@@ -2,8 +2,8 @@ import { ArrowRight } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section id="inicio" className="hero-section relative overflow-hidden bg-off-white pt-32 pb-20">
-      <div className="container flex flex-col md:flex-row items-center gap-12">
+    <section id="inicio" className="hero-section relative overflow-hidden bg-off-white pt-32 pb-32">
+      <div className="container flex flex-col md:flex-row items-center gap-12 mb-16">
         <div className="md:w-1/2 animate-fade-in">
           <h1 className="text-primary-blue font-bold text-5xl leading-tight mb-4">
             Expertos en <span className="text-secondary-gray">Control de Plagas</span> en Barcelona
@@ -12,7 +12,7 @@ const Hero = () => {
             Soluciones avanzadas para eliminar cucarachas y otras plagas urbanas. 
             <strong> Llevamos más de 20 años protegiendo hogares y negocios </strong> en toda la provincia de Barcelona con resultados 100% garantizados.
           </p>
-          <div className="flex flex-wrap gap-4 mb-10">
+          <div className="flex flex-wrap gap-4 mb-16">
             <a href="#contacto" className="btn btn-primary flex items-center gap-2">
               Pide Presupuesto Gratis <ArrowRight size={20} />
             </a>

@@ -17,8 +17,8 @@ const About = () => {
           <div className="relative">
             <div className="absolute inset-0 bg-primary-blue rounded-2xl transform rotate-3 scale-105 opacity-10"></div>
             <img 
-              src="https://images.unsplash.com/photo-1581578731522-6582fe001713?auto=format&fit=crop&q=80&w=800" 
-              alt="Professional Pest Control" 
+              src="/professional-technician.png" 
+              alt="CEC SANIDAD AMBIENTAL - Profesionales" 
               className="relative w-full h-auto rounded-2xl shadow-xl z-10"
             />
             <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl z-20 animate-fade-in">

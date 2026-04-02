@@ -84,9 +84,9 @@ const Contact = () => {
                 </button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="flex flex-col gap-2">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="flex flex-col gap-3">
                     <label htmlFor="name" className="font-semibold text-text-dark ml-1">Nombre</label>
                     <input 
                       type="text" 
@@ -98,7 +98,7 @@ const Contact = () => {
                       className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                     />
                   </div>
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col gap-3">
                     <label htmlFor="phone" className="font-semibold text-text-dark ml-1">Teléfono</label>
                     <input 
                       type="tel" 
@@ -111,7 +111,7 @@ const Contact = () => {
                     />
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   <label htmlFor="email" className="font-semibold text-text-dark ml-1">Email</label>
                   <input 
                     type="email" 
@@ -123,7 +123,7 @@ const Contact = () => {
                     className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3">
                   <label htmlFor="message" className="font-semibold text-text-dark ml-1">Mensaje o Plaga detectada</label>
                   <textarea 
                     id="message" 

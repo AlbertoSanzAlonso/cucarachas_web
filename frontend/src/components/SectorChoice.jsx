@@ -2,10 +2,10 @@ import { Home, Building2, ArrowRight } from 'lucide-react';
 
 const SectorChoice = () => {
   return (
-    <section className="bg-white py-12">
+    <section className="bg-white py-24">
       <div className="container">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-1/2 group cursor-pointer bg-off-white p-12 rounded-3xl border border-transparent hover:border-primary-blue hover:shadow-2xl transition-all duration-500">
+        <div className="flex flex-col md:flex-row gap-12">
+          <div className="md:w-1/2 group cursor-pointer bg-off-white p-16 rounded-3xl border border-transparent hover:border-primary-blue hover:shadow-2xl transition-all duration-500">
             <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-8 group-hover:scale-110 transition-transform">
               <Home size={48} className="text-primary-blue" />
             </div>
@@ -18,7 +18,7 @@ const SectorChoice = () => {
             </a>
           </div>
 
-          <div className="md:w-1/2 group cursor-pointer bg-secondary-gray p-12 rounded-3xl border border-transparent hover:border-white/10 hover:shadow-2xl transition-all duration-500 text-white">
+          <div className="md:w-1/2 group cursor-pointer bg-secondary-gray p-16 rounded-3xl border border-transparent hover:border-white/10 hover:shadow-2xl transition-all duration-500 text-white">
             <div className="bg-white/10 p-6 rounded-2xl w-fit mb-8 group-hover:scale-110 transition-transform">
               <Building2 size={48} className="text-primary-blue" />
             </div>

@@ -43,7 +43,7 @@ const LocalAuthority = () => {
              </div>
           </div>
           
-          <div className="lg:w-1/2 grid grid-cols-2 gap-4">
+          <div className="lg:w-1/2 grid grid-cols-2 gap-8">
              <div className="bg-off-white p-8 rounded-3xl border border-gray-100 flex flex-col items-center text-center">
                 <span className="text-4xl font-bold text-primary-blue mb-2">100%</span>
                 <span className="text-xs uppercase font-bold text-text-gray tracking-tighter">Satisfacción</span>
