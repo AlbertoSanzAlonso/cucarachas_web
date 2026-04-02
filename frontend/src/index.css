@@ -59,6 +59,13 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--secondary-g
 .h-full { height: 100% !important; }
 .h-auto { height: auto !important; }
 
+.p-4 { padding: 1rem !important; }
+.p-6 { padding: 1.5rem !important; }
+.p-8 { padding: 2rem !important; }
+.p-10 { padding: 2.5rem !important; }
+.p-12 { padding: 3rem !important; }
+.p-16 { padding: 4rem !important; }
+
 .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
 .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
 .py-10 { padding-top: 2.5rem; padding-bottom: 2.5rem; }
@@ -89,6 +96,7 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--secondary-g
   .md\:flex-row { flex-direction: row !important; }
   .md\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
   .md\:grid-cols-3 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .md\:p-16 { padding: 4rem !important; }
 }
 @media (min-width: 1024px) {
   .lg\:flex { display: flex !important; }
@@ -97,6 +105,7 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--secondary-g
   .lg\:w-1\/2 { width: 50% !important; }
   .lg\:w-3\/5 { width: 60% !important; }
   .lg\:w-2\/5 { width: 40% !important; }
+  .lg\:p-16 { padding: 4rem !important; }
 }
 
 /* TYPOGRAPHY */
