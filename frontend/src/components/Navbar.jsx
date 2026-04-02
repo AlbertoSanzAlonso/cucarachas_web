@@ -28,8 +28,12 @@ const Navbar = () => {
             <img 
               src="/assets/isotipo.png" 
               alt="CECSA Icon" 
-              className="h-5 w-auto object-contain" 
-              style={{ filter: 'brightness(0) invert(1)' }} 
+              style={{ 
+                height: '24px', 
+                width: 'auto', 
+                objectFit: 'contain', 
+                filter: 'brightness(0) invert(1)' 
+              }} 
             />
           </div>
           <div className="flex flex-col justify-center">
