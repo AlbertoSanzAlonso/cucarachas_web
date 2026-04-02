@@ -33,7 +33,7 @@ const About = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {values.slice(0, 2).map((v, i) => (
                 <div key={i} className="flex gap-4 items-start">
-                  <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">{v.icon}</div>
+                  <div className="p-1">{v.icon}</div>
                   <div>
                     <h4 className="font-bold text-secondary-gray mb-1">{v.title}</h4>
                     <p className="text-xs text-text-muted leading-snug">{v.desc}</p>
@@ -42,8 +42,8 @@ const About = () => {
               ))}
             </div>
 
-            <div className="mt-16 flex items-center gap-8 p-6 glass rounded-2xl border border-white/5">
-              <ShieldCheck className="text-primary-blue shrink-0" size={40} />
+            <div className="mt-16 flex items-center gap-5 p-6 glass rounded-2xl border border-white/5">
+              <ShieldCheck className="text-primary-blue shrink-0 mr-2" size={40} />
               <div>
                 <div className="text-white font-bold">Certificación ROESB Oficial</div>
                 <div className="text-xs text-muted uppercase tracking-tighter">Nº Registro: 0246-CAT-SB</div>
