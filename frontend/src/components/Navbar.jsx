@@ -28,13 +28,13 @@ const Navbar = () => {
             <img 
               src="/assets/isotipo.png" 
               alt="CECSA Icon" 
-              className="h-12 w-auto object-contain" 
+              className="h-5 w-auto object-contain" 
               style={{ filter: 'brightness(0) invert(1)' }} 
             />
           </div>
-          <div className="flex flex-col">
-            <span className="text-2xl font-black tracking-tighter text-white leading-none">CECSA</span>
-            <span className="text-[12px] uppercase font-bold tracking-[0.2em] text-white/90">Urban Plagas</span>
+          <div className="flex flex-col justify-center">
+            <span className="text-xl font-black tracking-tighter text-white leading-none mb-0.5">CECSA</span>
+            <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-white/90 leading-none">Urban Plagas</span>
           </div>
         </a>
 
