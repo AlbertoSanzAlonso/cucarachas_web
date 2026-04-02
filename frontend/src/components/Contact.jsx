@@ -14,6 +14,21 @@ const Contact = () => {
     setSubmitted(true);
   };
 
+  const fieldStyle = {
+    width: '100%',
+    padding: '18px 20px',
+    fontSize: '16px',
+    color: '#3c3c3b',
+    background: '#f8fafc',
+    border: '1.5px solid #e2e8f0',
+    borderRadius: '14px',
+    outline: 'none',
+    boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+    transition: 'border-color 200ms, box-shadow 200ms',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+  };
+
   if (submitted) {
     return (
       <section id="contacto" className="py-32 bg-bg-light">
@@ -94,43 +109,45 @@ const Contact = () => {
               viewport={{ once: true }}
               className="bg-white p-12 lg:p-20 rounded-[4rem] border border-gray-100 shadow-2xl relative shadow-primary-blue/5"
             >
-              <form onSubmit={handleSubmit} className="space-y-10">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Nombre Completo</label>
-                    <input 
-                      type="text" 
+              <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
+
+                {/* Name + Phone row */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '24px' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Nombre Completo</label>
+                    <input
+                      type="text"
                       required
                       placeholder="Nombre y apellidos"
-                      className="w-full px-6 py-6 bg-bg-light border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-[16px]"
+                      style={fieldStyle}
                     />
                   </div>
-                  <div className="space-y-4">
-                    <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Teléfono</label>
-                    <input 
-                      type="tel" 
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Teléfono</label>
+                    <input
+                      type="tel"
                       required
                       placeholder="93x xxx xxx"
-                      className="w-full px-6 py-6 bg-bg-light border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-[16px]"
+                      style={fieldStyle}
                     />
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Correo Electrónico</label>
-                  <input 
-                    type="email" 
+                {/* Email */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Correo Electrónico</label>
+                  <input
+                    type="email"
                     required
                     placeholder="email@empresa.com"
-                    className="w-full px-6 py-6 bg-bg-light border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-[16px]"
+                    style={fieldStyle}
                   />
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Tipo de Servicio</label>
-                  <select 
-                    className="w-full px-6 py-6 bg-bg-light border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-[16px] appearance-none cursor-pointer"
-                  >
+                {/* Service select */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Tipo de Servicio</label>
+                  <select style={{ ...fieldStyle, appearance: 'none', cursor: 'pointer' }}>
                     <option>Desinsectación (Cucarachas, Chinches...)</option>
                     <option>Desratización (Ratones, Ratas)</option>
                     <option>Tratamientos de Madera (Termitas, Carcoma)</option>
@@ -138,40 +155,68 @@ const Contact = () => {
                   </select>
                 </div>
 
-                <div className="space-y-4">
-                  <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Descripción del Problema</label>
-                  <textarea 
+                {/* Textarea */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Descripción del Problema</label>
+                  <textarea
                     rows="4"
                     required
                     placeholder="Detalle la situación..."
-                    className="w-full px-6 py-6 bg-bg-light border border-gray-200 rounded-xl focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-[16px] resize-none"
-                  ></textarea>
+                    style={{ ...fieldStyle, resize: 'none', lineHeight: '1.6' }}
+                  />
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <input type="checkbox" required id="privacy" className="w-5 h-5 rounded border-gray-300 text-primary-blue focus:ring-primary-blue cursor-pointer flex-shrink-0" />
-                  <label htmlFor="privacy" className="text-sm text-text-muted leading-normal">
-                    Acepto la <a href="#" className="text-primary-blue underline hover:text-secondary-gray font-bold">política de privacidad</a>.
+                {/* Privacy checkbox */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <input
+                    type="checkbox"
+                    required
+                    id="privacy"
+                    style={{ width: '20px', height: '20px', borderRadius: '4px', flexShrink: 0, cursor: 'pointer', accentColor: '#0080bb' }}
+                  />
+                  <label htmlFor="privacy" style={{ fontSize: '14px', color: '#888', lineHeight: 1.4 }}>
+                    Acepto la <a href="#" style={{ color: '#0080bb', fontWeight: 700 }}>política de privacidad</a>.
                   </label>
                 </div>
 
-                <button 
-                  type="submit" 
+                {/* Submit button */}
+                <button
+                  type="submit"
                   disabled={isSubmitting}
-                  className="w-full btn btn-primary py-8 text-xl font-black flex items-center justify-center gap-6 group relative overflow-hidden"
+                  style={{
+                    width: '100%',
+                    background: '#0080bb',
+                    color: 'white',
+                    fontWeight: 900,
+                    fontSize: '18px',
+                    padding: '22px 32px',
+                    borderRadius: '16px',
+                    border: 'none',
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '16px',
+                    marginTop: '8px',
+                    opacity: isSubmitting ? 0.7 : 1,
+                    transition: 'background 200ms, transform 150ms',
+                    boxShadow: '0 8px 32px rgba(0,128,187,0.3)',
+                  }}
+                  onMouseEnter={e => !isSubmitting && (e.currentTarget.style.background = '#006fa3')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '#0080bb')}
                 >
-                  <span className="relative z-10 flex items-center gap-4">
-                    {isSubmitting ? (
-                      <span className="w-8 h-8 border-4 border-white/30 border-t-white rounded-full animate-spin"></span>
-                    ) : (
-                      <>
-                        Solicitar Presupuesto Gratuito
-                        <Send size={24} className="group-hover:translate-x-2 group-hover:-translate-y-2 transition-transform duration-300" />
-                      </>
-                    )}
-                  </span>
+                  {isSubmitting ? (
+                    <span style={{ width: '28px', height: '28px', border: '4px solid rgba(255,255,255,0.3)', borderTop: '4px solid white', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />
+                  ) : (
+                    <>
+                      Solicitar Presupuesto Gratuito
+                      <Send size={22} />
+                    </>
+                  )}
                 </button>
+                <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </form>
+
 
               <div className="mt-16 pt-10 border-t border-gray-100 grid grid-cols-3 gap-6 opacity-50">
                 <div className="text-center">

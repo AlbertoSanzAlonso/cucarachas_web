@@ -172,7 +172,7 @@ const Navbar = () => {
             transition={{ duration: 0.25 }}
             style={{ background: '#006fa3', borderTop: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }}
           >
-            <div className="container py-8 flex flex-col" style={{ gap: '28px' }}>
+            <div className="container py-10 flex flex-col" style={{ gap: '24px', paddingTop: '32px', paddingBottom: '32px' }}>
               {navLinks.map((link) => (
                 <a
                   key={link.title}
