@@ -21,7 +21,7 @@ const About = () => {
             <p className="text-primary-blue font-black uppercase tracking-[0.3em] text-xs mb-4">Nuestra Filosofía</p>
             <h2 className="text-secondary-gray mb-8">Aceptar para actuar con <span className="text-primary-blue">conciencia</span></h2>
             
-            <div className="space-y-6 mb-12">
+            <div className="space-y-6 mb-6">
               <p className="text-lg text-text-muted leading-relaxed">
                 Fundada en Barcelona, CECSA nace de la necesidad de elevar los estándares de sanidad ambiental. No solo gestionamos plagas; entendemos el ecosistema urbano para intervenir de forma inteligente y sostenible.
               </p>
@@ -30,7 +30,7 @@ const About = () => {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-4">
               {values.slice(0, 2).map((v, i) => (
                 <div key={i} className="flex gap-4 items-start">
                   <div className="p-1">{v.icon}</div>
@@ -42,7 +42,7 @@ const About = () => {
               ))}
             </div>
 
-            <div className="mt-16 flex items-center gap-5 p-6 glass rounded-2xl border border-white/5">
+            <div className="mt-8 flex items-center gap-5 p-6 glass rounded-2xl border border-white/5">
               <ShieldCheck className="text-primary-blue shrink-0 mr-2" size={40} />
               <div>
                 <div className="text-white font-bold">Certificación ROESB Oficial</div>

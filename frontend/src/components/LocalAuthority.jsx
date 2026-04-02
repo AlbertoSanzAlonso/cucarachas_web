@@ -18,8 +18,8 @@ const LocalAuthority = () => {
             viewport={{ once: true }}
             className="lg:w-1/2"
           >
-            <div className="inline-flex items-center gap-3 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-6">
-              <MapPin size={14} className="text-primary-blue" />
+            <div className="inline-flex items-center gap-4 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-6">
+              <MapPin size={14} className="text-primary-blue flex-shrink-0" style={{ marginRight: '8px' }} />
               Liderazgo Local en Barcelona
             </div>
             

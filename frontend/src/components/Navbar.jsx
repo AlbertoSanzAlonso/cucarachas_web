@@ -26,9 +26,10 @@ const Navbar = () => {
     <header
       className="sticky top-0 w-full z-[1000] transition-all duration-300"
       style={{
-        background: `rgba(0, 128, 187, ${0.92 + scrollProgress * 0.07})`,
-        backdropFilter: scrollProgress > 0.1 ? `blur(${scrollProgress * 14}px)` : 'none',
-        boxShadow: scrollProgress > 0.2 ? `0 4px ${24 * scrollProgress}px rgba(0,0,0,${0.08 + scrollProgress * 0.12})` : '0 1px 4px rgba(0,0,0,0.06)',
+        background: `rgba(0, 128, 187, ${1 - scrollProgress * 0.20})`,
+        backdropFilter: scrollProgress > 0.05 ? `blur(${scrollProgress * 16}px)` : 'none',
+        WebkitBackdropFilter: scrollProgress > 0.05 ? `blur(${scrollProgress * 16}px)` : 'none',
+        boxShadow: scrollProgress > 0.1 ? `0 4px ${20 * scrollProgress}px rgba(0,0,0,${0.06 + scrollProgress * 0.14})` : 'none',
         padding: scrollProgress > 0.8 ? '10px 0' : '14px 0',
         transition: 'padding 300ms',
       }}

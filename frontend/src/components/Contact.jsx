@@ -66,8 +66,8 @@ const Contact = () => {
         <div className="flex flex-col lg:flex-row gap-24 items-stretch">
           
           <div className="lg:w-2/5 flex flex-col justify-center">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-10 w-fit">
-              <ShieldCheck size={14} className="text-primary-blue" />
+            <div className="inline-flex items-center gap-4 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-10 w-fit">
+              <ShieldCheck size={14} className="text-primary-blue flex-shrink-0" style={{ marginRight: '8px' }} />
               Compromiso de Calidad Sanitaria
             </div>
             
@@ -86,7 +86,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <div className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-1">Línea de Urgencia 24h</div>
-                  <a href="tel:933309169" className="text-3xl font-black text-secondary-gray hover:text-primary-blue transition-colors">933 309 169</a>
+                  <a href="tel:933309169" className="text-3xl font-black transition-colors" style={{ textDecoration: 'none', color: '#0080bb' }}>933 309 169</a>
                 </div>
               </div>
 
