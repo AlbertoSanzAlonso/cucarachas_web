@@ -1,10 +1,20 @@
 {
   "version": 1,
   "skills": {
+    "bencium-innovative-ux-designer": {
+      "source": "bencium/bencium-claude-code-design-skill",
+      "sourceType": "github",
+      "computedHash": "a535e501e9f72e0de2d43546104f98b596119f8bbea1df915579b26da08d792d"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
       "computedHash": "d31e234f0c90694a670222cdd1dafa853e051d7066beda389f1097c22dadd461"
+    },
+    "frontend-design": {
+      "source": "mager/frontend-design",
+      "sourceType": "github",
+      "computedHash": "932ef23b5d0a0aa4a89e51a9bde1217fb987d35fe2c1d5fe51c3090938ac4bd8"
     }
   }
 }
