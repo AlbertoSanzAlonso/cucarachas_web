@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "a535e501e9f72e0de2d43546104f98b596119f8bbea1df915579b26da08d792d"
     },
+    "brand-typography-systems": {
+      "source": "mike-coulbourn/claude-vibes",
+      "sourceType": "github",
+      "computedHash": "e4aeaf58d5cb12aeecdf60316171f0e1a3df47fb2e98b4eff8370f2f9eb5e751"
+    },
     "find-skills": {
       "source": "vercel-labs/skills",
       "sourceType": "github",
@@ -25,6 +30,11 @@
       "source": "supabase/agent-skills",
       "sourceType": "github",
       "computedHash": "9c87c315aed143ee3b34bec8117100f5035e0df09e6b23e1ecc772cff434c9ad"
+    },
+    "typography-expert": {
+      "source": "erichowens/some_claude_skills",
+      "sourceType": "github",
+      "computedHash": "48b609c51040d944eb81fc148318368ff7d03273763791618b67020756da08fd"
     },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",

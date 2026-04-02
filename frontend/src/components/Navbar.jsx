@@ -24,12 +24,12 @@ const Navbar = () => {
       <div className="container flex justify-between items-center">
         {/* Brand */}
         <a href="#" className="flex items-center gap-3 group">
-          <div className="bg-primary-blue p-2 rounded-lg text-white group-hover:rotate-12 transition-transform">
-            <Bug size={24} />
+          <div className="bg-white p-1 rounded-lg group-hover:scale-105 transition-transform duration-300">
+            <img src="/assets/logo_crop_5.png" alt="CECSA Icon" className="w-10 h-10 object-contain" onError={(e) => { e.target.src = '/assets/logo_crop_1.png'; }} />
           </div>
           <div className="flex flex-col">
             <span className="text-xl font-black tracking-tighter text-secondary-gray leading-none">CECSA</span>
-            <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue">Sanidad Ambiental</span>
+            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-blue">Urban Plagas</span>
           </div>
         </a>
 

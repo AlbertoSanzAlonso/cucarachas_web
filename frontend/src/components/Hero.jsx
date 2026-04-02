@@ -20,9 +20,9 @@ const Hero = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">Acreditación Sanitaria ROESB: 0246-CAT-SB</span>
             </div>
             
-            <h1 className="text-5xl lg:text-7xl font-black text-secondary-gray leading-[1.1] mb-8 tracking-tighter">
+            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-secondary-gray leading-[1.1] mb-8 tracking-tighter">
               Control de Plagas <br />
-              <span className="text-primary-blue">Científico y Consciente</span>
+              <span className="text-primary-blue font-sans font-black">Científico y Consciente</span>
             </h1>
             
             <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
