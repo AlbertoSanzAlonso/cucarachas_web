@@ -4,10 +4,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 60);
+    const handleScroll = () => {
+      const progress = Math.min(window.scrollY / 150, 1);
+      setScrollProgress(progress);
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
@@ -23,17 +26,16 @@ const Navbar = () => {
     <header
       className="sticky top-0 w-full z-[1000] transition-all duration-300"
       style={{
-        background: scrolled
-          ? 'rgba(0, 128, 187, 0.97)'
-          : '#0080bb',
-        backdropFilter: scrolled ? 'blur(12px)' : 'none',
-        boxShadow: scrolled ? '0 4px 24px rgba(0,0,0,0.18)' : '0 2px 8px rgba(0,0,0,0.08)',
-        padding: scrolled ? '10px 0' : '14px 0',
+        background: `rgba(0, 128, 187, ${0.92 + scrollProgress * 0.07})`,
+        backdropFilter: scrollProgress > 0.1 ? `blur(${scrollProgress * 14}px)` : 'none',
+        boxShadow: scrollProgress > 0.2 ? `0 4px ${24 * scrollProgress}px rgba(0,0,0,${0.08 + scrollProgress * 0.12})` : '0 1px 4px rgba(0,0,0,0.06)',
+        padding: scrollProgress > 0.8 ? '10px 0' : '14px 0',
+        transition: 'padding 300ms',
       }}
     >
       {/* Top trust bar — only when not scrolled */}
       <AnimatePresence>
-        {!scrolled && (
+        {scrollProgress < 0.5 && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
