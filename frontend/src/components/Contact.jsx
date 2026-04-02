@@ -33,35 +33,35 @@ const Contact = () => {
       <div className="container">
         <div className="flex flex-col lg:flex-row gap-16">
           <div className="lg:w-1/3">
-            <h2 className="text-4xl font-bold text-primary-navy mb-6">Contacta con Cecsa</h2>
+            <h2 className="text-4xl font-bold text-text-dark mb-6">Contacta con Cecsa</h2>
             <p className="text-lg text-text-gray mb-10">
               ¿Preocupado por una plaga de cucarachas? Solicita un presupuesto sin compromiso y un técnico contactará contigo para darte una solución inmediata.
             </p>
             <div className="flex flex-col gap-6">
               <div className="flex items-start gap-4">
-                <div className="bg-light-blue p-3 rounded-xl text-olive-green">
+                <div className="bg-light-blue p-3 rounded-xl text-primary-blue">
                   <Phone size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-primary-navy">Llámanos</h4>
+                  <h4 className="font-bold text-text-dark">Llámanos</h4>
                   <p className="text-text-gray">+34 900 123 456</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="bg-light-blue p-3 rounded-xl text-olive-green">
+                <div className="bg-light-blue p-3 rounded-xl text-primary-blue">
                   <Mail size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-primary-navy">Email</h4>
+                  <h4 className="font-bold text-text-dark">Email</h4>
                   <p className="text-text-gray">info@cecsaplagas.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
-                <div className="bg-light-blue p-3 rounded-xl text-olive-green">
+                <div className="bg-light-blue p-3 rounded-xl text-primary-blue">
                   <MapPin size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-primary-navy">Ubicación</h4>
+                  <h4 className="font-bold text-text-dark">Ubicación</h4>
                   <p className="text-text-gray">Calle de la Limpieza, 12, 28001 Madrid</p>
                 </div>
               </div>
@@ -71,10 +71,10 @@ const Contact = () => {
           <div className="lg:w-2/3 bg-off-white p-8 md:p-12 rounded-3xl shadow-sm border border-gray-100">
             {status === 'success' ? (
               <div className="h-full flex flex-col items-center justify-center text-center animate-fade-in">
-                <div className="bg-olive-green p-4 rounded-full text-white mb-6">
+                <div className="bg-primary-blue p-4 rounded-full text-white mb-6">
                   <CheckCircle size={48} />
                 </div>
-                <h3 className="text-3xl font-bold text-primary-navy mb-4">¡Mensaje Enviado!</h3>
+                <h3 className="text-3xl font-bold text-text-dark mb-4">¡Mensaje Enviado!</h3>
                 <p className="text-lg text-text-gray mb-8">Gracias por contactar con Cecsa. Un técnico experto en control de plagas se pondrá en contacto contigo en breve.</p>
                 <button 
                   onClick={() => setStatus('idle')}
@@ -87,7 +87,7 @@ const Contact = () => {
               <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="name" className="font-semibold text-primary-navy ml-1">Nombre</label>
+                    <label htmlFor="name" className="font-semibold text-text-dark ml-1">Nombre</label>
                     <input 
                       type="text" 
                       id="name" 
@@ -95,11 +95,11 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       placeholder="Tu nombre completo"
-                      className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-olive-green transition-all"
+                      className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
-                    <label htmlFor="phone" className="font-semibold text-primary-navy ml-1">Teléfono</label>
+                    <label htmlFor="phone" className="font-semibold text-text-dark ml-1">Teléfono</label>
                     <input 
                       type="tel" 
                       id="phone" 
@@ -107,12 +107,12 @@ const Contact = () => {
                       onChange={handleChange}
                       required
                       placeholder="Tu número de contacto"
-                      className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-olive-green transition-all"
+                      className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                     />
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="email" className="font-semibold text-primary-navy ml-1">Email</label>
+                  <label htmlFor="email" className="font-semibold text-text-dark ml-1">Email</label>
                   <input 
                     type="email" 
                     id="email" 
@@ -120,11 +120,11 @@ const Contact = () => {
                     onChange={handleChange}
                     required
                     placeholder="compañia@email.com"
-                    className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-olive-green transition-all"
+                    className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                   />
                 </div>
                 <div className="flex flex-col gap-2">
-                  <label htmlFor="message" className="font-semibold text-primary-navy ml-1">Mensaje o Plaga detectada</label>
+                  <label htmlFor="message" className="font-semibold text-text-dark ml-1">Mensaje o Plaga detectada</label>
                   <textarea 
                     id="message" 
                     value={formData.message}
@@ -132,7 +132,7 @@ const Contact = () => {
                     required
                     rows="4"
                     placeholder="Cuéntanos sobre tu problema..."
-                    className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-olive-green transition-all"
+                    className="p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-blue transition-all"
                   ></textarea>
                 </div>
                 <button 

@@ -6,9 +6,9 @@
 *.swo
 
 # Backend
+**/__pycache__/
+**/*.pyc
 backend/venv/
-backend/__pycache__/
-backend/*.pyc
 backend/db.sqlite3
 backend/.env
 backend/static/
@@ -25,3 +25,4 @@ frontend/yarn-debug.log*
 frontend/yarn-error.log*
 frontend/pnpm-debug.log*
 frontend/lerna-debug.log*
+branding_text.txt

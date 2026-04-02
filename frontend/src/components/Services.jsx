@@ -45,7 +45,7 @@ const Services = () => {
                 >
                   <IconComponent size={32} />
                 </div>
-                <h3 className="text-xl font-bold mb-4 text-primary-navy">{service.title}</h3>
+                <h3 className="text-xl font-bold mb-4 text-text-dark">{service.title}</h3>
                 <p className="text-text-gray">{service.description}</p>
                 <a href="#contacto" className="inline-flex items-center gap-2 mt-6 font-semibold text-olive-green hover:gap-3 transition-all">
                   Saber más <LucideIcons.ArrowRight size={18} />
