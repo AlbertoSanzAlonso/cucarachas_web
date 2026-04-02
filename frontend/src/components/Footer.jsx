@@ -171,39 +171,40 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom bar — dark strip matching navbar trust bar */}
-        <div
-          style={{
-            background: 'rgba(0,0,0,0.28)',
-            margin: '0 -16px',
-            padding: '18px 16px',
-          }}
-        >
-          <div className="container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
-            <p style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
-              © {new Date().getFullYear()} CECSA Urban Plagas. Todos los derechos reservados.
-            </p>
-            <div style={{ display: 'flex', gap: '28px' }}>
-              {['Aviso Legal', 'Política de Privacidad', 'Cookies'].map(item => (
-                <a
-                  key={item}
-                  href="#"
-                  style={{
-                    fontSize: '10px',
-                    fontWeight: 700,
-                    letterSpacing: '0.12em',
-                    textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.4)',
-                    textDecoration: 'none',
-                    transition: 'color 200ms',
-                  }}
-                  onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
-                  onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
-                >
-                  {item}
-                </a>
-              ))}
-            </div>
+        {/* Bottom bar — dark strip — OUTSIDE container for full width */}
+      </div>
+
+      <div
+        style={{
+          background: 'rgba(0,0,0,0.28)',
+          padding: '18px 0',
+          marginTop: '0',
+        }}
+      >
+        <div className="container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
+          <p style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+            © {new Date().getFullYear()} CECSA Urban Plagas. Todos los derechos reservados.
+          </p>
+          <div style={{ display: 'flex', gap: '28px' }}>
+            {['Aviso Legal', 'Política de Privacidad', 'Cookies'].map(item => (
+              <a
+                key={item}
+                href="#"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.4)',
+                  textDecoration: 'none',
+                  transition: 'color 200ms',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+              >
+                {item}
+              </a>
+            ))}
           </div>
         </div>
       </div>

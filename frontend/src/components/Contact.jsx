@@ -94,15 +94,15 @@ const Contact = () => {
               viewport={{ once: true }}
               className="bg-white p-12 lg:p-20 rounded-[4rem] border border-gray-100 shadow-2xl relative shadow-primary-blue/5"
             >
-              <form onSubmit={handleSubmit} className="space-y-12">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <form onSubmit={handleSubmit} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Nombre Completo</label>
                     <input 
                       type="text" 
                       required
                       placeholder="Nombre y apellidos"
-                      className="w-full px-8 py-6 bg-bg-light border border-gray-100 rounded-[2rem] focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-lg"
+                      className="w-full px-6 py-5 bg-bg-light border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-base"
                     />
                   </div>
                   <div className="space-y-4">
@@ -111,7 +111,7 @@ const Contact = () => {
                       type="tel" 
                       required
                       placeholder="93x xxx xxx"
-                      className="w-full px-8 py-6 bg-bg-light border border-gray-100 rounded-[2rem] focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-lg"
+                      className="w-full px-6 py-5 bg-bg-light border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-base"
                     />
                   </div>
                 </div>
@@ -122,14 +122,14 @@ const Contact = () => {
                     type="email" 
                     required
                     placeholder="email@empresa.com"
-                    className="w-full px-8 py-6 bg-bg-light border border-gray-100 rounded-[2rem] focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-lg"
+                    className="w-full px-6 py-5 bg-bg-light border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-base"
                   />
                 </div>
 
                 <div className="space-y-4">
                   <label className="text-[11px] font-black text-secondary-gray uppercase tracking-widest ml-1 block">Tipo de Servicio</label>
                   <select 
-                    className="w-full px-8 py-6 bg-bg-light border border-gray-100 rounded-[2rem] focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-lg appearance-none cursor-pointer"
+                    className="w-full px-6 py-5 bg-bg-light border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-base appearance-none cursor-pointer"
                   >
                     <option>Desinsectación (Cucarachas, Chinches...)</option>
                     <option>Desratización (Ratones, Ratas)</option>
@@ -144,7 +144,7 @@ const Contact = () => {
                     rows="4"
                     required
                     placeholder="Detalle la situación..."
-                    className="w-full px-8 py-6 bg-bg-light border border-gray-100 rounded-[2.5rem] focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-lg resize-none"
+                    className="w-full px-6 py-5 bg-bg-light border border-gray-200 rounded-lg focus:ring-4 focus:ring-primary-blue/10 focus:border-primary-blue transition-all outline-none text-secondary-gray shadow-sm text-base resize-none"
                   ></textarea>
                 </div>
 
