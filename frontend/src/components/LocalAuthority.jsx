@@ -46,13 +46,13 @@ const LocalAuthority = () => {
             viewport={{ once: true }}
             className="lg:w-1/2 relative"
           >
-            <div className="glass rounded-[3rem] p-4 shadow-2xl relative z-10">
+            <div className="glass rounded-[3rem] p-4 shadow-2xl relative overflow-hidden">
               <img 
-                src="https://images.unsplash.com/photo-1464938837314-84f1486d4818?auto=format&fit=crop&q=80&w=800" 
+                src="/assets/barcelona_authority.png" 
                 alt="Barcelona Skyline Sanitary Control" 
-                className="rounded-[2.5rem] w-full h-[400px] object-cover"
+                className="rounded-[2.5rem] w-full h-[500px] object-cover"
               />
-              <div className="absolute -bottom-6 -right-6 bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-[280px]">
+              <div className="absolute bottom-10 right-10 bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-[280px] z-20">
                 <ShieldCheck className="text-primary-blue mb-4" size={40} />
                 <p className="text-sm font-bold text-secondary-gray leading-snug">Empresa autorizada por la Generalitat de Catalunya</p>
                 <p className="text-[10px] font-black text-primary-blue mt-2 uppercase tracking-widest">ROESB: 0246-CAT-SB</p>
