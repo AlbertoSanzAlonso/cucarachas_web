@@ -1,89 +1,68 @@
-import { MapPin, Clock, Navigation, ShieldCheck } from 'lucide-react';
+import { MapPin, ShieldCheck, Users, Award, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const LocalAuthority = () => {
-  const stats = [
-    { label: "Satisfacción", value: "100%", sub: "Garantía Escrita" },
-    { label: "Clientes", value: "450k+", sub: "En toda España" },
-    { label: "Experiencia", value: "20+", sub: "Años en el Sector" },
-    { label: "Sanidad", value: "ROESB", sub: "0246-CAT-SB" }
-  ];
+const stats = [
+  { label: 'Años en Barcelona', value: '+20', icon: <Award className="text-primary-blue" /> },
+  { label: 'Servicios Realizados', value: '15k', icon: <CheckCircle2 className="text-primary-blue" /> },
+  { label: 'Técnicos Expertos', value: '12', icon: <Users className="text-primary-blue" /> }
+];
 
+const LocalAuthority = () => {
   return (
-    <section className="relative py-24 bg-bg-dark overflow-hidden">
-      <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row gap-20 items-center">
+    <section className="bg-white py-24">
+      <div className="container">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             className="lg:w-1/2"
           >
-             <span className="text-primary-blue font-bold tracking-[0.3em] uppercase text-xs mb-4 block">Autoridad Sanitaria Local</span>
-             <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">Compromiso con Barcelona</h2>
-             <p className="text-muted text-lg mb-10 leading-relaxed">
-               Desde nuestra sede central en el corazón de Barcelona, coordinamos intervenciones discretas y eficientes. 
-               Entendemos los desafíos específicos de barrios como el <span className="text-white font-semibold">Eixample, Sants o Gràcia</span>, y zonas como el <span className="text-white font-semibold">Vallès y el Maresme</span>.
-             </p>
-             
-             <div className="space-y-8 mb-12">
-                <div className="flex items-start gap-6">
-                  <div className="bg-primary-blue/10 p-4 rounded-xl text-primary-blue border border-primary-blue/20">
-                    <MapPin size={28} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-xl">Sede Central BARCELONA</h4>
-                    <p className="text-muted">Carrer dels Rajolers, 16-18, 08028 Barcelona</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-6">
-                  <div className="bg-primary-blue/10 p-4 rounded-xl text-primary-blue border border-primary-blue/20">
-                    <Clock size={28} />
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-white text-xl">Operativa 24/7</h4>
-                    <p className="text-muted">Atención continuada para urgencias y servicios preventivos.</p>
-                  </div>
-                </div>
-             </div>
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-6">
+              <MapPin size={14} className="text-primary-blue" />
+              Liderazgo Local en Barcelona
+            </div>
+            
+            <h2 className="text-secondary-gray mb-8">Autoridad Sanitaria en el <span className="text-primary-blue">Área Metropolitana</span></h2>
+            
+            <p className="text-lg text-text-muted mb-10 leading-relaxed">
+              En CECSA, no solo eliminamos plagas; restauramos la seguridad sanitaria de su entorno. Somos la empresa de referencia para comunidades y negocios en <span className="text-secondary-gray font-bold">Eixample, Gràcia, y Sant Cugat</span>.
+            </p>
 
-             <a 
-                href="https://goo.gl/maps/example" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="btn btn-secondary px-8 py-4 flex items-center gap-3 w-fit"
-             >
-               <Navigation size={20} /> Cómo llegar a CECSA
-             </a>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+              {stats.map((stat, idx) => (
+                <div key={idx} className="bg-bg-light p-6 rounded-2xl border border-gray-100 shadow-sm text-center">
+                  <div className="flex justify-center mb-4">{stat.icon}</div>
+                  <div className="text-3xl font-black text-secondary-gray">{stat.value}</div>
+                  <div className="text-[10px] font-bold text-muted uppercase tracking-widest">{stat.label}</div>
+                </div>
+              ))}
+            </div>
           </motion.div>
-          
-          <div className="lg:w-1/2 grid grid-cols-2 gap-6 md:gap-10">
-             {stats.map((stat, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="glass p-10 rounded-[2rem] border border-white/5 flex flex-col items-center text-center group hover:border-primary-blue/30 transition-colors"
-                >
-                   <span className="text-4xl md:text-5xl font-black text-primary-blue mb-2 group-hover:scale-110 transition-transform">
-                    {stat.value}
-                   </span>
-                   <span className="text-[10px] uppercase font-bold text-muted tracking-[0.2em] mb-1">
-                    {stat.label}
-                   </span>
-                   <span className="text-[9px] text-primary-blue font-bold uppercase tracking-tighter">
-                    {stat.sub}
-                   </span>
-                </motion.div>
-             ))}
-          </div>
+
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="lg:w-1/2 relative"
+          >
+            <div className="glass rounded-[3rem] p-4 shadow-2xl relative z-10">
+              <img 
+                src="https://images.unsplash.com/photo-1464938837314-84f1486d4818?auto=format&fit=crop&q=80&w=800" 
+                alt="Barcelona Skyline Sanitary Control" 
+                className="rounded-[2.5rem] w-full h-[400px] object-cover"
+              />
+              <div className="absolute -bottom-6 -right-6 bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-[280px]">
+                <ShieldCheck className="text-primary-blue mb-4" size={40} />
+                <p className="text-sm font-bold text-secondary-gray leading-snug">Empresa autorizada por la Generalitat de Catalunya</p>
+                <p className="text-[10px] font-black text-primary-blue mt-2 uppercase tracking-widest">ROESB: 0246-CAT-SB</p>
+              </div>
+            </div>
+            {/* Background design */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary-blue/5 rounded-full blur-[80px]"></div>
+          </motion.div>
         </div>
       </div>
-      
-      {/* Background radial glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary-blue/5 rounded-full blur-[120px] pointer-events-none"></div>
     </section>
   );
 };

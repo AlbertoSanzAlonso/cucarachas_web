@@ -1,51 +1,52 @@
-import { Home, Building2, ChevronRight, Users2 } from 'lucide-react';
+import { Home, Building2, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SectorChoice = () => {
   return (
-    <section className="relative py-24 bg-bg-dark overflow-hidden">
-      <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row gap-10">
+    <section id="sectores" className="py-24 bg-white">
+      <div className="container">
+        <div className="mb-20">
+          <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray leading-none mb-6">
+            Soluciones para <span className="text-primary-blue">cada entorno</span>
+          </h2>
+          <p className="text-text-muted text-lg max-w-2xl leading-relaxed">
+            Entendemos que cada espacio requiere un protocolo específico. Diseñamos planes personalizados para garantizar la máxima seguridad sanitaria.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Residential */}
           <motion.div 
-            whileHover={{ y: -15 }}
-            className="lg:w-1/2 group cursor-pointer glass p-12 md:p-20 rounded-[3rem] border border-white/5 hover:border-primary-blue/30 shadow-2xl transition-all duration-500 overflow-hidden relative"
+            whileHover={{ y: -10 }}
+            className="flex flex-col bg-bg-light rounded-[2.5rem] p-10 lg:p-16 border border-gray-100 shadow-sm transition-all"
           >
-            <div className="absolute top-0 right-0 w-48 h-48 bg-primary-blue opacity-[0.03] rounded-full blur-3xl -mr-16 -mt-16 group-hover:opacity-10 transition-opacity"></div>
-            
-            <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-10 group-hover:scale-110 group-hover:bg-primary-blue group-hover:text-white transition-all duration-500 text-primary-blue">
+            <div className="bg-primary-blue/10 w-20 h-20 rounded-3xl flex items-center justify-center text-primary-blue mb-10">
               <Home size={40} />
             </div>
-            
-            <h3 className="text-4xl font-black text-white mb-6 tracking-tight">Hogares y Particulares</h3>
-            <p className="text-muted text-lg mb-10 leading-relaxed max-w-sm">
-              Protegemos su hogar y familia con eficiencia discreta. <span className="text-white font-semibold">Técnicos especialistas en Barcelona</span> para desinsectación inmediata de cucarachas y roedores.
+            <h3 className="text-3xl font-black text-secondary-gray mb-6 leading-tight">Hogares y <br /> Particulares</h3>
+            <p className="text-text-muted text-lg mb-10 leading-relaxed">
+              Protegemos su hogar y su familia con eficiencia y total discreción. Técnicos especializados en Barcelona para desinsectación inmediata de cocinas y baños.
             </p>
-            
-            <a href="#contacto" className="btn btn-primary px-8 py-4 flex items-center gap-3 w-fit group-hover:gap-5 transition-all">
-              Soluciones Residenciales <ChevronRight size={20} />
-            </a>
+            <div className="mt-auto">
+              <a href="#contacto" className="btn btn-primary px-8">Solicite información</a>
+            </div>
           </motion.div>
 
           {/* Business */}
           <motion.div 
-            whileHover={{ y: -15 }}
-            className="lg:w-1/2 group cursor-pointer bg-bg-surface p-12 md:p-20 rounded-[3rem] border border-white/5 hover:border-primary-blue/30 shadow-2xl transition-all duration-500 overflow-hidden relative"
+            whileHover={{ y: -10 }}
+            className="flex flex-col bg-secondary-gray text-white rounded-[2.5rem] p-10 lg:p-16 shadow-2xl transition-all"
           >
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-blue opacity-[0.03] rounded-full blur-3xl -mb-20 -mr-20 group-hover:opacity-10 transition-opacity"></div>
-
-            <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-10 group-hover:scale-110 group-hover:bg-primary-blue group-hover:text-white transition-all duration-500 text-primary-blue">
+            <div className="bg-white/10 w-20 h-20 rounded-3xl flex items-center justify-center text-primary-blue mb-10">
               <Building2 size={40} />
             </div>
-            
-            <h3 className="text-4xl font-black text-white mb-6 tracking-tight">Empresas y HORECA</h3>
-            <p className="text-muted text-lg mb-10 leading-relaxed max-w-sm">
-              Certificados sanitarios oficiales en 24h. <span className="text-white font-semibold">Cumplimiento ROESB</span> garantizado para hostelería, oficinas y comunidades en toda la provincia.
+            <h3 className="text-3xl font-black mb-6 leading-tight">Empresa y <br /> Hostelería</h3>
+            <p className="text-white/60 text-lg mb-10 leading-relaxed">
+              Certificados oficiales en 24h. Cumplimiento ROESB garantizado para hostelería, oficinas y comunidades. Auditorías de sanidad ambiental según normativa RITE.
             </p>
-            
-            <a href="#contacto" className="btn btn-secondary px-8 py-4 flex items-center gap-3 w-fit group-hover:gap-5 transition-all">
-              Soluciones para Negocios <ChevronRight size={20} />
-            </a>
+            <div className="mt-auto">
+              <a href="#contacto" className="btn btn-primary px-8">Planes para empresas</a>
+            </div>
           </motion.div>
         </div>
       </div>

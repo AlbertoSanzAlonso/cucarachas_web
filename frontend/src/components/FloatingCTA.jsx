@@ -25,10 +25,10 @@ const FloatingCTA = () => {
         transition={{ delay: 0.1 }}
         whileHover={{ scale: 1.15 }}
         whileTap={{ scale: 0.9 }}
-        className="bg-white text-bg-dark w-16 h-16 rounded-full shadow-2xl flex items-center justify-center group overflow-hidden border border-white/10"
+        className="bg-white text-primary-blue w-14 h-14 rounded-full shadow-xl flex items-center justify-center group overflow-hidden border border-gray-100"
         title="Pedir Presupuesto…"
       >
-        <MessageSquare size={28} />
+        <MessageSquare size={24} />
       </motion.a>
     </div>
   );

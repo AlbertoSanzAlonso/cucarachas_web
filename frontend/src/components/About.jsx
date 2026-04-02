@@ -1,69 +1,43 @@
-import { CheckCircle2, ShieldCheck, HeartPulse } from 'lucide-react';
+import { ShieldCheck, Target, Heart, Eye, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const About = () => {
-  const highlights = [
-    "Personal especializado (Barcelona / Vallès / Maresme)",
-    "Restauración del equilibrio ambiental",
-    "Garantía por escrito en cada intervención",
-    "Atención inmediata en 24h con certificado",
-    "Metodología Científica y Rigor Sanitario",
-    "Prevención Post-Tratamiento Permanente"
-  ];
+const values = [
+  { title: 'Excelencia Técnica', desc: 'Protocolos basados en evidencia científica aplicada.', icon: <Target className="text-primary-blue" /> },
+  { title: 'Compromiso Ético', desc: 'Actuamos con conciencia ambiental y social.', icon: <Heart className="text-secondary-gray" /> },
+  { title: 'Transparencia', desc: 'Certificaciones oficiales y reportes detallados.', icon: <CheckCircle2 className="text-primary-blue" /> }
+];
 
+const About = () => {
   return (
-    <section id="nosotros" className="relative bg-bg-card overflow-hidden">
+    <section id="nosotros" className="bg-bg-light overflow-hidden">
       <div className="container">
         <div className="flex flex-col lg:flex-row items-center gap-20">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="lg:w-1/2 relative"
-          >
-            <div className="relative z-10 p-2 glass rounded-[2.5rem] border border-white/10">
-              <img 
-                src="/assets/professional-technician.png" 
-                alt="CEC SANIDAD AMBIENTAL - Profesionales en Barcelona" 
-                className="w-full h-auto rounded-[2rem] shadow-2xl"
-              />
-            </div>
-            
-            <div className="absolute -bottom-8 -right-8 glass p-8 rounded-2xl border border-white/10 shadow-2xl z-20">
-              <div className="text-4xl font-extrabold text-primary-blue mb-1">+20</div>
-              <div className="text-xs font-bold uppercase tracking-widest text-muted">Años Liderando</div>
-              <div className="text-[10px] text-primary-blue font-bold">Barcelona & Prov.</div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
             className="lg:w-1/2"
           >
-            <div className="inline-flex items-center gap-2 mb-6">
-              <HeartPulse className="text-primary-blue" size={20} />
-              <span className="text-primary-blue font-bold tracking-widest uppercase text-xs">Propósito CECSA</span>
+            <p className="text-primary-blue font-black uppercase tracking-[0.3em] text-xs mb-4">Nuestra Filosofía</p>
+            <h2 className="text-secondary-gray mb-8">Aceptar para actuar con <span className="text-primary-blue">conciencia</span></h2>
+            
+            <div className="space-y-6 mb-12">
+              <p className="text-lg text-text-muted leading-relaxed">
+                Fundada en Barcelona, CECSA nace de la necesidad de elevar los estándares de sanidad ambiental. No solo gestionamos plagas; entendemos el ecosistema urbano para intervenir de forma inteligente y sostenible.
+              </p>
+              <div className="bg-white p-6 rounded-2xl border-l-4 border-primary-blue shadow-sm italic text-secondary-gray">
+                "Nuestra misión es restaurar el equilibrio sanitario en cada espacio, integrando tecnología punta con un profundo respeto por el entorno."
+              </div>
             </div>
-            
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-8">Aceptar para actuar con conciencia</h2>
-            
-            <p className="text-lg text-muted mb-10 leading-relaxed italic">
-              "Nuestra labor no es solo erradicar, sino comprender. Aceptamos el reto de la convivencia urbana para actuar con la conciencia de restaurar el equilibrio perdido en hogares y empresas de Barcelona."
-            </p>
-            
-            <p className="text-muted mb-12">
-              Desde 2006, <strong>CECSA SANIDAD AMBIENTAL</strong> se ha consolidado como la referencia en control de plagas preventivo. No usamos el miedo; usamos la ciencia para proteger su salud y la de los suyos.
-            </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-6 gap-x-8">
-              {highlights.map((item, index) => (
-                <div key={index} className="flex items-center gap-3 group">
-                  <div className="p-1 rounded-full bg-primary-blue/10 text-primary-blue group-hover:bg-primary-blue group-hover:text-white transition-colors">
-                    <CheckCircle2 size={18} />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {values.slice(0, 2).map((v, i) => (
+                <div key={i} className="flex gap-4 items-start">
+                  <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">{v.icon}</div>
+                  <div>
+                    <h4 className="font-bold text-secondary-gray mb-1">{v.title}</h4>
+                    <p className="text-xs text-text-muted leading-snug">{v.desc}</p>
                   </div>
-                  <span className="font-semibold text-sm text-white/90">{item}</span>
                 </div>
               ))}
             </div>

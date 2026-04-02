@@ -1,92 +1,85 @@
-import { ArrowRight, ShieldCheck, Clock, Award } from 'lucide-react';
+import { ShieldCheck, Phone, ChevronRight, Activity, Users, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Hero = () => {
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center overflow-hidden pt-20">
-      {/* Background Decor */}
-      <div className="absolute top-[-10%] right-[-10%] w-[50%] h-[50%] bg-primary-blue opacity-10 rounded-full blur-[120px]"></div>
-      <div className="absolute bottom-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent-blue-deep opacity-10 rounded-full blur-[100px]"></div>
-      
+    <section className="relative overflow-hidden bg-bg-light py-20 lg:py-32">
+      {/* Abstract background elements */}
+      <div className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 blur-[120px] rounded-full -mr-20 -mt-20"></div>
+      <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
+
       <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16">
+        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
           <motion.div 
-            initial={{ opacity: 0, x: -50 }}
+            initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-            className="lg:w-1/2"
+            className="lg:w-3/5"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-white/10 mb-6">
-              <span className="flex h-2 w-2 rounded-full bg-primary-blue animate-pulse"></span>
-              <span className="text-xs font-bold uppercase tracking-widest text-primary-blue">ROESB: 0246-CAT-SB</span>
+            <div className="flex items-center gap-3 mb-6 bg-white w-fit px-4 py-2 rounded-full shadow-sm border border-primary-blue/10">
+              <ShieldCheck className="text-primary-blue" size={20} />
+              <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">Acreditación Sanitaria ROESB: 0246-CAT-SB</span>
             </div>
             
-            <h1 className="text-5xl md:text-7xl font-extrabold leading-[1.1] mb-6 text-white text-gradient">
+            <h1 className="text-5xl lg:text-7xl font-black text-secondary-gray leading-[1.1] mb-8 tracking-tighter">
               Control de Plagas <br />
-              <span className="text-white">en Barcelona</span>
+              <span className="text-primary-blue">Científico y Consciente</span>
             </h1>
             
-            <p className="text-lg md:text-xl text-muted mb-10 leading-relaxed max-w-xl">
-              Restauramos el equilibrio de su entorno con <span className="text-white font-semibold">eficiencia discreta</span>. 
-              Especialistas en desinsectación de cucarachas para hogares y negocios en toda el Área Metropolitana.
+            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
+              Restauramos el equilibrio de su entorno con precisión técnica y total discreción. Especialistas en <span className="text-secondary-gray font-bold underline decoration-primary-blue/30">Barcelona</span> para hogares, empresas y sector alimentario.
             </p>
             
             <div className="flex flex-wrap gap-5 mb-12">
-              <a href="#contacto" className="btn btn-primary px-10 py-5 text-lg flex items-center gap-3">
-                Presupuesto Gratuito <ArrowRight size={22} />
+              <a href="#contacto" className="btn btn-primary shadow-xl">
+                Pedir Presupuesto Gratuito <ChevronRight size={20} />
               </a>
-              <a href="#servicios" className="btn btn-secondary px-10 py-5 text-lg">
-                Nuestros Servicios
+              <a href="#servicios" className="btn btn-secondary">
+                Ver todos los servicios
               </a>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-8 border-t border-white/5">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-gray-200/50">
               <div className="flex items-center gap-3">
-                <ShieldCheck className="text-primary-blue" size={24} />
-                <span className="text-sm font-bold uppercase tracking-tight text-text-dim">Garantía Escrita</span>
+                <div className="text-primary-blue"><Clock size={24} /></div>
+                <div>
+                  <p className="text-xs uppercase font-bold tracking-widest text-muted">Respuesta</p>
+                  <p className="text-sm font-black text-secondary-gray">Menos de 24h</p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
-                <Clock className="text-primary-blue" size={24} />
-                <span className="text-sm font-bold uppercase tracking-tight text-text-dim">Atención 24h</span>
+                <div className="text-primary-blue"><Users size={24} /></div>
+                <div>
+                  <p className="text-xs uppercase font-bold tracking-widest text-muted">Experiencia</p>
+                  <p className="text-sm font-black text-secondary-gray">+20 Años</p>
+                </div>
               </div>
               <div className="flex items-center gap-3">
-                <Award className="text-primary-blue" size={24} />
-                <span className="text-sm font-bold uppercase tracking-tight text-text-dim">Técnicos Certificados</span>
+                <div className="text-primary-blue"><Activity size={24} /></div>
+                <div>
+                  <p className="text-xs uppercase font-bold tracking-widest text-muted">Eficacia</p>
+                  <p className="text-sm font-black text-secondary-gray">100% Garantizada</p>
+                </div>
               </div>
             </div>
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9, rotate: 2 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            transition={{ duration: 1, ease: "easeOut", delay: 0.2 }}
-            className="lg:w-1/2 relative"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="lg:w-2/5 relative"
           >
-            <div className="relative z-10 rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl">
-              <img 
-                src="/assets/hero.png" 
-                alt="Control de Plagas Profesional en Barcelona" 
-                className="w-full h-auto object-cover hover:scale-105 transition-transform duration-700" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-bg-dark/60 to-transparent"></div>
+            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3">
+               <img 
+                src="https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=800" 
+                alt="Sanitary Pest Control Service" 
+                className="w-full h-auto rounded-[2.5rem]"
+                loading="eager"
+               />
+               <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/50 shadow-xl">
+                 <p className="text-[10px] font-black uppercase text-primary-blue mb-1">Empresa Certificada</p>
+                 <p className="text-lg font-bold text-secondary-gray leading-tight">Garantía Sanitaria <br /> CECSA PROTECT</p>
+               </div>
             </div>
-            
-            {/* Floating Stats Card */}
-            <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-10 -left-10 glass p-6 rounded-2xl border border-white/10 shadow-2xl z-20 backdrop-blur-3xl hidden md:block"
-            >
-              <div className="flex items-center gap-4">
-                <div className="bg-primary-blue/20 p-3 rounded-xl">
-                  <ShieldCheck className="text-primary-blue" size={32} />
-                </div>
-                <div>
-                  <div className="text-2xl font-bold text-white">+20 Años</div>
-                  <div className="text-xs text-muted uppercase tracking-wider">Liderazgo en el sector</div>
-                </div>
-              </div>
-            </motion.div>
           </motion.div>
         </div>
       </div>
