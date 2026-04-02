@@ -144,7 +144,21 @@ h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; color: var(--secondary-g
 }
 .card-premium:hover { transform: translateY(-10px); }
 
-.glass { background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.3); }
+.rounded-2xl { border-radius: 1rem !important; }
+.rounded-3xl { border-radius: 1.5rem !important; }
+.rounded-\[1\.5rem\] { border-radius: 1.5rem !important; }
+.rounded-\[2rem\] { border-radius: 2rem !important; }
+.rounded-\[2\.5rem\] { border-radius: 2.5rem !important; }
+.rounded-\[3rem\] { border-radius: 3rem !important; }
+.rounded-\[3\.5rem\] { border-radius: 3.5rem !important; }
+.rounded-\[4rem\] { border-radius: 4rem !important; }
+
+.glass { 
+  background: rgba(255, 255, 255, 0.7); 
+  backdrop-filter: blur(20px); 
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3); 
+}
 
 /* COLOR UTILS */
 .bg-white { background-color: #ffffff !important; }
