@@ -44,7 +44,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-text-dark">Llámanos</h4>
-                  <p className="text-text-gray">+34 900 123 456</p>
+                  <p className="text-text-gray">933 309 169 | 686 371 385</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -53,7 +53,7 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-text-dark">Email</h4>
-                  <p className="text-text-gray">info@cecsaplagas.com</p>
+                  <p className="text-text-gray">info@cecsaddd.com</p>
                 </div>
               </div>
               <div className="flex items-start gap-4">
@@ -61,8 +61,8 @@ const Contact = () => {
                   <MapPin size={24} />
                 </div>
                 <div>
-                  <h4 className="font-bold text-text-dark">Ubicación</h4>
-                  <p className="text-text-gray">Calle de la Limpieza, 12, 28001 Madrid</p>
+                  <h4 className="font-bold text-text-dark">Ubicación Central</h4>
+                  <p className="text-text-gray">Calle Rajolers nº 16-18, 08028 Barcelona</p>
                 </div>
               </div>
             </div>

@@ -7,11 +7,11 @@ const PromotionBar = () => {
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1">
             <Clock size={14} className="text-primary-blue" />
-            Servicio 24h / 365 días
+            L-V: 09:00 - 20:00 | Urgencias 24h
           </span>
           <span className="hidden sm:inline-flex items-center gap-1">
             <Phone size={14} className="text-primary-blue" />
-            Atención Inmediata: 900 123 456
+            Atención: 933 309 169 | 686 371 385
           </span>
         </div>
         <div className="flex items-center gap-4 font-bold uppercase tracking-wider">

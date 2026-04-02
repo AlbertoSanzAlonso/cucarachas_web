@@ -50,9 +50,10 @@ const Footer = () => {
           <div>
             <h4 className="text-xl font-bold mb-6 text-white border-b border-white/10 pb-2 inline-block">Contacto</h4>
             <ul className="flex flex-col gap-4 text-gray-400">
-              <li className="flex items-center gap-2">Madrid, España</li>
-              <li className="flex items-center gap-2">+34 900 123 456</li>
-              <li className="flex items-center gap-2">info@cecsaplagas.com</li>
+              <li className="flex items-center gap-2">Calle Rajolers nº 16-18, Barcelona</li>
+              <li className="flex items-center gap-2">933 309 169 | 686 371 385</li>
+              <li className="flex items-center gap-2">info@cecsaddd.com</li>
+              <li className="text-xs pt-4 border-t border-white/5">ROESB: 0246-CAT-SB | CIF: B-64287055</li>
             </ul>
             <button 
               onClick={scrollToTop}

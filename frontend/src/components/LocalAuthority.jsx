@@ -7,21 +7,20 @@ const LocalAuthority = () => {
         <div className="flex flex-col lg:flex-row gap-16 items-center">
           <div className="lg:w-1/2">
              <span className="text-primary-blue font-bold tracking-widest uppercase text-sm mb-4 block">Presencia Local</span>
-             <h2 className="text-4xl font-bold text-secondary-gray mb-8">Nuestra Central de Madrid</h2>
+             <h2 className="text-4xl font-bold text-secondary-gray mb-8">Nuestra Sede Central</h2>
              <p className="text-text-gray text-lg mb-8 leading-relaxed">
-               Damos cobertura a toda la Comunidad de Madrid desde nuestra central. 
-               El clima de la región favorece la proliferación de cucarachas (Blattella germanica y Periplaneta americana). 
-               Nuestros técnicos locales conocen cada barrio y zona industrial, garantizando respuestas rápidas y tratamientos adaptados.
+               Desde nuestra sede central en Barcelona, CECSA SANIDAD AMBIENTAL coordina servicios especializados de control de plagas en toda la región. 
+               Con más de 20 años de trayectoria, combinamos el análisis científico con la acción consciente para restaurar el equilibrio en entornos urbanos y empresariales.
              </p>
              
              <div className="space-y-6">
-                <div className="flex items-center gap-4">
+                <div className="flex items-start gap-4">
                   <div className="bg-light-blue p-3 rounded-full text-primary-blue">
                     <MapPin size={24} />
                   </div>
                   <div>
-                    <h4 className="font-bold">Oficina MADRID</h4>
-                    <p className="text-text-gray">Calle de la Innovación, 28521 Rivas-Vaciamadrid, Madrid</p>
+                    <h4 className="font-bold">Sede Central BARCELONA</h4>
+                    <p className="text-text-gray">Calle Rajolers nº 16-18, 08028 Barcelona</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -30,7 +29,7 @@ const LocalAuthority = () => {
                   </div>
                   <div>
                     <h4 className="font-bold">Horario de Atención</h4>
-                    <p className="text-text-gray">Lunes a Viernes: 08:00 - 18:30 | Urgencias 24h</p>
+                    <p className="text-text-gray">L-V: 09:00 - 20:00 | Urgencias 24h</p>
                   </div>
                 </div>
                 <a 

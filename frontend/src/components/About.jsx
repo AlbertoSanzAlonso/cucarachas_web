@@ -28,9 +28,11 @@ const About = () => {
           </div>
         </div>
         <div className="md:w-1/2">
-          <h2 className="text-4xl font-bold text-text-dark mb-6">Por qué elegir Cecsa</h2>
+          <h2 className="text-4xl font-bold text-text-dark mb-6">Nuestra Filosofía</h2>
           <p className="text-lg text-text-gray mb-8">
-            En Cecsa, entendemos que una plaga de cucarachas no es solo un problema estético, sino un riesgo para la salud y la reputación de su negocio. Nuestro enfoque se basa en la prevención, el control y el mantenimiento, utilizando tecnología de vanguardia y productos de alta eficacia.
+            En <strong>CECSA SANIDAD AMBIENTAL</strong>, no solo eliminamos plagas; actuamos con conciencia. 
+            Nuestra labor no es solo fumigar, sino acompañar y analizar la biología de cada caso para restaurar el equilibrio perdido. 
+            Fundados en 2006, combinamos experiencia y rigor científico para proteger la salud pública y el bienestar en cada entorno.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {highlights.map((item, index) => (
