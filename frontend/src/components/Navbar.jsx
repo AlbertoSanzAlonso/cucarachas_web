@@ -14,7 +14,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed w-full top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
+    <nav className={`sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'}`}>
       <div className="container flex justify-between items-center">
         <div className="flex items-center gap-2 text-text-dark">
           <Bug className="text-secondary-gray" size={32} />
