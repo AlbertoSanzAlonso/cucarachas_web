@@ -6,11 +6,11 @@ const Hero = () => {
       <div className="container flex flex-col md:flex-row items-center gap-12">
         <div className="md:w-1/2 animate-fade-in">
           <h1 className="text-primary-blue font-bold text-5xl leading-tight mb-4">
-            Expertos en <span className="text-secondary-gray">Control de Plagas</span> en Madrid
+            Expertos en <span className="text-secondary-gray">Control de Plagas</span> en Barcelona
           </h1>
           <p className="text-text-gray text-lg mb-8 leading-relaxed">
             Soluciones avanzadas para eliminar cucarachas y otras plagas urbanas. 
-            <strong> Llevamos más de 20 años protegiendo hogares y negocios </strong> en toda la Comunidad de Madrid con resultados 100% garantizados.
+            <strong> Llevamos más de 20 años protegiendo hogares y negocios </strong> en toda la provincia de Barcelona con resultados 100% garantizados.
           </p>
           <div className="flex flex-wrap gap-4 mb-10">
             <a href="#contacto" className="btn btn-primary flex items-center gap-2">
@@ -33,7 +33,7 @@ const Hero = () => {
         </div>
         <div className="md:w-1/2 relative animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <div className="hero-image-wrapper">
-             <img src="/hero.png" alt="Control de Plagas en Madrid" className="w-full h-auto rounded-2xl shadow-2xl" />
+             <img src="/hero.png" alt="Control de Plagas en Barcelona" className="w-full h-auto rounded-2xl shadow-2xl" />
           </div>
         </div>
       </div>
