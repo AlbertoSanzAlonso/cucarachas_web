@@ -82,7 +82,7 @@ const Navbar = () => {
               src="/assets/isotipo.png"
               alt="CECSA Icon"
               style={{
-                height: '40px',
+                height: '80px',
                 width: 'auto',
                 objectFit: 'contain',
                 filter: 'brightness(0) invert(1)',

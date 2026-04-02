@@ -1,73 +1,211 @@
-import { Bug, Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ShieldCheck } from 'lucide-react';
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, ShieldCheck } from 'lucide-react';
 
 const Footer = () => {
+  const navLinks = [
+    { title: 'Inicio', href: '#' },
+    { title: 'Servicios', href: '#servicios' },
+    { title: 'Sobre Nosotros', href: '#nosotros' },
+    { title: 'Contacto', href: '#contacto' },
+  ];
+
+  const services = [
+    'Desinsectación',
+    'Desratización',
+    'Desinfección',
+    'Control de Plagas HORECA',
+  ];
+
+  const socialLinks = [
+    { Icon: Facebook, href: '#', label: 'Facebook' },
+    { Icon: Instagram, href: '#', label: 'Instagram' },
+    { Icon: Linkedin, href: '#', label: 'LinkedIn' },
+  ];
+
   return (
-    <footer className="footer py-20 bg-bg-surface text-secondary-gray">
+    <footer
+      style={{
+        background: '#0080bb',
+        color: 'rgba(255,255,255,0.85)',
+        padding: '72px 0 0',
+      }}
+    >
       <div className="container">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 mb-20">
-          {/* Brand */}
-          <div className="flex flex-col gap-6">
-            <div className="flex items-center gap-3">
-              <div className="bg-primary-blue p-2 rounded-lg text-white">
-                <Bug size={32} />
+        {/* Main grid */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '48px',
+            marginBottom: '64px',
+          }}
+        >
+          {/* Brand col */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* Logo */}
+            <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
+              <img
+                src="/assets/isotipo.png"
+                alt="CECSA"
+                style={{ height: '40px', width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+              />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                <span style={{ fontSize: '22px', fontWeight: 900, color: 'white', letterSpacing: '-0.04em', lineHeight: 1 }}>CECSA</span>
+                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', color: '#34d399', textTransform: 'uppercase', lineHeight: 1 }}>Urban Plagas</span>
               </div>
-              <span className="text-3xl font-black tracking-tighter uppercase">CECSA</span>
-            </div>
-            <p className="text-text-muted leading-relaxed">
+            </a>
+
+            <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'rgba(255,255,255,0.65)', maxWidth: '280px' }}>
               Líderes en sanidad ambiental en Barcelona. Restauramos el equilibrio de su entorno con rigor científico y compromiso ético.
             </p>
-            <div className="flex gap-4">
-              <a href="#" className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary-blue hover:text-white transition-all"><Facebook size={20} /></a>
-              <a href="#" className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary-blue hover:text-white transition-all"><Instagram size={20} /></a>
-              <a href="#" className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm hover:bg-primary-blue hover:text-white transition-all"><Linkedin size={20} /></a>
+
+            {/* Social icons */}
+            <div style={{ display: 'flex', gap: '10px', marginTop: '4px' }}>
+              {socialLinks.map(({ Icon, href, label }) => (
+                <a
+                  key={label}
+                  href={href}
+                  aria-label={label}
+                  style={{
+                    width: '38px',
+                    height: '38px',
+                    borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'white',
+                    textDecoration: 'none',
+                    transition: 'background 200ms, transform 150ms',
+                    flexShrink: 0,
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.25)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                >
+                  <Icon size={17} />
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Nav links */}
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-secondary-gray">Navegación</h4>
-            <ul className="space-y-4 font-bold text-sm">
-              <li><a href="#" className="text-text-muted hover:text-primary-blue transition-colors">Inicio</a></li>
-              <li><a href="#servicios" className="text-text-muted hover:text-primary-blue transition-colors">Servicios</a></li>
-              <li><a href="#nosotros" className="text-text-muted hover:text-primary-blue transition-colors">Sobre Nosotros</a></li>
-              <li><a href="#contacto" className="text-text-muted hover:text-primary-blue transition-colors">Contacto</a></li>
+            <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
+              Navegación
+            </h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {navLinks.map(link => (
+                <li key={link.title}>
+                  <a
+                    href={link.href}
+                    style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', textDecoration: 'none', transition: 'color 200ms' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#34d399'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+                  >
+                    {link.title}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
           {/* Services */}
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-secondary-gray">Servicios</h4>
-            <ul className="space-y-4 font-bold text-sm">
-              <li><a href="#" className="text-text-muted hover:text-primary-blue transition-colors">Desinsectación</a></li>
-              <li><a href="#" className="text-text-muted hover:text-primary-blue transition-colors">Desratización</a></li>
-              <li><a href="#" className="text-text-muted hover:text-primary-blue transition-colors">Desinfección</a></li>
-              <li><a href="#" className="text-text-muted hover:text-primary-blue transition-colors">Control de Plagas HORECA</a></li>
+            <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
+              Servicios
+            </h4>
+            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '14px' }}>
+              {services.map(service => (
+                <li key={service}>
+                  <a
+                    href="#servicios"
+                    style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', textDecoration: 'none', transition: 'color 200ms' }}
+                    onMouseEnter={e => e.currentTarget.style.color = '#34d399'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+                  >
+                    {service}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Contact info */}
+          {/* Legal & badge */}
           <div>
-            <h4 className="text-sm font-black uppercase tracking-[0.2em] mb-8 text-secondary-gray">Legal y Sanidad</h4>
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-4">
-              <div className="flex items-center gap-3">
-                <ShieldCheck className="text-primary-blue" size={20} />
-                <span className="text-[10px] font-black uppercase tracking-widest leading-none">Acreditación Sanitaria <br /> ROESB: 0246-CAT-SB</span>
+            <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
+              Legal y Sanidad
+            </h4>
+            <div
+              style={{
+                background: 'rgba(255,255,255,0.10)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                borderRadius: '16px',
+                padding: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <ShieldCheck size={20} style={{ color: '#34d399', flexShrink: 0 }} />
+                <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'white', lineHeight: 1.4 }}>
+                  Acreditación Sanitaria<br />ROESB: 0246-CAT-SB
+                </span>
               </div>
-              <p className="text-[10px] text-text-muted leading-relaxed">
+              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, margin: 0 }}>
                 Empresa autorizada por el Departament de Salut de la Generalitat de Catalunya.
               </p>
+            </div>
+
+            {/* Contact mini */}
+            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <a href="tel:933309169" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                <Phone size={14} style={{ color: '#34d399' }} /> 933 309 169
+              </a>
+              <a href="mailto:info@cecsa.es" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                <Mail size={14} style={{ color: '#34d399' }} /> info@cecsa.es
+              </a>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: 600 }}>
+                <MapPin size={14} style={{ color: '#34d399' }} /> Barcelona, Área Metropolitana
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="pt-10 border-t border-gray-200 flex flex-col md:flex-row justify-between items-center gap-6">
-          <p className="text-xs font-bold text-text-muted">
-            © {new Date().getFullYear()} CECSA Sanidad Ambiental. Todos los derechos reservados.
+        {/* Bottom bar */}
+        <div
+          style={{
+            borderTop: '1px solid rgba(255,255,255,0.12)',
+            padding: '24px 0',
+            display: 'flex',
+            flexWrap: 'wrap',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            gap: '16px',
+          }}
+        >
+          <p style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+            © {new Date().getFullYear()} CECSA Urban Plagas. Todos los derechos reservados.
           </p>
-          <div className="flex gap-8 text-[10px] uppercase font-bold tracking-widest text-text-muted">
-            <a href="#" className="hover:text-primary-blue transition-colors">Aviso Legal</a>
-            <a href="#" className="hover:text-primary-blue transition-colors">Política de Privacidad</a>
-            <a href="#" className="hover:text-primary-blue transition-colors">Cookies</a>
+          <div style={{ display: 'flex', gap: '28px' }}>
+            {['Aviso Legal', 'Política de Privacidad', 'Cookies'].map(item => (
+              <a
+                key={item}
+                href="#"
+                style={{
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  color: 'rgba(255,255,255,0.4)',
+                  textDecoration: 'none',
+                  transition: 'color 200ms',
+                }}
+                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+              >
+                {item}
+              </a>
+            ))}
           </div>
         </div>
       </div>
