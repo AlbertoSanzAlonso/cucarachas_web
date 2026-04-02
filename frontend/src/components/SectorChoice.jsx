@@ -1,35 +1,52 @@
-import { Home, Building2, ArrowRight } from 'lucide-react';
+import { Home, Building2, ChevronRight, Users2 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const SectorChoice = () => {
   return (
-    <section className="bg-white py-24">
-      <div className="container">
-        <div className="flex flex-col md:flex-row gap-12">
-          <div className="md:w-1/2 group cursor-pointer bg-off-white p-16 rounded-3xl border border-transparent hover:border-primary-blue hover:shadow-2xl transition-all duration-500">
-            <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-8 group-hover:scale-110 transition-transform">
-              <Home size={48} className="text-primary-blue" />
+    <section className="relative py-24 bg-bg-dark overflow-hidden">
+      <div className="container relative z-10">
+        <div className="flex flex-col lg:flex-row gap-10">
+          {/* Residential */}
+          <motion.div 
+            whileHover={{ y: -15 }}
+            className="lg:w-1/2 group cursor-pointer glass p-12 md:p-20 rounded-[3rem] border border-white/5 hover:border-primary-blue/30 shadow-2xl transition-all duration-500 overflow-hidden relative"
+          >
+            <div className="absolute top-0 right-0 w-48 h-48 bg-primary-blue opacity-[0.03] rounded-full blur-3xl -mr-16 -mt-16 group-hover:opacity-10 transition-opacity"></div>
+            
+            <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-10 group-hover:scale-110 group-hover:bg-primary-blue group-hover:text-white transition-all duration-500 text-primary-blue">
+              <Home size={40} />
             </div>
-            <h3 className="text-3xl font-bold text-secondary-gray mb-4">Para tu Hogar</h3>
-            <p className="text-text-gray text-lg mb-8">
-              Protegemos a tu familia y mascotas. Eliminamos cucarachas, chinches, termitas y roedores de forma rápida y segura.
+            
+            <h3 className="text-4xl font-black text-white mb-6 tracking-tight">Hogares y Particulares</h3>
+            <p className="text-muted text-lg mb-10 leading-relaxed max-w-sm">
+              Protegemos su hogar y familia con eficiencia discreta. <span className="text-white font-semibold">Técnicos especialistas en Barcelona</span> para desinsectación inmediata de cucarachas y roedores.
             </p>
-            <a href="#contacto" className="inline-flex items-center gap-2 font-bold text-primary-blue border-b-2 border-primary-blue pb-1">
-              Ver Soluciones Residenciales <ArrowRight size={20} />
+            
+            <a href="#contacto" className="btn btn-primary px-8 py-4 flex items-center gap-3 w-fit group-hover:gap-5 transition-all">
+              Soluciones Residenciales <ChevronRight size={20} />
             </a>
-          </div>
+          </motion.div>
 
-          <div className="md:w-1/2 group cursor-pointer bg-secondary-gray p-16 rounded-3xl border border-transparent hover:border-white/10 hover:shadow-2xl transition-all duration-500 text-white">
-            <div className="bg-white/10 p-6 rounded-2xl w-fit mb-8 group-hover:scale-110 transition-transform">
-              <Building2 size={48} className="text-primary-blue" />
+          {/* Business */}
+          <motion.div 
+            whileHover={{ y: -15 }}
+            className="lg:w-1/2 group cursor-pointer bg-bg-surface p-12 md:p-20 rounded-[3rem] border border-white/5 hover:border-primary-blue/30 shadow-2xl transition-all duration-500 overflow-hidden relative"
+          >
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-primary-blue opacity-[0.03] rounded-full blur-3xl -mb-20 -mr-20 group-hover:opacity-10 transition-opacity"></div>
+
+            <div className="bg-primary-blue/10 p-6 rounded-2xl w-fit mb-10 group-hover:scale-110 group-hover:bg-primary-blue group-hover:text-white transition-all duration-500 text-primary-blue">
+              <Building2 size={40} />
             </div>
-            <h3 className="text-3xl font-bold mb-4 text-white">Para tu Negocio</h3>
-            <p className="opacity-80 text-lg mb-8">
-              Garantizamos el cumplimiento normativo. Control de plagas preventivo y correctivo para hostelería, oficinas e industria.
+            
+            <h3 className="text-4xl font-black text-white mb-6 tracking-tight">Empresas y HORECA</h3>
+            <p className="text-muted text-lg mb-10 leading-relaxed max-w-sm">
+              Certificados sanitarios oficiales en 24h. <span className="text-white font-semibold">Cumplimiento ROESB</span> garantizado para hostelería, oficinas y comunidades en toda la provincia.
             </p>
-            <a href="#contacto" className="inline-flex items-center gap-2 font-bold text-primary-blue border-b-2 border-primary-blue pb-1">
-              Ver Soluciones para Empresas <ArrowRight size={20} />
+            
+            <a href="#contacto" className="btn btn-secondary px-8 py-4 flex items-center gap-3 w-fit group-hover:gap-5 transition-all">
+              Soluciones para Negocios <ChevronRight size={20} />
             </a>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

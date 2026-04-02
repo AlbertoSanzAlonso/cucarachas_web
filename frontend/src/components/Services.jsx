@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as LucideIcons from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Services = () => {
   const [services, setServices] = useState([]);
@@ -21,36 +22,55 @@ const Services = () => {
   }, []);
 
   if (loading) return (
-    <div className="flex justify-center items-center py-20">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-olive-green"></div>
+    <div className="flex justify-center items-center py-40">
+      <div className="w-12 h-12 border-4 border-primary-blue border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
 
   return (
-    <section id="servicios" className="bg-white">
+    <section id="servicios" className="relative bg-bg-dark">
       <div className="container">
-        <h2 className="section-title">Nuestros Servicios</h2>
-        <div className="services-grid mt-12">
-          {services.map((service) => {
+        <div className="flex flex-col items-center text-center mb-16">
+          <span className="text-primary-blue font-bold tracking-[0.3em] uppercase text-xs mb-4">Soluciones Integrales</span>
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Servicios de Control</h2>
+          <p className="text-muted max-w-2xl">
+            Aplicamos el rigor científico y la acción consciente para restaurar el equilibrio en Barcelona y su área metropolitana. 
+            Cumplimiento estricto del ROESB en cada intervención.
+          </p>
+        </div>
+
+        <div className="discovery-grid">
+          {services.map((service, index) => {
             const IconComponent = LucideIcons[service.icon] || LucideIcons.Bug;
             return (
-              <div 
-                key={service.id} 
-                className="service-card p-8 rounded-2xl transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-                style={{ borderTop: `4px solid ${service.color}` }}
+              <motion.div 
+                key={service.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.1 }}
+                className="card-mager group"
+                style={{ '--primary-blue': service.color }}
               >
                 <div 
-                  className="icon-wrapper mb-6 p-4 rounded-xl inline-flex"
+                  className="w-16 h-16 flex items-center justify-center rounded-2xl mb-8 transition-transform group-hover:scale-110 duration-500"
                   style={{ backgroundColor: `${service.color}15`, color: service.color }}
                 >
                   <IconComponent size={32} />
                 </div>
-                <h3 className="text-xl font-bold mb-4 text-text-dark">{service.title}</h3>
-                <p className="text-text-gray">{service.description}</p>
-                <a href="#contacto" className="inline-flex items-center gap-2 mt-6 font-semibold text-olive-green hover:gap-3 transition-all">
-                  Saber más <LucideIcons.ArrowRight size={18} />
+                <h3 className="text-2xl font-bold mb-4 text-white group-hover:text-primary-blue transition-colors">
+                  {service.title}
+                </h3>
+                <p className="text-muted mb-8 line-clamp-3">
+                  {service.description}
+                </p>
+                <a 
+                  href="#contacto" 
+                  className="inline-flex items-center gap-2 font-bold text-sm uppercase tracking-widest text-primary-blue group-hover:gap-4 transition-all"
+                >
+                  Más información <LucideIcons.ChevronRight size={16} />
                 </a>
-              </div>
+              </motion.div>
             );
           })}
         </div>
