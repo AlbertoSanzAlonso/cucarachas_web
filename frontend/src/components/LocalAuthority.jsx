@@ -29,12 +29,12 @@ const LocalAuthority = () => {
               En CECSA, no solo eliminamos plagas; restauramos la seguridad sanitaria de su entorno. Somos la empresa de referencia para comunidades y negocios en <span className="text-secondary-gray font-bold">Eixample, Gràcia, y Sant Cugat</span>.
             </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {stats.map((stat, idx) => (
-                <div key={idx} className="bg-bg-light p-6 rounded-2xl border border-gray-100 shadow-sm text-center">
-                  <div className="flex justify-center mb-4">{stat.icon}</div>
-                  <div className="text-3xl font-black text-secondary-gray">{stat.value}</div>
-                  <div className="text-[10px] font-bold text-muted uppercase tracking-widest">{stat.label}</div>
+                <div key={idx} className="bg-bg-light p-10 rounded-[2rem] border border-gray-100 shadow-sm text-center">
+                  <div className="flex justify-center mb-6 text-primary-heading">{stat.icon}</div>
+                  <div className="text-4xl font-black text-secondary-gray mb-2">{stat.value}</div>
+                  <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{stat.label}</div>
                 </div>
               ))}
             </div>
