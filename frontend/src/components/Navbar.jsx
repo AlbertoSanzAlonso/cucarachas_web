@@ -47,6 +47,7 @@ const Navbar = () => {
               padding: '5px 0',
               marginBottom: '8px',
             }}
+            className="hidden lg:block"
           >
             <div className="container flex items-center justify-between">
               <div className="flex items-center gap-6">
