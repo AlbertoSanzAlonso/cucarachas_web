@@ -29,9 +29,21 @@ const Footer = () => {
         padding: '72px 0 0',
       }}
     >
+      <style>{`
+        @media (max-width: 768px) {
+          .footer-grid { justify-items: center; }
+          .footer-col { align-items: center !important; text-align: center; width: 100%; }
+          .footer-col ul { align-items: center; }
+          .footer-col a[href^="#"] { justify-content: center; }
+          .footer-social { justify-content: center !important; }
+          .footer-badge { align-items: center; text-align: center; }
+          .footer-contact-row { justify-content: center; }
+        }
+      `}</style>
       <div className="container">
         {/* Main grid */}
         <div
+          className="footer-grid"
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
@@ -40,7 +52,7 @@ const Footer = () => {
           }}
         >
           {/* Brand col */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="footer-col" style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Logo */}
             <a href="#" style={{ display: 'flex', alignItems: 'center', gap: '14px', textDecoration: 'none' }}>
               <img
@@ -88,7 +100,7 @@ const Footer = () => {
           </div>
 
           {/* Nav links */}
-          <div>
+          <div className="footer-col">
             <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
               Navegación
             </h4>
@@ -109,7 +121,7 @@ const Footer = () => {
           </div>
 
           {/* Services */}
-          <div>
+          <div className="footer-col">
             <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
               Servicios
             </h4>
@@ -130,7 +142,7 @@ const Footer = () => {
           </div>
 
           {/* Legal & badge */}
-          <div>
+          <div className="footer-col">
             <h4 style={{ fontSize: '11px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', color: 'white', marginBottom: '24px' }}>
               Legal y Sanidad
             </h4>
