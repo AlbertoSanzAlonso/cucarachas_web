@@ -9,7 +9,7 @@ const values = [
 
 const About = () => {
   return (
-    <section id="nosotros" className="bg-bg-light overflow-hidden">
+    <section id="nosotros" className="bg-bg-light overflow-hidden py-24 lg:py-36">
       <div className="container">
         <div className="flex flex-col lg:flex-row items-center gap-20">
           <motion.div 
