@@ -217,21 +217,6 @@ const Contact = () => {
                 <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
               </form>
 
-
-              <div className="mt-16 pt-10 border-t border-gray-100 grid grid-cols-3 gap-6 opacity-50">
-                <div className="text-center">
-                  <div className="text-[9px] font-black text-secondary-gray uppercase tracking-[0.2em] mb-1">Privacidad</div>
-                  <div className="text-[10px] font-bold">RGPD OK</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-[9px] font-black text-secondary-gray uppercase tracking-[0.2em] mb-1">Certificación</div>
-                  <div className="text-[10px] font-bold">ROESB 0246</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-[9px] font-black text-secondary-gray uppercase tracking-[0.2em] mb-1">Respuesta</div>
-                  <div className="text-[10px] font-bold">&lt; 24h</div>
-                </div>
-              </div>
             </motion.div>
           </div>
         </div>
