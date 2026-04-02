@@ -25,11 +25,16 @@ const Navbar = () => {
         {/* Brand */}
         <a href="#" className="flex items-center gap-3 group">
           <div className="group-hover:scale-105 transition-transform duration-300">
-            <img src="/assets/isotipo.png" alt="CECSA Icon" className="w-10 h-10 object-contain invert brightness-0" />
+            <img 
+              src="/assets/isotipo.png" 
+              alt="CECSA Icon" 
+              className="h-12 w-auto object-contain" 
+              style={{ filter: 'brightness(0) invert(1)' }} 
+            />
           </div>
           <div className="flex flex-col">
-            <span className="text-xl font-black tracking-tighter text-white leading-none">CECSA</span>
-            <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/90">Urban Plagas</span>
+            <span className="text-2xl font-black tracking-tighter text-white leading-none">CECSA</span>
+            <span className="text-[12px] uppercase font-bold tracking-[0.2em] text-white/90">Urban Plagas</span>
           </div>
         </a>
 
