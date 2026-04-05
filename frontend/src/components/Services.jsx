@@ -101,93 +101,86 @@ const Services = () => {
         </div>
       </div>
 
-      {/* Immersive Full-Screen Species Experience */}
+      {/* Premium Species Modal - Standard Overlay Approach */}
       <AnimatePresence>
         {selectedType && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[5000] bg-white overflow-y-auto"
-          >
-            {/* Close Button - Sticky/Fixed */}
-            <button 
+          <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 lg:p-8">
+            {/* Dark immersive backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
               onClick={() => setSelectedType(null)}
-              className="fixed top-8 right-8 w-16 h-16 rounded-full bg-secondary-gray text-white hover:bg-primary-blue hover:scale-110 transition-all z-[5001] flex items-center justify-center shadow-2xl"
-              aria-label="Cerrar detalles"
+              className="absolute inset-0 bg-[#0a0a0a]/95 backdrop-blur-sm"
+            />
+            
+            {/* Modal Card */}
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 30 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 30 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-5xl bg-white rounded-[3rem] shadow-[0_30px_100px_rgba(0,0,0,0.5)] overflow-hidden flex flex-col lg:flex-row z-10 max-h-[90vh]"
             >
-              <X size={32} />
-            </button>
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedType(null)}
+                className="absolute top-6 right-6 w-12 h-12 rounded-full bg-bg-light text-secondary-gray hover:bg-red-500 hover:text-white transition-all z-20 flex items-center justify-center shadow-lg"
+              >
+                <X size={24} />
+              </button>
 
-            <div className="flex flex-col lg:flex-row min-h-screen">
-              {/* Cinematic Image Side */}
-              <div className="lg:w-1/2 h-[50vh] lg:h-screen lg:sticky lg:top-0">
-                <img 
-                  src={selectedType.image} 
-                  alt={selectedType.title} 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent hidden lg:block" />
+              {/* Image Side */}
+              <div className="lg:w-2/5 h-64 lg:h-auto relative">
+                <img src={selectedType.image} alt={selectedType.title} className="w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/30 via-transparent to-transparent" />
               </div>
               
               {/* Content Side */}
-              <div className="lg:w-1/2 bg-white px-8 py-20 lg:p-24 xl:p-32">
-                <div className="max-w-xl mx-auto lg:mx-0">
-                  <div className="flex items-center gap-4 mb-8">
-                    <div className="h-[2px] w-12 bg-primary-blue" />
-                    <span className="text-primary-blue font-black uppercase tracking-[0.2em] text-xs">
-                      {t('species.view_sheet')}
-                    </span>
-                  </div>
+              <div className="lg:w-3/5 p-10 lg:p-14 overflow-y-auto">
+                <div className="mb-10">
+                  <span className="text-secondary-gray/40 font-serif italic text-lg block mb-2">{selectedType.scientificName}</span>
+                  <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray mb-6 leading-tight">{selectedType.title}</h2>
+                  <div className="h-1.5 w-20 bg-primary-blue rounded-full" />
+                </div>
 
-                  <h2 className="text-5xl lg:text-7xl font-black text-secondary-gray mb-4 leading-none tracking-tighter">
-                    {selectedType.title}
-                  </h2>
-                  <p className="text-secondary-gray/40 font-serif italic text-2xl lg:text-3xl mb-12">
-                    {selectedType.scientificName}
-                  </p>
+                <div className="prose prose-lg text-secondary-gray/80 mb-10 leading-relaxed font-medium">
+                  {selectedType.fullDesc}
+                </div>
 
-                  <div className="prose prose-xl text-secondary-gray/80 mb-16 leading-relaxed">
-                    {selectedType.fullDesc}
-                  </div>
-
-                  {/* Technical Specs Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
-                    <div className="p-8 bg-bg-light rounded-[2.5rem] border border-gray-100">
-                      <div className="w-12 h-12 bg-primary-blue/10 rounded-2xl flex items-center justify-center text-primary-blue mb-6">
-                        <Home size={24} />
-                      </div>
-                      <h4 className="text-xs font-black uppercase text-primary-blue mb-3 tracking-widest">{t('species.habitat')}</h4>
-                      <p className="text-lg text-secondary-gray font-bold leading-tight">{selectedType.habitat}</p>
-                    </div>
-                    <div className="p-8 bg-red-50/30 rounded-[2.5rem] border border-red-50">
-                      <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
-                        <AlertCircle size={24} />
-                      </div>
-                      <h4 className="text-xs font-black uppercase text-red-500 mb-3 tracking-widest">{t('species.impact')}</h4>
-                      <p className="text-lg text-secondary-gray font-bold leading-tight">{selectedType.impact}</p>
+                {/* Specs Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-12">
+                  <div className="flex gap-4 items-start p-6 bg-bg-light rounded-[2rem] border border-gray-100">
+                    <Home className="text-primary-blue shrink-0" size={20} />
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase text-primary-blue mb-1 tracking-widest">{t('species.habitat')}</h4>
+                      <p className="text-sm text-secondary-gray font-bold">{selectedType.habitat}</p>
                     </div>
                   </div>
-
-                  {/* Final Call to Action Box */}
-                  <div className="bg-bg-light rounded-[3rem] p-10 lg:p-14 border border-gray-100 flex flex-col items-center text-center">
-                    <h3 className="text-2xl font-black text-secondary-gray mb-4">¿Detecta esta especie?</h3>
-                    <p className="text-text-muted mb-10 max-w-sm mx-auto">{t('species.desc_part1')} Intervención técnica profesional garantizada.</p>
-                    <a 
-                      href="#contacto" 
-                      onClick={() => setSelectedType(null)}
-                      className="btn btn-primary w-full py-5 text-xl shadow-xl flex gap-3 items-center justify-center"
-                    >
-                      <Beaker size={24} /> {t('species.cta_free')}
-                    </a>
-                    <span className="text-sm text-text-muted font-bold mt-6 tracking-wide">
-                      {t('species.resp_time')}
-                    </span>
+                  <div className="flex gap-4 items-start p-6 bg-red-50/50 rounded-[2rem] border border-red-100">
+                    <AlertCircle className="text-red-500 shrink-0" size={20} />
+                    <div>
+                      <h4 className="text-[10px] font-black uppercase text-red-500 mb-1 tracking-widest">{t('species.impact')}</h4>
+                      <p className="text-sm text-secondary-gray font-bold">{selectedType.impact}</p>
+                    </div>
                   </div>
                 </div>
+
+                <div className="flex flex-col sm:flex-row gap-6 items-center pt-8 border-t border-gray-100">
+                  <a 
+                    href="#contacto" 
+                    onClick={() => setSelectedType(null)}
+                    className="btn btn-primary px-10 py-5"
+                  >
+                    <Beaker size={20} /> {t('species.cta_free')}
+                  </a>
+                  <span className="text-sm text-text-muted font-bold tracking-tight">
+                    {t('species.resp_time')}
+                  </span>
+                </div>
               </div>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </section>
