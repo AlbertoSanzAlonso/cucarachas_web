@@ -1,0 +1,68 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "species": "Especies",
+    "about": "Sobre Nosotros",
+    "sectors": "Sectores",
+    "cta": "Presupuesto Gratuito",
+    "emergencies": "Urgencias 24h"
+  },
+  "hero": {
+    "badge": "Especialistas en Cucarachas • ROESB 0246-CAT-SB",
+    "title_part1": "Control Técnico de",
+    "title_accent": "Cucarachas",
+    "title_slogan": "Ético y Consciente",
+    "desc_part1": "Eliminación garantizada de focos de cría en",
+    "desc_city": "Barcelona",
+    "desc_part2": ". Aplicamos protocolos de desinsectación de cuarta generación para hogares y sector alimentario.",
+    "cta_urgent": "Urgent: Pedir Presupuesto",
+    "cta_identify": "Identificar Especie",
+    "stats": {
+      "intervention": "Intervención",
+      "urgent": "Urgencias 24h",
+      "accre": "Acreditación",
+      "senior": "Técnicos Senior",
+      "guarantee": "Garantía",
+      "cert": "Certificado Oficial"
+    },
+    "slide_badge": "Tecnología de Vanguardia",
+    "slide_title": "Eliminación Sin",
+    "slide_accent": "Plazo de Seguridad"
+  },
+  "species": {
+    "title_part1": "Especies de",
+    "title_accent": "Cucarachas",
+    "title_city": "en Barcelona",
+    "desc_part1": "Identificar correctamente la especie es el primer paso para una erradicación definitiva. En ",
+    "desc_brand": "CECSA Urban Plagas",
+    "desc_part2": " combinamos ciencia y experiencia local.",
+    "badge": "Tratamientos con Certificado ROESB",
+    "view_sheet": "Ver ficha técnica",
+    "more_info": "MÁS INFORMACIÓN",
+    "cta_free": "Pedir Presupuesto Gratis",
+    "resp_time": "Respuesta en menos de 2h",
+    "habitat": "Hábitat Principal",
+    "impact": "Riesgo Sanitario",
+    "germanica": {
+      "title": "Cucaracha Alemana",
+      "shortDesc": "La plaga más común en cocinas y hostelería. Pequeña, rápida y altamente prolífica.",
+      "fullDesc": "La cucaracha alemana es el principal problema en el sector alimentario de Barcelona. Con apenas 1.5 cm, colonizan motores de electrodomésticos, cafeteras y cuadros eléctricos. En CECSA Urban Plagas utilizamos tecnología de cebado por gel que aprovecha su comportamiento social para erradicar el nido completo sin necesidad de desalojar la estancia.",
+      "habitat": "Interiores, zonas de calor y humedad constante.",
+      "impact": "Contaminación de alimentos y crisis reputacionales en negocios."
+    },
+    "americana": {
+      "title": "Cucaracha Americana",
+      "shortDesc": "La especie de mayor tamaño. De color rojizo, vuela y habita principalmente en el alcantarillado.",
+      "fullDesc": "Conocida como \"la super cucaracha\", puede alcanzar los 5 cm de longitud. Acceden a las viviendas por bajantes, desagües o volando desde el exterior. Son muy resistentes y su presencia suele indicar fallos estructurales en los cierres o en la red de saneamiento. Aplicamos tratamientos perimetrales y barreras químicas de larga duración.",
+      "habitat": "Alcantarillado, cámaras de aire y falsos techos.",
+      "impact": "Transmisión de patógenos bacterianos y fuerte impacto visual negativo."
+    },
+    "oriental": {
+      "title": "Cucaracha Oriental",
+      "shortDesc": "De color negro intenso, prefiere ambientes frescos y muy húmedos en plantas bajas.",
+      "fullDesc": "Asociada tradicionalmente a sumideros y zonas de tierra, la cucaracha negra u oriental es una plaga persistente que requiere un control exhaustivo de los puntos de entrada. Se desplaza más lentamente que la alemana pero su cuerpo robusto le permite sobrevivir en condiciones adversas. Nuestro enfoque combina desinsectación técnica con recomendaciones de exclusión física.",
+      "habitat": "Sótanos, registros a nivel de calle y zonas de basura.",
+      "impact": "Alta carga de alérgenos y contaminación por contacto en superficies."
+    }
+  }
+}

@@ -42,10 +42,10 @@ const About = () => {
               ))}
             </div>
 
-            <div className="mt-8 flex items-center gap-5 p-6 glass rounded-2xl border border-white/5">
+            <div className="flex items-center gap-5 p-6 glass rounded-2xl border border-white/5" style={{ marginTop: '32px' }}>
               <ShieldCheck className="text-primary-blue shrink-0 mr-2" size={40} />
               <div>
-                <div className="text-white font-bold">Certificación ROESB Oficial</div>
+                <div className="font-bold" style={{ color: '#000000' }}>Certificación ROESB Oficial</div>
                 <div className="text-xs text-muted uppercase tracking-tighter">Nº Registro: 0246-CAT-SB</div>
               </div>
             </div>

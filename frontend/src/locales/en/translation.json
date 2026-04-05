@@ -1,0 +1,68 @@
+{
+  "nav": {
+    "home": "Home",
+    "species": "Species",
+    "about": "About Us",
+    "sectors": "Sectors",
+    "cta": "Get Free Quote",
+    "emergencies": "24h Emergencies"
+  },
+  "hero": {
+    "badge": "Cockroach Specialists • ROESB 0246-CAT-SB",
+    "title_part1": "Technical Control of",
+    "title_accent": "Cockroaches",
+    "title_slogan": "Ethical and Conscious",
+    "desc_part1": "Guaranteed elimination of breeding sites in",
+    "desc_city": "Barcelona",
+    "desc_part2": ". We apply fourth-generation disinsectization protocols for homes and the food sector.",
+    "cta_urgent": "Urgent: Request Quote",
+    "cta_identify": "Identify Species",
+    "stats": {
+      "intervention": "Intervention",
+      "urgent": "24h Emergency",
+      "accre": "Accreditation",
+      "senior": "Senior Technicians",
+      "guarantee": "Guarantee",
+      "cert": "Official Certificate"
+    },
+    "slide_badge": "Cutting-edge Technology",
+    "slide_title": "Elimination Without",
+    "slide_accent": "Safety Interval"
+  },
+  "species": {
+    "title_part1": "Cockroach",
+    "title_accent": "Species",
+    "title_city": "in Barcelona",
+    "desc_part1": "Correctly identifying the species is the first step towards definitive eradication. At ",
+    "desc_brand": "CECSA Urban Plagas",
+    "desc_part2": " we combine science with local expertise.",
+    "badge": "Treatments with ROESB Certificate",
+    "view_sheet": "View technical sheet",
+    "more_info": "MORE INFO",
+    "cta_free": "Request Free Quote",
+    "resp_time": "Response in less than 2h",
+    "habitat": "Primary Habitat",
+    "impact": "Sanitary Risk",
+    "germanica": {
+      "title": "German Cockroach",
+      "shortDesc": "The most common pest in kitchens and catering. Small, fast, and highly prolific.",
+      "fullDesc": "The German cockroach is the main concern in Barcelona's food sector. Only 1.5 cm long, they colonize appliance motors, coffee machines, and electrical panels. At CECSA Urban Plagas, we use gel-bait technology that leverages their social behavior to eradicate the entire nest without needing to evacuate the premises.",
+      "habitat": "Indoors, areas of constant heat and humidity.",
+      "impact": "Food contamination and reputation crises in businesses."
+    },
+    "americana": {
+      "title": "American Cockroach",
+      "shortDesc": "The largest species. Reddish-colored, they fly and mainly inhabit sewers.",
+      "fullDesc": "Known as the \"super cockroach\", it can reach up to 5 cm in length. They access homes through pipes, drains, or by flying from the outside. They are very resilient, and their presence usually indicates structural failures in seals or the sanitation network. We apply perimeter treatments and long-lasting chemical barriers.",
+      "habitat": "Sewers, air chambers, and false ceilings.",
+      "impact": "Transmission of bacterial pathogens and strong negative visual impact."
+    },
+    "oriental": {
+      "title": "Oriental Cockroach",
+      "shortDesc": "Deep black in color, they prefer cool and very humid environments in ground floors.",
+      "fullDesc": "Traditionally associated with culverts and dirt areas, the black or Oriental cockroach is a persistent pest that requires exhaustive control of entry points. It moves slower than the German one, but its robust body allows it to survive in adverse conditions. Our approach combines technical disinsectization with physical exclusion recommendations.",
+      "habitat": "Basements, street-level manholes, and garbage areas.",
+      "impact": "High allergen load and contamination by contact on surfaces."
+    }
+  }
+}
