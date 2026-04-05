@@ -5,14 +5,20 @@ description: Sincronización de servicios entre Django y React.
 
 # Skill: Service Auditor (CECSA)
 
-# Propósito
-Mantener la coherencia entre los servicios de control de plagas definidos en la base de datos (Backend) y su representación visual (Frontend).
+## Propósito
+Mantener la coherencia entre las especies de cucarachas (servicios) definidas en el backend y su representación visual multilingüe en el frontend.
 
-# Responsabilidades
-1.  **Sincronización Total**: Asegurar que cada servicio en `backend/init_db.py` tenga su correspondiente representación en `Services.jsx` si hay alguna lógica específica.
-2.  **Integridad de Datos**: Al agregar nuevos tipos de plaga o sectores, actualizar siempre el script de población de la DB (`init_db.py`).
-3.  **Chequeos de Salud**: Verificar periódicamente que el API de servicios (/api/services/) devuelva la información esperada.
+## Especialización de Especies
+El auditor debe velar por la sincronía de las 3 especies principales:
+1.  **Cuca Alemanya**
+2.  **Cuca Americana**
+3.  **Cuca Oriental**
 
-# Reglas
--   No agregar servicios hardcoded en el frontend. Usar siempre el API de Django.
--   Cada servicio debe incluir: `title`, `description`, `icon` (Lucide) y `color` (Corporate Blue/Gray).
+## Responsabilidades
+1.  **Sincronización Content-Backend**: Asegurar que los datos en `backend/init_db.py` coincidan con las claves de traducción en `frontend/src/locales/`.
+2.  **Integridad de i18n**: Al actualizar una especie en el backend, verificar que los archivos `ca.json`, `es.json` y `en.json` reflejen el cambio.
+3.  **Chequeos de Salud**: El API `/api/services/` debe servir la información básica que coincida con los IDs usados en el frontend.
+
+## Reglas
+-   No agregar especies hardcoded fuera de los locales de i18n.
+-   Cada especie debe incluir metadatos de riesgo y hábitat.

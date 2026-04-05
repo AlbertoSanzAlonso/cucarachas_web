@@ -1,10 +1,19 @@
-# Mantenimiento mediante Agentes AI (CECSA Urban Plagas)
+# Mantenimiento mediante Agentes AI (CECSA Control de Plagas)
 
 Este proyecto está diseñado para ser mantenido y evolucionado por agentes de IA. Para garantizar la consistencia, se han definido una serie de **Skills** que definen las reglas y procedimientos para cada área.
 
-## 🏷 Nombre de Marca
+## 🏷 Nombre de Marca y Enfoque
 
-El nombre oficial de la web es **CECSA Urban Plagas** (no "Sanidad Ambiental"). El footer y el header deben reflejar siempre este nombre.
+- **Nombre Oficial**: **CECSA Control de Plagas** (anteriormente Urban Plagas).
+- **Nicho Especializado**: El sitio está especializado exclusivamente en el **control de cucarachas** (desinsectación técnica).
+- **Eslógan**: **"Ético y Consciente"** (eliminar cualquier referencia a "Científico").
+- **Localización Principal**: **Catalunya / Barcelona**.
+
+## 🌍 Internacionalización (i18n)
+
+- **Idioma Primario**: **Catalán** (`ca`).
+- **Idiomas Secundarios**: Castellano (`es`) e Inglés (`en`).
+- Todos los componentes deben usar el hook `useTranslation` de `react-i18next`. Los textos estáticos en JSX están prohibidos para contenido de negocio.
 
 ## 🎨 Sistema de Diseño Activo: "Sanitary Premium Clean"
 
@@ -20,21 +29,18 @@ El nombre oficial de la web es **CECSA Urban Plagas** (no "Sanidad Ambiental"). 
 Encargado de la coherencia visual. Reglas estrictas sobre colores, tipografía y uso del isotipo. Ver SKILL.md para restricciones exactas.
 
 ### 2. **Service Auditor** (`.agents/skills/service_auditor`)
-Sincroniza los servicios presentados en la web con el backend Django. Su misión es asegurar que los datos en `backend/init_db.py` coincidan con la `Services.jsx` y el estado de la base de datos `db.sqlite3`.
+Sincroniza los servicios (especies de cucarachas) presentados en la web con el backend Django.
 
 ### 3. **Copywriter Local** (`.agents/skills/copywriter_local`)
-Genera contenido con autoridad para la región de Barcelona (Área Metropolitana, Vallès, etc.). Utiliza el enfoque "Aceptar para actuar con conciencia" extraído de la filosofía oficial de CECSA.
+Genera contenido con autoridad para la región de Barcelona en **Catalán** y Castellano. Utiliza el enfoque "Ético y Consciente" extraído de la filosofía oficial de CECSA.
 
 ### 4. **UI/UX Pro Max** (`.agents/skills/ui-ux-pro-max`)
-Inteligencia de diseño UI/UX. Consultar antes de implementar secciones nuevas. Proporciona patrones de diseño, tipografías, colores y guías de accesibilidad. Verificado y usado para el diseño del header/navbar actual.
-
-## 📋 Cómo Usar las Skills
-
-Antes de realizar cambios significativos, lee el archivo `SKILL.md` correspondiente para entender las restricciones y el tono de voz esperado por el cliente.
+Inteligencia de diseño UI/UX. Consultar antes de implementar secciones nuevas.
 
 ## ⚙️ Convenciones de Implementación
 
-- **Inline styles** en todos los componentes de layout críticos (Navbar, Footer, FloatingCTA) para evitar problemas de purging de Tailwind en producción (Vercel).
-- **Clases Tailwind** permitidas solo para utilidades simples como `container`, `flex`, `grid`, `hidden`, `lg:flex`, etc.
-- El **scroll del Navbar** usa `scrollProgress` (0→1 en los primeros 150px) para animar blur, sombra y padding de forma progresiva, no con un estado booleano.
-- **Isotipo**: `/public/assets/isotipo.png` con `filter: brightness(0) invert(1)` para versión blanca. Altura máxima de `40px`.
+- **Inline styles** en componentes de layout (Navbar, Footer, FloatingCTA).
+- **i18n**: Usar siempre `t('clave.traduccion')`.
+- **Media**: Usar formato `.webp` para todas las imágenes.
+- **Scroll del Navbar**: Animación progresiva mediante `scrollProgress`.
+- **Isotipo**: `/public/assets/isotipo.png` con `filter: brightness(0) invert(1)`. Altura máxima de `60px` en Navbar y `40px` en Footer.

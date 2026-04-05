@@ -9,12 +9,9 @@
   },
   "hero": {
     "badge": "Especialistes en Cuques • ROESB 0246-CAT-SB",
-    "title_part1": "Control Tècnic de",
-    "title_accent": "Cuques",
+    "title_main": "Control de Plagues",
     "title_slogan": "Ètic i Conscient",
-    "desc_part1": "Eliminació garantida de focus de cria a",
-    "desc_city": "Barcelona",
-    "desc_part2": ". Apliquem protocols de desinsectació de quarta generació per a llar i sector alimentari.",
+    "desc": "Restaurem l'equilibri del seu entorn amb precisió tècnica i total discreció. Especialistes a Barcelona per a llar, empreses i sector alimentari.",
     "cta_urgent": "Urgent: Demanar Pressupost",
     "cta_identify": "Identificar Espècie",
     "stats": {

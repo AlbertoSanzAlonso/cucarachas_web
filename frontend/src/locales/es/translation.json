@@ -9,12 +9,9 @@
   },
   "hero": {
     "badge": "Especialistas en Cucarachas • ROESB 0246-CAT-SB",
-    "title_part1": "Control Técnico de",
-    "title_accent": "Cucarachas",
+    "title_main": "Control de Plagas",
     "title_slogan": "Ético y Consciente",
-    "desc_part1": "Eliminación garantizada de focos de cría en",
-    "desc_city": "Barcelona",
-    "desc_part2": ". Aplicamos protocolos de desinsectación de cuarta generación para hogares y sector alimentario.",
+    "desc": "Restauramos el equilibrio de su entorno con precisión técnica y total discreción. Especialistas en Barcelona para hogares, empresas y sector alimentario.",
     "cta_urgent": "Urgent: Pedir Presupuesto",
     "cta_identify": "Identificar Especie",
     "stats": {

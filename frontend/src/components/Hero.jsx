@@ -44,12 +44,15 @@ const Hero = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">{t('hero.badge')}</span>
             </div>
             
-            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-black leading-[1.1] mb-2 tracking-tighter">
-              {t('hero.title_part1')} <br />
-              <span className="text-black font-sans font-black">{t('hero.title_accent')}</span>
+            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-[#3c3c3b] leading-tight mb-2 tracking-tighter">
+              {t('hero.title_main')}
             </h1>
-            <p className="text-primary-blue font-black tracking-[0.2em] uppercase text-sm mb-12">
+            <h2 className="font-sans text-5xl lg:text-7xl font-black text-primary-blue leading-tight mb-8 tracking-tight">
               {t('hero.title_slogan')}
+            </h2>
+            
+            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
+              {t('hero.desc')}
             </p>
             
             <div className="flex flex-wrap gap-5 mb-12">
@@ -91,20 +94,23 @@ const Hero = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="lg:w-2/5 relative"
           >
-            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5]">
-              <AnimatePresence mode="wait">
-                <motion.img 
-                  key={currentSlide}
-                  src={slides[currentSlide]} 
-                  alt="CECSA Pest Control Service Visualization" 
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.5 }}
-                  className="w-full h-full object-cover rounded-[2.5rem]"
-                  loading="eager"
-                />
-              </AnimatePresence>
+            {/* Structural Anchor for Slider - Fixed Size */}
+            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5] w-full">
+              <div className="relative w-full h-full overflow-hidden rounded-[2.5rem]">
+                <AnimatePresence mode="wait">
+                  <motion.img 
+                    key={currentSlide}
+                    src={slides[currentSlide]} 
+                    alt="CECSA Pest Control Service Visualization" 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    loading="eager"
+                  />
+                </AnimatePresence>
+              </div>
               
               <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/50 shadow-xl z-20">
                 <p className="text-[10px] font-black uppercase text-primary-blue mb-1">{t('hero.slide_badge')}</p>
