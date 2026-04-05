@@ -112,8 +112,8 @@ const Hero = () => {
                   />
                 </AnimatePresence>
 
-                {/* Slider indicators - Centered and Separated */}
-                <div className="absolute bottom-12 left-0 right-0 flex justify-center gap-5 z-30">
+                {/* Slider indicators - Centered and nicely separated at the bottom */}
+                <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-6 z-30">
                   {slides.map((_, idx) => (
                     <button 
                       key={idx}
@@ -122,12 +122,13 @@ const Hero = () => {
                         width: idx === currentSlide ? '32px' : '10px',
                         height: '10px',
                         borderRadius: '999px',
-                        background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.7)',
+                        background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.75)',
                         border: 'none',
                         cursor: 'pointer',
                         transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
                       }}
+                      aria-label={`Ir a diapositiva ${idx + 1}`}
                     />
                   ))}
                 </div>
