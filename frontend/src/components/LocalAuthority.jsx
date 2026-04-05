@@ -48,7 +48,7 @@ const LocalAuthority = () => {
           >
             <div className="glass rounded-[3rem] p-4 shadow-2xl relative overflow-hidden">
               <img 
-                src="/assets/barcelona_authority.png" 
+                src="/assets/barcelona_authority.webp" 
                 alt="Barcelona Skyline Sanitary Control" 
                 className="rounded-[2.5rem] w-full h-[500px] object-cover"
               />
