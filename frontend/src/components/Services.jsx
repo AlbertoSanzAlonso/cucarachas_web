@@ -99,7 +99,7 @@ const Services = () => {
         </div>
       </div>
 
-      {/* FIXED MODAL WITH REINFORCED INLINE STYLES FOR ASPECT RATIO PROTECTION */}
+      {/* DEFINITIVE FAILSAFE MODAL - ZERO OVERFLOW ARCHITECTURE */}
       {isClient && createPortal(
         <AnimatePresence>
           {selectedType && (
@@ -108,7 +108,7 @@ const Services = () => {
                  position: 'fixed',
                  top: 0, left: 0, right: 0, bottom: 0,
                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                 zIndex: 10000000, padding: '1.5rem'
+                 zIndex: 10000000, padding: window.innerWidth > 768 ? '3rem' : '1rem'
                }}
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
@@ -118,51 +118,61 @@ const Services = () => {
               <motion.div 
                 style={{
                   position: 'absolute', inset: 0,
-                  backgroundColor: 'rgba(0,0,0,0.75)',
+                  backgroundColor: 'rgba(0,0,0,0.8)',
                   backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                   cursor: 'zoom-out'
                 }}
                 onClick={closeModal} 
               />
               
-              {/* Modal Card - Grid Layout with INLINE Force */}
+              {/* Modal Card - FLEX with FIXED HEIGHT percentage to prevent outer overflow */}
               <motion.div 
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '60rem', // Balanced width
+                  maxWidth: '58rem',
+                  height: window.innerWidth > 991 ? '85vh' : 'auto', // Fixed height on desktop to enable internal scroll
+                  maxHeight: window.innerWidth > 991 ? '85vh' : '92vh',
                   backgroundColor: '#ffffff',
                   borderRadius: '3rem',
-                  boxShadow: '0 60px 180px rgba(0,0,0,1)',
-                  overflow: 'hidden',
-                  display: 'grid',
-                  gridTemplateColumns: window.innerWidth > 991 ? '1.6fr 1fr' : '1fr', // Imagery massive dominance
-                  maxHeight: '90vh',
+                  boxShadow: '0 80px 200px rgba(0,0,0,0.8)',
+                  overflow: 'hidden', // ABSOLUTELY ESSENTIAL: Parent must clip
+                  display: 'flex',
+                  flexDirection: window.innerWidth > 991 ? 'row' : 'column',
                   zIndex: 100
                 }}
-                initial={{ opacity: 0, scale: 0.95, y: 30 }}
+                initial={{ opacity: 0, scale: 0.95, y: 50 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 30 }}
+                exit={{ opacity: 0, scale: 0.95, y: 50 }}
                 transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
                 onClick={e => e.stopPropagation()}
               >
-                {/* Close Button */}
+                {/* Close Button - High visibility */}
                 <button 
                   onClick={closeModal}
                   style={{
-                    position: 'absolute', top: '1.5rem', left: '1.5rem',
+                    position: 'absolute', top: '1.5rem', right: '1.5rem',
                     width: '3.5rem', height: '3.5rem',
-                    borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.95)',
+                    borderRadius: '50%', backgroundColor: '#fff',
                     color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 100,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                    border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer', zIndex: 110,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                   }}
                 >
                   <X size={24} />
                 </button>
 
-                {/* Left: Imagery Cell (REINFORCED WITH INLINE COVER) */}
-                <div style={{ height: window.innerWidth > 991 ? '100%' : '16rem', position: 'relative', overflow: 'hidden', backgroundColor: '#111' }}>
+                {/* Left Side: Cinematic Aspect-Safe Image (60%) */}
+                <div 
+                  style={{ 
+                    width: window.innerWidth > 991 ? '58%' : '100%', 
+                    height: window.innerWidth > 991 ? '100%' : '20rem',
+                    backgroundColor: '#111', 
+                    flexShrink: 0,
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}
+                >
                    <img 
                       src={selectedType.image} 
                       alt={selectedType.title} 
@@ -170,49 +180,61 @@ const Services = () => {
                         width: '100%', 
                         height: '100%', 
                         objectFit: 'cover', 
-                        display: 'block',
-                        imageRendering: 'crisp-edges'
+                        display: 'block'
                       }} 
                    />
-                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '10rem', background: 'linear-gradient(to top, rgba(0,0,0,0.3), transparent)' }} />
+                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent 50%)' }} />
                 </div>
 
-                {/* Right: Narrow text pillar (FAILS NO COMPRESSION) */}
-                <div className="p-10 lg:p-14 overflow-y-auto bg-white flex flex-col items-start text-left scrollbar-hide border-l border-gray-50">
-                  <div className="mb-10 text-left">
-                    <span className="text-primary-blue font-black uppercase tracking-widest text-[10px] block mb-3 italic leading-none">{selectedType.scientificName}</span>
-                    <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray mb-8 leading-[0.8] tracking-tighter uppercase whitespace-normal">{selectedType.title}</h2>
-                    <div className="h-1.5 w-16 bg-primary-blue rounded-full" />
+                {/* Right Side: Authority Content with LOCAL SCROLL (42%) */}
+                <div 
+                  style={{ 
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    padding: window.innerWidth > 768 ? '3.5rem 3.5rem' : '2.5rem',
+                    backgroundColor: '#ffffff',
+                    overflowY: 'auto', // CRITICAL: This enables content to be seen when it's longer than 85vh
+                    textAlign: 'left'
+                  }}
+                  className="scrollbar-hide"
+                >
+                  <div style={{ marginBottom: '2.5rem' }}>
+                    <span className="text-primary-blue font-black uppercase tracking-widest text-[11px] block mb-3 italic leading-none">{selectedType.scientificName}</span>
+                    <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray mb-6 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
+                    <div className="h-2 w-20 bg-primary-blue rounded-full" />
                   </div>
 
-                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-14 text-left italic">
+                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-10 italic">
                     {selectedType.fullDesc}
                   </p>
 
-                  <div className="grid grid-cols-1 gap-6 mb-14 w-full">
-                    <div className="p-6 bg-blue-50/40 rounded-[2.5rem] border border-blue-100 flex items-center gap-4">
-                       <div className="p-2 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
-                         <Home size={22} />
-                       </div>
-                       <div className="flex flex-col text-left">
-                         <h4 className="text-[10px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
-                         <p className="text-lg text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
+                  <div className="grid grid-cols-1 gap-6 mb-10 w-full">
+                    <div className="p-7 bg-blue-50/40 rounded-[2.5rem] border border-blue-100 flex flex-col items-start gap-4">
+                       <div className="flex items-center gap-4">
+                          <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
+                            <Home size={24} />
+                          </div>
+                          <div className="flex flex-col">
+                            <h4 className="text-[11px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
+                            <p className="text-lg text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
+                          </div>
                        </div>
                     </div>
                   </div>
 
-                  {/* Powerful Interaction Hub */}
-                  <div className="flex flex-col gap-6 items-center border-t border-gray-100 pt-12 mt-auto w-full">
-                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_20px_60px_-10px_rgba(52,211,153,0.3)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
+                  {/* ACTION SECTION - STICKY-LIKE BEHAVIOR (At end of scroll) */}
+                  <div className="mt-auto border-t border-gray-100 pt-10 w-full flex flex-col gap-6">
+                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_30px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
                       URGÈNCIA 24H
                     </a>
                     
-                    <div className="flex w-full gap-4">
-                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
-                        <Phone size={20} /> TRUCAR
+                    <div className="flex w-full gap-5">
+                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
+                        <Phone size={22} /> TRUCAR
                       </a>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
-                        <MessageCircle size={20} /> CHAT
+                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
+                        <MessageCircle size={22} /> CHAT
                       </a>
                     </div>
                   </div>
