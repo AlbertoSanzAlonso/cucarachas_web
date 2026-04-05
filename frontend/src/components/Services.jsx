@@ -49,14 +49,14 @@ const Services = () => {
   const closeModal = () => setSelectedType(null);
 
   return (
-    <section id="servicios" className="bg-bg-light py-24 lg:py-32 relative">
+    <section id="servicios" className="bg-bg-light py-24 relative">
       <div className="absolute top-0 right-0 w-80 h-80 bg-primary-blue/5 rounded-full blur-[100px] pointer-events-none -mr-40 -mt-40 overflow-hidden" />
       
       <div className="container relative z-10 mx-auto px-4">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8 text-left">
           <div className="max-w-2xl">
-            <h2 className="text-secondary-gray mb-6 leading-tight font-black tracking-tight text-4xl lg:text-5xl uppercase">
+            <h2 className="text-secondary-gray mb-4 leading-tight font-black tracking-tight text-4xl lg:text-5xl uppercase">
               {t('species.title_part1')} <span className="text-primary-blue">{t('species.title_accent')}</span> {t('species.title_city')}
             </h2>
             <p className="text-lg text-text-muted leading-relaxed font-bold opacity-80 uppercase tracking-tight">
@@ -66,13 +66,13 @@ const Services = () => {
           <div className="flex items-center gap-4 bg-white px-6 py-4 rounded-3xl shadow-xl border border-blue-50 h-fit self-start md:self-auto uppercase">
             <ClipboardCheck className="text-emerald-500" size={26} />
             <div className="flex flex-col">
-              <span className="text-[10px] font-black text-emerald-600/60 uppercase tracking-widest leading-none">PROTOCOL</span>
-              <span className="text-[11px] font-black text-secondary-gray mt-1 uppercase">SANI-CLEAN</span>
+              <span className="text-[9px] font-black text-emerald-600/60 uppercase tracking-widest leading-none">PROTECCIÓ</span>
+              <span className="text-[11px] font-black text-secondary-gray mt-1 uppercase italic">CERTIFICADA</span>
             </div>
           </div>
         </div>
 
-        {/* RESTORED PREMIUM SINGLE-ROW GRID (BEFORE RECENT CONDENSING) */}
+        {/* Premium Single-Row Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {cockroachTypes.map((type) => (
             <button 
@@ -99,20 +99,21 @@ const Services = () => {
         </div>
       </div>
 
-      {/* BALANCED 1:1 MODAL DETAIL (MAINTAINED AS REQUESTED) */}
+      {/* FIXED GRID-BASED MODAL - PREVENTS ANY HORIZONTAL COMPRESSION */}
       {isClient && createPortal(
         <AnimatePresence>
           {selectedType && (
             <motion.div 
-              style={{
-                position: 'fixed',
-                top: 0, left: 0, right: 0, bottom: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                zIndex: 10000000, padding: '1.5rem'
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+               style={{
+                 position: 'fixed',
+                 top: 0, left: 0, right: 0, bottom: 0,
+                 display: 'flex', alignItems: 'center', justifyContent: 'center',
+                 zIndex: 10000000, padding: '1.5rem'
+               }}
+               initial={{ opacity: 0 }}
+               animate={{ opacity: 1 }}
+               exit={{ opacity: 0 }}
+               key="modal-portal"
             >
               <motion.div 
                 style={{
@@ -128,12 +129,13 @@ const Services = () => {
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '52rem',
+                  maxWidth: '56rem',
                   backgroundColor: '#ffffff',
-                  borderRadius: '3rem',
+                  borderRadius: '2.5rem',
                   boxShadow: '0 60px 180px rgba(0,0,0,0.5)',
                   overflow: 'hidden',
                   display: 'grid',
+                  // Using fixed grid ratios to absolutely prevent side-by-side compression
                   gridTemplateColumns: window.innerWidth > 991 ? '1.4fr 1fr' : '1fr',
                   maxHeight: '90vh',
                   zIndex: 100
@@ -141,15 +143,15 @@ const Services = () => {
                 initial={{ opacity: 0, scale: 0.95, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 30 }}
-                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
                 onClick={e => e.stopPropagation()}
               >
                 <button 
                   onClick={closeModal}
                   style={{
-                    position: 'absolute', top: '1.5rem', left: '1.5rem',
+                    position: 'absolute', top: '1.2rem', left: '1.2rem',
                     width: '3.5rem', height: '3.5rem',
-                    borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.9)',
+                    borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.95)',
                     color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 100,
                     boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
@@ -158,49 +160,46 @@ const Services = () => {
                   <X size={24} />
                 </button>
 
-                <div className="h-64 lg:h-full relative overflow-hidden bg-bg-dark">
-                   <img src={selectedType.image} alt={selectedType.title} className="w-full h-full object-cover block" />
-                   <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/20 to-transparent" />
+                {/* Left: Wide Image cell (UNCOMPRESSED GRID ITEM) */}
+                <div className="h-64 lg:h-full relative overflow-hidden bg-bg-dark border-r border-gray-50">
+                   <img src={selectedType.image} alt={selectedType.title} className="w-full h-full object-cover block shadow-inner" />
+                   <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/30 to-transparent" />
                 </div>
 
-                <div className="p-8 lg:p-14 overflow-y-auto bg-white flex flex-col items-start text-left scrollbar-hide border-l border-gray-50">
-                  <div className="mb-10">
+                {/* Right: Narrower text pillar */}
+                <div className="p-10 lg:p-14 overflow-y-auto bg-white flex flex-col items-start text-left scrollbar-hide">
+                  <div className="mb-8">
                     <span className="text-primary-blue font-black uppercase tracking-widest text-[10px] block mb-3 italic">{selectedType.scientificName}</span>
                     <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray mb-8 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
                     <div className="h-1.5 w-16 bg-primary-blue rounded-full" />
                   </div>
 
-                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-14 text-left italic">
+                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-12 text-left italic">
                     {selectedType.fullDesc}
                   </p>
 
-                  <div className="grid grid-cols-1 gap-6 mb-14 w-full">
-                    <div className="p-6 bg-blue-50/40 rounded-[2.5rem] border border-blue-100 flex flex-col items-start gap-3">
-                       <div className="flex items-center gap-3">
-                          <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
-                            <Home size={22} />
-                          </div>
-                          <h4 className="text-[11px] font-black uppercase text-primary-primary-blue tracking-widest">{t('species.habitat')}</h4>
+                  <div className="grid grid-cols-1 gap-6 mb-12 w-full">
+                    <div className="p-6 bg-blue-50/40 rounded-[2.5rem] border border-blue-100 flex items-center gap-4">
+                       <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
+                         <Home size={22} />
                        </div>
-                       <p className="text-lg text-secondary-gray font-black tracking-tight uppercase leading-tight">{selectedType.habitat}</p>
+                       <div className="flex flex-col">
+                         <h4 className="text-[10px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
+                         <p className="text-lg text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
+                       </div>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-6 items-center border-t border-gray-100 pt-10 mt-auto w-full">
-                    <a 
-                      href="#contacto" 
-                      onClick={closeModal} 
-                      className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_20px_60px_-10px_rgba(52,211,153,0.3)] bg-emerald-500 hover:bg-emerald-600 !border-none"
-                      style={{ backgroundColor: '#34d399' }}
-                    >
+                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-5 text-xl font-black w-full text-center shadow-[0_20px_60px_-10px_rgba(52,211,153,0.3)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
                       URGÈNCIA 24H
                     </a>
                     
                     <div className="flex w-full gap-4">
-                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-2 py-4 rounded-xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
+                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
                         <Phone size={20} /> TRUCAR
                       </a>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
+                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
                         <MessageCircle size={20} /> CHAT
                       </a>
                     </div>
