@@ -94,37 +94,38 @@ const Hero = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="lg:w-2/5 relative"
           >
-            {/* Structural Anchor for Slider - Fixed Size */}
-            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5] w-full">
-              <div className="relative w-full h-full overflow-hidden rounded-[2.5rem] bg-gray-50">
+            {/* Structural Anchor for Slider - Robust Padding Trick for 4:5 Aspect Ratio */}
+            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 transform lg:rotate-3 w-full">
+              <div className="relative w-full rounded-[2.5rem] overflow-hidden bg-gray-50" style={{ paddingBottom: '125%' }}>
                 <AnimatePresence mode="wait">
                   <motion.img 
-                    key={slides[currentSlide]} // Using the src as key is more stable
+                    key={slides[currentSlide]}
                     src={slides[currentSlide]} 
                     alt="CECSA Pest Control Service Visualization" 
-                    initial={{ opacity: 0, scale: 1.1 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    transition={{ duration: 0.8, ease: "easeInOut" }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.7 }}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </AnimatePresence>
-              </div>
-              
-              <div className="absolute top-8 left-8 bg-white/90 backdrop-blur-md px-6 py-4 rounded-2xl border border-white/50 shadow-xl z-20">
-                <p className="text-[10px] font-black uppercase text-primary-blue mb-1">{t('hero.slide_badge')}</p>
-                <p className="text-lg font-bold text-secondary-gray leading-tight">{t('hero.slide_title')} <br /> <span className="text-primary-blue">{t('hero.slide_accent')}</span></p>
-              </div>
 
-              {/* Slider indicators */}
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-2 z-20">
-                {slides.map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    className={`h-1 transition-all duration-300 rounded-full ${idx === currentSlide ? 'w-8 bg-primary-blue' : 'w-2 bg-gray-300/50 hover:bg-gray-400'}`}
-                  />
-                ))}
+                {/* Overlays inside the clipped area */}
+                <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/50 shadow-lg z-20">
+                  <p className="text-[10px] font-black uppercase text-primary-blue mb-1">{t('hero.slide_badge')}</p>
+                  <p className="text-base font-bold text-secondary-gray leading-tight">{t('hero.slide_title')} <br /> <span className="text-primary-blue">{t('hero.slide_accent')}</span></p>
+                </div>
+
+                {/* Slider indicators - Centered */}
+                <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
+                  {slides.map((_, idx) => (
+                    <button 
+                      key={idx}
+                      onClick={() => setCurrentSlide(idx)}
+                      className={`h-1.5 transition-all duration-300 rounded-full ${idx === currentSlide ? 'w-8 bg-primary-blue' : 'w-2 bg-white/50 hover:bg-white'}`}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
             

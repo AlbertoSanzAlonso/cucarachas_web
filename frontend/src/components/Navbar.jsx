@@ -164,16 +164,82 @@ const Navbar = () => {
 
         {/* CTA area */}
         <div className="hidden lg:flex items-center" style={{ gap: '28px' }}>
-          {/* Main Select for languages (Alternative to inline) - Hidden for now as I added inline in trust bar */}
-          <div className="hidden items-center gap-3">
-             <div className="relative">
-                <button 
-                  onClick={() => setLangMenuOpen(!langMenuOpen)}
-                  style={{ background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 12px', borderRadius: '12px', color: 'white', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 700 }}
+          {/* Language Switcher */}
+          <div className="relative">
+            <button
+              onClick={() => setLangMenuOpen(!langMenuOpen)}
+              onBlur={() => setTimeout(() => setLangMenuOpen(false), 200)}
+              style={{
+                background: 'rgba(255,255,255,0.08)',
+                border: '1px solid rgba(255,255,255,0.15)',
+                padding: '8px 12px',
+                borderRadius: '12px',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontSize: '12px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 200ms',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+            >
+              <Globe size={14} style={{ color: '#34d399' }} />
+              {currentLang.code.toUpperCase()}
+            </button>
+            
+            <AnimatePresence>
+              {langMenuOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  style={{
+                    position: 'absolute',
+                    top: 'calc(100% + 8px)',
+                    right: 0,
+                    background: 'white',
+                    borderRadius: '14px',
+                    padding: '8px',
+                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '4px',
+                    minWidth: '130px',
+                    zIndex: 2000,
+                  }}
                 >
-                  <Globe size={14} /> {currentLang.code.toUpperCase()}
-                </button>
-             </div>
+                  {languages.map((l) => (
+                    <button
+                      key={l.code}
+                      onClick={() => changeLanguage(l.code)}
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '8px',
+                        border: 'none',
+                        background: i18n.language === l.code ? '#f0f9ff' : 'transparent',
+                        color: i18n.language === l.code ? '#0080bb' : '#4b5563',
+                        fontSize: '13px',
+                        fontWeight: i18n.language === l.code ? 800 : 500,
+                        textAlign: 'left',
+                        cursor: 'pointer',
+                        transition: 'all 150ms',
+                      }}
+                      onMouseEnter={e => {
+                        if (i18n.language !== l.code) e.currentTarget.style.background = '#f9fafb';
+                      }}
+                      onMouseLeave={e => {
+                        if (i18n.language !== l.code) e.currentTarget.style.background = 'transparent';
+                      }}
+                    >
+                      {l.name}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
@@ -209,22 +275,28 @@ const Navbar = () => {
 
         {/* Mobile Toggle */}
         <div className="flex items-center gap-4 lg:hidden">
-          {/* Mobile Language Switch - Simple text toggle for mobile */}
-          <div className="flex gap-2">
-            {['ca', 'es', 'en'].map(l => (
-              <button 
-                key={l}
-                onClick={() => i18n.changeLanguage(l)}
-                style={{ fontSize: '10px', fontWeight: i18n.language === l ? 900 : 500, color: i18n.language === l ? '#34d399' : 'white', background: 'none', border: 'none' }}
-              >
-                {l.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          <button
+            style={{ 
+              color: 'white', 
+              background: 'rgba(255,255,255,0.1)', 
+              border: 'none', 
+              borderRadius: '10px',
+              padding: '6px 10px',
+              fontSize: '12px',
+              fontWeight: 800,
+              cursor: 'pointer' 
+            }}
+            onClick={() => {
+              const next = languages[(languages.findIndex(l => l.code === i18n.language) + 1) % languages.length].code;
+              i18n.changeLanguage(next);
+            }}
+          >
+            {i18n.language.toUpperCase()}
+          </button>
           <button
             style={{ color: 'white', background: 'none', border: 'none', cursor: 'pointer' }}
             onClick={() => setIsOpen(!isOpen)}
-            aria-label="Abrir menú"
+            aria-label="Toggle menu"
           >
             {isOpen ? <X size={28} /> : <Menu size={28} />}
           </button>
