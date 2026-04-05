@@ -18,26 +18,42 @@ const slides = [
 const Hero = () => {
   const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 992);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
     }, 5000);
-    return () => clearInterval(timer);
+    
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   return (
     <section className="relative overflow-hidden bg-bg-light py-20 lg:py-32">
-      {/* Abstract background elements */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 blur-[120px] rounded-full -mr-20 -mt-20"></div>
       <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
 
-      <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
+      <div className="container relative z-10 mx-auto px-4">
+        {/* FORCED SIDE-BY-SIDE INLINE STYLE - Text Left, Slider Right */}
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: isMobile ? 'column' : 'row', 
+          alignItems: 'center', 
+          gap: isMobile ? '3rem' : '5rem',
+          justifyContent: 'space-between'
+        }}>
+          
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:w-1/2"
+            style={{ width: isMobile ? '100%' : '45%', textAlign: 'left' }}
           >
             <div className="flex items-center gap-3 mb-6 bg-white w-fit px-4 py-2 rounded-full shadow-sm border border-primary-blue/10">
               <ShieldCheck className="text-primary-blue" size={20} />
@@ -51,53 +67,52 @@ const Hero = () => {
               {t('hero.title_slogan')}
             </h2>
             
-            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
-              {t('hero.desc_p1')} <span className="text-secondary-gray font-bold">{t('hero.desc_city')}</span> {t('hero.desc_p2')}
+            <p className="text-xl text-text-muted mb-10 max-w-2xl leading-relaxed font-medium">
+              {t('hero.desc_p1')} <span className="text-secondary-gray font-black">{t('hero.desc_city')}</span> {t('hero.desc_p2')}
             </p>
             
-            <div className="flex flex-wrap gap-5 mb-12">
-              <a href="#contacto" className="btn btn-primary shadow-xl">
+            <div className="flex flex-wrap gap-5 mb-14">
+              <a href="#contacto" className="btn btn-primary px-10 py-5 text-xl font-black shadow-xl" style={{ backgroundColor: '#34d399' }}>
                 {t('hero.cta_urgent')} <ChevronRight size={20} />
               </a>
-              <a href="#servicios" className="btn btn-secondary flex gap-2">
-                <Bug size={18} /> {t('hero.cta_identify')}
+              <a href="#servicios" className="btn btn-secondary px-10 py-5 text-xl font-black flex gap-2 border-2 border-primary-blue text-primary-blue">
+                <Bug size={22} /> {t('hero.cta_identify')}
               </a>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-gray-200/50">
-              {/* Stats items... */}
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 pt-10 border-t border-gray-200/50">
               <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Clock size={24} /></div>
+                <div className="text-primary-blue"><Clock size={28} /></div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.intervention')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.urgent')}</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted leading-none mb-1">{t('hero.stats.intervention')}</p>
+                  <p className="text-sm font-black text-secondary-gray uppercase">{t('hero.stats.urgent')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Users size={24} /></div>
+                <div className="text-primary-blue"><Users size={28} /></div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.accre')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.senior')}</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted leading-none mb-1">{t('hero.stats.accre')}</p>
+                  <p className="text-sm font-black text-secondary-gray uppercase">{t('hero.stats.senior')}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Activity size={24} /></div>
+                <div className="text-primary-blue"><Activity size={28} /></div>
                 <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.guarantee')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.cert')}</p>
+                  <p className="text-[10px] uppercase font-black tracking-widest text-muted leading-none mb-1">{t('hero.stats.guarantee')}</p>
+                  <p className="text-sm font-black text-secondary-gray uppercase">{t('hero.stats.cert')}</p>
                 </div>
               </div>
             </div>
           </motion.div>
 
+          {/* Slider Side - 55% Width with Force Order */}
           <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="lg:w-1/2 relative"
+            style={{ width: isMobile ? '100%' : '55%', position: 'relative' }}
           >
-            {/* Structural Anchor for Slider - Robust Aspect Ratio */}
-            <div className="relative z-10 bg-white p-3 rounded-[3.5rem] shadow-2xl border border-gray-100 w-full overflow-hidden">
-              <div className="relative w-full rounded-[2.8rem] overflow-hidden bg-bg-light" style={{ aspectRatio: '4/5', flexShrink: 0 }}>
+            <div className="bg-white p-3 rounded-[4rem] shadow-2xl border border-gray-100 overflow-hidden relative">
+              <div style={{ position: 'relative', width: '100%', aspectRatio: '4/3', borderRadius: '3rem', overflow: 'hidden', backgroundColor: '#f1f5f9' }}>
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={slides[currentSlide]}
@@ -107,38 +122,36 @@ const Hero = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="absolute inset-0 w-full h-full"
-                    style={{ objectFit: 'cover', objectPosition: 'center' }}
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
                   />
                 </AnimatePresence>
-
+                
+                {/* Visual Overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/20 to-transparent pointer-events-none" />
               </div>
 
-              {/* Slider indicators - Guaranteed bottom alignment within the outer frame */}
-              <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-6 z-30">
+              {/* Slider indicators */}
+              <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-4 z-30">
                 {slides.map((_, idx) => (
                   <button 
                     key={idx}
                     onClick={() => setCurrentSlide(idx)}
                     style={{
-                      width: idx === currentSlide ? '32px' : '10px',
+                      width: idx === currentSlide ? '40px' : '10px',
                       height: '10px',
                       borderRadius: '999px',
-                      background: idx === currentSlide ? '#0080bb' : 'rgba(0,0,0,0.2)',
+                      background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.6)',
                       border: 'none',
                       cursor: 'pointer',
                       transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                     }}
-                    aria-label={`Ir a diapositiva ${idx + 1}`}
                   />
                 ))}
               </div>
             </div>
-            
-            {/* Visual highlight element */}
-            <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-primary-blue/10 rounded-full blur-[110px] -z-0"></div>
           </motion.div>
+
         </div>
       </div>
     </section>
@@ -146,5 +159,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-
