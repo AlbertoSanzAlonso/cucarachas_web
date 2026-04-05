@@ -99,7 +99,7 @@ const Services = () => {
         </div>
       </div>
 
-      {/* DEFINITIVE FAILSAFE MODAL - FULL ASSET VISIBILITY GUARANTEED */}
+      {/* FINAL SPECIES MODAL REFINEMENT - WHITE ASSET BACKGROUND + COMPACT CTAs */}
       {isClient && createPortal(
         <AnimatePresence>
           {selectedType && (
@@ -108,7 +108,7 @@ const Services = () => {
                  position: 'fixed',
                  top: 0, left: 0, right: 0, bottom: 0,
                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                 zIndex: 10000000, padding: window.innerWidth > 768 ? '3rem' : '1rem'
+                 zIndex: 10000000, padding: window.innerWidth > 768 ? '3rem' : '1.2rem'
                }}
                initial={{ opacity: 0 }}
                animate={{ opacity: 1 }}
@@ -125,16 +125,15 @@ const Services = () => {
                 onClick={closeModal} 
               />
               
-              {/* Modal Container - Clipped Architecture with Dynamic Flex Height */}
               <motion.div 
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '70rem', // Expanded to fit full ficha
+                  maxWidth: '70rem',
                   height: window.innerWidth > 991 ? '85vh' : 'auto',
                   maxHeight: '92vh',
                   backgroundColor: '#ffffff',
-                  borderRadius: '2.5rem',
+                  borderRadius: '3rem',
                   boxShadow: '0 80px 200px rgba(0,0,0,0.6)',
                   overflow: 'hidden', 
                   display: 'flex',
@@ -147,27 +146,27 @@ const Services = () => {
                 transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
                 onClick={e => e.stopPropagation()}
               >
-                {/* Close Button - Always visible top-right */}
+                {/* Close Trigger */}
                 <button 
                   onClick={closeModal}
                   style={{
                     position: 'absolute', top: '1.5rem', right: '1.5rem',
-                    width: '3.5rem', height: '3.5rem',
+                    width: '3rem', height: '3rem',
                     borderRadius: '50%', backgroundColor: '#fff',
                     color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer', zIndex: 110,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 110,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
                   }}
                 >
                   <X size={24} />
                 </button>
 
-                {/* Left Side: FULL IMAGE VISIBILITY (CONTAIN) */}
+                {/* Left Side: WHITE BACKGROUND ASSET CONTAINER */}
                 <div 
                   style={{ 
                     width: window.innerWidth > 991 ? '55%' : '100%', 
-                    height: window.innerWidth > 991 ? '100%' : 'auto', // Auto on mobile to show full aspect
-                    backgroundColor: '#111', 
+                    height: window.innerWidth > 991 ? '100%' : 'auto', 
+                    backgroundColor: '#ffffff', // CHANGED TO WHITE AS REQUESTED
                     flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
@@ -182,14 +181,13 @@ const Services = () => {
                       style={{ 
                         width: '100%', 
                         height: '100%', 
-                        // OBJECT-FIT: CONTAIN ensures NO part of the ficha is cropped
                         objectFit: 'contain', 
                         display: 'block'
                       }} 
                    />
                 </div>
 
-                {/* Right Side: Authority Content (Internal Local Scroll) */}
+                {/* Right Side: Re-tightened Authority Content */}
                 <div 
                   style={{ 
                     flex: 1,
@@ -210,42 +208,47 @@ const Services = () => {
                     }
                   `}</style>
 
-                  <div style={{ marginBottom: '3rem' }}>
-                    <span className="text-primary-blue font-black uppercase tracking-widest text-[11px] block mb-3 italic leading-none">{selectedType.scientificName}</span>
-                    <h2 className="text-4xl lg:text-6xl font-black text-secondary-gray mb-8 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
-                    <div className="h-2 w-20 bg-primary-blue rounded-full" />
+                  <div style={{ marginBottom: '2rem' }}> {/* REDUCED MARGIN FOR TITLE-TEXT GLUE */}
+                    <span className="text-emerald-500 font-black uppercase tracking-widest text-[11px] block mb-2 italic leading-none">{selectedType.scientificName}</span>
+                    <h2 className="text-4xl lg:text-6xl font-black text-secondary-gray mb-6 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
+                    <div className="h-1.5 w-16 bg-primary-blue rounded-full" />
                   </div>
 
-                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-14 italic text-left">
+                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-10 italic text-left">
                     {selectedType.fullDesc}
                   </p>
 
-                  <div className="grid grid-cols-1 gap-8 mb-14 w-full">
-                    <div className="p-8 bg-blue-50/30 rounded-[3rem] border border-blue-100 flex flex-col items-start gap-5">
+                  <div className="grid grid-cols-1 gap-6 mb-12 w-full">
+                    <div className="p-8 bg-bg-light rounded-[2.5rem] border border-gray-100 flex flex-col items-start gap-4">
                        <div className="flex items-center gap-4">
-                          <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
+                          <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue border border-blue-50">
                             <Home size={28} />
                           </div>
                           <div className="flex flex-col text-left">
                             <h4 className="text-[11px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
-                            <p className="text-xl text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
+                            <p className="text-lg font-bold text-secondary-gray uppercase leading-none">{selectedType.habitat}</p>
                           </div>
                        </div>
                     </div>
                   </div>
 
-                  {/* Actions Hub */}
-                  <div className="mt-auto pb-6 w-full flex flex-col gap-6">
-                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_20px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
+                  {/* ACTION SECTION - COMPACT TO PREVENT OVERFLOW / "SALIDA" */}
+                  <div className="mt-auto pt-8 border-t border-gray-50 flex flex-col gap-5 w-full">
+                    <a 
+                      href="#contacto" 
+                      onClick={closeModal} 
+                      className="btn btn-primary px-10 py-4 text-lg font-black w-full text-center shadow-[0_15px_40px_-10px_rgba(52,211,153,0.4)] bg-emerald-500 hover:bg-emerald-600 !border-none" 
+                      style={{ backgroundColor: '#34d399' }}
+                    >
                       SOL·LICITAR TRACTAMENT
                     </a>
                     
-                    <div className="flex w-full gap-5">
-                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
-                        <Phone size={22} /> TRUCAR
+                    <div className="flex w-full gap-4">
+                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-[10px] tracking-widest border border-gray-100">
+                        <Phone size={18} /> TRUCAR
                       </a>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
-                        <MessageCircle size={22} /> CHAT
+                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-2 py-3 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-[10px] tracking-widest border border-emerald-100">
+                        <MessageCircle size={18} /> WHATSAPP
                       </a>
                     </div>
                   </div>
