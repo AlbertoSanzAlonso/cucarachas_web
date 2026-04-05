@@ -99,7 +99,7 @@ const Services = () => {
         </div>
       </div>
 
-      {/* DEFINITIVE FAILSAFE MODAL - ZERO OVERFLOW ARCHITECTURE */}
+      {/* MODAL REFINEMENT - ZERO SCROLLBAR ARTIFACT AND NO IMAGE SHADOW */}
       {isClient && createPortal(
         <AnimatePresence>
           {selectedType && (
@@ -118,25 +118,25 @@ const Services = () => {
               <motion.div 
                 style={{
                   position: 'absolute', inset: 0,
-                  backgroundColor: 'rgba(0,0,0,0.8)',
+                  backgroundColor: 'rgba(0,0,0,0.85)',
                   backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
                   cursor: 'zoom-out'
                 }}
                 onClick={closeModal} 
               />
               
-              {/* Modal Card - FLEX with FIXED HEIGHT percentage to prevent outer overflow */}
+              {/* Modal Container - Clipped with Hidden Scroll Hub */}
               <motion.div 
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '58rem',
-                  height: window.innerWidth > 991 ? '85vh' : 'auto', // Fixed height on desktop to enable internal scroll
+                  maxWidth: '60rem',
+                  height: window.innerWidth > 991 ? '85vh' : 'auto',
                   maxHeight: window.innerWidth > 991 ? '85vh' : '92vh',
                   backgroundColor: '#ffffff',
                   borderRadius: '3rem',
-                  boxShadow: '0 80px 200px rgba(0,0,0,0.8)',
-                  overflow: 'hidden', // ABSOLUTELY ESSENTIAL: Parent must clip
+                  boxShadow: '0 80px 200px rgba(0,0,0,0.6)',
+                  overflow: 'hidden', // Ensures zero corner breach
                   display: 'flex',
                   flexDirection: window.innerWidth > 991 ? 'row' : 'column',
                   zIndex: 100
@@ -147,7 +147,7 @@ const Services = () => {
                 transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
                 onClick={e => e.stopPropagation()}
               >
-                {/* Close Button - High visibility */}
+                {/* Close Button - Clean White */}
                 <button 
                   onClick={closeModal}
                   style={{
@@ -155,22 +155,21 @@ const Services = () => {
                     width: '3.5rem', height: '3.5rem',
                     borderRadius: '50%', backgroundColor: '#fff',
                     color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer', zIndex: 110,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
+                    border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 110,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
                   }}
                 >
                   <X size={24} />
                 </button>
 
-                {/* Left Side: Cinematic Aspect-Safe Image (60%) */}
+                {/* Left Side: PURE IMAGE (No Shadow Overlay) */}
                 <div 
                   style={{ 
-                    width: window.innerWidth > 991 ? '58%' : '100%', 
+                    width: window.innerWidth > 991 ? '60%' : '100%', 
                     height: window.innerWidth > 991 ? '100%' : '20rem',
                     backgroundColor: '#111', 
                     flexShrink: 0,
-                    overflow: 'hidden',
-                    position: 'relative'
+                    overflow: 'hidden'
                   }}
                 >
                    <img 
@@ -183,57 +182,66 @@ const Services = () => {
                         display: 'block'
                       }} 
                    />
-                   <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(to top, rgba(0,0,0,0.4), transparent 50%)' }} />
                 </div>
 
-                {/* Right Side: Authority Content with LOCAL SCROLL (42%) */}
+                {/* Right Side: Authority Content (Zero-Artifact Scroll) */}
                 <div 
                   style={{ 
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
-                    padding: window.innerWidth > 768 ? '3.5rem 3.5rem' : '2.5rem',
+                    padding: window.innerWidth > 768 ? '4rem 4rem' : '2.5rem',
                     backgroundColor: '#ffffff',
-                    overflowY: 'auto', // CRITICAL: This enables content to be seen when it's longer than 85vh
-                    textAlign: 'left'
+                    overflowY: 'auto',
+                    textAlign: 'left',
+                    // Pure aesthetic: hide scrollbar but maintain functionality
+                    scrollbarWidth: 'none',
+                    msOverflowStyle: 'none'
                   }}
                   className="scrollbar-hide"
                 >
-                  <div style={{ marginBottom: '2.5rem' }}>
+                  {/* Style block for Webkit scrollbar hiding */}
+                  <style>{`
+                    .scrollbar-hide::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}</style>
+
+                  <div style={{ marginBottom: '3rem' }}>
                     <span className="text-primary-blue font-black uppercase tracking-widest text-[11px] block mb-3 italic leading-none">{selectedType.scientificName}</span>
-                    <h2 className="text-4xl lg:text-5xl font-black text-secondary-gray mb-6 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
+                    <h2 className="text-4xl lg:text-6xl font-black text-secondary-gray mb-8 leading-[0.8] tracking-tighter uppercase">{selectedType.title}</h2>
                     <div className="h-2 w-20 bg-primary-blue rounded-full" />
                   </div>
 
-                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-10 italic">
+                  <p className="text-xl text-secondary-gray font-medium opacity-80 leading-relaxed mb-14 italic text-left">
                     {selectedType.fullDesc}
                   </p>
 
-                  <div className="grid grid-cols-1 gap-6 mb-10 w-full">
-                    <div className="p-7 bg-blue-50/40 rounded-[2.5rem] border border-blue-100 flex flex-col items-start gap-4">
+                  <div className="grid grid-cols-1 gap-8 mb-14 w-full">
+                    <div className="p-8 bg-blue-50/30 rounded-[3rem] border border-blue-100 flex flex-col items-start gap-5">
                        <div className="flex items-center gap-4">
                           <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
-                            <Home size={24} />
+                            <Home size={28} />
                           </div>
                           <div className="flex flex-col">
                             <h4 className="text-[11px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
-                            <p className="text-lg text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
+                            <p className="text-xl text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
                           </div>
                        </div>
                     </div>
                   </div>
 
-                  {/* ACTION SECTION - STICKY-LIKE BEHAVIOR (At end of scroll) */}
-                  <div className="mt-auto border-t border-gray-100 pt-10 w-full flex flex-col gap-6">
-                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_30px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
+                  {/* Actions Hub */}
+                  <div className="mt-auto pb-6 w-full flex flex-col gap-6">
+                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_30px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500" style={{ backgroundColor: '#34d399' }}>
                       URGÈNCIA 24H
                     </a>
                     
                     <div className="flex w-full gap-5">
-                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
+                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100">
                         <Phone size={22} /> TRUCAR
                       </a>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-4 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
+                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100">
                         <MessageCircle size={22} /> CHAT
                       </a>
                     </div>
