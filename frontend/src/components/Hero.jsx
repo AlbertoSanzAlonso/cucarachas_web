@@ -44,16 +44,12 @@ const Hero = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">{t('hero.badge')}</span>
             </div>
             
-            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-secondary-gray leading-[1.1] mb-2 tracking-tighter">
+            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-black leading-[1.1] mb-2 tracking-tighter">
               {t('hero.title_part1')} <br />
-              <span className="text-primary-blue font-sans font-black underline decoration-emerald-400 decoration-4">{t('hero.title_accent')}</span>
+              <span className="text-black font-sans font-black">{t('hero.title_accent')}</span>
             </h1>
-            <p className="text-emerald-600 font-bold tracking-[0.2em] uppercase text-xs mb-8">
+            <p className="text-primary-blue font-black tracking-[0.2em] uppercase text-sm mb-12">
               {t('hero.title_slogan')}
-            </p>
-            
-            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
-              {t('hero.desc_part1')} <span className="text-secondary-gray font-bold">{t('hero.desc_city')}</span>{t('hero.desc_part2')}
             </p>
             
             <div className="flex flex-wrap gap-5 mb-12">
@@ -95,7 +91,7 @@ const Hero = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="lg:w-2/5 relative"
           >
-            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5] sm:aspect-square lg:aspect-[4/5]">
+            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5]">
               <AnimatePresence mode="wait">
                 <motion.img 
                   key={currentSlide}
