@@ -95,9 +95,9 @@ const Hero = () => {
             animate={{ opacity: 1, scale: 1 }}
             className="lg:w-1/2 relative"
           >
-            {/* Wider fixed slider container */}
+            {/* Structural Anchor for Slider - Robust Aspect Ratio */}
             <div className="relative z-10 bg-white p-3 rounded-[3.5rem] shadow-2xl border border-gray-100 w-full overflow-hidden">
-              <div className="relative w-full rounded-[2.8rem] overflow-hidden bg-gray-50" style={{ paddingBottom: '115%' }}>
+              <div className="relative w-full rounded-[2.8rem] overflow-hidden bg-bg-light" style={{ aspectRatio: '4/5', flexShrink: 0 }}>
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={slides[currentSlide]}
@@ -107,24 +107,26 @@ const Hero = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.6 }}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="absolute inset-0 w-full h-full"
+                    style={{ objectFit: 'cover', objectPosition: 'center' }}
                   />
                 </AnimatePresence>
 
-                {/* Centered slider dots at the bottom */}
-                <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2.5 z-20">
+                {/* Slider indicators - Centered and Separated */}
+                <div className="absolute bottom-12 left-0 right-0 flex justify-center gap-5 z-30">
                   {slides.map((_, idx) => (
                     <button 
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
                       style={{
-                        width: idx === currentSlide ? '32px' : '8px',
-                        height: '8px',
+                        width: idx === currentSlide ? '32px' : '10px',
+                        height: '10px',
                         borderRadius: '999px',
-                        background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.6)',
+                        background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.7)',
                         border: 'none',
                         cursor: 'pointer',
-                        transition: 'all 300ms ease',
+                        transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
                       }}
                     />
                   ))}
@@ -133,7 +135,7 @@ const Hero = () => {
             </div>
             
             {/* Visual highlight element */}
-            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary-blue/10 rounded-full blur-[100px] -z-0"></div>
+            <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-primary-blue/10 rounded-full blur-[110px] -z-0"></div>
           </motion.div>
         </div>
       </div>
