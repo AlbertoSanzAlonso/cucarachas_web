@@ -99,7 +99,7 @@ const Services = () => {
         </div>
       </div>
 
-      {/* MODAL REFINEMENT - ZERO SCROLLBAR ARTIFACT AND NO IMAGE SHADOW */}
+      {/* DEFINITIVE FAILSAFE MODAL - FULL ASSET VISIBILITY GUARANTEED */}
       {isClient && createPortal(
         <AnimatePresence>
           {selectedType && (
@@ -125,18 +125,18 @@ const Services = () => {
                 onClick={closeModal} 
               />
               
-              {/* Modal Container - Clipped with Hidden Scroll Hub */}
+              {/* Modal Container - Clipped Architecture with Dynamic Flex Height */}
               <motion.div 
                 style={{
                   position: 'relative',
                   width: '100%',
-                  maxWidth: '60rem',
+                  maxWidth: '70rem', // Expanded to fit full ficha
                   height: window.innerWidth > 991 ? '85vh' : 'auto',
-                  maxHeight: window.innerWidth > 991 ? '85vh' : '92vh',
+                  maxHeight: '92vh',
                   backgroundColor: '#ffffff',
-                  borderRadius: '3rem',
+                  borderRadius: '2.5rem',
                   boxShadow: '0 80px 200px rgba(0,0,0,0.6)',
-                  overflow: 'hidden', // Ensures zero corner breach
+                  overflow: 'hidden', 
                   display: 'flex',
                   flexDirection: window.innerWidth > 991 ? 'row' : 'column',
                   zIndex: 100
@@ -147,7 +147,7 @@ const Services = () => {
                 transition={{ type: "spring", damping: 25, stiffness: 200, delay: 0.1 }}
                 onClick={e => e.stopPropagation()}
               >
-                {/* Close Button - Clean White */}
+                {/* Close Button - Always visible top-right */}
                 <button 
                   onClick={closeModal}
                   style={{
@@ -155,21 +155,25 @@ const Services = () => {
                     width: '3.5rem', height: '3.5rem',
                     borderRadius: '50%', backgroundColor: '#fff',
                     color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 110,
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.2)'
+                    border: '1px solid rgba(0,0,0,0.1)', cursor: 'pointer', zIndex: 110,
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.3)'
                   }}
                 >
                   <X size={24} />
                 </button>
 
-                {/* Left Side: PURE IMAGE (No Shadow Overlay) */}
+                {/* Left Side: FULL IMAGE VISIBILITY (CONTAIN) */}
                 <div 
                   style={{ 
-                    width: window.innerWidth > 991 ? '60%' : '100%', 
-                    height: window.innerWidth > 991 ? '100%' : '20rem',
+                    width: window.innerWidth > 991 ? '55%' : '100%', 
+                    height: window.innerWidth > 991 ? '100%' : 'auto', // Auto on mobile to show full aspect
                     backgroundColor: '#111', 
                     flexShrink: 0,
-                    overflow: 'hidden'
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative'
                   }}
                 >
                    <img 
@@ -178,13 +182,14 @@ const Services = () => {
                       style={{ 
                         width: '100%', 
                         height: '100%', 
-                        objectFit: 'cover', 
+                        // OBJECT-FIT: CONTAIN ensures NO part of the ficha is cropped
+                        objectFit: 'contain', 
                         display: 'block'
                       }} 
                    />
                 </div>
 
-                {/* Right Side: Authority Content (Zero-Artifact Scroll) */}
+                {/* Right Side: Authority Content (Internal Local Scroll) */}
                 <div 
                   style={{ 
                     flex: 1,
@@ -194,13 +199,11 @@ const Services = () => {
                     backgroundColor: '#ffffff',
                     overflowY: 'auto',
                     textAlign: 'left',
-                    // Pure aesthetic: hide scrollbar but maintain functionality
                     scrollbarWidth: 'none',
                     msOverflowStyle: 'none'
                   }}
                   className="scrollbar-hide"
                 >
-                  {/* Style block for Webkit scrollbar hiding */}
                   <style>{`
                     .scrollbar-hide::-webkit-scrollbar {
                       display: none;
@@ -223,7 +226,7 @@ const Services = () => {
                           <div className="p-3 bg-white rounded-2xl shadow-sm text-primary-primary-blue">
                             <Home size={28} />
                           </div>
-                          <div className="flex flex-col">
+                          <div className="flex flex-col text-left">
                             <h4 className="text-[11px] font-black uppercase text-primary-primary-blue tracking-widest opacity-80 mb-1 leading-none">{t('species.habitat')}</h4>
                             <p className="text-xl text-secondary-gray font-black tracking-tight uppercase leading-none">{selectedType.habitat}</p>
                           </div>
@@ -233,15 +236,15 @@ const Services = () => {
 
                   {/* Actions Hub */}
                   <div className="mt-auto pb-6 w-full flex flex-col gap-6">
-                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_30px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500" style={{ backgroundColor: '#34d399' }}>
-                      URGÈNCIA 24H
+                    <a href="#contacto" onClick={closeModal} className="btn btn-primary px-16 py-6 text-2xl font-black w-full text-center shadow-[0_20px_70px_-15px_rgba(52,211,153,0.5)] bg-emerald-500 hover:bg-emerald-600 !border-none" style={{ backgroundColor: '#34d399' }}>
+                      SOL·LICITAR TRACTAMENT
                     </a>
                     
                     <div className="flex w-full gap-5">
-                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100">
+                      <a href="tel:900123456" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-secondary-gray/5 text-secondary-gray font-black uppercase text-xs tracking-widest border border-gray-100 hover:bg-gray-100 transition-colors">
                         <Phone size={22} /> TRUCAR
                       </a>
-                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100">
+                      <a href="https://wa.me/34600000000" target="_blank" rel="noreferrer" className="flex-1 flex items-center justify-center gap-3 py-5 rounded-2xl bg-emerald-50 text-emerald-600 font-black uppercase text-xs tracking-widest border border-emerald-100 hover:bg-emerald-100 transition-colors">
                         <MessageCircle size={22} /> CHAT
                       </a>
                     </div>
