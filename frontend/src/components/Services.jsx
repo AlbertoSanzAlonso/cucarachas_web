@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bug, X, ChevronRight, ClipboardCheck, AlertCircle, Home } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+
+// Portal component to ensure we mount to the body only on client-side
+const SpeciesPortal = ({ children }) => {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted ? createPortal(children, document.body) : null;
+};
 
 const Services = () => {
   const { t } = useTranslation();
@@ -46,6 +53,7 @@ const Services = () => {
 
   return (
     <section id="servicios" className="bg-bg-light py-24 lg:py-36 relative overflow-hidden">
+      {/* Decorative element */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-primary-blue/5 rounded-full blur-3xl -mr-48 -mt-48 pointer-events-none" />
       
       <div className="container relative z-10">
@@ -100,45 +108,46 @@ const Services = () => {
         </div>
       </div>
 
-      {/* Robust Portal-based Modal */}
-      {typeof document !== 'undefined' && createPortal(
+      <SpeciesPortal>
         <AnimatePresence>
           {selectedType && (
-            <div 
-              className="fixed inset-0 z-[10000] flex items-center justify-center p-4 md:p-8"
-              style={{ pointerEvents: 'auto' }}
-            >
+            <div className="fixed inset-0 z-[20000] flex items-center justify-center p-4 lg:p-8" style={{ pointerEvents: 'auto' }}>
+              {/* Massive Dark Blur Backdrop */}
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setSelectedType(null)}
-                className="absolute inset-0 bg-black/95 backdrop-blur-md"
+                className="absolute inset-0 bg-black/95 backdrop-blur-xl cursor-zoom-out"
               />
               
+              {/* Cinematic Centered Modal */}
               <motion.div 
-                initial={{ opacity: 0, scale: 0.9, y: 40 }}
+                initial={{ opacity: 0, scale: 0.9, y: 30 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 40 }}
-                transition={{ type: "spring", damping: 30, stiffness: 300 }}
-                className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_50px_150px_rgba(0,0,0,0.7)] overflow-hidden flex flex-col lg:flex-row z-10 max-h-[95vh] lg:max-h-[90vh]"
+                exit={{ opacity: 0, scale: 0.9, y: 30 }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="relative w-full max-w-5xl bg-white rounded-[2.5rem] shadow-[0_50px_100px_rgba(0,0,0,0.6)] overflow-hidden flex flex-col lg:flex-row z-10 max-h-[90vh]"
               >
+                {/* Standard Close Button */}
                 <button 
                   onClick={() => setSelectedType(null)}
-                  className="absolute top-6 right-6 w-12 h-12 rounded-full bg-bg-light text-secondary-gray hover:bg-red-500 hover:text-white transition-all z-20 flex items-center justify-center shadow-lg border border-gray-100"
+                  className="absolute top-6 right-6 w-12 h-12 rounded-full bg-secondary-gray/10 text-secondary-gray hover:bg-red-500 hover:text-white transition-all z-20 flex items-center justify-center shadow-lg"
                 >
                   <X size={24} />
                 </button>
 
-                <div className="lg:w-2/5 h-48 lg:h-auto relative bg-bg-dark shrink-0">
+                {/* Left side Image */}
+                <div className="lg:w-2/5 h-48 lg:h-auto relative bg-secondary-gray/5 overflow-hidden">
                   <img src={selectedType.image} alt={selectedType.title} className="w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>
                 
+                {/* Right side Info */}
                 <div className="lg:w-3/5 p-8 lg:p-14 overflow-y-auto bg-white flex flex-col">
                   <div className="mb-8">
-                    <span className="text-primary-blue/60 font-black uppercase tracking-widest text-[10px] block mb-2">{selectedType.scientificName}</span>
-                    <h2 className="text-3xl lg:text-5xl font-black text-secondary-gray mb-4 leading-tight">{selectedType.title}</h2>
+                    <span className="text-primary-blue font-black uppercase tracking-widest text-[10px] block mb-2">{selectedType.scientificName}</span>
+                    <h2 className="text-3xl lg:text-5xl font-black text-secondary-gray mb-4 leading-[0.9]">{selectedType.title}</h2>
                     <div className="h-1.5 w-16 bg-primary-blue rounded-full" />
                   </div>
 
@@ -147,19 +156,19 @@ const Services = () => {
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-10">
-                    <div className="p-6 bg-blue-50/50 rounded-3xl border border-blue-100/50">
+                    <div className="p-6 bg-blue-50/40 rounded-3xl border border-blue-100/50">
                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-primary-blue mb-4 shadow-sm">
                         <Home size={20} />
                       </div>
                       <h4 className="text-[10px] font-black uppercase text-primary-blue mb-1 tracking-widest">{t('species.habitat')}</h4>
-                      <p className="text-sm text-secondary-gray font-black leading-snug">{selectedType.habitat}</p>
+                      <p className="text-sm text-secondary-gray font-bold line-clamp-2">{selectedType.habitat}</p>
                     </div>
-                    <div className="p-6 bg-red-50/50 rounded-3xl border border-red-100/50">
+                    <div className="p-6 bg-red-50/40 rounded-3xl border border-red-100/50">
                       <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-red-500 mb-4 shadow-sm">
                         <AlertCircle size={20} />
                       </div>
                       <h4 className="text-[10px] font-black uppercase text-red-500 mb-1 tracking-widest">{t('species.impact')}</h4>
-                      <p className="text-sm text-secondary-gray font-black leading-snug">{selectedType.impact}</p>
+                      <p className="text-sm text-secondary-gray font-bold line-clamp-2">{selectedType.impact}</p>
                     </div>
                   </div>
 
@@ -171,20 +180,16 @@ const Services = () => {
                     >
                       {t('species.cta_free')}
                     </a>
-                    <div className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                      <span className="text-[11px] font-black text-secondary-gray/50 uppercase tracking-widest">
-                        {t('species.resp_time')}
-                      </span>
-                    </div>
+                    <span className="text-[11px] font-black text-secondary-gray/40 uppercase tracking-widest">
+                      {t('species.resp_time')}
+                    </span>
                   </div>
                 </div>
               </motion.div>
             </div>
           )}
-        </AnimatePresence>,
-        document.body
-      )}
+        </AnimatePresence>
+      </SpeciesPortal>
     </section>
   );
 };
