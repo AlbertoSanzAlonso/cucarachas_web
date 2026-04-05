@@ -101,81 +101,93 @@ const Services = () => {
         </div>
       </div>
 
-      {/* Full-Screen Immersive Modal */}
+      {/* Immersive Full-Screen Species Experience */}
       <AnimatePresence>
         {selectedType && (
-          <div className="fixed inset-0 z-[3000] flex items-center justify-center overflow-hidden">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[5000] bg-white overflow-y-auto"
+          >
+            {/* Close Button - Sticky/Fixed */}
+            <button 
               onClick={() => setSelectedType(null)}
-              className="absolute inset-0 bg-secondary-gray/95 backdrop-blur-xl"
-            />
-            
-            <motion.div 
-              layoutId={selectedType.id}
-              className="relative w-full h-full lg:h-[85vh] lg:max-w-6xl lg:rounded-[3rem] bg-white shadow-2xl overflow-hidden z-10 flex flex-col lg:flex-row"
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed top-8 right-8 w-16 h-16 rounded-full bg-secondary-gray text-white hover:bg-primary-blue hover:scale-110 transition-all z-[5001] flex items-center justify-center shadow-2xl"
+              aria-label="Cerrar detalles"
             >
-              <button 
-                onClick={() => setSelectedType(null)}
-                className="absolute top-8 right-8 w-14 h-14 rounded-full bg-secondary-gray/10 text-secondary-gray hover:bg-red-500 hover:text-white transition-all z-20 flex items-center justify-center shadow-lg"
-              >
-                <X size={28} />
-              </button>
+              <X size={32} />
+            </button>
 
-              <div className="lg:w-1/2 h-[40vh] lg:h-full relative overflow-hidden">
-                <img src={selectedType.image} alt={selectedType.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/30 to-transparent" />
+            <div className="flex flex-col lg:flex-row min-h-screen">
+              {/* Cinematic Image Side */}
+              <div className="lg:w-1/2 h-[50vh] lg:h-screen lg:sticky lg:top-0">
+                <img 
+                  src={selectedType.image} 
+                  alt={selectedType.title} 
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-transparent hidden lg:block" />
               </div>
               
-              <div className="lg:w-1/2 p-8 lg:p-20 overflow-y-auto">
-                <div className="mb-10">
-                  <span className="text-primary-blue/40 font-serif italic text-xl block mb-2">{selectedType.scientificName}</span>
-                  <h2 className="text-5xl lg:text-6xl font-black text-secondary-gray mb-6 leading-tight">{selectedType.title}</h2>
-                  <div className="h-2 w-24 bg-emerald-400 rounded-full" />
-                </div>
+              {/* Content Side */}
+              <div className="lg:w-1/2 bg-white px-8 py-20 lg:p-24 xl:p-32">
+                <div className="max-w-xl mx-auto lg:mx-0">
+                  <div className="flex items-center gap-4 mb-8">
+                    <div className="h-[2px] w-12 bg-primary-blue" />
+                    <span className="text-primary-blue font-black uppercase tracking-[0.2em] text-xs">
+                      {t('species.view_sheet')}
+                    </span>
+                  </div>
 
-                <p className="text-secondary-gray text-xl leading-relaxed mb-12">
-                  {selectedType.fullDesc}
-                </p>
+                  <h2 className="text-5xl lg:text-7xl font-black text-secondary-gray mb-4 leading-none tracking-tighter">
+                    {selectedType.title}
+                  </h2>
+                  <p className="text-secondary-gray/40 font-serif italic text-2xl lg:text-3xl mb-12">
+                    {selectedType.scientificName}
+                  </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-16">
-                  <div className="flex gap-5 items-start p-6 bg-blue-50/50 rounded-[2rem] border border-blue-100">
-                    <Home className="text-primary-blue shrink-0" size={24} />
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-primary-blue mb-2 tracking-widest">{t('species.habitat')}</h4>
-                      <p className="text-base text-secondary-gray font-bold leading-snug">{selectedType.habitat}</p>
+                  <div className="prose prose-xl text-secondary-gray/80 mb-16 leading-relaxed">
+                    {selectedType.fullDesc}
+                  </div>
+
+                  {/* Technical Specs Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-20">
+                    <div className="p-8 bg-bg-light rounded-[2.5rem] border border-gray-100">
+                      <div className="w-12 h-12 bg-primary-blue/10 rounded-2xl flex items-center justify-center text-primary-blue mb-6">
+                        <Home size={24} />
+                      </div>
+                      <h4 className="text-xs font-black uppercase text-primary-blue mb-3 tracking-widest">{t('species.habitat')}</h4>
+                      <p className="text-lg text-secondary-gray font-bold leading-tight">{selectedType.habitat}</p>
+                    </div>
+                    <div className="p-8 bg-red-50/30 rounded-[2.5rem] border border-red-50">
+                      <div className="w-12 h-12 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500 mb-6">
+                        <AlertCircle size={24} />
+                      </div>
+                      <h4 className="text-xs font-black uppercase text-red-500 mb-3 tracking-widest">{t('species.impact')}</h4>
+                      <p className="text-lg text-secondary-gray font-bold leading-tight">{selectedType.impact}</p>
                     </div>
                   </div>
-                  <div className="flex gap-5 items-start p-6 bg-red-50/50 rounded-[2rem] border border-red-100">
-                    <AlertCircle className="text-red-500 shrink-0" size={24} />
-                    <div>
-                      <h4 className="text-xs font-black uppercase text-red-500 mb-2 tracking-widest">{t('species.impact')}</h4>
-                      <p className="text-base text-secondary-gray font-bold leading-snug">{selectedType.impact}</p>
-                    </div>
-                  </div>
-                </div>
 
-                <div className="flex flex-col sm:flex-row gap-6 items-center pt-10 border-t border-gray-100">
-                  <a 
-                    href="#contacto" 
-                    onClick={() => setSelectedType(null)}
-                    className="btn btn-primary w-full sm:w-auto px-10 py-5 text-lg"
-                  >
-                    <Beaker size={24} className="mr-2" /> {t('species.cta_free')}
-                  </a>
-                  <span className="text-base text-text-muted font-medium">
-                    {t('species.resp_time')}
-                  </span>
+                  {/* Final Call to Action Box */}
+                  <div className="bg-bg-light rounded-[3rem] p-10 lg:p-14 border border-gray-100 flex flex-col items-center text-center">
+                    <h3 className="text-2xl font-black text-secondary-gray mb-4">¿Detecta esta especie?</h3>
+                    <p className="text-text-muted mb-10 max-w-sm mx-auto">{t('species.desc_part1')} Intervención técnica profesional garantizada.</p>
+                    <a 
+                      href="#contacto" 
+                      onClick={() => setSelectedType(null)}
+                      className="btn btn-primary w-full py-5 text-xl shadow-xl flex gap-3 items-center justify-center"
+                    >
+                      <Beaker size={24} /> {t('species.cta_free')}
+                    </a>
+                    <span className="text-sm text-text-muted font-bold mt-6 tracking-wide">
+                      {t('species.resp_time')}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </section>
