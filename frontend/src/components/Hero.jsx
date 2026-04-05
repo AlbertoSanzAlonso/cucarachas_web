@@ -37,7 +37,7 @@ const Hero = () => {
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
-            className="lg:w-3/5"
+            className="lg:w-1/2"
           >
             <div className="flex items-center gap-3 mb-6 bg-white w-fit px-4 py-2 rounded-full shadow-sm border border-primary-blue/10">
               <ShieldCheck className="text-primary-blue" size={20} />
@@ -65,6 +65,7 @@ const Hero = () => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-gray-200/50">
+              {/* Stats items... */}
               <div className="flex items-center gap-3">
                 <div className="text-primary-blue"><Clock size={24} /></div>
                 <div>
@@ -90,47 +91,49 @@ const Hero = () => {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="lg:w-2/5 relative"
+            className="lg:w-1/2 relative"
           >
-            {/* Structural Anchor for Slider - Robust Padding Trick for 4:5 Aspect Ratio */}
-            <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 transform lg:rotate-3 w-full">
-              <div className="relative w-full rounded-[2.5rem] overflow-hidden bg-gray-50" style={{ paddingBottom: '125%' }}>
+            {/* Wider fixed slider container */}
+            <div className="relative z-10 bg-white p-3 rounded-[3.5rem] shadow-2xl border border-gray-100 w-full overflow-hidden">
+              <div className="relative w-full rounded-[2.8rem] overflow-hidden bg-gray-50" style={{ paddingBottom: '115%' }}>
                 <AnimatePresence mode="wait">
                   <motion.img 
                     key={slides[currentSlide]}
                     src={slides[currentSlide]} 
-                    alt="CECSA Pest Control Service Visualization" 
+                    alt="CECSA Control de Plagues" 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
-                    transition={{ duration: 0.7 }}
+                    transition={{ duration: 0.6 }}
                     className="absolute inset-0 w-full h-full object-cover"
                   />
                 </AnimatePresence>
 
-                {/* Overlays inside the clipped area */}
-                <div className="absolute top-6 left-6 bg-white/90 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/50 shadow-lg z-20">
-                  <p className="text-[10px] font-black uppercase text-primary-blue mb-1">{t('hero.slide_badge')}</p>
-                  <p className="text-base font-bold text-secondary-gray leading-tight">{t('hero.slide_title')} <br /> <span className="text-primary-blue">{t('hero.slide_accent')}</span></p>
-                </div>
-
-                {/* Slider indicators - Centered */}
-                <div className="absolute bottom-6 left-0 right-0 flex justify-center gap-2 z-20">
+                {/* Centered slider dots at the bottom */}
+                <div className="absolute bottom-8 left-0 right-0 flex justify-center gap-2.5 z-20">
                   {slides.map((_, idx) => (
                     <button 
                       key={idx}
                       onClick={() => setCurrentSlide(idx)}
-                      className={`h-1.5 transition-all duration-300 rounded-full ${idx === currentSlide ? 'w-8 bg-primary-blue' : 'w-2 bg-white/50 hover:bg-white'}`}
+                      style={{
+                        width: idx === currentSlide ? '32px' : '8px',
+                        height: '8px',
+                        borderRadius: '999px',
+                        background: idx === currentSlide ? '#0080bb' : 'rgba(255,255,255,0.6)',
+                        border: 'none',
+                        cursor: 'pointer',
+                        transition: 'all 300ms ease',
+                      }}
                     />
                   ))}
                 </div>
               </div>
             </div>
             
-            {/* Visual highlight */}
-            <div className="absolute -bottom-10 -right-10 w-48 h-48 bg-emerald-400/20 rounded-full blur-3xl -z-0"></div>
+            {/* Visual highlight element */}
+            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-primary-blue/10 rounded-full blur-[100px] -z-0"></div>
           </motion.div>
         </div>
       </div>
