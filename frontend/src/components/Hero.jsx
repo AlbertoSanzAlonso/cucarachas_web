@@ -52,7 +52,7 @@ const Hero = () => {
             </h2>
             
             <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
-              {t('hero.desc')}
+              {t('hero.desc_p1')} <span className="text-secondary-gray font-bold">{t('hero.desc_city')}</span> {t('hero.desc_p2')}
             </p>
             
             <div className="flex flex-wrap gap-5 mb-12">
@@ -96,18 +96,17 @@ const Hero = () => {
           >
             {/* Structural Anchor for Slider - Fixed Size */}
             <div className="relative z-10 bg-white p-4 rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden transform lg:rotate-3 aspect-[4/5] w-full">
-              <div className="relative w-full h-full overflow-hidden rounded-[2.5rem]">
+              <div className="relative w-full h-full overflow-hidden rounded-[2.5rem] bg-gray-50">
                 <AnimatePresence mode="wait">
                   <motion.img 
-                    key={currentSlide}
+                    key={slides[currentSlide]} // Using the src as key is more stable
                     src={slides[currentSlide]} 
                     alt="CECSA Pest Control Service Visualization" 
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0, scale: 1.1 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.8, ease: "easeInOut" }}
                     className="absolute inset-0 w-full h-full object-cover"
-                    loading="eager"
                   />
                 </AnimatePresence>
               </div>

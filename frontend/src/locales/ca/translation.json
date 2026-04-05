@@ -11,7 +11,9 @@
     "badge": "Especialistes en Cuques • ROESB 0246-CAT-SB",
     "title_main": "Control de Plagues",
     "title_slogan": "Ètic i Conscient",
-    "desc": "Restaurem l'equilibri del seu entorn amb precisió tècnica i total discreció. Especialistes a Barcelona per a llar, empreses i sector alimentari.",
+    "desc_p1": "Restaurem l'equilibri del seu entorn amb precisió tècnica i total discreció. Especialistes a ",
+    "desc_city": "Barcelona",
+    "desc_p2": " per a llar, empreses i sector alimentari.",
     "cta_urgent": "Urgent: Demanar Pressupost",
     "cta_identify": "Identificar Espècie",
     "stats": {
