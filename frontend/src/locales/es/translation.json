@@ -9,12 +9,12 @@
   },
   "hero": {
     "badge": "Especialistas en Cucarachas • ROESB 0246-CAT-SB",
-    "title_main": "Control de Plagas",
+    "title_main": "Control de Plagues",
     "title_slogan": "Ético y Consciente",
     "desc_p1": "Restauramos el equilibrio de su entorno con precisión técnica y total discreción. Especialistas en ",
     "desc_city": "Barcelona",
-    "desc_p2": " para hogares, empresas y sector alimentario.",
-    "cta_urgent": "Urgent: Pedir Presupuesto",
+    "desc_p2": " para hogar, empresas y sector alimentario.",
+    "cta_urgent": "Urgente: Pedir Presupuesto",
     "cta_identify": "Identificar Especie",
     "stats": {
       "intervention": "Intervención",
@@ -23,10 +23,7 @@
       "senior": "Técnicos Senior",
       "guarantee": "Garantía",
       "cert": "Certificado Oficial"
-    },
-    "slide_badge": "Tecnología de Vanguardia",
-    "slide_title": "Eliminación Sin",
-    "slide_accent": "Plazo de Seguridad"
+    }
   },
   "species": {
     "title_part1": "Especies de",
@@ -45,23 +42,50 @@
     "germanica": {
       "title": "Cucaracha Alemana",
       "shortDesc": "La plaga más común en cocinas y hostelería. Pequeña, rápida y altamente prolífica.",
-      "fullDesc": "La cucaracha alemana es el principal problema en el sector alimentario de Barcelona. Con apenas 1.5 cm, colonizan motores de electrodomésticos, cafeteras y cuadros eléctricos. En CECSA Urban Plagas utilizamos tecnología de cebado por gel que aprovecha su comportamiento social para erradicar el nido completo sin necesidad de desalojar la estancia.",
+      "fullDesc": "La cucaracha alemana es el principal problema en el sector alimentario de Barcelona. En CECSA utilizamos tecnología de cebado por gel que aprovecha su comportamiento social para erradicar el nido completo sin necesidad de desalojar la estancia.",
       "habitat": "Interiores, zonas de calor y humedad constante.",
       "impact": "Contaminación de alimentos y crisis reputacionales en negocios."
     },
     "americana": {
       "title": "Cucaracha Americana",
       "shortDesc": "La especie de mayor tamaño. De color rojizo, vuela y habita principalmente en el alcantarillado.",
-      "fullDesc": "Conocida como \"la super cucaracha\", puede alcanzar los 5 cm de longitud. Acceden a las viviendas por bajantes, desagües o volando desde el exterior. Son muy resistentes y su presencia suele indicar fallos estructurales en los cierres o en la red de saneamiento. Aplicamos tratamientos perimetrales y barreras químicas de larga duración.",
+      "fullDesc": "Conocida como \"la super cucaracha\", puede alcanzar los 5 cm. Acceden por bajantes, desagües o volando. Aplicamos tratamientos perimetrales y barreras químicas de larga durada.",
       "habitat": "Alcantarillado, cámaras de aire y falsos techos.",
       "impact": "Transmisión de patógenos bacterianos y fuerte impacto visual negativo."
     },
     "oriental": {
       "title": "Cucaracha Oriental",
       "shortDesc": "De color negro intenso, prefiere ambientes frescos y muy húmedos en plantas bajas.",
-      "fullDesc": "Asociada tradicionalmente a sumideros y zonas de tierra, la cucaracha negra u oriental es una plaga persistente que requiere un control exhaustivo de los puntos de entrada. Se desplaza más lentamente que la alemana pero su cuerpo robusto le permite sobrevivir en condiciones adversas. Nuestro enfoque combina desinsectación técnica con recomendaciones de exclusión física.",
+      "fullDesc": "Asociada a sumideros y zonas de tierra, la cucaracha negra u oriental es persistente. Nuestro enfoque combina desinsectación técnica con recomendaciones de exclusión física.",
       "habitat": "Sótanos, registros a nivel de calle y zonas de basura.",
       "impact": "Alta carga de alérgenos y contaminación por contacto en superficies."
     }
+  },
+  "about": {
+    "badge": "Nuestra Filosofía",
+    "title_part1": "Aceptar para actuar con ",
+    "title_accent": "conciencia",
+    "desc": "Fundada en Barcelona, CECSA nace de la necesidad de elevar los estándares de sanidad ambiental. No solo gestionamos plagas; entendemos el ecosistema urbano para intervenir de forma inteligente y sostenible.",
+    "quote": "Nuestra misión es restaurar el equilibrio sanitario en cada espacio, integrando tecnología punta con un profundo respeto por el entorno.",
+    "excelence_title": "Excelencia Técnica",
+    "excelence_desc": "Protocolos basados en evidencia científica aplicada.",
+    "ethics_title": "Compromiso Ético",
+    "ethics_desc": "Actuamos con consciencia ambiental y social.",
+    "cert_title": "Certificación ROESB Oficial"
+  },
+  "origen": {
+    "badge": "CECSA ORIGEN • Servicio Premium",
+    "title": "Recuperación Integral de Viviendas Ocupadas",
+    "slogan": "Transformamos espacios deteriorados en viviendas dignas, seguras y preparadas para volver a la vida.",
+    "desc": "Ofrecemos un servicio integral de recuperación de viviendas ocupadas o en estado de abandono, diseñado para aliviar la carga de los propietarios y revalorizar el inmueble de manera rápida y eficiente.",
+    "process_title": "Nos encargamos de todo el proceso:",
+    "steps": [
+      "Desalojo de mobiliario y residuos",
+      "Limpieza profunda y recuperación del espacio",
+      "Pintura y adecuación estética",
+      "Desinsectación, desratización y desinfección profesional"
+    ],
+    "guarantee": "Con la experiencia y garantía de CECSA Desinfecciones, aseguramos un resultado final impecable, eliminando cualquier riesgo sanitario y devolviendo la vivienda a su estado óptimo.",
+    "goal": "Convertir un problema en una oportunidad, recuperando el valor de tu inmueble con un servicio eficiente, discreto y de máxima calidad."
   }
 }

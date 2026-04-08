@@ -4,6 +4,7 @@ import SectorChoice from './components/SectorChoice';
 import Services from './components/Services';
 import LocalAuthority from './components/LocalAuthority';
 import About from './components/About';
+import OrigenService from './components/OrigenService';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 import PromotionBar from './components/PromotionBar';
@@ -16,10 +17,11 @@ function App() {
       <Navbar />
       <main>
         <Hero />
-        <SectorChoice />
+        <About />
+        <OrigenService />
         <Services />
         <LocalAuthority />
-        <About />
+        <SectorChoice />
         <Contact />
       </main>
       <Footer />
