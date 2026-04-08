@@ -1,109 +1,70 @@
+import { MapPin, ShieldCheck, Users, Award, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { ShieldCheck, Crosshair, HelpCircle, Award, CheckCircle2 } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+
+const stats = [
+  { label: 'Años en Barcelona', value: '+20', icon: <Award className="text-primary-blue" /> },
+  { label: 'Servicios Realizados', value: '15k', icon: <CheckCircle2 className="text-primary-blue" /> },
+  { label: 'Técnicos Expertos', value: '12', icon: <Users className="text-primary-blue" /> }
+];
 
 const LocalAuthority = () => {
-  const { t } = useTranslation();
-
-  const stats = [
-    { icon: <ShieldCheck size={28} />, label: t('authority.stats.years'), val: '+20', color: 'text-primary-blue' },
-    { icon: <Crosshair size={28} />, label: t('authority.stats.services'), val: '15k', color: 'text-primary-blue' },
-    { icon: <Users size={28} />, label: t('authority.stats.experts'), val: '12', color: 'text-primary-blue' }
-  ];
-
   return (
-    <section className="bg-white py-24 relative overflow-hidden">
-      <div className="absolute top-0 left-0 w-64 h-64 bg-primary-blue-light/5 blur-[120px] rounded-full -ml-32 -mt-32"></div>
-      
-      <div className="container relative z-10 mx-auto px-4">
-        {/* DESKTOP FORCED SIDE-BY-SIDE: Stats Left, Image Right */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-16 lg:gap-24">
-          
-          {/* Left Column: Stats and Content (40%) */}
-          <div className="w-full lg:w-[42%] text-left">
-            <div className="bg-primary-blue/5 border border-primary-blue/10 px-4 py-2 rounded-full w-fit mb-8 flex items-center gap-3">
-              <Award className="text-primary-blue" size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#3c3c3b]">AUTORITAT SANITÀRIA</span>
+    <section className="bg-white py-24">
+      <div className="container">
+        <div className="flex flex-col lg:flex-row items-center gap-16">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="lg:w-1/2"
+          >
+            <div className="inline-flex items-center gap-4 px-4 py-2 bg-primary-blue-light rounded-full text-secondary-gray text-[10px] font-black uppercase tracking-widest mb-6">
+              <MapPin size={14} className="text-primary-blue flex-shrink-0" style={{ marginRight: '8px' }} />
+              Liderazgo Local en Barcelona
             </div>
             
-            <h2 className="text-4xl lg:text-6xl font-black text-secondary-gray leading-[0.9] tracking-tighter uppercase mb-2">
-              Lideratge <span className="text-primary-blue">Local</span> a <span className="text-primary-blue">Barcelona</span>
-            </h2>
-            <p className="text-lg text-text-muted font-bold opacity-80 uppercase tracking-tight mb-12 italic">
-               Servint des de fa dècades a barris com l'Eixample, Gràcia i Sant Cugat del Vallès.
+            <h2 className="text-secondary-gray mb-8">Autoridad Sanitaria en el <span className="text-primary-blue">Área Metropolitana</span></h2>
+            
+            <p className="text-lg text-text-muted mb-10 leading-relaxed">
+              En CECSA, no solo eliminamos plagas; restauramos la seguridad sanitaria de su entorno. Somos la empresa de referencia para comunidades y negocios en <span className="text-secondary-gray font-bold">Eixample, Gràcia, y Sant Cugat</span>.
             </p>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-1 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               {stats.map((stat, idx) => (
-                <motion.div 
-                  key={idx}
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: idx * 0.1 }}
-                  className="bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm flex items-center gap-6 hover:shadow-xl hover:shadow-primary-blue/5 transition-all duration-300 group"
-                >
-                  <div className="p-4 bg-bg-light rounded-[1.8rem] text-primary-heading group-hover:bg-primary-blue group-hover:text-white transition-colors duration-300 flex-shrink-0">
-                    {stat.icon}
-                  </div>
-                  <div>
-                    <p className="text-3xl font-black text-secondary-gray leading-none mb-1">{stat.val}</p>
-                    <p className="text-[10px] font-black uppercase tracking-widest text-text-muted leading-none">{stat.label}</p>
-                  </div>
-                </motion.div>
+                <div key={idx} className="bg-bg-light p-10 rounded-[2rem] border border-gray-100 shadow-sm text-center">
+                  <div className="flex justify-center mb-6 text-primary-heading">{stat.icon}</div>
+                  <div className="text-4xl font-black text-secondary-gray mb-2">{stat.value}</div>
+                  <div className="text-[10px] font-bold text-text-muted uppercase tracking-widest">{stat.label}</div>
+                </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Illustrative Image (58%) */}
-          <div className="w-full lg:w-[58%] relative">
-             <motion.div 
-               initial={{ opacity: 0, scale: 0.95 }}
-               whileInView={{ opacity: 1, scale: 1 }}
-               viewport={{ once: true }}
-               className="relative rounded-[4rem] overflow-hidden shadow-2xl border border-gray-100 bg-bg-light"
-             >
-                <img 
-                  src="/assets/barcelona_authority.webp" 
-                  alt="Barcelona Skyline" 
-                  className="w-full h-auto grayscale-[0.3] hover:grayscale-0 transition-all duration-1000 transform hover:scale-105"
-                />
-                
-                {/* Visual Accent */}
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/20 to-transparent pointer-events-none"></div>
-                
-                <div className="absolute bottom-8 left-8 right-8 bg-white/95 backdrop-blur-md p-8 rounded-[2.5rem] shadow-xl border border-white/50 flex items-center justify-between">
-                   <div className="flex items-center gap-4">
-                     <div className="p-3 bg-secondary-gray text-white rounded-2xl">
-                       <CheckCircle2 size={24} />
-                     </div>
-                     <div className="flex flex-col">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-[#3c3c3b] opacity-60 leading-none mb-1">PROXIMITAT I</span>
-                        <span className="text-lg font-black text-[#3c3c3b] uppercase leading-none">EQUIP TÈCNIC DIRECTE</span>
-                     </div>
-                   </div>
-                   <div className="hidden sm:flex items-center gap-2">
-                      <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">Actiu Avui</span>
-                   </div>
-                </div>
-             </motion.div>
-             
-             {/* Floating Badge */}
-             <div className="absolute -top-6 -right-6 bg-primary-blue text-white p-6 rounded-full shadow-2xl font-black text-xs uppercase tracking-widest leading-tight z-20 border-4 border-white">
-                ROESB<br/>
-                0234-CAT
-             </div>
-          </div>
-
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="lg:w-1/2 relative"
+          >
+            <div className="glass rounded-[3rem] p-4 shadow-2xl relative overflow-hidden">
+              <img 
+                src="/assets/barcelona_authority.webp" 
+                alt="Barcelona Skyline Sanitary Control" 
+                className="rounded-[2.5rem] w-full h-[500px] object-cover"
+              />
+              <div className="absolute bottom-10 right-10 bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-[280px] z-20">
+                <ShieldCheck className="text-primary-blue mb-4" size={40} />
+                <p className="text-sm font-bold text-secondary-gray leading-snug">Empresa autorizada por la Generalitat de Catalunya</p>
+                <p className="text-[10px] font-black text-primary-blue mt-2 uppercase tracking-widest">ROESB: 0246-CAT-SB</p>
+              </div>
+            </div>
+            {/* Background design */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-primary-blue/5 rounded-full blur-[80px]"></div>
+          </motion.div>
         </div>
       </div>
     </section>
   );
 };
-
-const Users = ({ size }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-);
 
 export default LocalAuthority;
