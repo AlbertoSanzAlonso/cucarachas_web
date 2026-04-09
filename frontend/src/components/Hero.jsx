@@ -31,6 +31,15 @@ const Hero = () => {
       {/* Abstract background elements */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 blur-[120px] rounded-full -mr-20 -mt-20"></div>
       <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
+      
+      {/* Brand Background Element - Van */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center opacity-[0.03] grayscale">
+        <img 
+          src="/assets/cecsa_van_cutout.webp" 
+          alt="" 
+          className="w-full max-w-[1400px] object-contain rotate-[-5deg] scale-125 translate-x-1/4"
+        />
+      </div>
 
       <div className="container relative z-10">
         <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
