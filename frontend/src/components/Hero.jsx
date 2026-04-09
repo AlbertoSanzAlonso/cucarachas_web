@@ -27,7 +27,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-bg-light py-20 lg:py-32">
+    <section className="relative overflow-hidden bg-bg-light pb-20 lg:pb-32 pt-0 lg:pt-0">
       {/* Abstract background elements */}
       <div className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 blur-[120px] rounded-full -mr-20 -mt-20"></div>
       <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
