@@ -44,15 +44,15 @@ const Hero = () => {
               <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">{t('hero.badge')}</span>
             </div>
             
-            <h1 className="font-serif text-5xl lg:text-7xl font-bold text-[#3c3c3b] leading-tight mb-2 tracking-tighter">
+            <h1 className="font-sans text-5xl lg:text-8xl font-black text-[var(--secondary-gray)] leading-[0.9] mb-2 tracking-tighter uppercase">
               {t('hero.title_main')}
             </h1>
-            <h2 className="font-sans text-5xl lg:text-7xl font-black text-primary-blue leading-tight mb-8 tracking-tight">
+            <h2 className="font-sans text-4xl lg:text-7xl font-extrabold text-primary-blue leading-tight mb-8 tracking-tight">
               {t('hero.title_slogan')}
             </h2>
             
-            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed">
-              {t('hero.desc_p1')} <span className="text-secondary-gray font-bold">{t('hero.desc_city')}</span> {t('hero.desc_p2')}
+            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed font-medium">
+              {t('hero.desc_p1')}
             </p>
             
             <div className="flex flex-wrap gap-5 mb-12">
@@ -124,7 +124,7 @@ const Hero = () => {
                       width: idx === currentSlide ? '32px' : '10px',
                       height: '10px',
                       borderRadius: '999px',
-                      background: idx === currentSlide ? '#0080bb' : 'rgba(0,0,0,0.2)',
+                      background: idx === currentSlide ? 'var(--primary-blue)' : 'rgba(0,0,0,0.2)',
                       border: 'none',
                       cursor: 'pointer',
                       transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',

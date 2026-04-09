@@ -17,11 +17,13 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 
 ## 🎨 Sistema de Diseño Activo: "Sanitary Premium Clean"
 
-- **Patrón**: Trust & Authority + Conversion (verificado con ui-ux-pro-max)
-- **Fondo del Header y Footer**: Azul corporativo sólido `#0080bb`
-- **Acento / CTA**: Verde esmeralda `#34d399` (botones de presupuesto, hover de links, iconos)
-- **Texto sobre fondos azules**: Blanco puro o `rgba(255,255,255,0.65~0.85)` para jerarquía
-- **Inline styles obligatorios**: Usar siempre `style={{}}` en lugar de clases Tailwind en Navbar, Footer y FloatingCTA para garantizar compilación correcta en Vercel.
+- **Patrón**: Trust & Authority + Conversion (centralizado en `index.css`).
+- **Tokens de Marca (Variables CSS)**:
+  - **Corporativo**: `--primary-blue` (`#0080bb`), `--primary-blue-hv` (`#006fa3`).
+  - **Acción/CTA**: `--accent-green` (`#34d399`), `--accent-green-hv` (`#10b981`).
+  - **Neutrales**: `--secondary-gray` (`#3c3c3b`), `--bg-light` (`#f8fafc`).
+- **Jerarquía de Texto**: Usar `--text-white-dim` y `--text-white-muted` para contenidos secundarios sobre fondos azules.
+- **Inline styles obligatorios**: Usar siempre `style={{}}` en Navbar, Footer y FloatingCTA, PERO **siempre invocando las variables CSS** (ej: `background: 'var(--primary-blue)'`) para mantener la centralización.
 
 ## 🛠 Skills Activas
 

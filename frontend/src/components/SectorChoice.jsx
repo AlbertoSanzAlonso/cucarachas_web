@@ -18,13 +18,13 @@ const SectorChoice = () => {
           {/* Residential */}
           <motion.div 
             whileHover={{ y: -10 }}
-            className="flex flex-col bg-bg-light rounded-[2.5rem] p-10 lg:p-16 border border-gray-100 shadow-sm transition-all"
+            className="flex flex-col bg-bg-light rounded-[2.5rem] p-10 lg:p-16 border border-gray-100 shadow-sm transition-all group"
           >
-            <div className="bg-primary-blue/10 w-20 h-20 rounded-3xl flex items-center justify-center text-primary-blue mb-10">
-              <Home size={40} />
+            <div className="text-primary-blue mb-10 group-hover:scale-110 transition-transform duration-300">
+              <Home size={52} />
             </div>
-            <h3 className="text-3xl font-black text-secondary-gray mb-6 leading-tight">Hogares y <br /> Particulares</h3>
-            <p className="text-text-muted text-lg mb-10 leading-relaxed">
+            <h3 className="text-3xl font-black text-secondary-gray mb-6 leading-tight uppercase">Hogares y <br /> Particulares</h3>
+            <p className="text-text-muted text-lg mb-10 leading-relaxed font-bold opacity-80 uppercase tracking-tight">
               Protegemos su hogar y su familia con eficiencia y total discreción. Técnicos especializados en Barcelona para desinsectación inmediata de cocinas y baños.
             </p>
             <div className="mt-auto">
@@ -35,13 +35,13 @@ const SectorChoice = () => {
           {/* Business */}
           <motion.div 
             whileHover={{ y: -10 }}
-            className="flex flex-col bg-secondary-gray text-white rounded-[2.5rem] p-10 lg:p-16 shadow-2xl transition-all"
+            className="flex flex-col bg-secondary-gray text-white rounded-[2.5rem] p-10 lg:p-16 shadow-2xl transition-all group"
           >
-            <div className="bg-white/10 w-20 h-20 rounded-3xl flex items-center justify-center text-primary-blue mb-10">
-              <Building2 size={40} />
+            <div className="text-primary-blue mb-10 group-hover:scale-110 transition-transform duration-300">
+              <Building2 size={52} />
             </div>
-            <h3 className="text-3xl font-black text-white mb-6 leading-tight">Empresa y <br /> Hostelería</h3>
-            <p className="text-white text-lg mb-10 leading-relaxed font-medium">
+            <h3 className="text-3xl font-black text-white mb-6 leading-tight uppercase">Empresa y <br /> Hostelería</h3>
+            <p className="text-white/80 text-lg mb-10 leading-relaxed font-bold uppercase tracking-tight">
               Certificados oficiales en 24h. Cumplimiento ROESB garantizado para hostelería, oficinas y comunidades. Auditorías de sanidad ambiental según normativa RITE.
             </p>
             <div className="mt-auto">

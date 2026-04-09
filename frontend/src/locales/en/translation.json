@@ -9,10 +9,10 @@
   },
   "hero": {
     "badge": "Cockroach Specialists • ROESB 0246-CAT-SB",
-    "title_main": "Pest Control",
-    "title_slogan": "Ethical and Conscious",
-    "desc": "We restore the balance of your environment with technical precision and total discretion. Specialists in Barcelona for homes, businesses, and the food sector.",
-    "cta_urgent": "Urgent: Request Quote",
+    "title_main": "We eliminate cockroaches.",
+    "title_slogan": "Regain your peace of mind.",
+    "desc_p1": "Professional pest control service in Barcelona. Fast, safe intervention with a guarantee.",
+    "cta_urgent": "Urgent intervention today",
     "cta_identify": "Identify Species",
     "stats": {
       "intervention": "Intervention",
@@ -21,17 +21,20 @@
       "senior": "Senior Technicians",
       "guarantee": "Guarantee",
       "cert": "Official Certificate"
-    },
-    "slide_badge": "Cutting-edge Technology",
-    "slide_title": "Elimination Without",
-    "slide_accent": "Safety Interval"
+    }
+  },
+  "problem": {
+    "title": "Seeing cockroaches at home or in your business is not just uncomfortable…",
+    "subtitle": "it's a feeling of loss of control.",
+    "desc": "It generates stress, insecurity, and health concerns.",
+    "hook": "And what you really want is not just to eliminate them… it's to feel peaceful in your space again."
   },
   "species": {
     "title_part1": "Cockroach",
     "title_accent": "Species",
     "title_city": "in Barcelona",
     "desc_part1": "Correctly identifying the species is the first step towards definitive eradication. At ",
-    "desc_brand": "CECSA Urban Plagas",
+    "desc_brand": "CECSA Pest Control",
     "desc_part2": " we combine science with local expertise.",
     "badge": "Treatments with ROESB Certificate",
     "view_sheet": "View technical sheet",
@@ -43,23 +46,71 @@
     "germanica": {
       "title": "German Cockroach",
       "shortDesc": "The most common pest in kitchens and catering. Small, fast, and highly prolific.",
-      "fullDesc": "The German cockroach is the main concern in Barcelona's food sector. Only 1.5 cm long, they colonize appliance motors, coffee machines, and electrical panels. At CECSA Urban Plagas, we use gel-bait technology that leverages their social behavior to eradicate the entire nest without needing to evacuate the premises.",
+      "fullDesc": "The German cockroach is the main concern in Barcelona. At CECSA we use gel-bait technology to eradicate the entire nest without evacuation.",
       "habitat": "Indoors, areas of constant heat and humidity.",
       "impact": "Food contamination and reputation crises in businesses."
     },
     "americana": {
       "title": "American Cockroach",
-      "shortDesc": "The largest species. Reddish-colored, they fly and mainly inhabit sewers.",
-      "fullDesc": "Known as the \"super cockroach\", it can reach up to 5 cm in length. They access homes through pipes, drains, or by flying from the outside. They are very resilient, and their presence usually indicates structural failures in seals or the sanitation network. We apply perimeter treatments and long-lasting chemical barriers.",
+      "shortDesc": "The largest species. Reddish-colored, flies and mainly inhabits sewers.",
+      "fullDesc": "Known as the \"super cockroach\", up to 5 cm long. They access through pipes or flying. We apply long-lasting barriers.",
       "habitat": "Sewers, air chambers, and false ceilings.",
-      "impact": "Transmission of bacterial pathogens and strong negative visual impact."
+      "impact": "Transmission of bacterial pathogens and strong visual impact."
     },
     "oriental": {
       "title": "Oriental Cockroach",
-      "shortDesc": "Deep black in color, they prefer cool and very humid environments in ground floors.",
-      "fullDesc": "Traditionally associated with culverts and dirt areas, the black or Oriental cockroach is a persistent pest that requires exhaustive control of entry points. It moves slower than the German one, but its robust body allows it to survive in adverse conditions. Our approach combines technical disinsectization with physical exclusion recommendations.",
+      "shortDesc": "Deep black in color, prefers cool and humid environments.",
+      "fullDesc": "Associated with culverts and dirt areas. Our approach combines technical disinsectization with physical exclusion.",
       "habitat": "Basements, street-level manholes, and garbage areas.",
-      "impact": "High allergen load and contamination by contact on surfaces."
+      "impact": "High allergen load and contamination on surfaces."
     }
+  },
+  "about": {
+    "badge": "Our Solution",
+    "title_part1": "Effective cockroach elimination with a ",
+    "title_accent": "guarantee",
+    "desc": "At CECSA, we act quickly and precisely to completely eliminate the pest through advanced intervention protocols.",
+    "steps_title": "We intervene directly on the problem:",
+    "steps": [
+      "Professional diagnosis of the source",
+      "Specific and effective treatment",
+      "Safe products for people and pets",
+      "Follow-up to prevent recurrence"
+    ],
+    "hook": "We ensure the problem truly disappears.",
+    "excelence_title": "Total control",
+    "excelence_desc": "We know where to act and how to do it for final results.",
+    "ethics_title": "Safety",
+    "ethics_desc": "Safe and professional treatments for your environment.",
+    "cert_title": "Peace of mind"
+  },
+  "method": {
+    "title": "Our definitive control method",
+    "steps": [
+      { "title": "Inspection", "desc": "We detect the real origin of the source." },
+      { "title": "Treatment", "desc": "Direct elimination of the pest." },
+      { "title": "Follow-up", "desc": "We ensure it never returns." },
+      { "title": "Prevention", "desc": "We help you avoid future infestations." }
+    ]
+  },
+  "origen": {
+    "badge": "CECSA ORIGEN • Premium Service",
+    "title": "Comprehensive Recovery of Squatted Homes",
+    "slogan": "We transform deteriorated spaces into dignified, safe homes ready for life again.",
+    "desc": "We offer a comprehensive recovery service for squatted or abandoned homes, designed to relieve the burden on owners and revaluate the property.",
+    "process_title": "We take care of the entire process:",
+    "steps": [
+      "Removal of furniture and waste",
+      "Deep cleaning and space recovery",
+      "Painting and aesthetic adaptation",
+      "Professional disinfection"
+    ],
+    "guarantee": "With the experience and guarantee of CECSA Desinfeccions, we ensure an impeccable final result.",
+    "goal": "Turning a problem into an opportunity, recovering the value of your property with a high-quality service."
+  },
+  "contact_section": {
+    "title": "Have cockroaches? Act today.",
+    "subtitle": "The sooner you act, the easier it is to eliminate them.",
+    "cta": "Contact CECSA now"
   }
 }

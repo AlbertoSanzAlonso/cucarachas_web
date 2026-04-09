@@ -27,8 +27,8 @@ const Footer = () => {
   return (
     <footer
       style={{
-        background: '#0080bb',
-        color: 'rgba(255,255,255,0.85)',
+        background: 'var(--primary-blue)',
+        color: 'var(--text-white-dim)',
         padding: '72px 0 0',
       }}
     >
@@ -64,8 +64,8 @@ const Footer = () => {
                 style={{ height: '40px', width: 'auto', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
               />
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                <span style={{ fontSize: '22px', fontWeight: 900, color: 'white', letterSpacing: '-0.04em', lineHeight: 1 }}>CECSA</span>
-                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', color: '#34d399', textTransform: 'uppercase', lineHeight: 1 }}>Control de Plagas</span>
+                <span style={{ fontSize: '22px', fontWeight: 900, color: 'var(--text-white)', letterSpacing: '-0.04em', lineHeight: 1 }}>CECSA</span>
+                <span style={{ fontSize: '10px', fontWeight: 700, letterSpacing: '0.18em', color: 'var(--accent-green)', textTransform: 'uppercase', lineHeight: 1 }}>Control de Plagas</span>
               </div>
             </a>
 
@@ -88,7 +88,7 @@ const Footer = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    color: 'white',
+                    color: 'var(--text-white)',
                     textDecoration: 'none',
                     transition: 'background 200ms, transform 150ms',
                     flexShrink: 0,
@@ -112,9 +112,9 @@ const Footer = () => {
                 <li key={link.title}>
                   <a
                     href={link.href}
-                    style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', textDecoration: 'none', transition: 'color 200ms' }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#34d399'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+                    style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white-dim)', textDecoration: 'none', transition: 'color 200ms' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-green)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--text-white-dim)'}
                   >
                     {link.title}
                   </a>
@@ -133,9 +133,9 @@ const Footer = () => {
                 <li key={service}>
                   <a
                     href="#servicios"
-                    style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.65)', textDecoration: 'none', transition: 'color 200ms' }}
-                    onMouseEnter={e => e.currentTarget.style.color = '#34d399'}
-                    onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.65)'}
+                    style={{ fontSize: '14px', fontWeight: 600, color: 'var(--text-white-dim)', textDecoration: 'none', transition: 'color 200ms' }}
+                    onMouseEnter={e => e.currentTarget.style.color = 'var(--accent-green)'}
+                    onMouseLeave={e => e.currentTarget.style.color = 'var(--text-white-dim)'}
                   >
                     {service}
                   </a>
@@ -162,26 +162,26 @@ const Footer = () => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <ShieldCheck size={20} style={{ color: '#34d399', flexShrink: 0 }} />
-                <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'white', lineHeight: 1.4 }}>
+                <ShieldCheck size={20} style={{ color: 'var(--accent-green)', flexShrink: 0 }} />
+                <span style={{ fontSize: '10px', fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text-white)', lineHeight: 1.4 }}>
                   {t('hero.stats.accre')}<br />ROESB: 0246-CAT-SB
                 </span>
               </div>
-              <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, margin: 0 }}>
+              <p style={{ fontSize: '11px', color: 'var(--text-white-muted)', lineHeight: 1.6, margin: 0 }}>
                 {t('hero.badge')}
               </p>
             </div>
 
             {/* Contact mini */}
             <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px', alignItems: 'flex-start' }}>
-              <a href="tel:933309169" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
-                <Phone size={14} style={{ color: '#34d399' }} /> 933 309 169
+              <a href="tel:933309169" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-white-dim)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                <Phone size={14} style={{ color: 'var(--accent-green)' }} /> 933 309 169
               </a>
-              <a href="mailto:info@cecsa.es" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
-                <Mail size={14} style={{ color: '#34d399' }} /> info@cecsa.es
+              <a href="mailto:info@cecsa.es" style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-white-dim)', textDecoration: 'none', fontSize: '13px', fontWeight: 600 }}>
+                <Mail size={14} style={{ color: 'var(--accent-green)' }} /> info@cecsa.es
               </a>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'rgba(255,255,255,0.7)', fontSize: '13px', fontWeight: 600 }}>
-                <MapPin size={14} style={{ color: '#34d399' }} /> Barcelona, Àrea Metropolitana
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-white-dim)', fontSize: '13px', fontWeight: 600 }}>
+                <MapPin size={14} style={{ color: 'var(--accent-green)' }} /> Barcelona, Àrea Metropolitana
               </div>
             </div>
           </div>
@@ -192,13 +192,13 @@ const Footer = () => {
 
       <div
         style={{
-          background: 'rgba(0,0,0,0.28)',
+          background: 'var(--bg-dark-strip)',
           padding: '18px 0',
           marginTop: '0',
         }}
       >
         <div className="container" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: '16px' }}>
-          <p style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255,255,255,0.45)', margin: 0 }}>
+          <p style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-white-muted)', margin: 0 }}>
             © {new Date().getFullYear()} CECSA Control de Plagas. Tots els drets reservats.
           </p>
           <div style={{ display: 'flex', gap: '28px' }}>
@@ -211,12 +211,12 @@ const Footer = () => {
                   fontWeight: 700,
                   letterSpacing: '0.12em',
                   textTransform: 'uppercase',
-                  color: 'rgba(255,255,255,0.4)',
+                  color: 'var(--text-white-muted)',
                   textDecoration: 'none',
                   transition: 'color 200ms',
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = 'rgba(255,255,255,0.8)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.4)'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--text-white-dim)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-white-muted)'}
               >
                 {item}
               </a>

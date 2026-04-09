@@ -9,12 +9,10 @@
   },
   "hero": {
     "badge": "Especialistas en Cucarachas • ROESB 0246-CAT-SB",
-    "title_main": "Control de Plagas",
-    "title_slogan": "Ético y Consciente",
-    "desc_p1": "Restauramos el equilibrio de su entorno con precisión técnica y total discreción. Especialistas en ",
-    "desc_city": "Barcelona",
-    "desc_p2": " para hogares, empresas y sector alimentario.",
-    "cta_urgent": "Urgent: Pedir Presupuesto",
+    "title_main": "Eliminamos las cucarachas.",
+    "title_slogan": "Recupera la tranquilidad.",
+    "desc_p1": "Servicio profesional de control de plagas en Barcelona. Intervención rápida, segura y con garantía.",
+    "cta_urgent": "Intervención urgente hoy mismo",
     "cta_identify": "Identificar Especie",
     "stats": {
       "intervention": "Intervención",
@@ -23,17 +21,20 @@
       "senior": "Técnicos Senior",
       "guarantee": "Garantía",
       "cert": "Certificado Oficial"
-    },
-    "slide_badge": "Tecnología de Vanguardia",
-    "slide_title": "Eliminación Sin",
-    "slide_accent": "Plazo de Seguridad"
+    }
+  },
+  "problem": {
+    "title": "Ver cucarachas en casa o en tu negocio no es solo incómodo…",
+    "subtitle": "es una sensación de pérdida de control.",
+    "desc": "Genera estrés, inseguridad y preocupación por la salud.",
+    "hook": "Y lo que realmente quieres no es solo eliminarlas… es volver a sentirte tranquilo en tu espacio."
   },
   "species": {
     "title_part1": "Especies de",
     "title_accent": "Cucarachas",
     "title_city": "en Barcelona",
     "desc_part1": "Identificar correctamente la especie es el primer paso para una erradicación definitiva. En ",
-    "desc_brand": "CECSA Urban Plagas",
+    "desc_brand": "CECSA Control de Plagas",
     "desc_part2": " combinamos ciencia y experiencia local.",
     "badge": "Tratamientos con Certificado ROESB",
     "view_sheet": "Ver ficha técnica",
@@ -45,23 +46,71 @@
     "germanica": {
       "title": "Cucaracha Alemana",
       "shortDesc": "La plaga más común en cocinas y hostelería. Pequeña, rápida y altamente prolífica.",
-      "fullDesc": "La cucaracha alemana es el principal problema en el sector alimentario de Barcelona. Con apenas 1.5 cm, colonizan motores de electrodomésticos, cafeteras y cuadros eléctricos. En CECSA Urban Plagas utilizamos tecnología de cebado por gel que aprovecha su comportamiento social para erradicar el nido completo sin necesidad de desalojar la estancia.",
+      "fullDesc": "La cucaracha alemana es el principal problema en el sector alimentario de Barcelona. En CECSA utilizamos tecnología de cebado por gel que aprovecha su comportamiento social para erradicar el nido completo sin necesidad de desalojar la estancia.",
       "habitat": "Interiores, zonas de calor y humedad constante.",
       "impact": "Contaminación de alimentos y crisis reputacionales en negocios."
     },
     "americana": {
       "title": "Cucaracha Americana",
       "shortDesc": "La especie de mayor tamaño. De color rojizo, vuela y habita principalmente en el alcantarillado.",
-      "fullDesc": "Conocida como \"la super cucaracha\", puede alcanzar los 5 cm de longitud. Acceden a las viviendas por bajantes, desagües o volando desde el exterior. Son muy resistentes y su presencia suele indicar fallos estructurales en los cierres o en la red de saneamiento. Aplicamos tratamientos perimetrales y barreras químicas de larga duración.",
+      "fullDesc": "Conocida como \"la super cucaracha\", puede alcanzar los 5 cm. Acceden por bajantes, desagües o volando. Aplicamos tratamientos perimetrales y barreras químicas de larga duración.",
       "habitat": "Alcantarillado, cámaras de aire y falsos techos.",
       "impact": "Transmisión de patógenos bacterianos y fuerte impacto visual negativo."
     },
     "oriental": {
       "title": "Cucaracha Oriental",
       "shortDesc": "De color negro intenso, prefiere ambientes frescos y muy húmedos en plantas bajas.",
-      "fullDesc": "Asociada tradicionalmente a sumideros y zonas de tierra, la cucaracha negra u oriental es una plaga persistente que requiere un control exhaustivo de los puntos de entrada. Se desplaza más lentamente que la alemana pero su cuerpo robusto le permite sobrevivir en condiciones adversas. Nuestro enfoque combina desinsectación técnica con recomendaciones de exclusión física.",
+      "fullDesc": "Asociada a sumideros y zonas de tierra, la cucaracha negra u oriental es persistente. Nuestro enfoque combina desinsectación técnica con recomendaciones de exclusión física.",
       "habitat": "Sótanos, registros a nivel de calle y zonas de basura.",
       "impact": "Alta carga de alérgenos y contaminación por contacto en superficies."
     }
+  },
+  "about": {
+    "badge": "Nuestra Solución",
+    "title_part1": "Eliminación efectiva de cucarachas con ",
+    "title_accent": "garantía",
+    "desc": "En CECSA, actuamos de manera rápida y precisa para eliminar completamente la plaga mediante protocolos avanzados de intervención.",
+    "steps_title": "Intervenimos directamente sobre el problema:",
+    "steps": [
+      "Diagnóstico profesional del foco",
+      "Tratamiento específico y eficaz",
+      "Productos seguros para personas y mascotas",
+      "Seguimiento para evitar reapariciones"
+    ],
+    "hook": "Nos aseguramos de que el problema desaparezca de verdad.",
+    "excelence_title": "Control total",
+    "excelence_desc": "Sabemos dónde actuar y cómo hacerlo para resultados definitivos.",
+    "ethics_title": "Seguridad",
+    "ethics_desc": "Tratamientos seguros y profesionales para tu entorno.",
+    "cert_title": "Tranquilidad"
+  },
+  "method": {
+    "title": "Nuestro método de control definitivo",
+    "steps": [
+      { "title": "Inspección", "desc": "Detectamos el origen real del foco." },
+      { "title": "Tratamiento", "desc": "Eliminación directa de la plaga." },
+      { "title": "Seguimiento", "desc": "Aseguramos que no vuelva nunca más." },
+      { "title": "Prevención", "desc": "Te ayudamos a evitar futuras infestaciones." }
+    ]
+  },
+  "origen": {
+    "badge": "CECSA ORIGEN • Servicio Premium",
+    "title": "Recuperación Integral de Viviendas Ocupadas",
+    "slogan": "Transformamos espacios deteriorados en viviendas dignas, seguras y preparadas para volver a la vida.",
+    "desc": "Ofrecemos un servicio integral de recuperación de viviendas ocupadas o en estado de abandono, diseñado para aliviar la carga de los propietarios y revalorizar el inmueble de manera rápida y eficiente.",
+    "process_title": "Nos encargamos de todo el proceso:",
+    "steps": [
+      "Desalojo de mobiliario y residuos",
+      "Limpieza profunda y recuperación del espacio",
+      "Pintura y adecuación estética",
+      "Desinsectación, desratización y desinfección profesional"
+    ],
+    "guarantee": "Con la experiencia y garantía de CECSA Desinfecciones, aseguramos un resultado final impecable, eliminando cualquier riesgo sanitario y devolviendo la vivienda a su estado óptimo.",
+    "goal": "Convertir un problema en una oportunidad, recuperando el valor de tu inmueble con un servicio eficiente, discreto y de máxima calidad."
+  },
+  "contact_section": {
+    "title": "¿Tienes cucarachas? Actúa hoy.",
+    "subtitle": "Cuanto antes actúes, más fácil es eliminarlas.",
+    "cta": "Contacta con CECSA ahora"
   }
 }

@@ -1,8 +1,10 @@
 import { Phone, Mail, MapPin, Send, ShieldCheck, Clock, CheckCircle2 } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const Contact = () => {
+  const { t } = useTranslation();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -71,18 +73,18 @@ const Contact = () => {
               Compromiso de Calidad Sanitaria
             </div>
             
-            <h2 className="text-5xl lg:text-7xl font-black text-secondary-gray leading-none mb-10 tracking-tighter">
-              Solicite su <span className="text-primary-blue">Presupuesto</span> Técnico
+            <h2 className="text-5xl lg:text-7xl font-black text-secondary-gray leading-[0.9] mb-10 tracking-tighter uppercase">
+              {t('contact_section.title')}
             </h2>
             
-            <p className="text-xl text-text-muted mb-12 leading-relaxed">
-              Obtenga un diagnóstico preliminar y presupuesto detallado para la eliminación garantizada de plagas.
+            <p className="text-xl text-text-muted mb-12 leading-relaxed font-bold opacity-80 uppercase tracking-tight">
+              {t('contact_section.subtitle')}
             </p>
 
             <div className="space-y-10">
               <div className="flex items-start gap-8 group">
                 <div className="w-16 h-16 rounded-[1.5rem] bg-bg-light flex items-center justify-center text-primary-heading group-hover:bg-primary-blue group-hover:text-white transition-all shadow-sm border border-gray-100">
-                  <Phone size={28} />
+                  <Phone size={36} />
                 </div>
                 <div>
                   <div className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-1">Línea de Urgencia 24h</div>
@@ -92,11 +94,11 @@ const Contact = () => {
 
               <div className="flex items-start gap-8 group">
                 <div className="w-16 h-16 rounded-[1.5rem] bg-bg-light flex items-center justify-center text-primary-heading group-hover:bg-primary-blue group-hover:text-white transition-all shadow-sm border border-gray-100">
-                  <Clock size={28} />
+                  <Clock size={36} />
                 </div>
                 <div>
                   <div className="text-[10px] font-black text-text-muted uppercase tracking-[0.2em] mb-1">Servicio Inmediato</div>
-                  <div className="text-2xl font-bold text-secondary-gray">Lunes a Domingo — 24h</div>
+                  <div className="text-2xl font-bold text-secondary-gray uppercase">{t('nav.emergencies')}</div>
                 </div>
               </div>
             </div>
@@ -118,16 +120,16 @@ const Contact = () => {
                     <input
                       type="text"
                       required
-                      placeholder="Nombre y apellidos"
+                      placeholder="Ej: Marc García"
                       style={fieldStyle}
                     />
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Teléfono</label>
+                    <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Teléfono de contacto</label>
                     <input
                       type="tel"
                       required
-                      placeholder="93x xxx xxx"
+                      placeholder="933 000 000"
                       style={fieldStyle}
                     />
                   </div>
@@ -139,29 +141,29 @@ const Contact = () => {
                   <input
                     type="email"
                     required
-                    placeholder="email@empresa.com"
+                    placeholder="ejemplo@correo.com"
                     style={fieldStyle}
                   />
                 </div>
 
                 {/* Service select */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Tipo de Servicio</label>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Motivo de la cita</label>
                   <select style={{ ...fieldStyle, appearance: 'none', cursor: 'pointer' }}>
-                    <option>Desinsectación (Cucarachas, Chinches...)</option>
-                    <option>Desratización (Ratones, Ratas)</option>
-                    <option>Tratamientos de Madera (Termitas, Carcoma)</option>
-                    <option>Otros Servicios</option>
+                    <option>Eliminación de Panerolas (Urgente)</option>
+                    <option>Inspección y Diagnóstico Técnico</option>
+                    <option>Presupuesto Preventivo (Hostelería/Negocios)</option>
+                    <option>Recuperación Integral (CECSA Origen)</option>
                   </select>
                 </div>
 
                 {/* Textarea */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Descripción del Problema</label>
+                  <label style={{ fontSize: '11px', fontWeight: 800, color: '#3c3c3b', textTransform: 'uppercase', letterSpacing: '0.15em' }}>Descripción del problema</label>
                   <textarea
                     rows="4"
                     required
-                    placeholder="Detalle la situación..."
+                    placeholder="Cuéntenos su situación para un mejor diagnóstico..."
                     style={{ ...fieldStyle, resize: 'none', lineHeight: '1.6' }}
                   />
                 </div>
@@ -209,7 +211,7 @@ const Contact = () => {
                     <span style={{ width: '28px', height: '28px', border: '4px solid rgba(255,255,255,0.3)', borderTop: '4px solid white', borderRadius: '50%', animation: 'spin 0.8s linear infinite', display: 'inline-block' }} />
                   ) : (
                     <>
-                      Solicitar Presupuesto Gratuito
+                      {t('contact_section.cta')}
                       <Send size={22} />
                     </>
                   )}

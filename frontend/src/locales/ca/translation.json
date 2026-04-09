@@ -9,12 +9,10 @@
   },
   "hero": {
     "badge": "Especialistes en Cuques • ROESB 0246-CAT-SB",
-    "title_main": "Control de Plagues",
-    "title_slogan": "Ètic i Conscient",
-    "desc_p1": "Restaurem l'equilibri del seu entorn amb precisió tècnica i total discreció. Especialistes a ",
-    "desc_city": "Barcelona",
-    "desc_p2": " per a llar, empreses i sector alimentari.",
-    "cta_urgent": "Urgent: Demanar Pressupost",
+    "title_main": "Eliminem les paneroles.",
+    "title_slogan": "Recupera la tranquil·litat.",
+    "desc_p1": "Servei professional de control de plagues a Barcelona. Intervenció ràpida, segura i amb garantia.",
+    "cta_urgent": "Intervenció urgent avui mateix",
     "cta_identify": "Identificar Espècie",
     "stats": {
       "intervention": "Intervenció",
@@ -23,17 +21,20 @@
       "senior": "Tècnics Sènior",
       "guarantee": "Garantia",
       "cert": "Certificat Oficial"
-    },
-    "slide_badge": "Tecnologia de Vanguarda",
-    "slide_title": "Eliminació Sense",
-    "slide_accent": "Termini de Seguretat"
+    }
+  },
+  "problem": {
+    "title": "Veure paneroles a casa o al teu negoci no és només incòmode…",
+    "subtitle": "és una sensació de pèrdua de control.",
+    "desc": "Genera estrès, inseguretat i preocupació per la salut.",
+    "hook": "I el que realment vols no és només eliminar-les… és tornar a sentir-te tranquil al teu espai."
   },
   "species": {
     "title_part1": "Espècies de",
-    "title_accent": "Cuques",
+    "title_accent": "Paneroles",
     "title_city": "a Barcelona",
     "desc_part1": "Identificar correctament l'espècie és el primer pas per a una eradicació definitiva. A ",
-    "desc_brand": "CECSA Urban Plagas",
+    "desc_brand": "CECSA Control de Plagues",
     "desc_part2": " combinem ciència i experiència local.",
     "badge": "Tractaments amb Certificat ROESB",
     "view_sheet": "Veure fitxa tècnica",
@@ -45,23 +46,71 @@
     "germanica": {
       "title": "Cuca Alemanya",
       "shortDesc": "La plaga més comuna en cuines i hostaleria. Petita, ràpida i altament prolífica.",
-      "fullDesc": "La cuca alemanya és el principal problema en el sector alimentari de Barcelona. Amb prou feines 1.5 cm, colonitzen motors d'electrodomèstics, cafeteres i quadres elèctrics. A CECSA Urban Plagas utilitzem tecnologia de cibada per gel que aprofita el seu comportament social per erradicar el niu complet sense necessitat de desallotjar l'estança.",
+      "fullDesc": "La cuca alemanya és el principal problema en el sector alimentari de Barcelona. Amb prou feines 1.5 cm, colonitzen motors d'electrodomèstics, cafeteres i quadres elèctrics. A CECSA utilitzem tecnologia de cibada per gel que aprofita el seu comportament social per erradicar el niu complet sense necessitat de desallotjar l'estança.",
       "habitat": "Interiors, zones de calor i humitat constant.",
       "impact": "Contaminació d'aliments i crisis reputacionals en negocis."
     },
     "americana": {
       "title": "Cuca Americana",
       "shortDesc": "L'espècie de major volum. De color vermellós, vola i habita principalment al clavegueram.",
-      "fullDesc": "Coneguda com la \"super cuca\", pot arribar als 5 cm de longitud. Accedeixen als habitatges per baixants, desguassos o volant des de l'exterior. Són molt resistents i la seva presència sol indicar fallades estructurals en els tancaments o en la xarxa de sanejament. Apliquem tractaments perimetrals i barreres químiques de llarga durada.",
+      "fullDesc": "Coneguda com la \"super cuca\", pot arribar als 5 cm de longitud. Accedeixen als habitatges per baixants, desguassos o volant des de l'exterior. Apliquem tractaments perimetrals i barreres químiques de llarga durada.",
       "habitat": "Clavegueram, càmeres d'aire i falsos sostres.",
       "impact": "Transmissió de patògens bacterians i fort impacte visual negatiu."
     },
     "oriental": {
       "title": "Cuca Oriental",
       "shortDesc": "De color negre intens, prefereix ambients frescos i molt humits en plantes baixes.",
-      "fullDesc": "Associada tradicionalment a claveguerons i zones de terra, la cuca negra o oriental és una plaga persistent que requereix un control exhaustiu dels punts d'entrada. Es desplaça més lentament que l'alemanya però el seu cos robust li permet sobreviure en condicions adverses. El nostre enfocament combina desinsectació tècnica amb recomanacions d'exclusió física.",
+      "fullDesc": "Associada tradicionalment a claveguerons i zones de terra, la cuca negra o oriental és una plaga persistent que requereix un control exhaustiu dels punts d'entrada. El nostre enfocament combina desinsectació tècnica amb recomanacions d'exclusió física.",
       "habitat": "Soterranis, registres a nivell de carrer i zones d'escombraries.",
       "impact": "Alta càrrega d'al·lergògens i contaminació per contacte en superfícies."
     }
+  },
+  "about": {
+    "badge": "La Nostra Solució",
+    "title_part1": "Eliminació efectiva de paneroles amb ",
+    "title_accent": "garantia",
+    "desc": "A CECSA, actuem de manera ràpida i precisa per eliminar completament la plaga mitjançant protocols avançats d'intervenció.",
+    "steps_title": "Intervenim directament sobre el problema:",
+    "steps": [
+      "Diagnosi professional del focus",
+      "Tractament específic i eficaç",
+      "Productes segurs per a persones i mascotes",
+      "Seguiment per evitar reaparicions"
+    ],
+    "hook": "Ens assegurem que el problema desaparegui de veritat.",
+    "excelence_title": "Control total",
+    "excelence_desc": "Sabem on actuar i com fer-ho per a resultats definitius.",
+    "ethics_title": "Seguretat",
+    "ethics_desc": "Tractaments segurs i professionals per al teu entorn.",
+    "cert_title": "Tranquil·litat"
+  },
+  "method": {
+    "title": "El nostre mètode de control definitiu",
+    "steps": [
+      { "title": "Inspecció", "desc": "Detectem l’origen real del focus." },
+      { "title": "Tractament", "desc": "Eliminació directa de la plaga." },
+      { "title": "Seguiment", "desc": "Assegurem que no torni mai més." },
+      { "title": "Prevenció", "desc": "T’ajudem a evitar futures infestacions." }
+    ]
+  },
+  "origen": {
+    "badge": "CECSA ORIGEN • Servei Premium",
+    "title": "Recuperació Integral d’Habitatges Ocupats",
+    "slogan": "Transformem espais deteriorats en habitatges dignes, segurs i preparats per tornar a la vida.",
+    "desc": "Oferim un servei integral de recuperació d’habitatges ocupats o en estat d’abandonament, dissenyat per alleujar la càrrega dels propietaris i revaloritzar l’immoble de manera ràpida i eficient.",
+    "process_title": "Ens encarreguem de tot el procés:",
+    "steps": [
+      "Desallotjament de mobiliari i residus",
+      "Neteja profunda i recuperació de l’espai",
+      "Pintura i adequació estètica",
+      "Desinsectació, desratització i desinfecció professional"
+    ],
+    "guarantee": "Amb l’experiència i garantia de CECSA Desinfeccions, assegurem un resultat final impecable, eliminant qualsevol risc sanitari i retornant l’habitatge al seu estat òptim.",
+    "goal": "Convertir un problema en una oportunitat, recuperant el valor del teu immoble amb un servei eficient, discret i de màxima qualitat."
+  },
+  "contact_section": {
+    "title": "Tens paneroles? Actua avui.",
+    "subtitle": "Com més aviat actuïs, més fàcil és eliminar-les.",
+    "cta": "Contacta amb CECSA ara"
   }
 }

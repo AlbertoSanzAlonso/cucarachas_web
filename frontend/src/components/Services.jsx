@@ -152,8 +152,8 @@ const Services = () => {
                   style={{
                     position: 'absolute', top: '1.5rem', right: '1.5rem',
                     width: '3rem', height: '3rem',
-                    borderRadius: '50%', backgroundColor: '#fff',
-                    color: '#3c3c3b', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    borderRadius: '50%', backgroundColor: 'var(--bg-white)',
+                    color: 'var(--secondary-gray)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     border: '1px solid rgba(0,0,0,0.05)', cursor: 'pointer', zIndex: 110,
                     boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
                   }}
@@ -166,7 +166,7 @@ const Services = () => {
                   style={{ 
                     width: window.innerWidth > 991 ? '55%' : '100%', 
                     height: window.innerWidth > 991 ? '100%' : 'auto', 
-                    backgroundColor: '#ffffff', // CHANGED TO WHITE AS REQUESTED
+                    backgroundColor: 'var(--bg-white)',
                     flexShrink: 0,
                     display: 'flex',
                     alignItems: 'center',
@@ -238,7 +238,7 @@ const Services = () => {
                       href="#contacto" 
                       onClick={closeModal} 
                       className="btn btn-primary px-10 py-4 text-lg font-black w-full text-center shadow-[0_15px_40px_-10px_rgba(52,211,153,0.4)] bg-emerald-500 hover:bg-emerald-600 !border-none" 
-                      style={{ backgroundColor: '#34d399' }}
+                      style={{ backgroundColor: 'var(--accent-green)', color: 'var(--accent-green-dark)' }}
                     >
                       SOL·LICITAR TRACTAMENT
                     </a>

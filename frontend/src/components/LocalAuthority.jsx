@@ -2,9 +2,9 @@ import { MapPin, ShieldCheck, Users, Award, CheckCircle2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const stats = [
-  { label: 'Años en Barcelona', value: '+20', icon: <Award className="text-primary-blue" /> },
-  { label: 'Servicios Realizados', value: '15k', icon: <CheckCircle2 className="text-primary-blue" /> },
-  { label: 'Técnicos Expertos', value: '12', icon: <Users className="text-primary-blue" /> }
+  { label: 'Años en Barcelona', value: '+20', icon: <Award size={42} className="text-primary-blue" /> },
+  { label: 'Servicios Realizados', value: '15k', icon: <CheckCircle2 size={42} className="text-primary-blue" /> },
+  { label: 'Técnicos Expertos', value: '12', icon: <Users size={42} className="text-primary-blue" /> }
 ];
 
 const LocalAuthority = () => {
@@ -53,7 +53,7 @@ const LocalAuthority = () => {
                 className="rounded-[2.5rem] w-full h-[500px] object-cover"
               />
               <div className="absolute bottom-10 right-10 bg-white p-8 rounded-3xl shadow-xl border border-gray-100 max-w-[280px] z-20">
-                <ShieldCheck className="text-primary-blue mb-4" size={40} />
+                <ShieldCheck className="text-primary-blue mb-4" size={48} />
                 <p className="text-sm font-bold text-secondary-gray leading-snug">Empresa autorizada por la Generalitat de Catalunya</p>
                 <p className="text-[10px] font-black text-primary-blue mt-2 uppercase tracking-widest">ROESB: 0246-CAT-SB</p>
               </div>

@@ -49,6 +49,7 @@ const Navbar = () => {
         boxShadow: scrollProgress > 0.1 ? `0 4px ${20 * scrollProgress}px rgba(0,0,0,${0.06 + scrollProgress * 0.14})` : 'none',
         padding: scrollProgress > 0.8 ? '10px 0' : '14px 0',
         transition: 'padding 300ms',
+        backgroundColor: `rgba(0, 128, 187, ${1 - scrollProgress * 0.20})`,
       }}
     >
       {/* Top trust bar — only when not scrolled */}
@@ -70,8 +71,8 @@ const Navbar = () => {
             <div className="container flex items-center justify-between">
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1.5">
-                  <ShieldCheck size={12} style={{ color: '#34d399' }} />
-                  <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.75)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+                  <ShieldCheck size={12} style={{ color: 'var(--accent-green)' }} />
+                  <span style={{ fontSize: '10px', color: 'var(--text-white-dim)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
                     Empresa autoritzada Generalitat de Catalunya
                   </span>
                 </div>
@@ -104,9 +105,9 @@ const Navbar = () => {
                    ))}
                  </div>
                 <div className="flex items-center gap-1.5">
-                  <Phone size={11} style={{ color: '#34d399' }} />
+                  <Phone size={11} style={{ color: 'var(--accent-green)' }} />
                   <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
-                    {t('nav.emergencies')}: <a href="tel:933309169" style={{ color: 'white', textDecoration: 'none', fontWeight: 800 }}>933 309 169</a>
+                    {t('nav.emergencies')}: <a href="tel:933309169" style={{ color: 'var(--text-white)', textDecoration: 'none', fontWeight: 800 }}>933 309 169</a>
                   </span>
                 </div>
               </div>
@@ -134,8 +135,8 @@ const Navbar = () => {
             />
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-            <span style={{ fontSize: '26px', fontWeight: 900, color: 'white', letterSpacing: '-0.02em', lineHeight: 1 }}>CECSA</span>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.15em', color: '#34d399', textTransform: 'uppercase', lineHeight: 1 }}>Control de Plagas</span>
+            <span style={{ fontSize: '26px', fontWeight: 900, color: 'var(--text-white)', letterSpacing: '-0.02em', lineHeight: 1 }}>CECSA</span>
+            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.15em', color: 'var(--accent-green)', textTransform: 'uppercase', lineHeight: 1 }}>Control de Plagas</span>
           </div>
         </a>
 
@@ -148,14 +149,14 @@ const Navbar = () => {
               style={{
                 fontSize: '14px',
                 fontWeight: 700,
-                color: 'rgba(255,255,255,0.82)',
+                color: 'var(--text-white-dim)',
                 textDecoration: 'none',
                 letterSpacing: '0.01em',
                 transition: 'color 200ms',
                 cursor: 'pointer',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#fff'}
-              onMouseLeave={e => e.currentTarget.style.color = 'rgba(255,255,255,0.82)'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-white)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-white-dim)'}
             >
               {link.title}
             </a>
@@ -186,7 +187,7 @@ const Navbar = () => {
               onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
               onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
             >
-              <Globe size={14} style={{ color: '#34d399' }} />
+              <Globe size={14} style={{ color: 'var(--accent-green)' }} />
               {currentLang.code.toUpperCase()}
             </button>
             
@@ -243,10 +244,10 @@ const Navbar = () => {
           </div>
 
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.55)', letterSpacing: '0.12em', textTransform: 'uppercase', lineHeight: 1 }}>{t('nav.emergencies')}</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-white-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', lineHeight: 1 }}>{t('nav.emergencies')}</span>
             <a
               href="tel:933309169"
-              style={{ fontSize: '20px', fontWeight: 900, color: 'white', textDecoration: 'none', lineHeight: 1 }}
+              style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-white)', textDecoration: 'none', lineHeight: 1 }}
             >
               933 309 169
             </a>
@@ -254,20 +255,20 @@ const Navbar = () => {
           <a
             href="#contacto"
             style={{
-              background: '#34d399',
-              color: '#064e3b',
+              background: 'var(--accent-green)',
+              color: 'var(--accent-green-dark)',
               fontWeight: 800,
               fontSize: '13px',
               padding: '12px 28px',
               borderRadius: '2rem',
               textDecoration: 'none',
               display: 'inline-block',
-              boxShadow: '0 4px 14px rgba(52, 211, 153, 0.35)',
+              boxShadow: 'var(--shadow-cta)',
               transition: 'background 200ms, transform 150ms',
               letterSpacing: '0.01em',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#10b981'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#34d399'; e.currentTarget.style.transform = 'translateY(0)'; }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-green-hv)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--accent-green)'; e.currentTarget.style.transform = 'translateY(0)'; }}
           >
             {t('nav.cta')}
           </a>
@@ -326,25 +327,25 @@ const Navbar = () => {
               ))}
               <div style={{ paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', width: '100%' }}>
                 <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>{t('nav.emergencies')}</p>
-                <a href="tel:933309169" style={{ fontSize: '26px', fontWeight: 900, color: 'white', display: 'block', marginBottom: '20px', textDecoration: 'none' }}>933 309 169</a>
-                <a
-                  href="#contacto"
-                  style={{
-                    background: '#34d399',
-                    color: '#064e3b',
-                    fontWeight: 800,
-                    fontSize: '15px',
-                    padding: '16px 0 18px',
-                    borderRadius: '2rem',
-                    textDecoration: 'none',
-                    display: 'block',
-                    textAlign: 'center',
-                    width: '100%',
-                  }}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {t('nav.cta')}
-                </a>
+                <a href="tel:933309169" style={{ fontSize: '26px', fontWeight: 900, color: 'var(--text-white)', display: 'block', marginBottom: '20px', textDecoration: 'none' }}>933 309 169</a>
+                  <a
+                    href="#contacto"
+                    style={{
+                      background: 'var(--accent-green)',
+                      color: 'var(--accent-green-dark)',
+                      fontWeight: 800,
+                      fontSize: '15px',
+                      padding: '16px 0 18px',
+                      borderRadius: '2rem',
+                      textDecoration: 'none',
+                      display: 'block',
+                      textAlign: 'center',
+                      width: '100%',
+                    }}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {t('nav.cta')}
+                  </a>
               </div>
             </div>
           </motion.div>
