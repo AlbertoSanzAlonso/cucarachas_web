@@ -11,9 +11,7 @@
     "badge": "Cockroach Specialists • ROESB 0246-CAT-SB",
     "title_main": "Pest Control",
     "title_slogan": "Ethical and Conscious",
-    "desc_p1": "We restore the balance of your environment with technical precision and total discretion. Specialists in ",
-    "desc_city": "Barcelona",
-    "desc_p2": " for homes, companies, and the food sector.",
+    "desc": "We restore the balance of your environment with technical precision and total discretion. Specialists in Barcelona for homes, businesses, and the food sector.",
     "cta_urgent": "Urgent: Request Quote",
     "cta_identify": "Identify Species",
     "stats": {
@@ -23,7 +21,10 @@
       "senior": "Senior Technicians",
       "guarantee": "Guarantee",
       "cert": "Official Certificate"
-    }
+    },
+    "slide_badge": "Cutting-edge Technology",
+    "slide_title": "Elimination Without",
+    "slide_accent": "Safety Interval"
   },
   "species": {
     "title_part1": "Cockroach",
@@ -31,7 +32,7 @@
     "title_city": "in Barcelona",
     "desc_part1": "Correctly identifying the species is the first step towards definitive eradication. At ",
     "desc_brand": "CECSA Urban Plagas",
-    "desc_part2": " we combine science with local experience.",
+    "desc_part2": " we combine science with local expertise.",
     "badge": "Treatments with ROESB Certificate",
     "view_sheet": "View technical sheet",
     "more_info": "MORE INFO",
@@ -42,50 +43,23 @@
     "germanica": {
       "title": "German Cockroach",
       "shortDesc": "The most common pest in kitchens and catering. Small, fast, and highly prolific.",
-      "fullDesc": "The German cockroach is the main problem in the food sector of Barcelona. At CECSA Urban Plagas we use gel bait technology to eradicate the entire nest without evacuation.",
+      "fullDesc": "The German cockroach is the main concern in Barcelona's food sector. Only 1.5 cm long, they colonize appliance motors, coffee machines, and electrical panels. At CECSA Urban Plagas, we use gel-bait technology that leverages their social behavior to eradicate the entire nest without needing to evacuate the premises.",
       "habitat": "Indoors, areas of constant heat and humidity.",
       "impact": "Food contamination and reputation crises in businesses."
     },
     "americana": {
       "title": "American Cockroach",
-      "shortDesc": "The largest species. Reddish-colored, flies and mainly inhabits sewers.",
-      "fullDesc": "Known as the \"super cockroach\", can reach 5 cm. Access through pipes or flying. We apply long-lasting chemical barriers.",
+      "shortDesc": "The largest species. Reddish-colored, they fly and mainly inhabit sewers.",
+      "fullDesc": "Known as the \"super cockroach\", it can reach up to 5 cm in length. They access homes through pipes, drains, or by flying from the outside. They are very resilient, and their presence usually indicates structural failures in seals or the sanitation network. We apply perimeter treatments and long-lasting chemical barriers.",
       "habitat": "Sewers, air chambers, and false ceilings.",
-      "impact": "Transmission of bacterial pathogens and strong visual impact."
+      "impact": "Transmission of bacterial pathogens and strong negative visual impact."
     },
     "oriental": {
       "title": "Oriental Cockroach",
-      "shortDesc": "Deep black in color, prefers cool and humid environments.",
-      "fullDesc": "Associated with culverts and dirt areas. Our approach combines technical disinsectization with physical exclusion.",
+      "shortDesc": "Deep black in color, they prefer cool and very humid environments in ground floors.",
+      "fullDesc": "Traditionally associated with culverts and dirt areas, the black or Oriental cockroach is a persistent pest that requires exhaustive control of entry points. It moves slower than the German one, but its robust body allows it to survive in adverse conditions. Our approach combines technical disinsectization with physical exclusion recommendations.",
       "habitat": "Basements, street-level manholes, and garbage areas.",
-      "impact": "High allergen load and contamination on surfaces."
+      "impact": "High allergen load and contamination by contact on surfaces."
     }
-  },
-  "about": {
-    "badge": "Our Philosophy",
-    "title_part1": "Accept to act with ",
-    "title_accent": "consciousness",
-    "desc": "Founded in Barcelona, CECSA was born from the need to raise sanitary environmental standards. We understand the urban ecosystem to intervene intelligently and sustainably.",
-    "quote": "Our mission is to restore sanitary balance in every space, integrating cutting-edge technology with deep respect for the environment.",
-    "excelence_title": "Technical Excellence",
-    "excelence_desc": "Protocols based on applied scientific evidence.",
-    "ethics_title": "Ethical Commitment",
-    "ethics_desc": "We act with environmental and social consciousness.",
-    "cert_title": "Official ROESB Certification"
-  },
-  "origen": {
-    "badge": "CECSA ORIGEN • Premium Service",
-    "title": "Comprehensive Recovery of Squatted Homes",
-    "slogan": "We transform deteriorated spaces into dignified, safe homes ready for life again.",
-    "desc": "We offer a comprehensive recovery service for squatted or abandoned homes, designed to relieve the burden on owners and revaluate the property quickly and efficiently.",
-    "process_title": "We take care of the entire process:",
-    "steps": [
-      "Removal of furniture and waste",
-      "Deep cleaning and space recovery",
-      "Painting and aesthetic adaptation",
-      "Professional disinfection"
-    ],
-    "guarantee": "With the experience and guarantee of CECSA Desinfeccions, we ensure an impeccable final result.",
-    "goal": "Turning a problem into an opportunity, recovering the value of your property with an efficient, discreet, and high-quality service."
   }
 }
