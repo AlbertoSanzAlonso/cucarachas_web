@@ -33,7 +33,7 @@ const Hero = () => {
       <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
       
       {/* Brand Background Element - Van */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center opacity-[0.03] grayscale">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center opacity-[0.012] grayscale">
         <img 
           src="/assets/cecsa_van_cutout.webp" 
           alt="" 
