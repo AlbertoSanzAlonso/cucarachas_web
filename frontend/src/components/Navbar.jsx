@@ -1,359 +1,149 @@
-import { Menu, X, ShieldCheck, Phone, Globe } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Menu, X, Phone, Globe } from 'lucide-react';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
-      const progress = Math.min(window.scrollY / 150, 1);
-      setScrollProgress(progress);
+      setIsScrolled(window.scrollY > 20);
     };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
-    { title: t('nav.home'), href: '#' },
-    { title: t('nav.species'), href: '#servicios' },
-    { title: t('nav.about'), href: '#nosotros' },
-    { title: t('nav.sectors'), href: '#sectores' },
-  ];
-
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
-    setLangMenuOpen(false);
-    setIsOpen(false);
   };
 
-  const languages = [
-    { code: 'ca', name: 'Català' },
-    { code: 'es', name: 'Castellano' },
-    { code: 'en', name: 'English' }
-  ];
-
-  const currentLang = languages.find(l => l.code === i18n.language) || languages[0];
-
   return (
-    <header
-      className="sticky top-0 w-full z-[1000] transition-all duration-300"
+    <nav 
+      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full overflow-hidden ${isScrolled ? 'py-2 shadow-xl' : 'py-4 shadow-lg'}`}
       style={{
-        background: `rgba(0, 128, 187, ${1 - scrollProgress * 0.20})`,
-        backdropFilter: scrollProgress > 0.05 ? `blur(${scrollProgress * 16}px)` : 'none',
-        WebkitBackdropFilter: scrollProgress > 0.05 ? `blur(${scrollProgress * 16}px)` : 'none',
-        boxShadow: scrollProgress > 0.1 ? `0 4px ${20 * scrollProgress}px rgba(0,0,0,${0.06 + scrollProgress * 0.14})` : 'none',
-        padding: scrollProgress > 0.8 ? '10px 0' : '14px 0',
-        transition: 'padding 300ms',
-        backgroundColor: `rgba(0, 128, 187, ${1 - scrollProgress * 0.20})`,
+        background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'var(--color-primary-blue)',
+        backdropFilter: isScrolled ? 'blur(15px)' : 'none',
+        border: isScrolled ? `1px solid var(--color-primary-blue-hv, #006fa3)22` : '1px solid rgba(255,255,255,0.2)',
+        boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.1)' : '0 10px 40px rgba(0,0,0,0.15)'
       }}
     >
-      {/* Top trust bar — only when not scrolled */}
-      <AnimatePresence>
-        {scrollProgress < 0.5 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            style={{
-              background: 'rgba(0,0,0,0.12)',
-              borderBottom: '1px solid rgba(255,255,255,0.08)',
-              padding: '5px 0',
-              marginBottom: '8px',
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        {/* Logo Section */}
+        <div className="flex items-center space-x-3 group cursor-pointer">
+          <img 
+            src="/assets/isotipo.png" 
+            alt="CECSA Logo" 
+            className="transition-all duration-500 h-[35px] md:h-[45px]"
+            style={{ 
+              filter: isScrolled ? 'none' : 'brightness(0) invert(1)',
+              opacity: isScrolled ? 1 : 0.9
             }}
-            className="hidden lg:block"
-          >
-            <div className="container flex items-center justify-between">
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck size={12} style={{ color: 'var(--accent-green)' }} />
-                  <span style={{ fontSize: '10px', color: 'var(--text-white-dim)', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-                    Empresa autoritzada Generalitat de Catalunya
-                  </span>
-                </div>
-                <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px' }}>|</span>
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.6)', fontWeight: 500 }}>
-                  ROESB: 0246-CAT-SB
-                </span>
-              </div>
-              <div className="flex items-center gap-4">
-                 {/* Desktop Language Switcher (Inline) */}
-                 <div className="flex items-center gap-3 mr-4">
-                   {languages.map(l => (
-                     <button 
-                      key={l.code}
-                      onClick={() => changeLanguage(l.code)}
-                      style={{ 
-                        fontSize: '9px', 
-                        fontWeight: 800, 
-                        color: i18n.language === l.code ? '#34d399' : 'rgba(255,255,255,0.5)',
-                        background: 'none',
-                        border: 'none',
-                        cursor: 'pointer',
-                        padding: '2px 4px',
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.05em'
-                      }}
-                     >
-                       {l.code}
-                     </button>
-                   ))}
-                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Phone size={11} style={{ color: 'var(--accent-green)' }} />
-                  <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
-                    {t('nav.emergencies')}: <a href="tel:933309169" style={{ color: 'var(--text-white)', textDecoration: 'none', fontWeight: 800 }}>933 309 169</a>
-                  </span>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Main nav */}
-      <div className="container flex justify-between items-center">
-        {/* Brand */}
-        <a href="#" className="flex items-center group" style={{ textDecoration: 'none', gap: '10px' }}>
-          <div
-            className="group-hover:scale-105 transition-transform duration-300 flex-shrink-0"
-          >
-            <img
-              src="/assets/isotipo.png"
-              alt="CECSA Icon"
-              style={{
-                height: '60px',
-                width: 'auto',
-                objectFit: 'contain',
-                filter: 'brightness(0) invert(1)',
-              }}
-            />
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.nextSibling.style.display = 'block';
+            }}
+          />
+          <div className="hidden" style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}>
+            <span className="font-black text-2xl tracking-tighter">CEC<span className="text-accent-green">SA</span></span>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
-            <span style={{ fontSize: '26px', fontWeight: 900, color: 'var(--text-white)', letterSpacing: '-0.02em', lineHeight: 1 }}>CECSA</span>
-            <span style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.15em', color: 'var(--accent-green)', textTransform: 'uppercase', lineHeight: 1 }}>Control de Plagas</span>
+          <div className="flex flex-col leading-none">
+            <span className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 ${isScrolled ? 'text-primary-blue' : 'text-white'}`}>
+              CEC<span className="text-accent-green">SA</span>
+            </span>
+            <span className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 ${isScrolled ? 'text-secondary-gray/70' : 'text-white/70'}`}>
+              Control de Plagas
+            </span>
           </div>
-        </a>
+        </div>
 
-        {/* Desktop Nav */}
-        <nav className="hidden lg:flex items-center" style={{ gap: '40px' }}>
-          {navLinks.map((link) => (
-            <a
-              key={link.title}
-              href={link.href}
-              style={{
-                fontSize: '14px',
-                fontWeight: 700,
-                color: 'var(--text-white-dim)',
-                textDecoration: 'none',
-                letterSpacing: '0.01em',
-                transition: 'color 200ms',
-                cursor: 'pointer',
-              }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--text-white)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-white-dim)'}
+        {/* Desktop Navigation */}
+        <div className="hidden lg:flex items-center space-x-10">
+          {[
+            { key: 'nav.services', label: 'Especies' },
+            { key: 'nav.sectors', label: 'Sectores' },
+            { key: 'nav.process', label: 'Método' },
+            { key: 'nav.about', label: 'Sobre CECSA' }
+          ].map((item) => (
+            <a 
+              key={item.key} 
+              href={`#${item.key.split('.')[1]}`} 
+              className={`text-sm font-semibold uppercase tracking-widest transition-all duration-300 hover:scale-105 ${isScrolled ? 'text-secondary-gray hover:text-primary-blue' : 'text-white/90 hover:text-white'}`}
             >
-              {link.title}
+              {t(item.key, item.label)}
             </a>
           ))}
-        </nav>
+        </div>
 
-        {/* CTA area */}
-        <div className="hidden lg:flex items-center" style={{ gap: '28px' }}>
+        {/* Desktop Action Buttons */}
+        <div className="hidden lg:flex items-center space-x-6">
           {/* Language Switcher */}
-          <div className="relative">
-            <button
-              onClick={() => setLangMenuOpen(!langMenuOpen)}
-              onBlur={() => setTimeout(() => setLangMenuOpen(false), 200)}
-              style={{
-                background: 'rgba(255,255,255,0.08)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                padding: '8px 12px',
-                borderRadius: '12px',
-                color: 'white',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                fontSize: '12px',
-                fontWeight: 700,
-                cursor: 'pointer',
-                transition: 'all 200ms',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
-              onMouseLeave={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
-            >
-              <Globe size={14} style={{ color: 'var(--accent-green)' }} />
-              {currentLang.code.toUpperCase()}
-            </button>
-            
-            <AnimatePresence>
-              {langMenuOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 10 }}
-                  style={{
-                    position: 'absolute',
-                    top: 'calc(100% + 8px)',
-                    right: 0,
-                    background: 'white',
-                    borderRadius: '14px',
-                    padding: '8px',
-                    boxShadow: '0 10px 25px rgba(0,0,0,0.15)',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '4px',
-                    minWidth: '130px',
-                    zIndex: 2000,
-                  }}
-                >
-                  {languages.map((l) => (
-                    <button
-                      key={l.code}
-                      onClick={() => changeLanguage(l.code)}
-                      style={{
-                        padding: '10px 14px',
-                        borderRadius: '8px',
-                        border: 'none',
-                        background: i18n.language === l.code ? '#f0f9ff' : 'transparent',
-                        color: i18n.language === l.code ? '#0080bb' : '#4b5563',
-                        fontSize: '13px',
-                        fontWeight: i18n.language === l.code ? 800 : 500,
-                        textAlign: 'left',
-                        cursor: 'pointer',
-                        transition: 'all 150ms',
-                      }}
-                      onMouseEnter={e => {
-                        if (i18n.language !== l.code) e.currentTarget.style.background = '#f9fafb';
-                      }}
-                      onMouseLeave={e => {
-                        if (i18n.language !== l.code) e.currentTarget.style.background = 'transparent';
-                      }}
-                    >
-                      {l.name}
-                    </button>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+          <div className="flex items-center space-x-2 border-r pr-6 border-white/20">
+            {['ca', 'es'].map((lng) => (
+              <button 
+                key={lng} 
+                onClick={() => changeLanguage(lng)}
+                className={`text-xs font-bold uppercase cursor-pointer transition-colors ${i18n.language === lng ? 'text-accent-green' : (isScrolled ? 'text-secondary-gray/60 hover:text-primary-blue' : 'text-white/60 hover:text-white')}`}
+              >
+                {lng}
+              </button>
+            ))}
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
-            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--text-white-dim)', letterSpacing: '0.12em', textTransform: 'uppercase', lineHeight: 1 }}>{t('nav.emergencies')}</span>
-            <a
-              href="tel:933309169"
-              style={{ fontSize: '20px', fontWeight: 900, color: 'var(--text-white)', textDecoration: 'none', lineHeight: 1 }}
-            >
-              933 309 169
-            </a>
-          </div>
-          <a
-            href="#contacto"
-            style={{
-              background: 'var(--accent-green)',
-              color: 'var(--accent-green-dark)',
-              fontWeight: 800,
-              fontSize: '13px',
-              padding: '12px 28px',
-              borderRadius: '2rem',
-              textDecoration: 'none',
-              display: 'inline-block',
-              boxShadow: 'var(--shadow-cta)',
-              transition: 'background 200ms, transform 150ms',
-              letterSpacing: '0.01em',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--accent-green-hv)'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'var(--accent-green)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+          <a 
+            href="tel:+34930000000"
+            className="flex items-center space-x-2 font-bold transition-all hover:opacity-80"
+            style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}
           >
-            {t('nav.cta')}
+            <Phone size={18} className="text-accent-green" />
+            <span>930 000 000</span>
           </a>
+
+          <button 
+            className="px-6 py-2.5 rounded-full text-white font-bold text-sm uppercase tracking-wider transition-all duration-300 hover:shadow-lg active:scale-95"
+            style={{ 
+              background: isScrolled ? 'var(--color-primary-blue)' : 'var(--color-accent-green)',
+              color: isScrolled ? 'white' : 'var(--color-secondary-gray)',
+              boxShadow: isScrolled ? '0 4px 15px rgba(0,128,187,0.3)' : '0 4px 15px rgba(0,0,0,0.1)'
+            }}
+          >
+            {t('nav.contact', 'Urgencias 24h')}
+          </button>
         </div>
 
         {/* Mobile Toggle */}
-        <div className="flex items-center gap-4 lg:hidden">
-          <button
-            style={{ 
-              color: 'white', 
-              background: 'rgba(255,255,255,0.1)', 
-              border: 'none', 
-              borderRadius: '10px',
-              padding: '6px 10px',
-              fontSize: '12px',
-              fontWeight: 800,
-              cursor: 'pointer' 
-            }}
-            onClick={() => {
-              const next = languages[(languages.findIndex(l => l.code === i18n.language) + 1) % languages.length].code;
-              i18n.changeLanguage(next);
-            }}
-          >
-            {i18n.language.toUpperCase()}
-          </button>
-          <button
-            style={{ color: 'white', background: 'none', border: 'none', cursor: 'pointer' }}
-            onClick={() => setIsOpen(!isOpen)}
-            aria-label="Toggle menu"
-          >
-            {isOpen ? <X size={28} /> : <Menu size={28} />}
-          </button>
-        </div>
+        <button 
+          className="lg:hidden p-2 rounded-lg transition-colors"
+          style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+        >
+          {mobileMenuOpen ? <X size={30} /> : <Menu size={30} />}
+        </button>
       </div>
 
       {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25 }}
-            style={{ background: '#006fa3', borderTop: '1px solid rgba(255,255,255,0.1)', overflow: 'hidden' }}
+      <div 
+        className={`lg:hidden fixed inset-x-0 top-[90px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
+      >
+        <div className="flex flex-col p-6 space-y-6">
+          {['Especies', 'Sectores', 'Método', 'Sobre CECSA'].map((item) => (
+            <a key={item} href="#" className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-50">{item}</a>
+          ))}
+          <div className="pt-4 flex items-center space-x-6">
+            <button onClick={() => changeLanguage('ca')} className="font-bold text-lg">CA</button>
+            <button onClick={() => changeLanguage('es')} className="font-bold text-lg text-gray-400">ES</button>
+          </div>
+          <button 
+            className="w-full py-4 rounded-xl text-white font-black text-lg shadow-xl"
+            style={{ background: 'var(--color-primary-blue)' }}
           >
-            <div className="container flex flex-col" style={{ gap: '24px', paddingTop: '32px', paddingBottom: '32px', alignItems: 'flex-start' }}>
-              {navLinks.map((link) => (
-                <a
-                  key={link.title}
-                  href={link.href}
-                  style={{ fontSize: '18px', fontWeight: 700, color: 'rgba(255,255,255,0.9)', textDecoration: 'none' }}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.title}
-                </a>
-              ))}
-              <div style={{ paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.1)', width: '100%' }}>
-                <p style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.55)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: '8px' }}>{t('nav.emergencies')}</p>
-                <a href="tel:933309169" style={{ fontSize: '26px', fontWeight: 900, color: 'var(--text-white)', display: 'block', marginBottom: '20px', textDecoration: 'none' }}>933 309 169</a>
-                  <a
-                    href="#contacto"
-                    style={{
-                      background: 'var(--accent-green)',
-                      color: 'var(--accent-green-dark)',
-                      fontWeight: 800,
-                      fontSize: '15px',
-                      padding: '16px 0 18px',
-                      borderRadius: '2rem',
-                      textDecoration: 'none',
-                      display: 'block',
-                      textAlign: 'center',
-                      width: '100%',
-                    }}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {t('nav.cta')}
-                  </a>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+            URGENCIAS 24H
+          </button>
+        </div>
+      </div>
+    </nav>
   );
 };
 
 export default Navbar;
-

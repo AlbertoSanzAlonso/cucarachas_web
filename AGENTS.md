@@ -39,6 +39,9 @@ Genera contenido con autoridad para la región de Barcelona en **Catalán** y Ca
 ### 4. **UI/UX Pro Max** (`.agents/skills/ui-ux-pro-max`)
 Inteligencia de diseño UI/UX. Consultar antes de implementar secciones nuevas.
 
+### 5. **Tailwind Design System** (`.agents/skills/tailwind-design-system`)
+Construcción de sistemas de diseño escalables con Tailwind CSS v4, tokens de diseño y patrones responsivos. Uso para estandarizar UI y componentes.
+
 ## ⚙️ Convenciones de Implementación
 
 - **Inline styles** en componentes de layout (Navbar, Footer, FloatingCTA).

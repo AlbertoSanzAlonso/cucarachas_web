@@ -1,23 +1,17 @@
-import { useState, useEffect } from 'react';
-import { ShieldCheck, ChevronRight, Clock, Users, Activity, Bug } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
-const slides = [
-  '/assets/slideshow/control-cucarachas-barcelona.webp',
-  '/assets/slideshow/tecnico-fumigacion-cocina.webp',
-  '/assets/slideshow/desinsectacion-vivienda.webp',
-  '/assets/slideshow/eliminacion-nidos-cucarachas.webp',
-  '/assets/slideshow/tratamiento-sanitario-preventivo.webp',
-  '/assets/slideshow/control-plagas-urbano.webp',
-  '/assets/slideshow/certificacion-roesb-cecsa.webp',
-  '/assets/slideshow/servicio-urgencias-24h.webp',
-  '/assets/slideshow/fumigacion-locales-barcelona.webp'
-];
+import { ShieldCheck, Zap, ArrowRight, Bug } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Hero = () => {
   const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
+
+  const slides = [
+    "/assets/Tècnic d'insectes inspecionant una esquerda.webp",
+    "/assets/Tècnic de control de plagues saludant.webp",
+    "/assets/Una parella feliç al sofà.webp"
+  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -27,130 +21,151 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-bg-light pb-20 lg:pb-32 pt-0 lg:pt-0">
-      {/* Abstract background elements */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 blur-[120px] rounded-full -mr-20 -mt-20"></div>
-      <div className="absolute bottom-0 left-0 w-1/4 h-1/2 bg-primary-blue/10 blur-[100px] rounded-full -ml-10 -mb-10"></div>
-      
-      {/* Brand Background Element - Van */}
+    <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
+      {/* Contained Floating Hero Box - No touching edges */}
       <div 
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full pointer-events-none overflow-hidden flex items-center justify-center grayscale"
-        style={{ opacity: 0.02 }}
+        className="relative min-h-[80vh] md:min-h-[75vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
+        style={{ 
+          background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)'
+        }}
       >
-        <img 
-          src="/assets/cecsa_van_cutout.webp" 
-          alt="" 
-          className="w-full max-w-[1400px] object-contain rotate-[-5deg] scale-125 translate-x-1/4"
-        />
-      </div>
-
-      <div className="container relative z-10">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-24">
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:w-1/2"
-          >
-            <div className="flex items-center gap-3 mb-6 bg-white w-fit px-4 py-2 rounded-full shadow-sm border border-primary-blue/10">
-              <ShieldCheck className="text-primary-blue" size={20} />
-              <span className="text-[10px] font-black uppercase tracking-widest text-secondary-gray">{t('hero.badge')}</span>
+        {/* Animated Insect Vector Pattern within the container */}
+        <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none overflow-hidden">
+          {[...Array(12)].map((_, i) => (
+            <div 
+              key={i} 
+              className="absolute animate-pulse"
+              style={{
+                top: `${Math.random() * 100}%`,
+                left: `${Math.random() * 100}%`,
+                transform: `rotate(${Math.random() * 360}deg) scale(${1 + Math.random()})`,
+                animationDelay: `${i * 0.5}s`
+              }}
+            >
+              <Bug size={80 + Math.random() * 100} key={i} />
             </div>
-            
-            <h1 className="font-sans text-5xl lg:text-8xl font-black text-[var(--secondary-gray)] leading-[0.9] mb-2 tracking-tighter uppercase">
-              {t('hero.title_main')}
-            </h1>
-            <h2 className="font-sans text-4xl lg:text-7xl font-extrabold text-primary-blue leading-tight mb-8 tracking-tight">
-              {t('hero.title_slogan')}
-            </h2>
-            
-            <p className="text-lg lg:text-xl text-text-muted mb-10 max-w-2xl leading-relaxed font-medium">
-              {t('hero.desc_p1')}
-            </p>
-            
-            <div className="flex flex-wrap gap-5 mb-12">
-              <a href="#contacto" className="btn btn-primary shadow-xl">
-                {t('hero.cta_urgent')} <ChevronRight size={20} />
-              </a>
-              <a href="#servicios" className="btn btn-secondary flex gap-2">
-                <Bug size={18} /> {t('hero.cta_identify')}
-              </a>
+          ))}
+        </div>
+        
+        {/* Modern Accent Gradient */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+
+        {/* Content Container (Now inside the bounded box) */}
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 lg:py-12 grid lg:grid-cols-2 gap-16 items-center">
+          
+          {/* Text Side */}
+          <div className="space-y-8 animate-fade-in">
+            <div className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm transition-all hover:bg-white/15">
+              <span className="flex h-2 w-2 rounded-full bg-accent-green animate-ping"></span>
+              <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">
+                {t('hero.badge')}
+              </span>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-8 border-t border-gray-200/50">
-              {/* Stats items... */}
-              <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Clock size={24} /></div>
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.intervention')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.urgent')}</p>
+            <div className="space-y-4">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter">
+                {t('hero.title')}
+              </h1>
+              <p className="max-w-xl text-lg md:text-xl text-white/85 font-light leading-relaxed tracking-wide">
+                {t('hero.desc')}
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+              <button 
+                className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-accent-green text-primary-gray font-black text-lg uppercase tracking-wider shadow-2xl transition-all duration-300 hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 group"
+              >
+                <span className="flex items-center justify-center">
+                  Pedir Diagnóstico Gratis
+                  <ArrowRight size={22} className="ml-3 transition-transform group-hover:translate-x-1" />
+                </span>
+              </button>
+              
+              <button className="flex items-center space-x-3 px-8 py-4 text-white font-bold transition-all hover:opacity-80">
+                <span className="p-3 bg-white/10 rounded-full">
+                  <ShieldCheck size={24} className="text-accent-green" />
+                </span>
+                <span className="text-sm uppercase tracking-widest leading-none">Certificado ROESB</span>
+              </button>
+            </div>
+
+            {/* Social Proof Pills */}
+            <div className="flex items-center space-x-8 pt-8 opacity-60 border-t border-white/10">
+              <div className="flex flex-col">
+                <span className="text-2xl md:text-3xl font-black text-white">+12.000</span>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">Servicios Realizados</span>
+              </div>
+              <div className="flex flex-col border-l border-white/20 pl-8">
+                <span className="text-2xl md:text-3xl font-black text-white">4.9/5</span>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">Google Reviews</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Visual/Image Side - Slider Implementation */}
+          <div className="relative hidden lg:block animate-slide-up">
+             <div className="relative z-10 transform translate-x-10 translate-y-10">
+                <div 
+                  className="aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white/20 relative rotate-3 hover:rotate-0 transition-all duration-700"
+                  style={{ 
+                    background: 'rgba(255,255,255,0.05)',
+                    backdropFilter: 'blur(10px)'
+                  }}
+                >
+                   {/* Image Slider */}
+                   <div className="absolute inset-0">
+                      <AnimatePresence mode="wait">
+                        <motion.img
+                          key={slides[currentSlide]}
+                          src={slides[currentSlide]}
+                          initial={{ opacity: 0, scale: 1.1 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.95 }}
+                          transition={{ duration: 0.8, ease: "easeInOut" }}
+                          alt="CECSA Control de Plagas"
+                          className="w-full h-full object-cover"
+                        />
+                      </AnimatePresence>
+                      {/* Darkening Overlay for better text readability and depth */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-primary-blue/30 to-transparent"></div>
+                   </div>
+                   
+                   {/* Technical Insight Card - Maintaining over the images */}
+                   <div className="absolute bottom-12 left-12 right-12 p-8 glass rounded-3xl animate-fade-in z-20">
+                      <div className="flex items-center space-x-4">
+                        <div className="p-3 bg-primary-blue rounded-2xl text-white">
+                          <Zap size={28} />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest font-black text-primary-gray/50 mb-1">Sistema Activo</p>
+                          <motion.p 
+                            key={currentSlide}
+                            initial={{ opacity: 0, y: 5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="text-primary-blue font-black tracking-tight text-xl"
+                          >
+                            {currentSlide === 0 ? 'Inspección Técnica' : currentSlide === 1 ? 'Control de Plagas' : 'Hogar Protegido'}
+                          </motion.p>
+                        </div>
+                      </div>
+                   </div>
+
+                   {/* Slider Progress Indicators */}
+                   <div className="absolute top-12 left-12 right-12 flex space-x-2 z-20">
+                      {slides.map((_, i) => (
+                        <div 
+                          key={i} 
+                          className={`h-1 flex-grow rounded-full transition-all duration-500 ${i === currentSlide ? 'bg-accent-green' : 'bg-white/30'}`}
+                        ></div>
+                      ))}
+                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Users size={24} /></div>
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.accre')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.senior')}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="text-primary-blue"><Activity size={24} /></div>
-                <div>
-                  <p className="text-xs uppercase font-bold tracking-widest text-muted">{t('hero.stats.guarantee')}</p>
-                  <p className="text-sm font-black text-secondary-gray">{t('hero.stats.cert')}</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="lg:w-1/2 relative"
-          >
-            {/* Structural Anchor for Slider - Robust Aspect Ratio */}
-            <div className="relative z-10 bg-white p-3 rounded-[3.5rem] shadow-2xl border border-gray-100 w-full overflow-hidden">
-              <div className="relative w-full rounded-[2.8rem] overflow-hidden bg-bg-light" style={{ aspectRatio: '4/5', flexShrink: 0 }}>
-                <AnimatePresence mode="wait">
-                  <motion.img 
-                    key={slides[currentSlide]}
-                    src={slides[currentSlide]} 
-                    alt="CECSA Control de Plagues" 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.6 }}
-                    className="absolute inset-0 w-full h-full"
-                    style={{ objectFit: 'cover', objectPosition: 'center' }}
-                  />
-                </AnimatePresence>
-
-              </div>
-
-              {/* Slider indicators - Guaranteed bottom alignment within the outer frame */}
-              <div className="absolute bottom-10 left-0 right-0 flex justify-center gap-6 z-30">
-                {slides.map((_, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setCurrentSlide(idx)}
-                    style={{
-                      width: idx === currentSlide ? '32px' : '10px',
-                      height: '10px',
-                      borderRadius: '999px',
-                      background: idx === currentSlide ? 'var(--primary-blue)' : 'rgba(0,0,0,0.2)',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-                    }}
-                    aria-label={`Ir a diapositiva ${idx + 1}`}
-                  />
-                ))}
-              </div>
-            </div>
-            
-            {/* Visual highlight element */}
-            <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-primary-blue/10 rounded-full blur-[110px] -z-0"></div>
-          </motion.div>
+             </div>
+             
+             {/* Decorative Blobs */}
+             <div className="absolute -top-20 -right-20 w-80 h-80 bg-accent-green/20 rounded-full blur-[100px] animate-pulse"></div>
+             <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary-blue-hv/30 rounded-full blur-[100px] animate-pulse"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -158,5 +173,3 @@ const Hero = () => {
 };
 
 export default Hero;
-
-

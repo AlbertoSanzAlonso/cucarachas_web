@@ -1,116 +1,58 @@
 {
+  "common": {
+    "tagline": "Ètic i Conscient",
+    "cta_free": "Demanar Diagnòstic Gratuït",
+    "cta_call": "Trucar Ara",
+    "emergency_24h": "Urgències 24h",
+    "certified": "Certificació ROESB"
+  },
   "nav": {
-    "home": "Inici",
-    "species": "Espècies",
-    "about": "Sobre Nosaltres",
+    "services": "Espècies",
     "sectors": "Sectors",
-    "cta": "Pressupost Gratuït",
-    "emergencies": "Urgències 24h"
+    "process": "Mètode",
+    "about": "Sobre CECSA",
+    "contact": "Urgències 24h"
   },
   "hero": {
-    "badge": "Especialistes en Cuques • ROESB 0246-CAT-SB",
-    "title_main": "Eliminem les paneroles.",
-    "title_slogan": "Recupera la tranquil·litat.",
-    "desc_p1": "Servei professional de control de plagues a Barcelona. Intervenció ràpida, segura i amb garantia.",
-    "cta_urgent": "Intervenció urgent avui mateix",
-    "cta_identify": "Identificar Espècie",
-    "stats": {
-      "intervention": "Intervenció",
-      "urgent": "Urgències 24h",
-      "accre": "Acreditació",
-      "senior": "Tècnics Sènior",
-      "guarantee": "Garantia",
-      "cert": "Certificat Oficial"
-    }
+    "title": "Eliminar paneroles a Barcelona ràpida i definitivament.",
+    "desc": "A CECSA som especialistes en el control de paneroles, amb servei urgent 24h, tractaments segurs i garantia certificada per recuperar la tranquil·litat al teu habitatge o negoci.",
+    "badge": "Servei urgent 24h a Barcelona"
   },
-  "problem": {
-    "title": "Veure paneroles a casa o al teu negoci no és només incòmode…",
-    "subtitle": "és una sensació de pèrdua de control.",
-    "desc": "Genera estrès, inseguretat i preocupació per la salut.",
-    "hook": "I el que realment vols no és només eliminar-les… és tornar a sentir-te tranquil al teu espai."
-  },
-  "species": {
-    "title_part1": "Espècies de",
-    "title_accent": "Paneroles",
-    "title_city": "a Barcelona",
-    "desc_part1": "Identificar correctament l'espècie és el primer pas per a una eradicació definitiva. A ",
-    "desc_brand": "CECSA Control de Plagues",
-    "desc_part2": " combinem ciència i experiència local.",
-    "badge": "Tractaments amb Certificat ROESB",
-    "view_sheet": "Veure fitxa tècnica",
-    "more_info": "MÉS INFORMACIÓ",
-    "cta_free": "Demanar Pressupost Gratis",
-    "resp_time": "Resposta en menys de 2h",
-    "habitat": "Hàbitat Principal",
-    "impact": "Risc Sanitari",
-    "germanica": {
-      "title": "Cuca Alemanya",
-      "shortDesc": "La plaga més comuna en cuines i hostaleria. Petita, ràpida i altament prolífica.",
-      "fullDesc": "La cuca alemanya és el principal problema en el sector alimentari de Barcelona. Amb prou feines 1.5 cm, colonitzen motors d'electrodomèstics, cafeteres i quadres elèctrics. A CECSA utilitzem tecnologia de cibada per gel que aprofita el seu comportament social per erradicar el niu complet sense necessitat de desallotjar l'estança.",
-      "habitat": "Interiors, zones de calor i humitat constant.",
-      "impact": "Contaminació d'aliments i crisis reputacionals en negocis."
-    },
-    "americana": {
-      "title": "Cuca Americana",
-      "shortDesc": "L'espècie de major volum. De color vermellós, vola i habita principalment al clavegueram.",
-      "fullDesc": "Coneguda com la \"super cuca\", pot arribar als 5 cm de longitud. Accedeixen als habitatges per baixants, desguassos o volant des de l'exterior. Apliquem tractaments perimetrals i barreres químiques de llarga durada.",
-      "habitat": "Clavegueram, càmeres d'aire i falsos sostres.",
-      "impact": "Transmissió de patògens bacterians i fort impacte visual negatiu."
-    },
-    "oriental": {
-      "title": "Cuca Oriental",
-      "shortDesc": "De color negre intens, prefereix ambients frescos i molt humits en plantes baixes.",
-      "fullDesc": "Associada tradicionalment a claveguerons i zones de terra, la cuca negra o oriental és una plaga persistent que requereix un control exhaustiu dels punts d'entrada. El nostre enfocament combina desinsectació tècnica amb recomanacions d'exclusió física.",
-      "habitat": "Soterranis, registres a nivell de carrer i zones d'escombraries.",
-      "impact": "Alta càrrega d'al·lergògens i contaminació per contacte en superfícies."
-    }
-  },
-  "about": {
-    "badge": "La Nostra Solució",
-    "title_part1": "Eliminació efectiva de paneroles amb ",
-    "title_accent": "garantia",
-    "desc": "A CECSA, actuem de manera ràpida i precisa per eliminar completament la plaga mitjançant protocols avançats d'intervenció.",
-    "steps_title": "Intervenim directament sobre el problema:",
-    "steps": [
-      "Diagnosi professional del focus",
-      "Tractament específic i eficaç",
-      "Productes segurs per a persones i mascotes",
-      "Seguiment per evitar reaparicions"
-    ],
-    "hook": "Ens assegurem que el problema desaparegui de veritat.",
-    "excelence_title": "Control total",
-    "excelence_desc": "Sabem on actuar i com fer-ho per a resultats definitius.",
-    "ethics_title": "Seguretat",
-    "ethics_desc": "Tractaments segurs i professionals per al teu entorn.",
-    "cert_title": "Tranquil·litat"
+  "focus": {
+    "title": "Com eliminar paneroles de forma definitiva",
+    "desc": "Eliminar paneroles no consisteix només a aplicar productes. Cal un tractament professional adaptat a cada situació per eliminar la plaga des de l’origen i evitar que torni a aparèixer."
   },
   "method": {
-    "title": "El nostre mètode de control definitiu",
-    "steps": [
-      { "title": "Inspecció", "desc": "Detectem l’origen real del focus." },
-      { "title": "Tractament", "desc": "Eliminació directa de la plaga." },
-      { "title": "Seguiment", "desc": "Assegurem que no torni mai més." },
-      { "title": "Prevenció", "desc": "T’ajudem a evitar futures infestacions." }
-    ]
+    "title": "El nostre mètode d'eficàcia total",
+    "step1_title": "Inspecció inicial",
+    "step1_desc": "Evaluem el nivell d’infestació i localitzem l’origen real de la plaga.",
+    "step2_title": "Tractament professional",
+    "step2_desc": "Apliquem solucions específiques d’alta eficàcia i segures per a persones i mascotes.",
+    "step3_title": "Seguiment i Prevenció",
+    "step3_desc": "Supervisem l’evolució per garantir l’eliminació total i t’ajudem a evitar futures infestacions."
+  },
+  "species": {
+    "title": "Tipus de paneroles més comunes a Barcelona",
+    "germanica": "Panerola alemanya (Blattella germanica)",
+    "americana": "Panerola americana (Periplaneta americana)",
+    "orientalis": "Panerola oriental (Blatta orientalis)"
   },
   "origen": {
-    "badge": "CECSA ORIGEN • Servei Premium",
-    "title": "Recuperació Integral d’Habitatges Ocupats",
-    "slogan": "Transformem espais deteriorats en habitatges dignes, segurs i preparats per tornar a la vida.",
-    "desc": "Oferim un servei integral de recuperació d’habitatges ocupats o en estat d’abandonament, dissenyat per alleujar la càrrega dels propietaris i revaloritzar l’immoble de manera ràpida i eficient.",
-    "process_title": "Ens encarreguem de tot el procés:",
-    "steps": [
-      "Desallotjament de mobiliari i residus",
-      "Neteja profunda i recuperació de l’espai",
-      "Pintura i adequació estètica",
-      "Desinsectació, desratització i desinfecció professional"
-    ],
-    "guarantee": "Amb l’experiència i garantia de CECSA Desinfeccions, assegurem un resultat final impecable, eliminant qualsevol risc sanitari i retornant l’habitatge al seu estat òptim.",
-    "goal": "Convertir un problema en una oportunitat, recuperant el valor del teu immoble amb un servei eficient, discret i de màxima qualitat."
+    "title": "CECSA ORIGEN • Servei Premium",
+    "subtitle": "Recuperació integral d'habitatges ocupats",
+    "desc": "Transformem espais deteriorats en habitatges dignes, segurs i preparats per tornar a la vida. Ens encarreguem de tot: desallotjament, neteja profunda, pintura i desinsectació professional.",
+    "quote": "Convertim un problema en una oportunitat, recuperant el valor del teu immoble amb un servei eficient i discret."
   },
-  "contact_section": {
-    "title": "Tens paneroles? Actua avui.",
-    "subtitle": "Com més aviat actuïs, més fàcil és eliminar-les.",
-    "cta": "Contacta amb CECSA ara"
+  "others": {
+    "title": "Altres serveis de control de plagues",
+    "desc": "A CECSA també som especialistes en el control de plagues urbanes amb protocols segurs i efectius.",
+    "rodents": "Control de rates i ratolins",
+    "termites": "Eliminació de tèrmits",
+    "bedbugs": "Control de xinxes",
+    "ants": "Eliminació de formigues",
+    "pigeons": "Control de coloms i aus"
+  },
+  "meta": {
+    "desc": "Eliminar paneroles (cucarachas) a Barcelona amb servei urgent 24h. Tractament professional, segur i amb garantia. Pressupost gratuït."
   }
 }

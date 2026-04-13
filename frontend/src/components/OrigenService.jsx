@@ -1,96 +1,83 @@
-import { CheckCircle2, ChevronRight, Truck, SprayCan, PaintBucket, Trash2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Home, Trash2, Brush, Sparkles, ShieldCheck, Quote } from 'lucide-react';
 
 const OrigenService = () => {
   const { t } = useTranslation();
 
-  const steps = [
-    { icon: <Trash2 size={32} />, text: t('origen.steps.0') },
-    { icon: <Truck size={32} />, text: t('origen.steps.1') },
-    { icon: <PaintBucket size={32} />, text: t('origen.steps.2') },
-    { icon: <SprayCan size={32} />, text: t('origen.steps.3') },
+  const services = [
+    { icon: <Trash2 />, text: t('origen.step1', 'Desallotjament de mobiliari i residus') },
+    { icon: <Sparkles />, text: t('origen.step2', 'Neteja profunda i recuperació de l’espai') },
+    { icon: <Brush />, text: t('origen.step3', 'Pintura i adequació estètica') },
+    { icon: <ShieldCheck />, text: t('origen.step4', 'Desinsectació i desinfecció professional') }
   ];
 
   return (
-    <section id="origen" className="py-24 lg:py-36 bg-white overflow-hidden border-t border-gray-100">
-      <div className="container">
-        <div className="flex flex-col lg:flex-row items-center gap-20">
-          
-          <motion.div 
-            initial={{ opacity: 0, x: -40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="lg:w-1/2"
-          >
-            <div className="inline-flex items-center gap-3 px-4 py-2 bg-accent-green-light rounded-full text-accent-green-dark text-[10px] font-black uppercase tracking-widest mb-6">
-              <div className="w-2 h-2 bg-accent-green rounded-full animate-pulse" />
-              {t('origen.badge')}
-            </div>
-            
-            <h2 className="text-4xl lg:text-6xl font-black text-secondary-gray mb-8 leading-[1.1] tracking-tighter uppercase">
-              {t('origen.title')}
-            </h2>
-            
-            <p className="text-xl text-primary-blue font-bold mb-8 leading-relaxed italic">
-              "{t('origen.slogan')}"
-            </p>
+    <section className="py-24 relative overflow-hidden bg-primary-blue text-white" id="origin">
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
+        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,#fff_1px,transparent_0)] bg-[length:60px_60px]"></div>
+      </div>
 
-            <p className="text-lg text-text-muted mb-10 leading-relaxed font-medium">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+        
+        {/* Left Side: Content */}
+        <div className="space-y-10 animate-fade-in">
+          <div className="space-y-6">
+            <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20">
+               <span className="flex h-2 w-2 rounded-full bg-accent-green"></span>
+               <span className="text-[10px] uppercase font-bold tracking-[0.2em]">{t('origen.title')}</span>
+            </div>
+            <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter">
+              {t('origen.subtitle')}
+            </h2>
+            <p className="text-lg text-white/70 font-light leading-relaxed max-w-xl">
               {t('origen.desc')}
             </p>
+          </div>
 
-            <div className="bg-bg-light p-8 rounded-[2.5rem] border border-gray-100 shadow-sm mb-10">
-              <h4 className="text-secondary-gray font-black uppercase text-sm tracking-widest mb-6 flex items-center gap-3">
-                <ChevronRight className="text-primary-blue" size={18} />
-                {t('origen.process_title')}
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {steps.map((step, index) => (
-                  <div key={index} className="flex items-center gap-4 group">
-                    <div className="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-primary-blue border border-gray-50 group-hover:scale-110 transition-transform">
-                      {step.icon}
-                    </div>
-                    <span className="text-xs font-bold text-secondary-gray uppercase tracking-tight leading-snug">
-                      {step.text}
-                    </span>
-                  </div>
-                ))}
+          <div className="grid sm:grid-cols-2 gap-6 pt-4">
+            {services.map((service, i) => (
+              <div key={i} className="flex items-center space-x-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all group">
+                 <div className="p-3 bg-accent-green/20 rounded-xl text-accent-green group-hover:scale-110 transition-transform">
+                   {React.cloneElement(service.icon, { size: 24 })}
+                 </div>
+                 <span className="text-sm font-bold tracking-tight">{service.text}</span>
               </div>
-            </div>
+            ))}
+          </div>
 
-            <p className="text-sm text-text-muted font-bold leading-relaxed border-l-4 border-accent-green pl-6 italic opacity-80 mb-8">
-              {t('origen.guarantee')}
-            </p>
-
-            <div className="bg-accent-green-light px-8 py-6 rounded-[2rem] border border-accent-green/20">
-               <p className="text-accent-green-dark text-[13px] font-bold italic leading-relaxed text-left">
-                 "{t('origen.goal')}"
-               </p>
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="lg:w-1/2 self-stretch flex"
-          >
-            <div className="relative z-10 bg-white p-3 rounded-[3.5rem] shadow-2xl border border-gray-100 overflow-hidden w-full">
-               <img 
-                 src="/assets/recovery_service.png" 
-                 alt="Recuperació Integral d'Habitatges" 
-                 className="w-full h-full rounded-[2.8rem] object-cover"
-                 style={{ minHeight: '100%', objectPosition: 'center' }}
-               />
-            </div>
-            
-            {/* Background design */}
-            <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent-green/5 rounded-full blur-[100px] -z-10"></div>
-            <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-primary-blue/5 rounded-full blur-[80px] -z-10"></div>
-          </motion.div>
-
+          <div className="pt-6 relative">
+             <div className="p-8 border-l-4 border-accent-green bg-white/5 rounded-r-3xl italic">
+                <Quote size={40} className="text-accent-green/20 absolute top-4 right-8 mb-4 rotate-180" />
+                <p className="text-lg text-white font-light leading-relaxed relative z-10">
+                  "{t('origen.quote')}"
+                </p>
+             </div>
+          </div>
         </div>
+
+        {/* Right Side: Visual Context/Image */}
+        <div className="relative group">
+           <div className="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl border-4 border-white/10 aspect-[4/5] bg-bg-light/10">
+              <img 
+                src="/assets/Inspecció de plagues a la cuina.webp" 
+                alt="Inspecció de Plagues CECSA" 
+                className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-primary-blue-hv/40 to-transparent"></div>
+              
+              <div className="absolute bottom-12 left-12 right-12 p-8 glass rounded-3xl text-primary-gray animate-pulse">
+                 <p className="text-[10px] uppercase font-black text-primary-gray/40 mb-2 tracking-widest leading-none">Status de Recuperación</p>
+                 <p className="text-primary-blue font-black text-2xl tracking-tighter">100% Habitable</p>
+              </div>
+           </div>
+           
+           {/* Decorative Blobs */}
+           <div className="absolute -top-10 -right-10 w-64 h-64 bg-accent-green/20 rounded-full blur-[80px] animate-pulse"></div>
+           <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-primary-blue/30 rounded-full blur-[80px]"></div>
+        </div>
+
       </div>
     </section>
   );

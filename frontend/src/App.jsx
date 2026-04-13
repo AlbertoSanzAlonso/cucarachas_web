@@ -1,36 +1,74 @@
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import Problem from './components/Problem';
-import SectorChoice from './components/SectorChoice';
-import Services from './components/Services';
-import Method from './components/Method';
-import LocalAuthority from './components/LocalAuthority';
-import About from './components/About';
-import OrigenService from './components/OrigenService';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
-import PromotionBar from './components/PromotionBar';
-import FloatingCTA from './components/FloatingCTA';
+import React, { Suspense, lazy } from 'react';
+import { useTranslation } from 'react-i18next';
+import './index.css';
 
+// Lazy load components for performance
+const Navbar = lazy(() => import('./components/Navbar'));
+const Hero = lazy(() => import('./components/Hero'));
+const CockroachFocus = lazy(() => import('./components/CockroachFocus'));
+const FleetSection = lazy(() => import('./components/FleetSection'));
+const PestGrid = lazy(() => import('./components/PestGrid'));
+const SectorGrid = lazy(() => import('./components/SectorGrid'));
+const OrigenService = lazy(() => import('./components/OrigenService'));
+const OtherServices = lazy(() => import('./components/OtherServices'));
+const StatsBar = lazy(() => import('./components/StatsBar'));
+const Process = lazy(() => import('./components/Process'));
+const Testimonials = lazy(() => import('./components/Testimonials'));
+const ContactForm = lazy(() => import('./components/ContactForm'));
+const Footer = lazy(() => import('./components/Footer'));
+const FloatingCTA = lazy(() => import('./components/FloatingCTA'));
+
+/**
+ * CECSA Control de Plagas - Specialized in Cockroach Control
+ * Ethical and Conscious Approach - "Ético y Consciente"
+ */
 function App() {
+  const { t } = useTranslation();
+
   return (
-    <div className="app">
-      <PromotionBar />
-      <Navbar />
-      <main>
+    <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center text-primary-blue font-black text-3xl tracking-tighter animate-pulse">CEC<span className="text-accent-green">SA</span>...</div>}>
+      <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
+        
+        {/* Navigation Layer */}
+        <Navbar />
+
+        {/* Presentation Layer */}
         <Hero />
-        <Problem />
-        <About />
-        <Method />
-        <Services />
-        <LocalAuthority />
-        <SectorChoice />
+        
+        {/* Specialized Content Layer */}
+        <CockroachFocus />
+        
+        {/* Authority & Trust Layer */}
+        <StatsBar />
+        
+        {/* Operational Scope Layer */}
+        <FleetSection />
+        
+        {/* Services & Sectors Layer */}
+        <PestGrid />
+        <OtherServices />
+        <SectorGrid />
+        
+        {/* Premium Layer */}
         <OrigenService />
-        <Contact />
-      </main>
-      <Footer />
-      <FloatingCTA />
-    </div>
+        
+        {/* Methodology Layer */}
+        <Process />
+        
+        {/* Social Proof Layer */}
+        <Testimonials />
+        
+        {/* Lead Generation Layer */}
+        <ContactForm />
+        
+        {/* Footer Layer */}
+        <Footer />
+        
+        {/* Interaction Layer */}
+        <FloatingCTA />
+
+      </div>
+    </Suspense>
   );
 }
 

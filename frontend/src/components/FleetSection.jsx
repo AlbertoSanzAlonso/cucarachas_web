@@ -1,0 +1,90 @@
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { Truck, MapPin, Clock } from 'lucide-react';
+
+const FleetSection = () => {
+  const { t } = useTranslation();
+
+  return (
+    <section className="py-20 relative overflow-hidden" style={{ background: '#eef7ff' }}>
+      {/* Decorative Blue Wave/Shape */}
+      <div 
+        className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 z-0"
+        style={{ clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)' }}
+      ></div>
+
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+        
+        {/* Visual/Image Side */}
+        <div className="relative group perspective-1000">
+           <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:rotate-y-6">
+             <img 
+               src="/assets/cecasa-van.webp" 
+               alt="CECSA Service Fleet Barcelona" 
+               className="w-full h-auto object-cover"
+             />
+             <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent opacity-60"></div>
+           </div>
+           
+           {/* Speed Tag */}
+           <div className="absolute top-8 left-8 p-4 glass rounded-2xl animate-fade-in flex items-center space-x-3">
+              <div className="p-3 bg-accent-green rounded-xl text-white">
+                <Clock size={24} />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase font-bold text-secondary-gray/50">Tiempo de Respuesta</p>
+                <p className="text-primary-blue font-black tracking-tight underline-offset-4 decoration-accent-green">Menos de 2h</p>
+              </div>
+           </div>
+        </div>
+
+        {/* Text Section Side */}
+        <div className="space-y-8 lg:pl-12">
+          <div className="space-y-4">
+             <h2 className="text-4xl md:text-5xl font-black text-primary-blue leading-tight tracking-tighter">
+               {t('fleet.title', 'Protegemos tu entorno en cualquier rincón de Catalunya')}
+             </h2>
+             <p className="text-lg text-secondary-gray/80 leading-relaxed font-light">
+               {t('fleet.desc', 'Nuestra flota técnica está distribuida estratégicamente para ofrecer una cobertura inmediata en Barcelona, Girona, Tarragona y Lleida. Cada unidad móvil es un laboratorio técnico avanzado.')}
+             </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-8 pt-4">
+             <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-primary-blue font-bold">
+                   <MapPin size={20} className="text-accent-green" />
+                   <span>Provincias</span>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                   {['Barcelona', 'Tarragona', 'Girona', 'Lleida'].map(prov => (
+                     <span key={prov} className="px-3 py-1 bg-white rounded-lg text-xs font-bold text-secondary-gray shadow-sm border border-primary-blue/5">
+                        {prov}
+                     </span>
+                   ))}
+                </div>
+             </div>
+
+             <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-primary-blue font-bold">
+                   <Truck size={20} className="text-accent-green" />
+                   <span>Capacidad</span>
+                </div>
+                <p className="text-sm font-medium text-secondary-gray/60 italic">
+                  Intervenciones simultáneas en múltiples sectores para máxima eficiencia.
+                </p>
+             </div>
+          </div>
+
+          <div className="pt-6">
+            <button className="px-10 py-5 rounded-2xl bg-primary-blue text-white font-black text-lg shadow-xl hover:translate-y-[-4px] transition-all duration-300">
+               Ver Unidades Disponibles
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export default FleetSection;
