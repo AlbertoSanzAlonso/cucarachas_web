@@ -22,7 +22,7 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full overflow-hidden ${isScrolled ? 'py-2 shadow-xl' : 'py-4 shadow-lg'}`}
+      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${mobileMenuOpen ? '' : 'overflow-hidden'} ${isScrolled ? 'py-2 shadow-xl' : 'py-4 shadow-lg'}`}
       style={{
         background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'var(--color-primary-blue)',
         backdropFilter: isScrolled ? 'blur(15px)' : 'none',
@@ -162,21 +162,43 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`lg:hidden fixed inset-x-0 top-[90px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
+        className={`lg:hidden fixed inset-x-0 top-[90px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
       >
         <div className="flex flex-col p-6 space-y-6">
-          {['Especies', 'Sectores', 'Método', 'Sobre CECSA'].map((item) => (
-            <a key={item} href="#" className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-50">{item}</a>
+          {[
+            { key: 'nav.services', id: 'species' },
+            { key: 'nav.sectors', id: 'sectors' },
+            { key: 'nav.process', id: 'process' },
+            { key: 'nav.about', id: 'about' }
+          ].map((item) => (
+            <a 
+              key={item.key} 
+              href={`#${item.id}`} 
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-50 uppercase tracking-tighter"
+            >
+              {t(item.key)}
+            </a>
           ))}
           <div className="pt-4 flex items-center space-x-6">
-            <button onClick={() => changeLanguage('ca')} className="font-bold text-lg">CA</button>
-            <button onClick={() => changeLanguage('es')} className="font-bold text-lg text-gray-400">ES</button>
+            <button 
+              onClick={() => { changeLanguage('ca'); setMobileMenuOpen(false); }} 
+              className={`font-bold text-lg ${i18n.language === 'ca' ? 'text-accent-green' : 'text-primary-blue'}`}
+            >
+              CA
+            </button>
+            <button 
+              onClick={() => { changeLanguage('es'); setMobileMenuOpen(false); }} 
+              className={`font-bold text-lg ${i18n.language === 'es' ? 'text-accent-green' : 'text-primary-blue'}`}
+            >
+              ES
+            </button>
           </div>
           <button 
-            className="w-full py-4 rounded-xl text-white font-black text-lg shadow-xl"
+            className="w-full py-4 rounded-xl text-white font-black text-lg shadow-xl uppercase tracking-widest"
             style={{ background: 'var(--color-primary-blue)' }}
           >
-            URGENCIAS 24H
+            {t('nav.contact')}
           </button>
         </div>
       </div>

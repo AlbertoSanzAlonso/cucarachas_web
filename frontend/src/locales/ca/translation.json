@@ -33,9 +33,38 @@
   },
   "species": {
     "title": "Tipus de paneroles més comunes a Barcelona",
-    "germanica": "Panerola alemanya (Blattella germanica)",
-    "americana": "Panerola americana (Periplaneta americana)",
-    "orientalis": "Panerola oriental (Blatta orientalis)"
+    "germanica": "Panerola alemanya",
+    "germanica_desc": "La més comuna en cuines i habitatges de Barcelona.",
+    "germanica_details": [
+      "Detectades habitualment en motors d'electrodomèstics.",
+      "Garantia d'eliminació mitjançant gel de cebo tècnic.",
+      "No requereix desallotjar l'habitatge."
+    ],
+    "americana": "Panerola americana",
+    "americana_desc": "Gran, rogenca i experta en xarxes de clavegueram.",
+    "americana_details": [
+      "Especialistes en comunitats de veïns i locals.",
+      "Tractament de barrera perimetral d'alta persistència.",
+      "Control focalitzat en punts d'entrada de sanejament."
+    ],
+    "orientalis": "Panerola oriental",
+    "orientalis_desc": "Negra i robusta, prefereix zones fresques i humides.",
+    "orientalis_details": [
+      "Comuna en canalitzacions d'aigua i baixants antigues.",
+      "Tractament mitjançant pulverització dirigida i encebat.",
+      "Prevenció d'accessos des del subsòl."
+    ],
+    "banded": "Panerola banda cafè",
+    "banded_desc": "Petita, prefereix mobles i sostres elevats. No sol trobar-se a les cuines.",
+    "banded_details": [
+      "Detectades sovint en marcs de quadres i motors de rellotge.",
+      "Prefereixen llocs càlids i secs, a diferència de l'alemanya.",
+      "Control expert per evitar la dispersió pel mobiliari."
+    ],
+    "monitor": "Monitoreig Tècnic",
+    "zap": "Eliminació Directa",
+    "barrier": "Barreres Actives",
+    "thermal": "Control Tècnic"
   },
   "origen": {
     "title": "CECSA ORIGEN • Servei Premium",

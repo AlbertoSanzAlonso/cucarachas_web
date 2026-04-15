@@ -15,8 +15,9 @@ const PestGrid = () => {
       icon: <Bug />, 
       color: 'var(--color-primary-blue)', 
       image: '/assets/cucaracha-alemana-nobg.png',
-      desc: 'La más común en cocinas y viviendas de Barcelona.',
-      details: ['Detectadas habitualmente en motores de electrodomésticos.', 'Garantía de eliminación mediante gel de cebo técnico.', 'No requiere desalojar la vivienda.']
+      imageScale: 1.35,
+      desc: t('species.germanica_desc'),
+      details: t('species.germanica_details', { returnObjects: true })
     },
     { 
       id: 'american', 
@@ -25,8 +26,8 @@ const PestGrid = () => {
       icon: <Bug />, 
       color: 'var(--color-accent-green)', 
       image: '/assets/cucaracha-americana-nobg.png',
-      desc: 'Grande, rojiza y experta en redes de alcantarillado.',
-      details: ['Especialistas en comunidades de vecinos y locales.', 'Tratamiento de barrera perimetral de alta persistencia.', 'Control focalizado en puntos de entrada de saneamiento.']
+      desc: t('species.americana_desc'),
+      details: t('species.americana_details', { returnObjects: true })
     },
     { 
       id: 'oriental', 
@@ -35,15 +36,25 @@ const PestGrid = () => {
       icon: <Bug />, 
       color: '#ffffff', 
       image: '/assets/cucaracha-oriental-nobg.png',
-      desc: 'Negra y robusta, prefiere zonas frescas y húmedas.',
+      desc: t('species.orientalis_desc'),
       darkText: true,
-      details: ['Común en canalizaciones de agua y bajantes antiguas.', 'Tratamiento mediante pulverización dirigida y cebado.', 'Prevención de accesos desde el subsuelo.']
+      details: t('species.orientalis_details', { returnObjects: true })
     },
-    { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#111827', desc: 'Pequeña, prefiere muebles y techos elevados.' },
-    { id: 'disinfect', name: 'Monitoreo Técnico', icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
-    { id: 'nests', name: 'Eliminación Directa', icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
-    { id: 'prevent', name: 'Barreras Activas', icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
-    { id: 'urgent', name: 'Control Térmico', icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
+    { 
+      id: 'banded', 
+      name: t('species.banded'), 
+      scientific: 'Supella longipalpa',
+      icon: <Bug />, 
+      color: '#111827', 
+      image: '/assets/cucaracha-bandancafe-white-removebg-preview.png',
+      imageScale: 1.2,
+      desc: t('species.banded_desc'),
+      details: t('species.banded_details', { returnObjects: true })
+    },
+    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
+    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
+    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
+    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
   ];
 
   return (
@@ -69,7 +80,7 @@ const PestGrid = () => {
                whileInView={{ opacity: 1, y: 0 }}
                transition={{ delay: i * 0.1 }}
                viewport={{ once: true }}
-               className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-6 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''}`}
+               className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''}`}
                style={{ background: pest.color }}
              >
                  {/* Corner Search Icon */}
@@ -78,18 +89,18 @@ const PestGrid = () => {
                  </div>
 
                  {/* Main Icon */}
-                 <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                 <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-10 h-10 md:w-14 md:h-14`}>
                     {React.cloneElement(pest.icon, { 
-                      size: 32, 
+                      size: '100%', 
                       strokeWidth: 2 
                     })}
                  </div>
 
                 <div className="text-center space-y-3 md:space-y-6 relative z-10 w-full px-2">
-                   <h3 className={`font-extrabold text-[11px] md:text-xl tracking-tight leading-tight ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                   <h3 className={`font-extrabold text-[12px] md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'}`} style={{ hyphens: 'auto' }}>
                      {pest.name}
                      {pest.scientific && (
-                       <span className="block text-[9px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
+                       <span className="block text-[8px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
                          ({pest.scientific})
                        </span>
                      )}
@@ -121,7 +132,7 @@ const PestGrid = () => {
       {/* Species Detail Modal */}
       <AnimatePresence>
         {selectedPest && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 pb-20 md:pb-6">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 overflow-hidden">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -134,25 +145,25 @@ const PestGrid = () => {
                 initial={{ scale: 0.9, opacity: 0, y: 40 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 0.9, opacity: 0, y: 40 }}
-                className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[95vh] z-[210]"
+                className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210]"
               >
-                {/* Close Button */}
+                {/* Close Button - Fixed relative to modal top */}
                 <button 
                   onClick={() => setSelectedPest(null)}
-                  className="absolute top-4 right-4 md:top-6 md:right-6 z-30 p-2 md:p-3 bg-white/80 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
+                  className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg border border-gray-100"
                 >
                   <X size={20} className="text-primary-gray md:w-6 md:h-6" />
                 </button>
 
                 {/* Sidebar / Image area */}
-                <div className="md:w-1/2 bg-[#f8fafc] p-6 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[200px] md:min-h-[300px]">
+                <div className="md:w-1/2 bg-white p-6 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[200px] md:min-h-[300px]">
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                   </div>
                   
                   <motion.img 
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
+                    animate={{ opacity: 1, scale: selectedPest.imageScale || 1 }}
                     transition={{ delay: 0.2, duration: 0.5 }}
                     src={selectedPest.image} 
                     alt={selectedPest.name} 

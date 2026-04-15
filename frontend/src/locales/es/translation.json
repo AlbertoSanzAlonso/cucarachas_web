@@ -33,9 +33,38 @@
   },
   "species": {
     "title": "Tipos de cucarachas más comunes en Barcelona",
-    "germanica": "Cucaracha alemana (Blattella germanica)",
-    "americana": "Cucaracha americana (Periplaneta americana)",
-    "orientalis": "Cucaracha oriental (Blatta orientalis)"
+    "germanica": "Cucaracha alemana",
+    "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
+    "germanica_details": [
+      "Detectadas habitualmente en motores de electrodomésticos.",
+      "Garantía de eliminación mediante gel de cebo técnico.",
+      "No requiere desalojar la vivienda."
+    ],
+    "americana": "Cucaracha americana",
+    "americana_desc": "Grande, rojiza y experta en redes de alcantarillado.",
+    "americana_details": [
+      "Especialistas en comunidades de vecinos y locales.",
+      "Tratamiento de barrera perimetral de alta persistencia.",
+      "Control focalizado en puntos de entrada de saneamiento."
+    ],
+    "orientalis": "Cucaracha oriental",
+    "orientalis_desc": "Negra y robusta, prefiere zonas frescas y húmedas.",
+    "orientalis_details": [
+      "Común en canalizaciones de agua y bajantes antiguas.",
+      "Tratamiento mediante pulverización dirigida y cebado.",
+      "Prevención de accesos desde el subsuelo."
+    ],
+    "banded": "Cucaracha banda café",
+    "banded_desc": "Pequeña, prefiere muebles y techos elevados. No suele encontrarse en cocinas.",
+    "banded_details": [
+      "Detectadas a menudo en marcos de cuadros y motores de reloj.",
+      "Prefieren lugares cálidos y secos, a diferencia de la alemana.",
+      "Control experto para evitar la dispersión por el mobiliario."
+    ],
+    "monitor": "Monitoreo Técnico",
+    "zap": "Eliminación Directa",
+    "barrier": "Barreras Activas",
+    "thermal": "Control Térmico"
   },
   "origen": {
     "title": "CECSA ORIGEN • Servicio Premium",
