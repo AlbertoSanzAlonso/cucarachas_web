@@ -51,10 +51,10 @@ const PestGrid = () => {
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
     },
-    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
-    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
-    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
-    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
+    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: 'var(--color-primary-blue)', desc: 'Seguimiento preventivo con feromonas.' },
+    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: 'var(--color-accent-green)', desc: 'Localización precisa y eliminación de nidos.' },
+    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: '#ffffff', desc: 'Tratamientos residuales de larga duración.', darkText: true },
+    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: '#111827', desc: 'Eliminación ecológica por calor sin químicos.' }
   ];
 
   return (
