@@ -67,7 +67,8 @@ const PestGrid = () => {
       name: t('species.zap'), 
       icon: <Zap />, 
       color: '#111827', 
-      image: '/assets/cockroach-focus.webp',
+      image: '/assets/recovery_service.png',
+      imageScale: 1,
       desc: t('species.zap_desc'),
       details: t('species.zap_details', { returnObjects: true })
     },
