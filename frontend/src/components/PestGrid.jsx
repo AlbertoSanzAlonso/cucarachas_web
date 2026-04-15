@@ -1,77 +1,216 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, Activity } from 'lucide-react';
+import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, Activity, X, ShieldCheck, Thermometer } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const PestGrid = () => {
   const { t } = useTranslation();
+  const [selectedPest, setSelectedPest] = useState(null);
 
   const species = [
-    { id: 'germanic', name: t('species.germanica'), icon: <Bug />, color: 'var(--color-primary-blue)', desc: 'La más común en cocinas y viviendas.' },
-    { id: 'american', name: t('species.americana'), icon: <Fingerprint />, color: 'var(--color-accent-green)', desc: 'Grande, rojiza y experta en alcantarillado.' },
-    { id: 'oriental', name: t('species.orientalis'), icon: <Droplets />, color: '#ffffff', desc: 'Negra y robusta, prefiere zonas frescas.', darkText: true },
-    { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#111827', desc: 'Pequeña, prefiere muebles y techos.' },
-    { id: 'disinfect', name: 'Monitoreo', icon: <Activity />, color: '#ffffff', desc: 'Seguimiento continuo', darkText: true },
-    { id: 'nests', name: 'Eliminación de Nidos', icon: <Zap />, color: '#111827', desc: 'Localización y sellado termitas.' },
-    { id: 'prevent', name: 'Barreras Biológicas', icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
-    { id: 'urgent', name: 'Control Térmico', icon: <Ban />, color: 'var(--color-accent-green)', desc: 'Eliminación por calor sin químicos.' }
+    { 
+      id: 'germanic', 
+      name: t('species.germanica'), 
+      scientific: 'Blattella germanica',
+      icon: <Bug />, 
+      color: 'var(--color-primary-blue)', 
+      image: '/assets/cucaracha-alemana-nobg.png',
+      desc: 'La más común en cocinas y viviendas de Barcelona.',
+      details: ['Detectadas habitualmente en motores de electrodomésticos.', 'Garantía de eliminación mediante gel de cebo técnico.', 'No requiere desalojar la vivienda.']
+    },
+    { 
+      id: 'american', 
+      name: t('species.americana'), 
+      scientific: 'Periplaneta americana',
+      icon: <Fingerprint />, 
+      color: 'var(--color-accent-green)', 
+      image: '/assets/cucaracha-americana-nobg.png',
+      desc: 'Grande, rojiza y experta en redes de alcantarillado.',
+      details: ['Especialistas en comunidades de vecinos y locales.', 'Tratamiento de barrera perimetral de alta persistencia.', 'Control focalizado en puntos de entrada de saneamiento.']
+    },
+    { 
+      id: 'oriental', 
+      name: t('species.orientalis'), 
+      scientific: 'Blatta orientalis',
+      icon: <Droplets />, 
+      color: '#ffffff', 
+      image: '/assets/cucaracha-oriental-nobg.png',
+      desc: 'Negra y robusta, prefiere zonas frescas y húmedas.',
+      darkText: true,
+      details: ['Común en canalizaciones de agua y bajantes antiguas.', 'Tratamiento mediante pulverización dirigida y cebado.', 'Prevención de accesos desde el subsuelo.']
+    },
+    { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#111827', desc: 'Pequeña, prefiere muebles y techos elevados.' },
+    { id: 'disinfect', name: 'Monitoreo Técnico', icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
+    { id: 'nests', name: 'Eliminación Directa', icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
+    { id: 'prevent', name: 'Barreras Activas', icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
+    { id: 'urgent', name: 'Control Térmico', icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
   ];
 
   return (
-    <section className="py-24 bg-bg-light" id="species">
-      <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
+    <section className="py-24 bg-bg-light relative overflow-hidden" id="species">
+      <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
         
         <div className="max-w-3xl mx-auto space-y-4">
-           <h2 className="text-4xl md:text-5xl font-black text-primary-blue tracking-tighter">
+           <h2 className="text-4xl md:text-5xl font-black text-primary-gray tracking-tighter uppercase">
              {t('species.title')}
            </h2>
-           <p className="text-secondary-gray/80 text-lg font-light">
-             Soluciones radicales para cada especie. Identificamos el foco y eliminamos la plaga de raíz.
+           <div className="w-24 h-1.5 bg-accent-green mx-auto rounded-full"></div>
+           <p className="text-secondary-gray/80 text-lg font-light pt-4 italic">
+             Identificación precisa y protocolos de eliminación radical por especie.
            </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
            {species.map((pest, i) => (
-             <div 
+             <motion.div 
                key={pest.id} 
-               className={`group relative overflow-hidden rounded-[1rem] md:rounded-[2rem] aspect-square flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10' : ''}`}
+               onClick={() => pest.image && setSelectedPest(pest)}
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               transition={{ delay: i * 0.1 }}
+               viewport={{ once: true }}
+               className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-6 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''}`}
                style={{ background: pest.color }}
              >
-                 {/* Visual Icon */}
-                 <div className={`mb-3 md:mb-6 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                 {/* Corner Search Icon */}
+                 <div className="absolute top-6 right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                    <Search size={24} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
+                 </div>
+
+                 {/* Main Icon */}
+                 <div className={`mt-4 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                     {React.cloneElement(pest.icon, { 
                       size: 32, 
-                      strokeWidth: 1.5 
+                      strokeWidth: 2 
                     })}
                  </div>
 
-                <div className="text-center space-y-1 md:space-y-2 px-2">
-                   <h3 className={`font-extrabold text-xs md:text-xl tracking-tight leading-tight transition-all duration-300 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                <div className="text-center space-y-4 relative z-10 w-full">
+                   <h3 className={`font-black text-sm md:text-xl tracking-tighter leading-tight ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                      {pest.name}
-                     {pest.subName && (
-                       <span className="block text-[8px] md:text-sm font-medium opacity-0 group-hover:opacity-100 h-0 group-hover:h-auto transition-all duration-500 overflow-hidden mt-1 px-1">
-                         {pest.subName}
+                     {pest.scientific && (
+                       <span className="block text-[8px] md:text-[10px] font-medium opacity-60 mt-1 uppercase tracking-widest">
+                         ({pest.scientific})
                        </span>
                      )}
                    </h3>
-                   <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>Ver Tratamiento</span>
+                   
+                   <div className="flex justify-center">
+                     <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] px-6 py-2.5 rounded-full border border-current transition-all duration-300 group-hover:bg-white group-hover:text-primary-gray group-hover:border-white shadow-sm ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
+                       {pest.image ? 'Ver Detalles' : 'Info Técnica'}
+                     </span>
+                   </div>
                 </div>
 
-                {/* Hover Description Overlay */}
-                <div className="absolute inset-x-4 bottom-4 glass p-4 rounded-xl opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-                   <p className="text-[10px] font-bold text-primary-gray leading-tight">
+                {/* Background Watermark Icon */}
+                <div className={`absolute -bottom-6 -right-6 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-12 scale-150 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                   {React.cloneElement(pest.icon, { size: 140 })}
+                </div>
+
+                {/* Hover Description Overlay (Floating Glass Style) */}
+                <div className="absolute inset-x-4 bottom-4 glass p-4 rounded-xl opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 z-10 pointer-events-none">
+                   <p className="text-[10px] font-bold text-primary-gray leading-tight text-center">
                      {pest.desc}
                    </p>
                 </div>
-                
-                {/* Corner Decoration */}
-                <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity">
-                   <Search size={40} className={pest.darkText ? 'text-primary-blue' : 'text-white'} />
-                </div>
-             </div>
+             </motion.div>
            ))}
         </div>
-
       </div>
+
+      {/* Species Detail Modal */}
+      <AnimatePresence>
+        {selectedPest && (
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 pb-20 md:pb-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedPest(null)}
+              className="absolute inset-0 bg-primary-blue/40 backdrop-blur-xl"
+            />
+            
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 40 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 40 }}
+              className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[90vh] z-[210]"
+            >
+              {/* Close Button */}
+              <button 
+                onClick={() => setSelectedPest(null)}
+                className="absolute top-6 right-6 z-20 p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <X size={24} className="text-primary-gray" />
+              </button>
+
+              {/* Sidebar / Image area */}
+              <div className="md:w-1/2 bg-[#f8fafc] p-8 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[300px]">
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                  <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
+                </div>
+                
+                <motion.img 
+                  initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  transition={{ delay: 0.2, duration: 0.5 }}
+                  src={selectedPest.image} 
+                  alt={selectedPest.name} 
+                  className="w-full max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
+                />
+                
+                <div className="mt-8 text-center space-y-1 relative z-10">
+                   <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">Certificado Entomológico</p>
+                   <p className="text-secondary-gray/40 text-xs italic">{selectedPest.scientific}</p>
+                </div>
+              </div>
+
+              {/* Content area */}
+              <div className="md:w-1/2 p-8 md:p-16 flex flex-col justify-center space-y-8 overflow-y-auto">
+                <div className="space-y-4">
+                   <h3 className="text-4xl md:text-5xl font-black text-primary-blue tracking-tighter leading-none">
+                     {selectedPest.name}
+                   </h3>
+                   <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
+                   <p className="text-lg text-secondary-gray/80 leading-relaxed font-light italic">
+                     "{selectedPest.desc}"
+                   </p>
+                </div>
+
+                <div className="space-y-6">
+                   <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">Protocolo de Actuación</h4>
+                   <ul className="space-y-4">
+                      {selectedPest.details?.map((detail, idx) => (
+                        <motion.li 
+                          initial={{ opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: 0.3 + (idx * 0.1) }}
+                          key={idx} 
+                          className="flex items-start space-x-3"
+                        >
+                           <div className="mt-1 flex-shrink-0 text-accent-green">
+                              <ShieldCheck size={20} />
+                           </div>
+                           <span className="text-secondary-gray font-medium leading-tight">{detail}</span>
+                        </motion.li>
+                      ))}
+                   </ul>
+                </div>
+
+                <div className="pt-6 space-y-4">
+                   <button className="w-full py-6 rounded-2xl bg-primary-blue text-white font-black text-lg tracking-widest shadow-xl hover:shadow-primary-blue/20 hover:translate-y-[-4px] transition-all flex items-center justify-center group active:scale-95">
+                      SOLICITAR TRATAMIENTO
+                      <Zap size={20} className="ml-3 text-accent-green group-hover:scale-125 transition-transform" />
+                   </button>
+                   <p className="text-center text-[10px] font-bold text-secondary-gray/30 tracking-widest uppercase">
+                     Disponibilidad 24h · Respuesta en &lt;2h
+                   </p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </section>
   );
 };
