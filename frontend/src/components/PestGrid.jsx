@@ -47,7 +47,7 @@ const PestGrid = () => {
       icon: <Bug />, 
       color: '#111827', 
       image: '/assets/cucaracha-bandancafe-white-removebg-preview.png',
-      imageScale: 1.2,
+      imageScale: 1,
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
     },
