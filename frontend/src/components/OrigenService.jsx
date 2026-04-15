@@ -13,13 +13,19 @@ const OrigenService = () => {
   ];
 
   return (
-    <section className="py-24 relative overflow-hidden bg-primary-blue text-white" id="origin">
-      {/* Background Decorative Elements */}
-      <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
-        <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_80%_20%,#fff_1px,transparent_0)] bg-[length:60px_60px]"></div>
+    <section className="relative overflow-visible py-24 md:py-32 z-20" id="origin">
+      {/* Skewed Background - The blue stripe (Matches StatsBar style) */}
+      <div 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 shadow-[0_20px_50px_rgba(0,128,187,0.3)]" 
+        style={{ background: 'var(--color-primary-blue)' }}
+      >
+         {/* Subtle Background Pattern inside skewed area */}
+         <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
+           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
+         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10">
+      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 text-white">
         
         {/* Left Side: Content */}
         <div className="space-y-10 animate-fade-in">

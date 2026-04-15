@@ -6,7 +6,15 @@ const ContactForm = () => {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 relative overflow-hidden" style={{ background: '#bcd755' }} id="contact">
+    <section className="py-24 relative overflow-hidden" 
+      style={{ 
+        background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona_authority.webp)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }} 
+      id="contact"
+    >
       {/* Decorative Blob background */}
       <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 -z-0" style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)' }}></div>
 
@@ -15,11 +23,11 @@ const ContactForm = () => {
         {/* Text Section */}
         <div className="space-y-12">
            <div className="space-y-6">
-              <h2 className="text-5xl md:text-7xl font-black text-primary-blue leading-[0.9] tracking-tighter">
+              <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter">
                 Tu protección <br /> contra plagas, <br /> garantizada.
               </h2>
-              <div className="w-32 h-2 bg-primary-blue rounded-full"></div>
-              <p className="text-xl font-medium text-primary-gray/70 leading-relaxed max-w-md italic">
+              <div className="w-32 h-2 bg-accent-green rounded-full"></div>
+              <p className="text-xl font-medium text-white/80 leading-relaxed max-w-md italic">
                 {t('contact.subtitle', 'Rellena el formulario y un técnico especialista te contactará en menos de 2h para un diagnóstico gratuito.')}
               </p>
            </div>
@@ -32,12 +40,12 @@ const ContactForm = () => {
                 { icon: <Mail />, title: 'Email', value: 'hola@cecasa.cat' }
               ].map((item, i) => (
                 <div key={i} className="flex items-start space-x-4 group">
-                   <div className="p-3 bg-white/15 rounded-xl text-primary-blue group-hover:bg-white/25 transition-all">
+                   <div className="p-3 bg-white/10 rounded-xl text-accent-green group-hover:bg-white/20 transition-all border border-white/5">
                       {React.cloneElement(item.icon, { size: 24, strokeWidth: 2 })}
                    </div>
                    <div className="flex flex-col">
-                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">{item.title}</p>
-                      <p className="font-bold text-primary-blue tracking-tight">{item.value}</p>
+                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/50">{item.title}</p>
+                      <p className="font-extrabold text-white tracking-tight">{item.value}</p>
                    </div>
                 </div>
               ))}
@@ -92,8 +100,8 @@ const ContactForm = () => {
            
            {/* Form caption */}
            <div className="mt-8 text-center space-y-2 opacity-60">
-              <p className="text-xs font-bold text-primary-blue uppercase tracking-widest">Compromiso CECSA</p>
-              <p className="text-[10px] text-primary-gray/80 font-medium">Privacidad absoluta y respuesta técnica garantizada.</p>
+              <p className="text-xs font-bold text-accent-green uppercase tracking-widest">Compromiso CECSA</p>
+              <p className="text-[10px] text-white font-medium">Privacidad absoluta y respuesta técnica garantizada.</p>
            </div>
         </div>
 
