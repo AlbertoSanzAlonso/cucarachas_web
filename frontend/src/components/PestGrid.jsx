@@ -130,84 +130,84 @@ const PestGrid = () => {
               className="absolute inset-0 bg-primary-blue/40 backdrop-blur-xl"
             />
             
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 40 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 40 }}
-              className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[90vh] z-[210]"
-            >
-              {/* Close Button */}
-              <button 
-                onClick={() => setSelectedPest(null)}
-                className="absolute top-6 right-6 z-20 p-3 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              <motion.div 
+                initial={{ scale: 0.9, opacity: 0, y: 40 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 40 }}
+                className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[95vh] z-[210]"
               >
-                <X size={24} className="text-primary-gray" />
-              </button>
+                {/* Close Button */}
+                <button 
+                  onClick={() => setSelectedPest(null)}
+                  className="absolute top-4 right-4 md:top-6 md:right-6 z-30 p-2 md:p-3 bg-white/80 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
+                >
+                  <X size={20} className="text-primary-gray md:w-6 md:h-6" />
+                </button>
 
-              {/* Sidebar / Image area */}
-              <div className="md:w-1/2 bg-[#f8fafc] p-8 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[300px]">
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
-                  <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
-                </div>
-                
-                <motion.img 
-                  initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
-                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                  transition={{ delay: 0.2, duration: 0.5 }}
-                  src={selectedPest.image} 
-                  alt={selectedPest.name} 
-                  className="w-full max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
-                />
-                
-                <div className="mt-8 text-center space-y-1 relative z-10">
-                   <p className="text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">Certificado Entomológico</p>
-                   <p className="text-secondary-gray/40 text-xs italic">{selectedPest.scientific}</p>
-                </div>
-              </div>
-
-              {/* Content area */}
-              <div className="md:w-1/2 p-8 md:p-16 flex flex-col justify-center space-y-8 overflow-y-auto">
-                <div className="space-y-4">
-                   <h3 className="text-4xl md:text-5xl font-black text-primary-blue tracking-tighter leading-none">
-                     {selectedPest.name}
-                   </h3>
-                   <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
-                   <p className="text-lg text-secondary-gray/80 leading-relaxed font-light italic">
-                     "{selectedPest.desc}"
-                   </p>
+                {/* Sidebar / Image area */}
+                <div className="md:w-1/2 bg-[#f8fafc] p-6 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[200px] md:min-h-[300px]">
+                  <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+                    <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
+                  </div>
+                  
+                  <motion.img 
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2, duration: 0.5 }}
+                    src={selectedPest.image} 
+                    alt={selectedPest.name} 
+                    className="w-full max-w-[180px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
+                  />
+                  
+                  <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
+                     <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">Certificado Entomológico</p>
+                     <p className="text-secondary-gray/40 text-[10px] md:text-xs italic">{selectedPest.scientific}</p>
+                  </div>
                 </div>
 
-                <div className="space-y-6">
-                   <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">Protocolo de Actuación</h4>
-                   <ul className="space-y-4">
-                      {selectedPest.details?.map((detail, idx) => (
-                        <motion.li 
-                          initial={{ opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: 0.3 + (idx * 0.1) }}
-                          key={idx} 
-                          className="flex items-start space-x-3"
-                        >
-                           <div className="mt-1 flex-shrink-0 text-accent-green">
-                              <ShieldCheck size={20} />
-                           </div>
-                           <span className="text-secondary-gray font-medium leading-tight">{detail}</span>
-                        </motion.li>
-                      ))}
-                   </ul>
-                </div>
+                {/* Content area */}
+                <div className="md:w-1/2 p-6 md:p-16 flex flex-col justify-center space-y-6 md:space-y-8 overflow-y-auto">
+                  <div className="space-y-3 md:space-y-4">
+                     <h3 className="text-3xl md:text-5xl font-black text-primary-gray tracking-tighter leading-[0.9]">
+                       {selectedPest.name}
+                     </h3>
+                     <div className="w-12 h-1.5 bg-accent-green rounded-full"></div>
+                     <p className="text-sm md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
+                       "{selectedPest.desc}"
+                     </p>
+                  </div>
 
-                <div className="pt-6 space-y-4">
-                   <button className="w-full py-6 rounded-2xl bg-primary-blue text-white font-black text-lg tracking-widest shadow-xl hover:shadow-primary-blue/20 hover:translate-y-[-4px] transition-all flex items-center justify-center group active:scale-95">
-                      SOLICITAR TRATAMIENTO
-                      <Zap size={20} className="ml-3 text-accent-green group-hover:scale-125 transition-transform" />
-                   </button>
-                   <p className="text-center text-[10px] font-bold text-secondary-gray/30 tracking-widest uppercase">
-                     Disponibilidad 24h · Respuesta en &lt;2h
-                   </p>
+                  <div className="space-y-4 md:space-y-6">
+                     <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">Protocolo de Actuación</h4>
+                     <ul className="space-y-3 md:space-y-4">
+                        {selectedPest.details?.map((detail, idx) => (
+                          <motion.li 
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: 0.3 + (idx * 0.1) }}
+                            key={idx} 
+                            className="flex items-start space-x-3"
+                          >
+                             <div className="mt-1 flex-shrink-0 text-accent-green">
+                                <ShieldCheck size={18} className="md:w-5 md:h-5" />
+                             </div>
+                             <span className="text-xs md:text-base text-secondary-gray font-medium leading-tight">{detail}</span>
+                          </motion.li>
+                        ))}
+                     </ul>
+                  </div>
+
+                  <div className="pt-4 md:pt-6 space-y-3 md:space-y-4">
+                     <button className="w-full py-4 md:py-6 rounded-2xl bg-primary-blue text-white font-black text-base md:text-lg tracking-widest shadow-xl hover:shadow-primary-blue/20 transition-all flex items-center justify-center group active:scale-95">
+                        SOLICITAR TRATAMIENTO
+                        <Zap size={18} className="ml-2 md:ml-3 text-accent-green md:w-5 md:h-5" />
+                     </button>
+                     <p className="text-center text-[8px] md:text-[10px] font-bold text-secondary-gray/30 tracking-widest uppercase">
+                       Disponibilidad 24h · Respuesta Técnica
+                     </p>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
           </div>
         )}
       </AnimatePresence>
