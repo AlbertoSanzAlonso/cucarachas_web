@@ -67,7 +67,7 @@ const OrigenService = () => {
         <div className="relative group">
            <div className="relative z-10 rounded-[3.5rem] overflow-hidden shadow-2xl border-4 border-white/10 aspect-[4/5] bg-bg-light/10">
               <img 
-                src="/assets/Inspecció de plagues a la cuina.webp" 
+                src="/assets/inspeccion-plagas-cocina-profesional.webp" 
                 alt="Inspecció de Plagues CECSA" 
                 className="w-full h-full object-cover transition-transform duration-[3s] group-hover:scale-110"
               />

@@ -7,11 +7,11 @@ const FleetSection = () => {
   const [currentStyle, setCurrentStyle] = React.useState(0);
 
   const vanStyles = [
-    '/assets/cecasa-van.webp',
-    '/assets/cecasa-van-eixample.png',
-    '/assets/cecasa-van-park.png',
-    '/assets/cecasa-van-modern.png',
-    '/assets/cecasa-van-residential.png'
+    '/assets/furgoneta-control-plagas-barcelona.webp',
+    '/assets/unidad-movil-control-cucarachas.webp',
+    '/assets/servicio-tecnico-plagas-urbano.webp',
+    '/assets/flota-tecnica-especializada-cecsa.webp',
+    '/assets/control-cucarachas-viviendas.webp'
   ];
 
   React.useEffect(() => {

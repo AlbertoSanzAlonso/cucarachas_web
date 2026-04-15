@@ -8,9 +8,9 @@ const Hero = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
   const slides = [
-    "/assets/Tècnic d'insectes inspecionant una esquerda.webp",
-    "/assets/Tècnic de control de plagues saludant.webp",
-    "/assets/Una parella feliç al sofà.webp"
+    "/assets/tecnico-identificando-foco-cucarachas.webp",
+    "/assets/especialista-sanitario-cecsa-barcelona.webp",
+    "/assets/hogar-protegido-libre-de-cucarachas.webp"
   ];
 
   useEffect(() => {
