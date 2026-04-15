@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
 
   const stats = [
@@ -35,45 +36,54 @@ const AdminDashboard = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden">
+    <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
+      {/* Mobile Sidebar Overlay */}
+      <AnimatePresence>
+        {sidebarOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSidebarOpen(false)}
+            className="fixed inset-0 bg-primary-blue/40 backdrop-blur-sm z-40 lg:hidden"
+          />
+        )}
+      </AnimatePresence>
+
       {/* Sidebar */}
-      <aside className="w-64 bg-primary-blue text-white flex flex-col shadow-2xl z-20">
-        <div className="p-8 pb-4">
+      <aside className={`
+        fixed inset-y-0 left-0 w-72 bg-primary-blue text-white flex flex-col shadow-2xl z-50 transition-transform duration-500 lg:relative lg:translate-x-0
+        ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-8 pb-4 flex justify-between items-center">
           <div className="flex items-center space-x-2 font-black text-2xl tracking-tighter">
             <span className="text-white">CEC</span><span className="text-accent-green">SA</span>
             <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded ml-2 font-medium tracking-normal">ADMIN</span>
           </div>
+          <button 
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors"
+          >
+            <X size={24} />
+          </button>
         </div>
 
         <nav className="flex-1 px-4 py-8 space-y-2">
-          <button 
-            onClick={() => setActiveTab('overview')}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'overview' ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-          >
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab('species')}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'species' ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-          >
-            <Bug size={20} />
-            <span>Espècies</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab('leads')}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'leads' ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-          >
-            <MessageSquare size={20} />
-            <span>Leads</span>
-          </button>
-          <button 
-            onClick={() => setActiveTab('calendar')}
-            className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'calendar' ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
-          >
-            <Calendar size={20} />
-            <span>Agenda</span>
-          </button>
+          {[
+            { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+            { id: 'species', icon: <Bug size={20} />, label: 'Espècies' },
+            { id: 'leads', icon: <MessageSquare size={20} />, label: 'Leads' },
+            { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
+          ].map((item) => (
+            <button 
+              key={item.id}
+              onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === item.id ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+            >
+              {item.icon}
+              <span>{item.label}</span>
+            </button>
+          ))}
         </nav>
 
         <div className="p-4 border-t border-white/10 space-y-2">
@@ -92,11 +102,19 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-12">
+      <main className="flex-1 overflow-y-auto p-6 md:p-12">
         <header className="flex justify-between items-center mb-12">
-          <div>
-            <h1 className="text-3xl font-black text-primary-gray tracking-tight">Hola, Alberto</h1>
-            <p className="text-primary-gray/50 font-medium">Benvingut al teu panell de control sanitari.</p>
+          <div className="flex items-center space-x-4">
+            <button 
+              onClick={() => setSidebarOpen(true)}
+              className="lg:hidden p-2 bg-white rounded-xl shadow-sm border border-gray-100 text-primary-blue"
+            >
+              <LayoutDashboard size={24} />
+            </button>
+            <div className="hidden md:block">
+              <h1 className="text-3xl font-black text-primary-gray tracking-tight">Hola, Alberto</h1>
+              <p className="text-primary-gray/50 font-medium">Benvingut al teu panell de control sanitari.</p>
+            </div>
           </div>
           <div className="flex items-center space-x-6">
             <button className="relative p-2 text-primary-gray/40 hover:text-primary-blue transition-colors">
