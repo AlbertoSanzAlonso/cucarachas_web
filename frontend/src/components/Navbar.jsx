@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Phone, Globe } from 'lucide-react';
+import { Menu, X, Phone, Bug } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
@@ -29,6 +30,40 @@ const Navbar = () => {
         boxShadow: isScrolled ? '0 10px 30px rgba(0,0,0,0.1)' : '0 10px 40px rgba(0,0,0,0.15)'
       }}
     >
+      {/* Floating Icons Pattern (Only visible against blue background) */}
+      <div 
+        className="absolute inset-0 pointer-events-none select-none transition-opacity duration-700"
+        style={{ opacity: isScrolled ? 0 : 1 }}
+      >
+        <div className="absolute inset-0 overflow-hidden">
+          {[...Array(10)].map((_, i) => (
+            <motion.div 
+              key={i} 
+              className="absolute text-white"
+              animate={{
+                x: [0, i % 2 === 0 ? 30 : -30, 0],
+                y: [0, i % 3 === 0 ? -15 : 15, 0],
+                scale: [0.8, 1, 0.8],
+                opacity: [0, 0.1, 0.1, 0.1, 0]
+              }}
+              transition={{
+                duration: 15,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: (i % 5) * 2,
+                times: [0, 0.1, 0.5, 0.9, 1]
+              }}
+              style={{
+                top: `${(i * 15) % 100}%`,
+                left: `${(i * 27) % 100}%`,
+                scale: 0.4 + Math.random(),
+              }}
+            >
+              <Bug size={25 + (i * 5)} />
+            </motion.div>
+          ))}
+        </div>
+      </div>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center space-x-3 group cursor-pointer">

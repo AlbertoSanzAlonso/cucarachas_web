@@ -16,7 +16,7 @@ const Hero = () => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timer);
   }, []);
 
@@ -30,21 +30,37 @@ const Hero = () => {
         }}
       >
         {/* Animated Insect Vector Pattern within the container */}
-        <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <div 
-              key={i} 
-              className="absolute animate-pulse"
-              style={{
-                top: `${Math.random() * 100}%`,
-                left: `${Math.random() * 100}%`,
-                transform: `rotate(${Math.random() * 360}deg) scale(${1 + Math.random()})`,
-                animationDelay: `${i * 0.5}s`
-              }}
-            >
-              <Bug size={80 + Math.random() * 100} key={i} />
-            </div>
-          ))}
+        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+          {[...Array(20)].map((_, i) => {
+            const rotation = (i * 45) % 360;
+            return (
+              <motion.div 
+                key={i} 
+                className="absolute text-white"
+                animate={{
+                  x: [0, i % 2 === 0 ? 60 : -60, 0],
+                  y: [0, i % 3 === 0 ? -60 : 60, 0],
+                  rotate: [rotation, rotation + (i % 2 === 0 ? 20 : -20), rotation],
+                  scale: [0.8, 1, 0.8],
+                  opacity: [0, 0.1, 0.1, 0.1, 0]
+                }}
+                transition={{
+                  duration: 15,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                  delay: (i % 4) * 3,
+                  times: [0, 0.1, 0.5, 0.9, 1]
+                }}
+                style={{
+                  top: `${5 + (i * 7) % 90}%`,
+                  left: `${5 + (i * 13) % 90}%`,
+                  scale: 0.6 + Math.random() * 1.2,
+                }}
+              >
+                <Bug size={40 + (i * 5)} />
+              </motion.div>
+            );
+          })}
         </div>
         
         {/* Modern Accent Gradient */}
@@ -118,10 +134,10 @@ const Hero = () => {
                         <motion.img
                           key={slides[currentSlide]}
                           src={slides[currentSlide]}
-                          initial={{ opacity: 0, scale: 1.1 }}
+                          initial={{ opacity: 0, scale: 1.2 }}
                           animate={{ opacity: 1, scale: 1 }}
-                          exit={{ opacity: 0, scale: 0.95 }}
-                          transition={{ duration: 0.8, ease: "easeInOut" }}
+                          exit={{ opacity: 0, scale: 1.1 }}
+                          transition={{ duration: 2.5, ease: [0.4, 0, 0.2, 1] }}
                           alt="CECSA Control de Plagas"
                           className="w-full h-full object-cover"
                         />

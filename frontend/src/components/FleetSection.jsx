@@ -8,15 +8,16 @@ const FleetSection = () => {
 
   const vanStyles = [
     '/assets/cecasa-van.webp',
-    '/assets/cecasa-van-sketch.png',
-    '/assets/cecasa-van-thermal.png',
-    '/assets/cecasa-van-neon.png'
+    '/assets/cecasa-van-sketch-new.png',
+    '/assets/cecasa-van-blueprint-new.png',
+    '/assets/cecasa-van-flat-new.png',
+    '/assets/cecasa-van-ink-new.png'
   ];
 
   React.useEffect(() => {
     const timer = setInterval(() => {
       setCurrentStyle((prev) => (prev + 1) % vanStyles.length);
-    }, 80);
+    }, 800);
     return () => clearInterval(timer);
   }, [vanStyles.length]);
 
@@ -32,20 +33,20 @@ const FleetSection = () => {
         
         {/* Visual/Image Side */}
         <div className="relative group perspective-1000">
-           <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:rotate-y-6 aspect-square md:aspect-video">
+           <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:rotate-y-6 aspect-square">
              {vanStyles.map((style, i) => (
                <img 
                  key={i}
                  src={style} 
                  alt="CECSA Service Fleet Barcelona" 
-                 className={`absolute inset-0 w-full h-full object-cover ${i === currentStyle ? 'opacity-100' : 'opacity-0'}`}
+                 className={`absolute inset-0 w-full h-full object-contain bg-white/50 ${i === currentStyle ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
                />
              ))}
-             <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent opacity-60"></div>
+             <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/20 to-transparent opacity-40"></div>
            </div>
            
            {/* Speed Tag */}
-           <div className="absolute top-8 left-8 p-4 glass rounded-2xl animate-fade-in flex items-center space-x-3">
+           <div className="absolute top-8 left-8 p-4 glass rounded-2xl flex items-center space-x-3 z-20 shadow-xl">
               <div className="p-3 bg-accent-green rounded-xl text-white">
                 <Clock size={24} />
               </div>
