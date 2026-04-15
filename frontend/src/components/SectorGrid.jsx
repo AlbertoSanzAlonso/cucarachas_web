@@ -17,8 +17,10 @@ const SectorGrid = () => {
       <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
         
         <div className="max-w-3xl mx-auto space-y-4">
-           <h2 className="text-4xl md:text-5xl font-black text-primary-blue tracking-tighter uppercase underline decoration-accent-green decoration-8 underline-offset-[12px]">
-             Servicios para empresas
+           <h2 className="text-3xl md:text-5xl font-black text-primary-blue tracking-tight uppercase">
+             <span className="inline-block border-b-[8px] md:border-b-[16px] border-accent-green/80 leading-tight pb-1 md:pb-2">
+               Servicios para empresas
+             </span>
            </h2>
            <p className="text-secondary-gray/80 text-lg font-light pt-8">
              Soluciones permanentes y discretas para cada sector empresarial en Catalunya.
