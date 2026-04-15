@@ -6,9 +6,9 @@ const PestGrid = () => {
   const { t } = useTranslation();
 
   const species = [
-    { id: 'germanic', name: t('species.germanica'), image: '/assets/pest-germanica.png', color: 'var(--color-primary-blue)', desc: 'La más común en cocinas y viviendas.' },
-    { id: 'american', name: t('species.americana'), image: '/assets/pest-americana.png', color: 'var(--color-accent-green)', desc: 'Grande, rojiza y experta en alcantarillado.' },
-    { id: 'oriental', name: t('species.orientalis'), image: '/assets/pest-orientalis.png', color: '#ffffff', desc: 'Negra y robusta, prefiere zonas frescas.', darkText: true },
+    { id: 'germanic', name: t('species.germanica'), icon: <Bug />, color: 'var(--color-primary-blue)', desc: 'La más común en cocinas y viviendas.' },
+    { id: 'american', name: t('species.americana'), icon: <Fingerprint />, color: 'var(--color-accent-green)', desc: 'Grande, rojiza y experta en alcantarillado.' },
+    { id: 'oriental', name: t('species.orientalis'), icon: <Droplets />, color: '#ffffff', desc: 'Negra y robusta, prefiere zonas frescas.', darkText: true },
     { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#111827', desc: 'Pequeña, prefiere muebles y techos.' },
     { id: 'disinfect', name: 'Monitoreo', icon: <Activity />, color: '#ffffff', desc: 'Seguimiento continuo', darkText: true },
     { id: 'nests', name: 'Eliminación de Nidos', icon: <Zap />, color: '#111827', desc: 'Localización y sellado termitas.' },
@@ -36,22 +36,13 @@ const PestGrid = () => {
                className={`group relative overflow-hidden rounded-[1rem] md:rounded-[2rem] aspect-square flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10' : ''}`}
                style={{ background: pest.color }}
              >
-                {/* Visual Icon / Image */}
-                <div className={`mb-3 md:mb-6 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
-                   {pest.image ? (
-                     <img 
-                       src={pest.image} 
-                       alt={pest.name} 
-                       className="w-16 h-16 md:w-24 md:h-24 object-contain filter brightness-110"
-                       style={{ mixBlendMode: 'multiply' }}
-                     />
-                   ) : (
-                     React.cloneElement(pest.icon, { 
-                       size: 32, 
-                       strokeWidth: 1.5 
-                     })
-                   )}
-                </div>
+                 {/* Visual Icon */}
+                 <div className={`mb-3 md:mb-6 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                    {React.cloneElement(pest.icon, { 
+                      size: 32, 
+                      strokeWidth: 1.5 
+                    })}
+                 </div>
 
                 <div className="text-center space-y-1 md:space-y-2 px-2">
                    <h3 className={`font-extrabold text-xs md:text-xl tracking-tight leading-tight transition-all duration-300 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
