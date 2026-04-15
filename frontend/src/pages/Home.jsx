@@ -17,53 +17,37 @@ const ContactForm = lazy(() => import('../components/ContactForm'));
 const Footer = lazy(() => import('../components/Footer'));
 const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
 
+import { SectionSkeleton } from '../components/Skeleton';
+
+// Optimized Section Components with Granular Suspense
+const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
+  <Suspense fallback={fallback}>
+    <Component />
+  </Suspense>
+);
+
 function Home() {
   const { t } = useTranslation();
 
   return (
-    <Suspense fallback={<div className="h-screen w-screen flex items-center justify-center text-primary-blue font-black text-3xl tracking-tighter animate-pulse">CEC<span className="text-accent-green">SA</span>...</div>}>
-      <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
-        
-        {/* Navigation Layer */}
-        <Navbar />
+    <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
+      <Navbar />
 
-        {/* Presentation Layer */}
-        <Hero />
-        
-        {/* Specialized Content Layer */}
-        <CockroachFocus />
-        
-        {/* Social Proof Layer */}
-        <Testimonials />
-        
-        {/* Operational Scope Layer */}
-        <FleetSection />
-        
-        {/* Services & Sectors Layer */}
-        <PestGrid />
-        <OtherServices />
-        <SectorGrid />
-        
-        {/* Premium Layer */}
-        <OrigenService />
-        
-        {/* Methodology Layer */}
-        <Process />
-        
-        {/* Authority & Trust Layer */}
-        <StatsBar />
-        
-        {/* Lead Generation Layer */}
-        <ContactForm />
-        
-        {/* Footer Layer */}
-        <Footer />
-        
-        {/* Interaction Layer */}
-        <FloatingCTA />
-
-      </div>
-    </Suspense>
+      <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
+      <LazySection Component={CockroachFocus} />
+      <LazySection Component={Testimonials} />
+      <LazySection Component={FleetSection} />
+      <LazySection Component={PestGrid} />
+      <LazySection Component={OtherServices} />
+      <LazySection Component={SectorGrid} />
+      <LazySection Component={OrigenService} />
+      <LazySection Component={Process} />
+      <LazySection Component={StatsBar} />
+      <LazySection Component={ContactForm} />
+      
+      <Footer />
+      <FloatingCTA />
+    </div>
   );
 }
 
