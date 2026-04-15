@@ -62,9 +62,33 @@
       "Control expert per evitar la dispersió pel mobiliari."
     ],
     "monitor": "Monitoreig Tècnic",
+    "monitor_desc": "Seguiment preventiu mitjançant estacions de monitorització.",
+    "monitor_details": [
+      "Instal·lació de trampes amb feromones d'atracció específica.",
+      "Revisió periòdica per detectar activitat abans que es converteixi en plaga.",
+      "Informes digitals detallats amb el nivell de risc capturat."
+    ],
     "zap": "Eliminació Directa",
+    "zap_desc": "Localització precisa i eliminació immediata de nius i focus.",
+    "zap_details": [
+      "Identificació dels llocs de nidificació mitjançant càmeres tècniques.",
+      "Aplicació localitzada de productes d'alta eficàcia i baix impacte.",
+      "Eliminació física dels residus i restes biològiques."
+    ],
     "barrier": "Barreres Actives",
-    "thermal": "Control Tècnic"
+    "barrier_desc": "Tractaments residuals per evitar l'entrada de nous insectes.",
+    "barrier_details": [
+      "Aplicació en punts crítics: baixants, esquerdes i zones de pas.",
+      "Ús de polímers d'alta persistència que aguanten la neteja diària.",
+      "Protecció perimetral de llarga durada (fins a 6 mesos)."
+    ],
+    "thermal": "Control Tècnic",
+    "thermal_desc": "Eliminació ecològica mitjançant calor controlada.",
+    "thermal_details": [
+      "Tractament 100% lliure de químics, ideal per a indústries alimentàries.",
+      "Eficàcia contra totes les fases del cicle de vida (ous inclosos).",
+      "Poca preparació necessària i sense terminis de seguretat."
+    ]
   },
   "origen": {
     "title": "CECSA ORIGEN • Servei Premium",

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, Activity, X, ShieldCheck, Thermometer } from 'lucide-react';
+import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, Activity, X, ShieldCheck, Thermometer, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PestGrid = () => {
@@ -51,10 +51,44 @@ const PestGrid = () => {
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
     },
-    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
-    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
-    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
-    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
+    { 
+      id: 'disinfect', 
+      name: t('species.monitor'), 
+      icon: <Activity />, 
+      color: '#ffffff', 
+      image: '/assets/cockroach-trap.png',
+      desc: t('species.monitor_desc'), 
+      darkText: true,
+      details: t('species.monitor_details', { returnObjects: true })
+    },
+    { 
+      id: 'nests', 
+      name: t('species.zap'), 
+      icon: <Zap />, 
+      color: '#111827', 
+      image: '/assets/cockroach-focus.webp',
+      desc: t('species.zap_desc'),
+      details: t('species.zap_details', { returnObjects: true })
+    },
+    { 
+      id: 'prevent', 
+      name: t('species.barrier'), 
+      icon: <ShieldAlert />, 
+      color: 'var(--color-primary-blue)', 
+      image: '/assets/Inspecció de plagues a la cuina.webp',
+      desc: t('species.barrier_desc'), 
+      details: t('species.barrier_details', { returnObjects: true })
+    },
+    { 
+      id: 'urgent', 
+      name: t('species.thermal'), 
+      icon: <Thermometer />, 
+      color: 'var(--color-accent-green)', 
+      image: '/assets/cecasa-van-thermal.png',
+      imageScale: 1.1,
+      desc: t('species.thermal_desc'), 
+      details: t('species.thermal_details', { returnObjects: true })
+    }
   ];
 
   return (
@@ -81,7 +115,7 @@ const PestGrid = () => {
              return (
                <motion.div 
                  key={pest.id} 
-                 onClick={() => pest.image && setSelectedPest(pest)}
+                 onClick={() => setSelectedPest(pest)}
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
                  transition={{ delay: i * 0.1 }}
@@ -89,49 +123,49 @@ const PestGrid = () => {
                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
                style={{ background: pest.color }}
              >
-                 {/* Corner Search Icon */}
-                 <div className="absolute top-6 right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
-                    <Search size={24} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
+                  {/* Corner Search Icon */}
+                  <div className="absolute top-6 right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                     <Search size={24} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
+                  </div>
+
+                  {/* Main Icon */}
+                  <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-10 h-10 md:w-14 md:h-14`}>
+                     {React.cloneElement(pest.icon, { 
+                       size: '100%', 
+                       strokeWidth: 2 
+                     })}
+                  </div>
+
+                 <div className="text-center space-y-3 md:space-y-6 relative z-10 w-full px-2">
+                    <h3 className={`font-extrabold text-[12px] md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'}`} style={{ hyphens: 'auto' }}>
+                      {pest.name}
+                      {pest.scientific && (
+                        <span className="block text-[8px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
+                          ({pest.scientific})
+                        </span>
+                      )}
+                    </h3>
+                    
+                    <div className="flex justify-center pt-2">
+                      <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-all duration-300 group-hover:scale-110 ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
+                        VER TRATAMIENTO
+                      </span>
+                    </div>
                  </div>
 
-                 {/* Main Icon */}
-                 <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-10 h-10 md:w-14 md:h-14`}>
-                    {React.cloneElement(pest.icon, { 
-                      size: '100%', 
-                      strokeWidth: 2 
-                    })}
+                 {/* Background Watermark Icon */}
+                 <div className={`absolute -bottom-6 -right-6 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-12 scale-150 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                    {React.cloneElement(pest.icon, { size: 140 })}
                  </div>
 
-                <div className="text-center space-y-3 md:space-y-6 relative z-10 w-full px-2">
-                   <h3 className={`font-extrabold text-[12px] md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'}`} style={{ hyphens: 'auto' }}>
-                     {pest.name}
-                     {pest.scientific && (
-                       <span className="block text-[8px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
-                         ({pest.scientific})
-                       </span>
-                     )}
-                   </h3>
-                   
-                   <div className="flex justify-center pt-2">
-                     <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-all duration-300 group-hover:scale-110 ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
-                       VER TRATAMIENTO
-                     </span>
-                   </div>
-                </div>
-
-                {/* Background Watermark Icon */}
-                <div className={`absolute -bottom-6 -right-6 opacity-5 group-hover:opacity-10 transition-all duration-700 rotate-12 scale-150 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
-                   {React.cloneElement(pest.icon, { size: 140 })}
-                </div>
-
-                {/* Hover Description Overlay (Floating Glass Style) */}
-                <div className="absolute inset-x-4 bottom-4 glass p-4 rounded-xl opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 z-10 pointer-events-none">
-                   <p className="text-[10px] font-bold text-primary-gray leading-tight text-center">
-                     {pest.desc}
-                   </p>
-                </div>
-             </motion.div>
-           ); })}
+                 {/* Hover Description Overlay (Floating Glass Style) */}
+                 <div className="absolute inset-x-4 bottom-4 glass p-4 rounded-xl opacity-0 translate-y-4 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0 z-10 pointer-events-none">
+                    <p className="text-[10px] font-bold text-primary-gray leading-tight text-center">
+                      {pest.desc}
+                    </p>
+                 </div>
+              </motion.div>
+            ); })}
         </div>
       </div>
 
@@ -178,7 +212,9 @@ const PestGrid = () => {
                   
                   <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
                      <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">Certificado Entomológico</p>
-                     <p className="text-secondary-gray/40 text-[10px] md:text-xs italic">{selectedPest.scientific}</p>
+                     {selectedPest.scientific && (
+                       <p className="text-secondary-gray/40 text-[10px] md:text-xs italic">{selectedPest.scientific}</p>
+                     )}
                   </div>
                 </div>
 
@@ -214,14 +250,32 @@ const PestGrid = () => {
                      </ul>
                   </div>
 
-                  <div className="pt-4 md:pt-6 space-y-3 md:space-y-4">
-                     <button className="w-full py-4 md:py-6 rounded-2xl bg-primary-blue text-white font-black text-base md:text-lg tracking-widest shadow-xl hover:shadow-primary-blue/20 transition-all flex items-center justify-center group active:scale-95">
-                        SOLICITAR TRATAMIENTO
-                        <Zap size={18} className="ml-2 md:ml-3 text-accent-green md:w-5 md:h-5" />
-                     </button>
-                     <p className="text-center text-[8px] md:text-[10px] font-bold text-secondary-gray/30 tracking-widest uppercase">
-                       Disponibilidad 24h · Respuesta Técnica
-                     </p>
+                  {/* Modal CTA */}
+                  <div className="pt-8 border-t border-gray-100">
+                    <button 
+                      className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest flex items-center justify-center space-x-3 group"
+                      style={{ background: 'var(--color-primary-blue)' }}
+                    >
+                      <Zap className="w-6 h-6 text-accent-green group-hover:rotate-12 transition-transform animate-pulse" />
+                      <span>{t('common.cta_free')}</span>
+                    </button>
+                    <div className="flex justify-center items-center space-x-4 mt-6">
+                       <div className="flex -space-x-2">
+                         {[1,2,3].map(i => (
+                           <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
+                             <img src={`https://i.pravatar.cc/100?img=${i+10}`} alt="Expert" className="w-full h-full object-cover" />
+                           </div>
+                         ))}
+                       </div>
+                       <div className="flex flex-col">
+                          <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest leading-none">
+                             Técnicos de guardia
+                          </p>
+                          <p className="text-[10px] text-accent-green font-black uppercase tracking-widest">
+                             Disponibles ahora
+                          </p>
+                       </div>
+                    </div>
                   </div>
                 </div>
               </motion.div>

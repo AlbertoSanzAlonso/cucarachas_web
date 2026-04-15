@@ -62,9 +62,33 @@
       "Control experto para evitar la dispersión por el mobiliario."
     ],
     "monitor": "Monitoreo Técnico",
+    "monitor_desc": "Seguimiento preventivo mediante estaciones de monitoreo.",
+    "monitor_details": [
+      "Instalación de trampas con feromonas de atracción específica.",
+      "Revisión periódica para detectar actividad antes de que sea plaga.",
+      "Informes digitales detallados con el nivel de riesgo capturado."
+    ],
     "zap": "Eliminación Directa",
+    "zap_desc": "Localización precisa y eliminación inmediata de nidos y focos.",
+    "zap_details": [
+      "Identificación de lugares de nidificación mediante cámaras técnicas.",
+      "Aplicación localizada de productos de alta eficacia y bajo impacto.",
+      "Eliminación física de residuos y restos biológicos."
+    ],
     "barrier": "Barreras Activas",
-    "thermal": "Control Térmico"
+    "barrier_desc": "Tratamientos residuales para evitar la entrada de nuevos insectos.",
+    "barrier_details": [
+      "Aplicación en puntos críticos: bajantes, grietas y zonas de paso.",
+      "Uso de polímeros de alta persistencia que aguantan limpieza diaria.",
+      "Protección perimetral de larga duración (hasta 6 meses)."
+    ],
+    "thermal": "Control Térmico",
+    "thermal_desc": "Eliminación ecológica mediante calor controlado.",
+    "thermal_details": [
+      "Tratamiento 100% libre de químicos, ideal para industria alimentaria.",
+      "Eficacia contra todas las fases del ciclo de vida (huevos incluidos).",
+      "Poca preparación necesaria y sin plazos de seguridad."
+    ]
   },
   "origen": {
     "title": "CECSA ORIGEN • Servicio Premium",
