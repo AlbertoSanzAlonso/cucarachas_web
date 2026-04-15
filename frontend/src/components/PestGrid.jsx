@@ -85,18 +85,18 @@ const PestGrid = () => {
                     })}
                  </div>
 
-                <div className="text-center space-y-4 relative z-10 w-full">
-                   <h3 className={`font-black text-sm md:text-xl tracking-tighter leading-tight ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                <div className="text-center space-y-2 md:space-y-4 relative z-10 w-full px-1">
+                   <h3 className={`font-black text-[10px] md:text-xl tracking-tighter leading-tight ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                      {pest.name}
                      {pest.scientific && (
-                       <span className="block text-[8px] md:text-[10px] font-medium opacity-60 mt-1 uppercase tracking-widest">
+                       <span className="block text-[7px] md:text-[10px] font-medium opacity-60 mt-0.5 uppercase tracking-widest leading-none">
                          ({pest.scientific})
                        </span>
                      )}
                    </h3>
                    
                    <div className="flex justify-center">
-                     <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] px-6 py-2.5 rounded-full border border-current transition-all duration-300 group-hover:bg-white group-hover:text-primary-gray group-hover:border-white shadow-sm ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
+                     <span className={`text-[8px] md:text-[10px] uppercase font-extrabold tracking-[0.15em] md:tracking-[0.2em] px-3 py-1.5 md:px-6 md:py-2.5 rounded-full border border-current transition-all duration-300 group-hover:bg-white group-hover:text-primary-gray group-hover:border-white shadow-sm ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
                        {pest.image ? 'Ver Detalles' : 'Info Técnica'}
                      </span>
                    </div>
