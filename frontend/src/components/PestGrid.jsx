@@ -51,10 +51,10 @@ const PestGrid = () => {
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
     },
-    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: 'var(--color-primary-blue)', desc: 'Seguimiento preventivo con feromonas.' },
-    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: 'var(--color-accent-green)', desc: 'Localización precisa y eliminación de nidos.' },
-    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: '#ffffff', desc: 'Tratamientos residuales de larga duración.', darkText: true },
-    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: '#111827', desc: 'Eliminación ecológica por calor sin químicos.' }
+    { id: 'disinfect', name: t('species.monitor'), icon: <Activity />, color: '#ffffff', desc: 'Seguimiento preventivo con feromonas.', darkText: true },
+    { id: 'nests', name: t('species.zap'), icon: <Zap />, color: '#111827', desc: 'Localización precisa y eliminación de nidos.' },
+    { id: 'prevent', name: t('species.barrier'), icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
+    { id: 'urgent', name: t('species.thermal'), icon: <Thermometer />, color: 'var(--color-accent-green)', desc: 'Eliminación ecológica por calor sin químicos.' }
   ];
 
   return (
@@ -72,15 +72,21 @@ const PestGrid = () => {
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-           {species.map((pest, i) => (
-             <motion.div 
-               key={pest.id} 
-               onClick={() => pest.image && setSelectedPest(pest)}
-               initial={{ opacity: 0, y: 20 }}
-               whileInView={{ opacity: 1, y: 0 }}
-               transition={{ delay: i * 0.1 }}
-               viewport={{ once: true }}
-               className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''}`}
+           {species.map((pest, i) => {
+             const orderClasses = [
+               'order-1', 'order-2', 'order-3', 'order-4',
+               'order-7 md:order-5', 'order-8 md:order-6',
+               'order-5 md:order-7', 'order-6 md:order-8'
+             ];
+             return (
+               <motion.div 
+                 key={pest.id} 
+                 onClick={() => pest.image && setSelectedPest(pest)}
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 transition={{ delay: i * 0.1 }}
+                 viewport={{ once: true }}
+                 className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
                style={{ background: pest.color }}
              >
                  {/* Corner Search Icon */}
@@ -125,7 +131,7 @@ const PestGrid = () => {
                    </p>
                 </div>
              </motion.div>
-           ))}
+           ); })}
         </div>
       </div>
 
