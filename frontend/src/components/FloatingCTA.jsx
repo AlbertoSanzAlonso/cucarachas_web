@@ -26,26 +26,26 @@ const FloatingCTA = () => {
           </div>
 
           {/* Core Urgent Floating CTA (Right) */}
-          <div className="flex flex-col space-y-3 items-end pointer-events-auto">
+          <div className="flex flex-col space-y-2 items-end pointer-events-auto">
              {/* Dynamic Tooltip */}
-             <div className="bg-primary-blue text-white text-[10px] font-black uppercase tracking-[0.2em] px-4 py-2 rounded-full shadow-xl animate-bounce">
+             <div className="bg-primary-blue text-white text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1.5 md:px-4 md:py-2 rounded-full shadow-xl animate-bounce">
                 {t('cta.badge', 'Técnico de Guardia disponible')}
              </div>
              
              <a 
                href="tel:+34930000000" 
-               className="flex items-center space-x-5 px-8 py-5 rounded-[2rem] bg-accent-green text-primary-gray font-black text-xl shadow-2xl hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 transition-all group"
+               className="flex items-center space-x-3 md:space-x-5 px-5 py-3 md:px-8 md:py-5 rounded-full bg-accent-green text-primary-gray font-black text-sm md:text-xl shadow-2xl hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 transition-all group"
                style={{ 
                  background: 'var(--color-accent-green)', 
-                 boxShadow: '0 20px 40px rgba(52, 211, 153, 0.3)'
+                 boxShadow: '0 15px 30px rgba(52, 211, 153, 0.4)'
                }}
              >
-                <span className="flex items-center">
-                  <span className="mr-3">LLAMAR AHORA</span>
-                  <span className="text-primary-gray/50 font-medium">930 000 000</span>
+                <span className="flex flex-col md:flex-row md:items-center text-left md:text-center space-y-1 md:space-y-0">
+                  <span className="md:mr-3 leading-none">LLAMAR AHORA</span>
+                  <span className="text-primary-gray/50 font-medium text-[10px] md:text-xl leading-none">930 000 000</span>
                 </span>
-                <div className="p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform">
-                   <Phone size={24} fill="currentColor" />
+                <div className="p-1.5 md:p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform">
+                   <Phone size={20} className="md:w-6 md:h-6" fill="currentColor" />
                 </div>
              </a>
           </div>

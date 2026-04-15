@@ -4,6 +4,21 @@ import { Truck, MapPin, Clock } from 'lucide-react';
 
 const FleetSection = () => {
   const { t } = useTranslation();
+  const [currentStyle, setCurrentStyle] = React.useState(0);
+
+  const vanStyles = [
+    '/assets/cecasa-van.webp',
+    '/assets/cecasa-van-sketch.png',
+    '/assets/cecasa-van-thermal.png',
+    '/assets/cecasa-van-neon.png'
+  ];
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentStyle((prev) => (prev + 1) % vanStyles.length);
+    }, 80);
+    return () => clearInterval(timer);
+  }, [vanStyles.length]);
 
   return (
     <section className="py-20 relative overflow-hidden" style={{ background: '#eef7ff' }}>
@@ -17,12 +32,15 @@ const FleetSection = () => {
         
         {/* Visual/Image Side */}
         <div className="relative group perspective-1000">
-           <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:rotate-y-6">
-             <img 
-               src="/assets/cecasa-van.webp" 
-               alt="CECSA Service Fleet Barcelona" 
-               className="w-full h-auto object-cover"
-             />
+           <div className="relative z-10 rounded-[3rem] overflow-hidden shadow-2xl transition-transform duration-700 group-hover:rotate-y-6 aspect-square md:aspect-video">
+             {vanStyles.map((style, i) => (
+               <img 
+                 key={i}
+                 src={style} 
+                 alt="CECSA Service Fleet Barcelona" 
+                 className={`absolute inset-0 w-full h-full object-cover ${i === currentStyle ? 'opacity-100' : 'opacity-0'}`}
+               />
+             ))}
              <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent opacity-60"></div>
            </div>
            

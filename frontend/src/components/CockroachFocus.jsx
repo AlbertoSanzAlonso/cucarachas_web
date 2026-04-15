@@ -54,8 +54,8 @@ const CockroachFocus = () => {
         <div className="relative order-1 md:order-2 group flex justify-center">
            <div className="relative z-10 w-full max-w-lg transition-transform duration-700 hover:scale-105 active:scale-95">
              <img 
-               src="/assets/cockroach-isolated.webp" 
-               alt="Control de Cucarachas CECSA" 
+               src="/assets/cockroach-trap.png" 
+               alt="Trampa de Monitoreo CECSA" 
                className="w-full h-auto object-contain mix-blend-multiply"
              />
            </div>

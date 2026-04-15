@@ -1,19 +1,19 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, ZapOff } from 'lucide-react';
+import { Bug, Droplets, ShieldAlert, Zap, Search, Fingerprint, Ban, Activity } from 'lucide-react';
 
 const PestGrid = () => {
   const { t } = useTranslation();
 
   const species = [
-    { id: 'germanic', name: t('species.germanica'), icon: <Bug />, color: '#7ad1ff', desc: 'La más común en cocinas y viviendas.' },
-    { id: 'american', name: t('species.americana'), icon: <Fingerprint />, color: '#4a74cc', desc: 'Grande, rojiza y experta en alcantarillado.' },
-    { id: 'oriental', name: t('species.orientalis'), icon: <Droplets />, color: '#b5d444', desc: 'Negra y robusta, prefiere zonas frescas.' },
-    { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#a0b52a', desc: 'Pequeña, prefiere muebles y techos.' },
-    { id: 'disinfect', name: 'Desinfección COVID/Virus', icon: <Droplets />, color: '#f7931e', desc: 'Nebulización técnica en locales.' },
-    { id: 'nests', name: 'Eliminación de Nidos', icon: <Zap />, color: '#e54d4d', desc: 'Localización y sellado termitas.' },
-    { id: 'prevent', name: 'Barreras Biológicas', icon: <ShieldAlert />, color: '#f06292', desc: 'Tratamientos residuales de larga duración.' },
-    { id: 'urgent', name: 'Control Térmico', icon: <Ban />, color: '#d81b60', desc: 'Eliminación por calor sin químicos.' }
+    { id: 'germanic', name: t('species.germanica'), icon: <Bug />, color: 'var(--color-primary-blue)', desc: 'La más común en cocinas y viviendas.' },
+    { id: 'american', name: t('species.americana'), icon: <Fingerprint />, color: 'var(--color-accent-green)', desc: 'Grande, rojiza y experta en alcantarillado.' },
+    { id: 'oriental', name: t('species.orientalis'), icon: <Droplets />, color: '#ffffff', desc: 'Negra y robusta, prefiere zonas frescas.', darkText: true },
+    { id: 'banded', name: 'Cucaracha Banda Café', icon: <Bug />, color: '#111827', desc: 'Pequeña, prefiere muebles y techos.' },
+    { id: 'disinfect', name: 'Monitoreo', icon: <Activity />, color: '#ffffff', desc: 'Seguimiento continuo', darkText: true },
+    { id: 'nests', name: 'Eliminación de Nidos', icon: <Zap />, color: '#111827', desc: 'Localización y sellado termitas.' },
+    { id: 'prevent', name: 'Barreras Biológicas', icon: <ShieldAlert />, color: 'var(--color-primary-blue)', desc: 'Tratamientos residuales de larga duración.' },
+    { id: 'urgent', name: 'Control Térmico', icon: <Ban />, color: 'var(--color-accent-green)', desc: 'Eliminación por calor sin químicos.' }
   ];
 
   return (
@@ -29,23 +29,31 @@ const PestGrid = () => {
            </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-1 md:gap-6">
            {species.map((pest, i) => (
              <div 
                key={pest.id} 
-               className="group relative overflow-hidden rounded-[2rem] aspect-square flex flex-col items-center justify-center p-8 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-8px] cursor-pointer"
+               className={`group relative overflow-hidden rounded-[1rem] md:rounded-[2rem] aspect-square flex flex-col items-center justify-center p-4 md:p-8 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10' : ''}`}
                style={{ background: pest.color }}
              >
                 {/* Visual Icon */}
-                <div className="mb-6 transform transition-transform duration-500 group-hover:scale-110 text-white drop-shadow-lg">
-                   {React.cloneElement(pest.icon, { size: 48, strokeWidth: 1.5 })}
+                <div className={`mb-3 md:mb-6 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                   {React.cloneElement(pest.icon, { 
+                     size: 32, 
+                     strokeWidth: 1.5 
+                   })}
                 </div>
 
-                <div className="text-center space-y-2">
-                   <h3 className="text-white font-extrabold text-lg md:text-xl tracking-tight leading-tight">
+                <div className="text-center space-y-1 md:space-y-2 px-2">
+                   <h3 className={`font-extrabold text-xs md:text-xl tracking-tight leading-tight transition-all duration-300 ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                      {pest.name}
+                     {pest.subName && (
+                       <span className="block text-[8px] md:text-sm font-medium opacity-0 group-hover:opacity-100 h-0 group-hover:h-auto transition-all duration-500 overflow-hidden mt-1 px-1">
+                         {pest.subName}
+                       </span>
+                     )}
                    </h3>
-                   <span className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/70">Ver Tratamiento</span>
+                   <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>Ver Tratamiento</span>
                 </div>
 
                 {/* Hover Description Overlay */}
@@ -57,7 +65,7 @@ const PestGrid = () => {
                 
                 {/* Corner Decoration */}
                 <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:opacity-40 transition-opacity">
-                   <Search size={40} className="text-white" />
+                   <Search size={40} className={pest.darkText ? 'text-primary-blue' : 'text-white'} />
                 </div>
              </div>
            ))}
