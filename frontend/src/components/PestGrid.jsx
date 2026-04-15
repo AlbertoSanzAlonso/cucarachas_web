@@ -84,8 +84,8 @@ const PestGrid = () => {
       name: t('species.thermal'), 
       icon: <Thermometer />, 
       color: 'var(--color-accent-green)', 
-      image: '/assets/cecasa-van-thermal.png',
-      imageScale: 1.1,
+      image: "/assets/Inspecció d'insectes en cuina professional.webp",
+      imageScale: 1,
       desc: t('species.thermal_desc'), 
       details: t('species.thermal_details', { returnObjects: true })
     }
