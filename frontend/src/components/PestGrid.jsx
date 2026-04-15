@@ -56,7 +56,8 @@ const PestGrid = () => {
       name: t('species.monitor'), 
       icon: <Activity />, 
       color: '#ffffff', 
-      image: '/assets/cockroach-trap.png',
+      image: '/assets/Trampa_de_monitoratge_amb_cuc_de_cuina__1_-removebg-preview.png',
+      imageScale: 1.25,
       desc: t('species.monitor_desc'), 
       darkText: true,
       details: t('species.monitor_details', { returnObjects: true })
