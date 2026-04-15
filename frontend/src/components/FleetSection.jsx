@@ -8,10 +8,10 @@ const FleetSection = () => {
 
   const vanStyles = [
     '/assets/cecasa-van.webp',
-    '/assets/cecasa-van-sketch-new.png',
-    '/assets/cecasa-van-blueprint-new.png',
-    '/assets/cecasa-van-flat-new.png',
-    '/assets/cecasa-van-ink-new.png'
+    '/assets/cecasa-van-eixample.png',
+    '/assets/cecasa-van-park.png',
+    '/assets/cecasa-van-modern.png',
+    '/assets/cecasa-van-residential.png'
   ];
 
   React.useEffect(() => {
@@ -39,7 +39,7 @@ const FleetSection = () => {
                  key={i}
                  src={style} 
                  alt="CECSA Service Fleet Barcelona" 
-                 className={`absolute inset-0 w-full h-full object-contain bg-white/50 ${i === currentStyle ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
+                 className={`absolute inset-0 w-full h-full object-cover ${i === currentStyle ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}
                />
              ))}
              <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/20 to-transparent opacity-40"></div>
