@@ -12,7 +12,7 @@ const Process = () => {
   ];
 
   return (
-    <section className="py-24 bg-white" id="method">
+    <section className="pt-40 pb-24 bg-white" id="method">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-20">
         
         <div className="max-w-3xl mx-auto space-y-4">

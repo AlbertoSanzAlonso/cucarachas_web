@@ -22,12 +22,16 @@ const FleetSection = () => {
   }, [vanStyles.length]);
 
   return (
-    <section className="py-20 relative overflow-hidden" style={{ background: '#eef7ff' }}>
-      {/* Decorative Blue Wave/Shape */}
+    <section className="py-24 md:py-32 relative overflow-visible bg-white">
+      {/* Skewed Background - Technical light blue stripe */}
       <div 
-        className="absolute top-0 right-0 w-1/3 h-full bg-primary-blue/5 z-0"
-        style={{ clipPath: 'polygon(20% 0, 100% 0, 100% 100%, 0% 100%)' }}
-      ></div>
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 bg-[#eef7ff] border-y border-primary-blue/5 shadow-[0_0_50px_rgba(0,0,0,0.02)]" 
+      >
+         {/* Subtle Technical Pattern */}
+         <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
+           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
+         </div>
+      </div>
 
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-12 items-center relative z-10">
         
