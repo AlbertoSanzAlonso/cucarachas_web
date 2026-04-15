@@ -14,7 +14,7 @@ const PestGrid = () => {
       scientific: 'Blattella germanica',
       icon: <Bug />, 
       color: 'var(--color-primary-blue)', 
-      image: '/assets/cucaracha-alemana-nobg.png',
+      image: '/assets/eliminar-cucaracha-alemana-barcelona.webp',
       imageScale: 1.35,
       desc: t('species.germanica_desc'),
       details: t('species.germanica_details', { returnObjects: true })
@@ -25,7 +25,7 @@ const PestGrid = () => {
       scientific: 'Periplaneta americana',
       icon: <Bug />, 
       color: 'var(--color-accent-green)', 
-      image: '/assets/cucaracha-americana-nobg.png',
+      image: '/assets/control-cucaracha-americana-catalunya.webp',
       desc: t('species.americana_desc'),
       details: t('species.americana_details', { returnObjects: true })
     },
@@ -35,7 +35,7 @@ const PestGrid = () => {
       scientific: 'Blatta orientalis',
       icon: <Bug />, 
       color: '#ffffff', 
-      image: '/assets/cucaracha-oriental-nobg.png',
+      image: '/assets/desinsectacion-cucaracha-oriental.webp',
       desc: t('species.orientalis_desc'),
       darkText: true,
       details: t('species.orientalis_details', { returnObjects: true })
@@ -46,7 +46,7 @@ const PestGrid = () => {
       scientific: 'Supella longipalpa',
       icon: <Bug />, 
       color: '#111827', 
-      image: '/assets/cucaracha-bandancafe-white-removebg-preview.png',
+      image: '/assets/eliminar-cucaracha-banda-cafe.webp',
       imageScale: 1,
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
@@ -56,7 +56,7 @@ const PestGrid = () => {
       name: t('species.monitor'), 
       icon: <Activity />, 
       color: '#ffffff', 
-      image: '/assets/Trampa_de_monitoratge_amb_cuc_de_cuina__1_-removebg-preview.png',
+      image: '/assets/monitoreo-tecnico-cucarachas-barcelona.webp',
       imageScale: 1.25,
       desc: t('species.monitor_desc'), 
       darkText: true,
@@ -67,7 +67,7 @@ const PestGrid = () => {
       name: t('species.zap'), 
       icon: <Zap />, 
       color: '#111827', 
-      image: '/assets/recovery_service.png',
+      image: '/assets/eliminacion-directa-focos-cucarachas.webp',
       imageScale: 1,
       desc: t('species.zap_desc'),
       details: t('species.zap_details', { returnObjects: true })
@@ -77,7 +77,7 @@ const PestGrid = () => {
       name: t('species.barrier'), 
       icon: <ShieldAlert />, 
       color: 'var(--color-primary-blue)', 
-      image: '/assets/Inspecció de plagues a la cuina.webp',
+      image: '/assets/barrera-proteccion-plagas-cocina.webp',
       desc: t('species.barrier_desc'), 
       details: t('species.barrier_details', { returnObjects: true })
     },
@@ -86,7 +86,7 @@ const PestGrid = () => {
       name: t('species.thermal'), 
       icon: <Thermometer />, 
       color: 'var(--color-accent-green)', 
-      image: "/assets/Inspecció d'insectes en cuina professional.webp",
+      image: "/assets/inspeccion-tecnica-cuina-professional.webp",
       imageScale: 1,
       desc: t('species.thermal_desc'), 
       details: t('species.thermal_details', { returnObjects: true })
@@ -209,7 +209,7 @@ const PestGrid = () => {
                     transition={{ delay: 0.2, duration: 0.5 }}
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
-                    className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
+                    className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
                   />
                   
                   <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
