@@ -38,8 +38,8 @@ function App() {
         {/* Specialized Content Layer */}
         <CockroachFocus />
         
-        {/* Authority & Trust Layer */}
-        <StatsBar />
+        {/* Social Proof Layer */}
+        <Testimonials />
         
         {/* Operational Scope Layer */}
         <FleetSection />
@@ -55,8 +55,8 @@ function App() {
         {/* Methodology Layer */}
         <Process />
         
-        {/* Social Proof Layer */}
-        <Testimonials />
+        {/* Authority & Trust Layer */}
+        <StatsBar />
         
         {/* Lead Generation Layer */}
         <ContactForm />
