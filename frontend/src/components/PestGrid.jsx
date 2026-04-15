@@ -255,13 +255,11 @@ const PestGrid = () => {
                   {/* Modal CTA */}
                   <div className="pt-8 border-t border-gray-100">
                     <button 
-                      className="w-full py-5 rounded-3xl text-white font-black text-xl shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-widest flex items-center justify-center space-x-4 group relative"
+                      className="w-full py-5 px-8 rounded-3xl text-white font-black text-xl shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter sm:tracking-widest flex items-center justify-center space-x-4 group"
                       style={{ background: 'var(--color-primary-blue)' }}
                     >
-                      <div className="flex items-center justify-center shrink-0">
-                        <Zap className="w-7 h-7 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform" />
-                      </div>
-                      <span className="relative top-[1px]">
+                      <Zap className="w-6 h-6 md:w-8 md:h-8 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
+                      <span className="leading-tight">
                         {t('common.cta_free')}
                       </span>
                     </button>
