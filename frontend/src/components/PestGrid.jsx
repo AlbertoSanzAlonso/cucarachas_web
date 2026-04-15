@@ -22,7 +22,7 @@ const PestGrid = () => {
       id: 'american', 
       name: t('species.americana'), 
       scientific: 'Periplaneta americana',
-      icon: <Fingerprint />, 
+      icon: <Bug />, 
       color: 'var(--color-accent-green)', 
       image: '/assets/cucaracha-americana-nobg.png',
       desc: 'Grande, rojiza y experta en redes de alcantarillado.',
@@ -32,7 +32,7 @@ const PestGrid = () => {
       id: 'oriental', 
       name: t('species.orientalis'), 
       scientific: 'Blatta orientalis',
-      icon: <Droplets />, 
+      icon: <Bug />, 
       color: '#ffffff', 
       image: '/assets/cucaracha-oriental-nobg.png',
       desc: 'Negra y robusta, prefiere zonas frescas y húmedas.',
@@ -78,14 +78,14 @@ const PestGrid = () => {
                  </div>
 
                  {/* Main Icon */}
-                 <div className={`mt-4 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
+                 <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                     {React.cloneElement(pest.icon, { 
                       size: 32, 
                       strokeWidth: 2 
                     })}
                  </div>
 
-                <div className="text-center space-y-2 md:space-y-4 relative z-10 w-full px-2">
+                <div className="text-center space-y-3 md:space-y-6 relative z-10 w-full px-2">
                    <h3 className={`font-extrabold text-[11px] md:text-xl tracking-tight leading-tight ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                      {pest.name}
                      {pest.scientific && (
