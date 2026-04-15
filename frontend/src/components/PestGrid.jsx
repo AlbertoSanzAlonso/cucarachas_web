@@ -156,7 +156,7 @@ const PestGrid = () => {
                     transition={{ delay: 0.2, duration: 0.5 }}
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
-                    className="w-full max-w-[180px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
+                    className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10"
                   />
                   
                   <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
@@ -171,7 +171,7 @@ const PestGrid = () => {
                      <h3 className="text-3xl md:text-5xl font-black text-primary-gray tracking-tighter leading-[0.9]">
                        {selectedPest.name}
                      </h3>
-                     <div className="w-12 h-1.5 bg-accent-green rounded-full"></div>
+                     <div className="w-20 h-1.5 bg-accent-green rounded-full"></div>
                      <p className="text-sm md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
                        "{selectedPest.desc}"
                      </p>
