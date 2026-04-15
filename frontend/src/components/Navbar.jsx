@@ -31,15 +31,18 @@ const Navbar = () => {
       }}
     >
       {/* Floating Icons Pattern (Only visible against blue background) */}
-      <div 
+      <motion.div 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: isScrolled ? 0 : 1 }}
+        transition={{ duration: 2, delay: 1 }}
         className="absolute inset-0 pointer-events-none select-none transition-opacity duration-700"
-        style={{ opacity: isScrolled ? 0 : 1 }}
       >
         <div className="absolute inset-0 overflow-hidden">
           {[...Array(10)].map((_, i) => (
             <motion.div 
               key={i} 
               className="absolute text-white"
+              initial={{ opacity: 0 }}
               animate={{
                 x: [0, i % 2 === 0 ? 30 : -30, 0],
                 y: [0, i % 3 === 0 ? -15 : 15, 0],
@@ -50,7 +53,7 @@ const Navbar = () => {
                 duration: 15,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: (i % 5) * 2,
+                delay: 2 + (i % 5) * 2,
                 times: [0, 0.1, 0.5, 0.9, 1]
               }}
               style={{
@@ -63,7 +66,7 @@ const Navbar = () => {
             </motion.div>
           ))}
         </div>
-      </div>
+      </motion.div>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo Section */}
         <div className="flex items-center space-x-3 group cursor-pointer">

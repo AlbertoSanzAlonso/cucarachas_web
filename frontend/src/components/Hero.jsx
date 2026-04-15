@@ -29,14 +29,19 @@ const Hero = () => {
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)'
         }}
       >
-        {/* Animated Insect Vector Pattern within the container */}
-        <div className="absolute inset-0 pointer-events-none select-none overflow-hidden">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 2, delay: 0.5 }}
+          className="absolute inset-0 pointer-events-none select-none overflow-hidden"
+        >
           {[...Array(20)].map((_, i) => {
             const rotation = (i * 45) % 360;
             return (
               <motion.div 
                 key={i} 
                 className="absolute text-white"
+                initial={{ opacity: 0 }}
                 animate={{
                   x: [0, i % 2 === 0 ? 60 : -60, 0],
                   y: [0, i % 3 === 0 ? -60 : 60, 0],
@@ -48,7 +53,7 @@ const Hero = () => {
                   duration: 15,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: (i % 4) * 3,
+                  delay: 2 + (i % 4) * 3,
                   times: [0, 0.1, 0.5, 0.9, 1]
                 }}
                 style={{
@@ -61,7 +66,7 @@ const Hero = () => {
               </motion.div>
             );
           })}
-        </div>
+        </motion.div>
         
         {/* Modern Accent Gradient */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
