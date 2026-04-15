@@ -53,7 +53,7 @@ const Hero = () => {
                   duration: 15,
                   repeat: Infinity,
                   ease: "easeInOut",
-                  delay: 2 + (i % 4) * 3,
+                  delay: 1 + (i % 4) * 3,
                   times: [0, 0.1, 0.5, 0.9, 1]
                 }}
                 style={{

@@ -53,7 +53,7 @@ const Navbar = () => {
                 duration: 15,
                 repeat: Infinity,
                 ease: "easeInOut",
-                delay: 2 + (i % 5) * 2,
+                delay: 1 + (i % 5) * 2,
                 times: [0, 0.1, 0.5, 0.9, 1]
               }}
               style={{
