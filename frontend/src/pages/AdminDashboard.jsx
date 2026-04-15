@@ -14,9 +14,11 @@ import {
   Activity,
   Bell
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const navigate = useNavigate();
 
   const stats = [
     { title: 'Tractaments Actius', value: '42', icon: <Activity className="text-accent-green" />, trend: '+12%' },
@@ -79,7 +81,10 @@ const AdminDashboard = () => {
             <Settings size={20} />
             <span>Configuració</span>
           </button>
-          <button className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:text-red-300 transition-all rounded-xl">
+          <button 
+            onClick={() => navigate('/login')}
+            className="w-full flex items-center space-x-3 px-4 py-3 text-red-400 hover:text-red-300 transition-all rounded-xl"
+          >
             <LogOut size={20} />
             <span>Tancar Sessió</span>
           </button>
