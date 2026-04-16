@@ -125,7 +125,49 @@
     "catalog_label": "Catálogo de Especies",
     "view_protocol": "Ver Protocolo",
     "safety_label": "Protocolos de seguridad total",
-    "view_all_btn": "VER TODOS LOS SERVICIOS"
+    "view_all_btn": "VER TODOS LOS SERVICIOS",
+    "protocols": {
+      "rodents_title": "Control Técnico de Roedores",
+      "rodents_desc": "Eliminamos ratas y ratones rápidamente con sistemas de seguridad total para tu familia o negocio.",
+      "rodents_details": [
+        "Inspección exhaustiva de puntos de entrada y nidos.",
+        "Instalación de portacebos de seguridad cerrados.",
+        "Sellado estructural de vías de acceso detectadas.",
+        "Seguimiento hasta la desaparición total de la actividad."
+      ],
+      "termites_title": "Sistemas Avanzados contra Termitas",
+      "termites_desc": "Protegemos la estructura de tu inmueble con tecnología de detección y eliminación de colonias.",
+      "termites_details": [
+        "Detección mediante sensores acústicos y radares térmicos.",
+        "Sistema de cebos de alta tecnología (Eliminación de raíz).",
+        "Tratamientos de barrera química perimetral.",
+        "Garantía de protección estructural a largo plazo."
+      ],
+      "bedbugs_title": "Eliminación Radical de Chinches",
+      "bedbugs_desc": "Protocolo de choque para recuperar tu descanso en viviendas y hoteles.",
+      "bedbugs_details": [
+        "Inspección profunda de colchones, cabeceros y mobiliario.",
+        "Tratamiento térmico o químico dirigido de alto impacto.",
+        "Eliminación de larvas y huevos de forma segura.",
+        "Certificado libre de plaga post-intervención."
+      ],
+      "ants_title": "Control de Hormigas profesional",
+      "ants_desc": "Eliminamos la colonia desde el origen, evitando que vuelvan a aparecer en cocinas y jardines.",
+      "ants_details": [
+        "Identificación de la especie para aplicar el tratamiento correcto.",
+        "Aplicación de geles de alta atracción indetectables.",
+        "Barrera perimetral de larga persistencia.",
+        "Control focalizado en puntos críticos de entrada."
+      ],
+      "pigeons_title": "Control de Aves y Palomas",
+      "pigeons_desc": "Sistemas de protección en fachadas, patios y azoteas para evitar riesgos sanitarios.",
+      "pigeons_details": [
+        "Instalación de redes de protección casi invisibles.",
+        "Sistemas de pinchos y barreras físicas discretas.",
+        "Repelentes tecnológicos no nocivos.",
+        "Limpieza y desinfección de zonas afectadas por excrementos."
+      ]
+    }
   },
   "meta": {
     "desc": "Eliminar cucarachas en Barcelona con servicio urgente 24h. Tratamiento profesional, seguro y con garantía. Presupuesto gratuito."

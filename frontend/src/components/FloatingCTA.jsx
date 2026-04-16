@@ -7,7 +7,7 @@ const FloatingCTA = () => {
 
   return (
     <div className="fixed bottom-8 left-0 right-0 z-[100] px-6 md:px-12 xl:px-0 flex justify-center pointer-events-none">
-       <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-end md:items-center justify-end md:justify-between space-y-4 md:space-y-0">
+       <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-end justify-end md:justify-between space-y-4 md:space-y-0">
           
           {/* WhatsApp / Direct Contact (Left on Desktop) */}
           <div className="flex items-center space-x-4 pointer-events-auto animate-fade-in animate-slide-up">

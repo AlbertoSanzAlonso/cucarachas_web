@@ -125,7 +125,49 @@
     "catalog_label": "Catàleg d'Espècies",
     "view_protocol": "Veure Protocol",
     "safety_label": "Protocols de seguretat total",
-    "view_all_btn": "VEURE TOTS ELS SERVEIS"
+    "view_all_btn": "VEURE TOTS ELS SERVEIS",
+    "protocols": {
+      "rodents_title": "Control Tècnic de Rosegadors",
+      "rodents_desc": "Eliminem rates i ratolins ràpidament amb sistemes de seguretat total per a la teva família o negoci.",
+      "rodents_details": [
+        "Inspecció exhaustiva de punts d'entrada i nius.",
+        "Instal·lació de portaceps de seguretat tancats.",
+        "Segellat estructural de vies d'accés detectades.",
+        "Seguiment fins a la desaparició total de l'activitat."
+      ],
+      "termites_title": "Sistemes Avançats contra Tèrmits",
+      "termites_desc": "Protegim l'estructura del teu immoble amb tecnologia de detecció i eliminació de colònies.",
+      "termites_details": [
+        "Detecció mitjançant sensors acústics i radars tèrmics.",
+        "Sistema de mels d'alta tecnologia (Eliminació des de l'arrel).",
+        "Tractaments de barrera química perimetral.",
+        "Garantia de protecció estructural a llarg termini."
+      ],
+      "bedbugs_title": "Eliminació Radical de Xinxes",
+      "bedbugs_desc": "Protocol de xoc per recuperar el teu descans en habitatges i hotels.",
+      "bedbugs_details": [
+        "Inspecció profunda de matalassos, capçals i mobiliari.",
+        "Tractament tèrmic o químic dirigit d'alt impacte.",
+        "Eliminació de larves i ous de forma segura.",
+        "Certificat lliure de plaga post-intervenció."
+      ],
+      "ants_title": "Control de Formigues professional",
+      "ants_desc": "Eliminem la colònia des de l'origen, evitant que tornin a aparèixer en cuines i jardins.",
+      "ants_details": [
+        "Identificació de l'espècie per aplicar el tractament correcte.",
+        "Aplicació de gels d'alta atracció indetectables.",
+        "Barrera perimetral de llarga persistència.",
+        "Control focalitzat en punts crítics d'entrada."
+      ],
+      "pigeons_title": "Control d'Aus i Coloms",
+      "pigeons_desc": "Sistemes de protecció en façanes, patis i terrats per evitar riscos sanitaris.",
+      "pigeons_details": [
+        "Instal·lació de xarxes de protecció quasi invisibles.",
+        "Sistemes de punxes i barreres físiques discretes.",
+        "Repel·lents tecnològics no nocius.",
+        "Neteja i desinfecció de zones afectades per excrements."
+      ]
+    }
   },
   "meta": {
     "desc": "Eliminar paneroles (cucarachas) a Barcelona amb servei urgent 24h. Tractament professional, segur i amb garantia. Pressupost gratuït."
