@@ -60,8 +60,17 @@ function Home() {
       <LazySection Component={SectorGrid} />
       <LazySection Component={OrigenService} />
       <LazySection Component={Process} />
-      <LazySection Component={StatsBar} />
-      <LazySection Component={ContactForm} />
+      <div 
+        className="relative overflow-hidden"
+        style={{ 
+          background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
+        }}
+      >
+        <LazySection Component={StatsBar} />
+        <LazySection Component={ContactForm} />
+      </div>
       
       <Footer />
       <FloatingCTA />
