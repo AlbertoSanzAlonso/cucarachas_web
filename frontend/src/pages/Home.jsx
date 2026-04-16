@@ -61,7 +61,7 @@ function Home() {
       <LazySection Component={OrigenService} />
       <LazySection Component={Process} />
       <div 
-        className="relative overflow-hidden"
+        className="relative overflow-hidden -mt-[1px]"
         style={{ 
           background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
           backgroundSize: 'cover',

@@ -44,7 +44,7 @@ const SectorGrid = () => {
   ];
 
   return (
-    <section className="py-24 bg-white" id="sectors">
+    <section className="py-32 md:py-40 bg-white" id="sectors">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
         
         <div className="max-w-3xl mx-auto space-y-4">
