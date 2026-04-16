@@ -206,7 +206,7 @@ const PestGrid = () => {
                 </button>
 
                 {/* Sidebar / Image area */}
-                <div className="md:w-1/2 bg-white pt-10 pb-4 px-4 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[140px] md:min-h-[300px]">
+                <div className={`md:w-1/2 bg-white flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 ${['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'min-h-[180px] md:min-h-[400px]' : 'min-h-[140px] md:min-h-[300px] pt-10 pb-4 px-4 md:p-16'}`}>
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                   </div>
@@ -214,12 +214,16 @@ const PestGrid = () => {
                   <img 
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
-                    className="w-full max-w-[140px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
-                    style={{ transform: `scale(${selectedPest.imageScale || 1})` }}
+                    className={`${['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) 
+                      ? 'absolute inset-0 w-full h-full object-cover md:scale-110' 
+                      : 'w-full max-w-[140px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
+                    style={{ transform: !['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) ? `scale(${selectedPest.imageScale || 1})` : undefined }}
                   />
                   
-                  <div className="mt-2 md:mt-8 text-center space-y-1 relative z-10">
-                     <p className="text-[7px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">
+                  {['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) && <div className="absolute inset-0 bg-primary-blue/30 md:bg-primary-blue/20"></div>}
+
+                  <div className={`text-center space-y-1 relative z-10 ${['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'mt-auto mb-4 bg-primary-blue/60 backdrop-blur-md px-4 py-1 rounded-full' : 'mt-2 md:mt-8'}`}>
+                     <p className={`text-[7px] md:text-[10px] uppercase font-bold tracking-[0.3em] ${['disinfect', 'nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'text-white' : 'text-accent-green'}`}>
                         {t('species_detail.modal_certified')}
                      </p>
                   </div>
