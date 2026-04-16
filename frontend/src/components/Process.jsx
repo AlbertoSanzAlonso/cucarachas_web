@@ -32,7 +32,7 @@ const Process = () => {
            {steps.map((step, i) => (
              <div 
                key={step.id} 
-               className="flex flex-col items-center justify-center space-y-8 animate-fade-in group relative"
+               className="flex flex-col items-center justify-start space-y-8 animate-fade-in group relative"
              >
                 {/* Visual Step Indicator with circle background */}
                 <div className="relative w-32 h-32 flex items-center justify-center">
