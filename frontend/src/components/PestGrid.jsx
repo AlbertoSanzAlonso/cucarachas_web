@@ -202,13 +202,11 @@ const PestGrid = () => {
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                   </div>
                   
-                  <motion.img 
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: selectedPest.imageScale || 1 }}
-                    transition={{ delay: 0.05, duration: 0.3 }}
+                  <img 
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
                     className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
+                    style={{ transform: `scale(${selectedPest.imageScale || 1})` }}
                   />
                   
                   <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
