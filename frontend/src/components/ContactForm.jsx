@@ -36,7 +36,13 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="py-24 relative overflow-visible z-10" 
+    <section className="py-24 relative overflow-visible z-30 -mt-20" 
+      style={{ 
+        background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundAttachment: 'fixed'
+      }} 
       id="contact"
     >
       {/* Decorative Blob background */}
