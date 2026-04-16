@@ -72,7 +72,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
         {/* Content Container (Now inside the bounded box) */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 lg:py-12 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 xl:py-12 grid xl:grid-cols-2 gap-16 items-center">
           
           {/* Text Side */}
           <div className="space-y-8 animate-fade-in">
@@ -84,7 +84,7 @@ const Hero = () => {
             </div>
 
             <div className="space-y-4">
-              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] tracking-tighter">
+              <h1 className="text-3xl md:text-4xl xl:text-6xl font-black text-white leading-[1.1] tracking-tighter">
                 {t('hero.title')}
               </h1>
               <p className="max-w-xl text-lg md:text-xl text-white/85 font-light leading-relaxed tracking-wide">

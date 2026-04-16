@@ -25,16 +25,16 @@ const OrigenService = () => {
          </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center relative z-10 text-white">
+      <div className="max-w-7xl mx-auto px-6 grid xl:grid-cols-2 gap-16 items-center relative z-10 text-white">
         
         {/* Left Side: Content */}
         <div className="space-y-10 animate-fade-in">
-          <div className="space-y-6">
+          <div className="space-y-6 text-center xl:text-left flex flex-col items-center xl:items-start">
             <div className="inline-flex items-center space-x-3 px-4 py-1.5 rounded-full bg-white/10 border border-white/20">
                <span className="flex h-2 w-2 rounded-full bg-accent-green"></span>
                <span className="text-[10px] uppercase font-bold tracking-[0.2em]">{t('origen.title')}</span>
             </div>
-            <h2 className="text-4xl md:text-6xl font-black text-white leading-tight tracking-tighter">
+            <h2 className="text-3xl md:text-5xl xl:text-6xl font-black text-white leading-tight tracking-tighter">
               {t('origen.subtitle')}
             </h2>
             <p className="text-lg text-white/70 font-light leading-relaxed max-w-xl">

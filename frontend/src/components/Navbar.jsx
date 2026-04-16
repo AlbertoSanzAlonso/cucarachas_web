@@ -98,7 +98,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center space-x-10">
+        <div className="hidden xl:flex items-center space-x-10">
           {[
             { key: 'nav.services', label: 'Especies', path: '/#species' },
             { key: 'nav.sectors', label: 'Sectores', path: '/#sectors' },
@@ -116,7 +116,7 @@ const Navbar = () => {
         </div>
 
         {/* Desktop Action Buttons */}
-        <div className="hidden lg:flex items-center space-x-6">
+        <div className="hidden xl:flex items-center space-x-6">
           {/* Language Switcher */}
           <div className="flex items-center space-x-2 border-r pr-6 border-white/20">
             {['ca', 'es'].map((lng) => (
@@ -153,7 +153,7 @@ const Navbar = () => {
 
         {/* Mobile Toggle */}
         <button 
-          className="lg:hidden p-2 rounded-lg transition-colors"
+          className="xl:hidden p-2 rounded-lg transition-colors"
           style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
@@ -163,7 +163,7 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`lg:hidden fixed inset-x-0 top-[108px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
+        className={`xl:hidden fixed inset-x-0 top-[108px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
       >
         <div className="flex flex-col p-6 space-y-6">
           {[
