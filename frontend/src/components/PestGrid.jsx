@@ -130,32 +130,31 @@ const PestGrid = () => {
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
                  transition={{ delay: i * 0.1 }}
-                 viewport={{ once: true }}
-                 className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
+                 viewport={{ once: true }                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[160px] md:aspect-square flex flex-col items-center justify-between p-5 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
                style={{ background: pest.color }}
              >
                   {/* Corner Search Icon */}
-                  <div className="absolute top-6 right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
-                     <Search size={24} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
+                  <div className="absolute top-4 right-4 md:top-6 md:right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110">
+                     <Search size={20} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
                   </div>
 
                   {/* Main Icon */}
-                  <div className={`mt-6 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-10 h-10 md:w-14 md:h-14`}>
+                  <div className={`mt-2 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-8 h-8 md:w-14 md:h-14`}>
                      {React.cloneElement(pest.icon, { 
                        size: '100%', 
                        strokeWidth: 2 
                      })}
                   </div>
 
-                 <div className="text-center space-y-3 md:space-y-6 relative z-10 w-full px-2">
-                    <h3 className={`font-extrabold text-[12px] md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'}`} style={{ hyphens: 'auto' }}>
+                 <div className="text-center space-y-1 md:space-y-6 relative z-10 w-full px-1">
+                    <h3 className={`font-extrabold text-sm md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'}`} style={{ hyphens: 'auto' }}>
                       {pest.name}
                       {pest.scientific && (
-                        <span className="block text-[8px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
+                        <span className="block text-[7px] md:text-xs font-medium opacity-60 mt-0.5 uppercase tracking-wider">
                           ({pest.scientific})
                         </span>
                       )}
-                    </h3>
+                    </h3>3>
                                        <div className="flex justify-center pt-2">
                       <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-all duration-300 group-hover:scale-110 ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
                         {t('species_detail.view_treatment')}
