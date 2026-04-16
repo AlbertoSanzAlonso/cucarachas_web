@@ -12,7 +12,7 @@ const FloatingCTA = () => {
           {/* WhatsApp / Direct Contact (Left on Desktop) */}
           <div className="hidden lg:flex items-center space-x-4 pointer-events-auto animate-fade-in animate-slide-up">
              <a 
-               href="https://wa.me/34930000000" 
+               href="https://wa.me/34933309169" 
                className="group flex items-center space-x-4 bg-white shadow-2xl rounded-2xl p-2 pr-6 border border-gray-100 hover:shadow-accent-green/20 transition-all hover:translate-y-[-4px]"
              >
                 <div className="p-3 bg-accent-green rounded-xl text-white shadow-lg group-hover:scale-110 transition-transform">
@@ -33,7 +33,7 @@ const FloatingCTA = () => {
              </div>
              
              <a 
-               href="tel:+34930000000" 
+               href="tel:+34933309169" 
                className="flex items-center space-x-3 md:space-x-5 px-5 py-3 md:px-8 md:py-5 rounded-full bg-accent-green text-primary-gray font-black text-sm md:text-xl shadow-2xl hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 transition-all group"
                style={{ 
                  background: 'var(--color-accent-green)', 
@@ -42,7 +42,7 @@ const FloatingCTA = () => {
              >
                 <span className="flex flex-col md:flex-row md:items-center text-left md:text-center space-y-1 md:space-y-0">
                   <span className="md:mr-3 leading-none">LLAMAR AHORA</span>
-                  <span className="text-primary-gray/50 font-medium text-[10px] md:text-xl leading-none">930 000 000</span>
+                  <span className="text-primary-gray/50 font-medium text-[10px] md:text-xl leading-none">933 309 169</span>
                 </span>
                 <div className="p-1.5 md:p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform">
                    <Phone size={20} className="md:w-6 md:h-6" fill="currentColor" />

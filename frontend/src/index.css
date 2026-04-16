@@ -1,52 +1,29 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  /* CECSA Brand Colors - Sanitary Premium Clean */
-  --color-primary-blue: #0080bb;
-  --color-primary-blue-hv: #006fa3;
-  --color-accent-green: #34d399;
-  --color-accent-green-hv: #10b981;
-  --color-secondary-gray: #3c3c3b;
-  --color-bg-light: #f8fafc;
-  
-  /* Text variations for dark backgrounds */
-  --color-text-white-dim: rgba(255, 255, 255, 0.9);
-  --color-text-white-muted: rgba(255, 255, 255, 0.7);
-
-  /* Modern Radius */
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
-
-  /* Animations */
-  --animate-fade-in: fade-in 0.5s ease-out;
-  --animate-slide-up: slide-up 0.5s ease-out;
-
-  @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-
-  @keyframes slide-up {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-}
-
-/* Global Reset & Base Styles */
 @layer base {
+  :root {
+    --color-primary-blue: #0080bb;
+    --color-primary-blue-hv: #006fa3;
+    --color-accent-green: #34d399;
+    --color-accent-green-hv: #10b981;
+    --color-secondary-gray: #3c3c3b;
+    --color-primary-gray: #3c3c3b;
+    --color-bg-light: #f8fafc;
+  }
+
   html {
     scroll-behavior: smooth;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
 
   body {
-    @apply bg-bg-light text-secondary-gray antialiased overflow-x-hidden;
+    @apply bg-[#f8fafc] text-[#3c3c3b] antialiased overflow-x-hidden;
   }
 
   h1, h2, h3, h4 {
-    @apply font-bold tracking-tight text-primary-blue;
+    @apply font-bold tracking-tight text-[#0080bb];
   }
 }
 
@@ -56,16 +33,60 @@
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-bg-light;
+  background: #f8fafc;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary-blue/30 rounded-full hover:bg-primary-blue/50 transition-colors;
+  background: rgba(0, 128, 187, 0.3);
+  border-radius: 10px;
 }
 
-/* Glassmorphism Classes */
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 128, 187, 0.5);
+}
+
+/* Glassmorphism & Utilities */
 @layer utilities {
   .glass {
     @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
   }
+
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .rotate-y-6 {
+    transform: rotateY(6deg);
+  }
+
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+
+  .text-white-dim {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .text-white-muted {
+    color: rgba(255, 255, 255, 0.7);
+  }
+}
+
+/* Keyframes */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out;
 }

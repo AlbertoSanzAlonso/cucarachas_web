@@ -1,5 +1,6 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { DashboardSkeleton } from './components/Skeleton';
 import './index.css';
 
@@ -12,6 +13,16 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
  * CECSA - Speed Optimized SPA Router
  * Implements granular code splitting and skeleton-based 'busy' loading states.
  */
+
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  return isAuthenticated ? children : <Navigate to="/login" replace />;
+};
+
+const PublicRoute = ({ children }) => {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  return isAuthenticated ? <Navigate to="/admin" replace /> : children;
+};
 function App() {
   return (
     <Router>
@@ -28,7 +39,9 @@ function App() {
           path="/login" 
           element={
             <Suspense fallback={<RootLoader />}>
-              <Login />
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
             </Suspense>
           } 
         />
@@ -36,7 +49,9 @@ function App() {
           path="/admin" 
           element={
             <Suspense fallback={<DashboardSkeleton />}>
-              <AdminDashboard />
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
             </Suspense>
           } 
         />

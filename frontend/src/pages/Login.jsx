@@ -1,24 +1,65 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useDispatch } from 'react-redux';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { insforge } from '../lib/insforge';
+import { setCredentials } from '../store/slices/authSlice';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
-    // Simulate authentication
-    setTimeout(() => {
+    try {
+      const { data, error: authError } = await insforge.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message === 'Invalid login credentials' 
+          ? 'Correu o contrasenya incorrectes' 
+          : 'Error al connectar amb el sistema sanitari');
+      } else if (data && data.user) {
+        // Fetch real profile from public.profiles
+        const { data: profile, error: profileError } = await insforge
+          .database
+          .from('profiles')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError) {
+          console.warn('Profile not found, using defaults', profileError);
+        }
+
+        dispatch(setCredentials({
+          user: {
+            email: data.user.email,
+            id: data.user.id,
+            name: profile?.name || (data.user.email === 'info@cucarachasbarcelona.cat' ? 'Marc' : 'Administrador'),
+            role: profile?.role || 'Sistemes'
+          },
+          token: data.accessToken
+        }));
+        navigate('/admin');
+      }
+    } catch (err) {
+      setError('Error inesperat. Torna a intentar-ho.');
+      console.error(err);
+    } finally {
       setIsLoading(false);
-      navigate('/admin');
-    }, 1500);
+    }
   };
 
   return (
@@ -45,6 +86,22 @@ const Login = () => {
           </div>
 
           <h1 className="text-2xl font-black text-primary-gray mb-8 text-center">Accés Professional</h1>
+
+          <AnimatePresence>
+            {error && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mb-6"
+              >
+                <div className="bg-red-50 text-red-600 p-4 rounded-2xl flex items-center space-x-3 border border-red-100">
+                  <AlertCircle size={20} className="shrink-0" />
+                  <p className="text-xs font-bold uppercase tracking-tight">{error}</p>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">

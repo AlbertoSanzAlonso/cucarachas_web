@@ -130,12 +130,12 @@ const Navbar = () => {
           </div>
 
           <a 
-            href="tel:+34930000000"
+            href="tel:+34933309169"
             className="flex items-center space-x-2 font-bold transition-all hover:opacity-80"
             style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}
           >
             <Phone size={18} className="text-accent-green" />
-            <span>930 000 000</span>
+            <span>933 309 169</span>
           </a>
 
           <button 

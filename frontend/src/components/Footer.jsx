@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Facebook, Twitter, Instagram, Linkedin, Phone, MapPin, Mail, ChevronRight, Globe } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Phone, MapPin, Mail, ChevronRight, Calendar, Globe } from 'lucide-react';
 
 const Footer = () => {
   const { t } = useTranslation();
@@ -48,12 +48,16 @@ const Footer = () => {
               </p>
               
               <div className="flex items-center space-x-4">
-                 {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
-                   <a key={i} href="#" className="p-3 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-accent-green hover:bg-white/10 transition-all">
-                      <Icon size={20} />
-                   </a>
-                 ))}
-              </div>
+                  {[
+                    { Icon: Facebook, href: 'https://www.facebook.com/cecsaddd/' },
+                    { Icon: Instagram, href: 'https://www.instagram.com/tecnicoplagas/' },
+                    { Icon: Linkedin, href: 'https://www.linkedin.com/company/desinfecciones-cecsa-sll/' }
+                  ].map((item, i) => (
+                    <a key={i} href={item.href} target="_blank" rel="noopener noreferrer" className="p-3 rounded-full bg-white/5 border border-white/10 text-white/50 hover:text-accent-green hover:bg-white/10 transition-all">
+                       <item.Icon size={20} />
+                    </a>
+                  ))}
+               </div>
            </div>
 
            {/* Quick Links Grid */}
@@ -82,19 +86,20 @@ const Footer = () => {
         {/* Bottom Contact Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/10">
            
-           <div className="grid sm:grid-cols-3 gap-8 w-full md:w-auto">
+           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
               {[
-                { icon: <Phone />, title: 'Urgencias 24h', value: '930 000 000' },
-                { icon: <Mail />, title: 'Email Soporte', value: 'hola@cecasa.cat' },
-                { icon: <Globe />, title: 'Presencia Física', value: 'Barcelona' }
+                { icon: <Phone />, title: 'Urgencias 24h', value: '933 309 169' },
+                { icon: <Mail />, title: 'Email Soporte', value: 'hola@cecsa.cat' },
+                { icon: <MapPin />, title: 'Sede Central', value: 'C/ Rajolers 16, Local 1, 08028 BCN' },
+                { icon: <Calendar />, title: 'Horarios', value: 'Lun - Ven, 9:00 - 20:00h' }
               ].map((item, i) => (
                 <div key={i} className="flex items-center space-x-4">
-                   <div className="p-3 rounded-xl bg-accent-green/10 text-accent-green flex items-center justify-center">
+                   <div className="p-3 rounded-xl bg-accent-green/10 text-accent-green flex items-center justify-center shrink-0">
                       {React.cloneElement(item.icon, { size: 24, strokeWidth: 1.5 })}
                    </div>
                    <div className="flex flex-col">
-                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/30">{item.title}</p>
-                      <p className="font-black text-white tracking-tighter text-lg">{item.value}</p>
+                      <p className="text-[10px] uppercase font-bold tracking-[0.2em] text-white/30 whitespace-nowrap">{item.title}</p>
+                      <p className="font-black text-white tracking-tighter text-sm md:text-md">{item.value}</p>
                    </div>
                 </div>
               ))}
@@ -116,7 +121,7 @@ const Footer = () => {
 
         {/* Copyright */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-12 opacity-30 text-[10px] font-bold uppercase tracking-widest text-center md:text-left">
-           <p>© {new Date().getFullYear()} CECSA Control de Plagas S.L. · Todos los derechos reservados.</p>
+           <p>© {new Date().getFullYear()} Desinfecciones Cecsa S.L. · CIF: B64287055 · Barcelona</p>
            <p className="flex items-center space-x-4">
               <a href="#" className="hover:text-white transition-colors">GDPR Compliant</a>
               <span>·</span>
