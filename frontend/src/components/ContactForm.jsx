@@ -39,9 +39,6 @@ const ContactForm = () => {
     <section className="py-24 relative overflow-visible z-10 -mt-20" 
       id="contact"
     >
-      {/* Decorative Blob background */}
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-white/5 -z-0" style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)' }}></div>
-
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
         
         {/* Text Section */}

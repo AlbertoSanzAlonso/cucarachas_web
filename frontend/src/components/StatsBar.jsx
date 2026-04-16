@@ -21,7 +21,7 @@ const StatsBar = () => {
 
       {/* Skewed Background Hole - The blue stripe stripe placeholder */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 shadow-[0_20px_50px_rgba(0,128,187,0.4)] overflow-hidden" 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 overflow-hidden" 
       >
          {/* Subtle Background Pattern */}
          <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
