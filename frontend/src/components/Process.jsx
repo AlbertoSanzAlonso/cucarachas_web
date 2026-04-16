@@ -6,9 +6,9 @@ const Process = () => {
   const { t } = useTranslation();
 
   const steps = [
-    { id: 'step1', name: t('method.step1_title'), shape: 'polygon(50% 0%, 0% 100%, 100% 100%)', icon: <Search />, desc: t('method.step1_desc') },
-    { id: 'step2', name: t('method.step2_title'), shape: 'rect(0 0 100% 100%)', icon: <PenTool />, desc: t('method.step2_desc') },
-    { id: 'step3', name: t('method.step3_title'), shape: 'circle(50% at 50% 50%)', icon: <Zap />, desc: t('method.step3_desc') }
+    { id: 'step1', name: t('method.step1_title'), icon: <Search />, desc: t('method.step1_desc') },
+    { id: 'step2', name: t('method.step2_title'), icon: <PenTool />, desc: t('method.step2_desc') },
+    { id: 'step3', name: t('method.step3_title'), icon: <Zap />, desc: t('method.step3_desc') }
   ];
 
   return (
@@ -27,18 +27,17 @@ const Process = () => {
 
         <div className="grid md:grid-cols-3 gap-16 relative">
            {/* Decorative connector line (Desktop only) */}
-           <div className="hidden md:block absolute top-[120px] left-[15%] right-[15%] h-0.5 bg-gray-100 -z-0"></div>
+           <div className="hidden md:block absolute top-[64px] left-[15%] right-[15%] h-0.5 bg-gray-100 z-0"></div>
 
            {steps.map((step, i) => (
              <div 
                key={step.id} 
                className="flex flex-col items-center justify-center space-y-8 animate-fade-in group relative"
              >
-                {/* Visual Step Indicator with geometric shape */}
+                {/* Visual Step Indicator with circle background */}
                 <div className="relative w-32 h-32 flex items-center justify-center">
                    <div 
-                     className="absolute inset-0 bg-primary-blue/5 group-hover:bg-accent-green/10 transition-colors duration-500 flex items-center justify-center"
-                     style={{ clipPath: step.shape }}
+                     className="absolute inset-0 bg-primary-blue/5 group-hover:bg-accent-green/10 transition-colors duration-500 rounded-full"
                    ></div>
                    
                    <div className="relative z-10 w-16 h-16 rounded-full bg-white shadow-xl flex items-center justify-center text-primary-gray group-hover:text-accent-green transition-all duration-500 border border-gray-50 scale-100 group-hover:scale-110">
