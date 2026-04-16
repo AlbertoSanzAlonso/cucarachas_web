@@ -158,7 +158,7 @@ const Hero = () => {
                    {/* Technical Insight Card - Maintaining over the images */}
                    <div className="absolute bottom-12 left-12 right-12 p-8 glass rounded-3xl animate-fade-in z-20">
                       <div className="flex items-center space-x-4">
-                        <div className="p-3 bg-primary-blue rounded-2xl text-white">
+                        <div className="hidden md:flex p-3 bg-primary-blue rounded-2xl text-white">
                           <Zap size={28} />
                         </div>
                         <div>

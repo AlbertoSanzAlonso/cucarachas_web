@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${mobileMenuOpen ? '' : 'overflow-hidden'} ${isScrolled ? 'py-2 shadow-xl' : 'py-4 shadow-lg'}`}
+      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${mobileMenuOpen ? '' : 'overflow-hidden'} ${isScrolled ? 'py-4 shadow-xl' : 'py-4 shadow-lg'}`}
       style={{
         background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'var(--color-primary-blue)',
         backdropFilter: isScrolled ? 'blur(15px)' : 'none',

@@ -48,12 +48,13 @@ const Footer = ({ className = "" }) => {
            {/* Brand Branding */}
            <div className="flex flex-col space-y-8 max-w-sm">
               <div className="flex items-center space-x-3">
-                 <img 
-                    src="/assets/isotipo.png" 
-                    alt="CECSA Logo" 
-                    className="h-[40px] md:h-[50px] brightness(10) invert"
-                    style={{ filter: 'brightness(0) invert(1)' }}
-                 />
+                  <div style={{ height: '40px', width: '40px', maxHeight: '50px', maxWidth: '50px' }} className="relative flex items-center justify-center">
+                   <img 
+                     src="/assets/isotipo.png" 
+                     alt="CECSA Logo" 
+                     style={{ width: '100%', height: '100%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+                   />
+                  </div>
                  <div className="flex flex-col leading-none">
                     <span className="text-2xl md:text-3xl font-black tracking-tighter text-white">
                       CEC<span className="text-accent-green">SA</span>
@@ -132,19 +133,20 @@ const Footer = ({ className = "" }) => {
            <div className="flex items-center space-x-6 md:space-x-10">
               <div className="flex flex-col items-center group/badge">
                  <div 
-                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110"
-                   style={{
-                     backgroundImage: 'url(/assets/certificaciones-cecsa.png)',
-                     backgroundSize: '200% 100%',
-                     backgroundPosition: '100% center', // ROESB is on the right in the generated image
-                     backgroundRepeat: 'no-repeat'
-                   }}
-                 ></div>
+                   className="w-16 h-16 md:w-20 md:h-20 mb-3 overflow-hidden flex items-center justify-center"
+                   style={{ background: '#0a1a2f' }}
+                 >
+                   <img 
+                     src="/assets/CERTIFICADO-01-1-1024x297.png" 
+                     alt="Certificación ROESB" 
+                     className="w-full h-full object-contain"
+                   />
+                 </div>
                  <span className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-white/40 group-hover/badge:text-accent-green transition-colors">A-256 ROESB</span>
               </div>
               <div className="flex flex-col items-center group/badge">
                  <div 
-                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110 flex items-center justify-center p-4"
+                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110 flex items-center justify-center"
                  >
                     <img 
                       src="/assets/iso-9001-2015.png" 

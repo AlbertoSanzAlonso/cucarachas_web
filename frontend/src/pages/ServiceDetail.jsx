@@ -22,7 +22,7 @@ const ServiceDetail = () => {
       title: t('sectors_grid.horeca'), 
       desc: t('sectors_grid.horeca_desc'),
       points: t('sectors_grid.horeca_points', { returnObjects: true }),
-      bg: '/assets/inspeccion-plagas-cocina-profesional.webp'
+      bg: '/assets/taula-de-cuina-amb-granit-endoftext-.webp'
     },
     hotels: { 
       title: t('sectors_grid.hotels'), 
@@ -60,7 +60,7 @@ const ServiceDetail = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="pt-40 pb-20 bg-primary-blue text-white relative overflow-hidden h-[500px] md:h-[600px] flex items-center">
+      <section className="pt-52 md:pt-40 pb-20 bg-primary-blue text-white relative overflow-hidden min-h-[500px] md:h-[600px] flex items-start md:items-center">
          <div className="absolute inset-0 z-0">
             <img 
                src={sector.bg} 
@@ -93,7 +93,7 @@ const ServiceDetail = () => {
                   </p>
                </div>
                
-               <div className="md:w-1/3 flex justify-center">
+               <div className="hidden md:flex md:w-1/3 justify-center">
                   <div className="w-64 h-64 md:w-80 md:h-80 bg-white/5 rounded-[4rem] border border-white/10 flex items-center justify-center text-accent-green backdrop-blur-3xl shadow-2xl">
                      {React.cloneElement(sectorIcons[id] || <Users />, { size: 120, strokeWidth: 0.5 })}
                   </div>

@@ -62,7 +62,7 @@ const About = () => {
     <div className="min-h-screen bg-bg-light">
       <Navbar />
 
-      <main className="pt-32 pb-0">
+      <main className="pt-40 md:pt-32 pb-0">
         {/* Page Hero */}
         <section className="max-w-7xl mx-auto px-6 mb-24">
           <div className="relative rounded-[4rem] overflow-hidden bg-primary-blue h-[600px] flex items-center shadow-2xl">

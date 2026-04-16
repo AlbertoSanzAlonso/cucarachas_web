@@ -14,28 +14,32 @@ const SectorGrid = () => {
       name: t('sectors_grid.horeca'), 
       icon: <Utensils />,
       desc: t('sectors_grid.horeca_desc'),
-      points: t('sectors_grid.horeca_points', { returnObjects: true })
+      points: t('sectors_grid.horeca_points', { returnObjects: true }),
+      bg: '/assets/taula-de-cuina-amb-granit-endoftext-.webp'
     },
     { 
       id: 'hotels', 
       name: t('sectors_grid.hotels'), 
       icon: <Hotel />,
       desc: t('sectors_grid.hotels_desc'),
-      points: t('sectors_grid.hotels_points', { returnObjects: true })
+      points: t('sectors_grid.hotels_points', { returnObjects: true }),
+      bg: '/assets/hotel-bg.webp'
     },
     { 
       id: 'comms', 
       name: t('sectors_grid.comms'), 
       icon: <Users />,
       desc: t('sectors_grid.comms_desc'),
-      points: t('sectors_grid.comms_points', { returnObjects: true })
+      points: t('sectors_grid.comms_points', { returnObjects: true }),
+      bg: '/assets/hogar-protegido-libre-de-cucarachas.webp'
     },
     { 
       id: 'industry', 
       name: t('sectors_grid.industry'), 
       icon: <Factory />,
       desc: t('sectors_grid.industry_desc'),
-      points: t('sectors_grid.industry_points', { returnObjects: true })
+      points: t('sectors_grid.industry_points', { returnObjects: true }),
+      bg: '/assets/industry-bg.webp'
     }
   ];
 
@@ -91,7 +95,7 @@ const SectorGrid = () => {
       {/* Sector Detail Modal */}
       <AnimatePresence>
         {selectedSector && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -104,68 +108,77 @@ const SectorGrid = () => {
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 40 }}
-              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] border border-white/20"
+              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20"
             >
               <button 
                 onClick={() => setSelectedSector(null)}
-                className="absolute top-4 right-4 md:top-8 md:right-8 z-30 p-2 md:p-3 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-100 hover:bg-bg-light transition-colors"
+                className="absolute top-4 right-4 z-40 p-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-100 hover:bg-bg-light transition-colors"
               >
                 <X size={20} className="text-primary-blue" />
               </button>
 
-              {/* Sidebar / Icon Area */}
-              <div className="md:w-1/3 bg-bg-light p-8 md:p-12 flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
-                <div className="w-32 h-32 md:w-48 md:h-48 rounded-[3rem] bg-white shadow-2xl flex items-center justify-center text-primary-blue mb-8">
-                   {React.cloneElement(selectedSector.icon, { size: 64, strokeWidth: 1 })}
-                </div>
-                <div className="text-center space-y-2">
-                   <p className="text-[10px] uppercase font-black tracking-[0.3em] text-accent-green">Sector Autorizado</p>
-                   <p className="text-primary-blue/40 text-[10px] font-medium tracking-widest italic">{selectedSector.name}</p>
+              {/* Sidebar / Image Area */}
+              <div className="md:w-1/3 min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+                <img 
+                   src={selectedSector.bg} 
+                   alt={selectedSector.name} 
+                   className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-primary-blue/60 backdrop-blur-[2px]"></div>
+                
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl flex items-center justify-center text-white mb-4">
+                     {React.cloneElement(selectedSector.icon, { size: 32, strokeWidth: 1.5 })}
+                  </div>
+                  <div className="text-center space-y-1">
+                     <p className="text-[8px] md:text-[10px] uppercase font-black tracking-[0.3em] text-accent-green">Sector Autorizado</p>
+                     <p className="text-white/60 text-[8px] md:text-[10px] font-medium tracking-widest italic">{selectedSector.name}</p>
+                  </div>
                 </div>
               </div>
 
               {/* Content Area */}
-              <div className="md:w-2/3 p-8 md:p-16 flex flex-col justify-center space-y-8 overflow-y-auto bg-white">
-                <div className="space-y-4">
-                  <h3 className="text-3xl md:text-5xl font-black text-primary-blue tracking-tighter leading-[0.9]">
+              <div className="md:w-2/3 p-6 md:p-12 flex flex-col justify-center space-y-4 md:space-y-8 overflow-y-auto bg-white">
+                <div className="space-y-2 md:space-y-4">
+                  <h3 className="text-2xl md:text-5xl font-black text-primary-blue tracking-tighter leading-[0.9]">
                     {selectedSector.name}
                   </h3>
-                  <div className="w-20 h-2 bg-accent-green rounded-full"></div>
-                  <p className="text-sm md:text-xl text-secondary-gray/80 leading-relaxed font-light italic">
+                  <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
+                  <p className="text-xs md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
                     "{selectedSector.desc}"
                   </p>
                 </div>
 
-                <div className="space-y-6">
-                  <h4 className="text-[10px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">Protocolos del Plan Sanitario</h4>
-                  <ul className="space-y-4">
+                <div className="space-y-4">
+                  <h4 className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">Protocolos del Plan Sanitario</h4>
+                  <ul className="grid grid-cols-1 gap-2 md:gap-4">
                     {selectedSector.points?.map((point, idx) => (
                       <motion.li 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 * idx }}
+                        transition={{ delay: 0.05 * idx }}
                         key={idx} 
-                        className="flex items-start space-x-4"
+                        className="flex items-start space-x-3"
                       >
                          <div className="mt-1 flex-shrink-0 text-accent-green">
-                           <ShieldCheck size={20} />
+                           <ShieldCheck size={16} />
                          </div>
-                         <span className="text-sm md:text-lg text-secondary-gray font-bold tracking-tight">{point}</span>
+                         <span className="text-[11px] md:text-lg text-secondary-gray font-bold tracking-tight">{point}</span>
                       </motion.li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
+                <div className="pt-4 md:pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
                   <button 
-                    className="flex-[1.5] py-4 bg-primary-blue text-white font-black text-lg md:text-xl rounded-2xl shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group px-4 text-center leading-tight"
+                    className="flex-[1.5] py-3 md:py-4 bg-primary-blue text-white font-black text-sm md:text-xl rounded-xl md:rounded-2xl shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group px-4 text-center leading-tight"
                   >
-                    <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-6 h-6" />
+                    <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-5 h-5 md:w-6 md:h-6" />
                     <span>{t('common.cta_free')}</span>
                   </button>
                   <a 
                     href="tel:+34933309169"
-                    className="flex-1 py-4 bg-bg-light border border-gray-200 text-primary-blue font-black text-lg md:text-xl rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors px-4 text-center leading-tight"
+                    className="flex-1 py-3 md:py-4 bg-bg-light border border-gray-200 text-primary-blue font-black text-sm md:text-xl rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors px-4 text-center leading-tight"
                   >
                     {t('common.cta_call')}
                   </a>
@@ -175,7 +188,7 @@ const SectorGrid = () => {
                 <div className="flex justify-center pt-2">
                    <Link 
                      to={`/serveis/${selectedSector.id}`}
-                     className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary-blue/30 hover:text-accent-green transition-colors flex items-center group/link"
+                     className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary-blue/40 hover:text-accent-green transition-colors flex items-center group/link p-2"
                    >
                      {t('common.know_more')}
                      <ChevronRight size={14} className="ml-1 transform group-hover/link:translate-x-1 transition-transform" />
@@ -186,6 +199,7 @@ const SectorGrid = () => {
           </div>
         )}
       </AnimatePresence>
+
     </section>
   );
 };
