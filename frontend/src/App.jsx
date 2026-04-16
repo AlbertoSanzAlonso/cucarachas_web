@@ -11,6 +11,7 @@ const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const About = lazy(() => import('./pages/About'));
 const LegalNotice = lazy(() => import('./pages/LegalNotice'));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
 
 /**
  * CECSA - Speed Optimized SPA Router
@@ -59,6 +60,14 @@ function App() {
           element={
             <Suspense fallback={<RootLoader />}>
               <PrivacyPolicy />
+            </Suspense>
+          } 
+        />
+        <Route 
+          path="/serveis/:id" 
+          element={
+            <Suspense fallback={<RootLoader />}>
+              <ServiceDetail />
             </Suspense>
           } 
         />

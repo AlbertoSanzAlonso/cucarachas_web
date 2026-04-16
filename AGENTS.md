@@ -42,6 +42,14 @@ Inteligencia de diseño UI/UX. Consultar antes de implementar secciones nuevas.
 ### 5. **Tailwind Design System** (`.agents/skills/tailwind-design-system`)
 Construcción de sistemas de diseño escalables con Tailwind CSS v4, tokens de diseño y patrones responsivos. Uso para estandarizar UI y componentes.
 
+## 🚀 SEO & Optimización Permanente (MANDATORIO)
+
+- **Activos**: Todos los nombres de imágenes y archivos deben ser descriptivos y usar guiones (ej: `eliminar-cucarachas-barcelona.webp`).
+- **Semántica**: Uso estricto de etiquetas HTML5 (`<main>`, `<article>`, `<section>`, `<h1>`-`<h6>`). Un solo `<h1>` por página.
+- **URLs**: Slugs limpios y semánticos (ej: `/sobre-nosaltres` o `/serveis/control-paneroles`).
+- **Textos**: Redacción orientada a intención de búsqueda (Catalunya, Barcelona, Control de Plagues) sin perder el enfoque "Ético y Consciente".
+- **Metadatos**: Cada página nueva debe incluir o actualizar sus etiquetas de título y meta-descripción en el archivo `translation.json`.
+
 ## ⚙️ Convenciones de Implementación
 
 - **Inline styles** en componentes de layout (Navbar, Footer, FloatingCTA).

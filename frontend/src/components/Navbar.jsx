@@ -92,7 +92,7 @@ const Navbar = () => {
               CEC<span className="text-accent-green">SA</span>
             </span>
             <span className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 ${isScrolled ? 'text-secondary-gray/70' : 'text-white/70'}`}>
-              Control de Plagas
+              {t('common.pest_control')}
             </span>
           </div>
         </Link>

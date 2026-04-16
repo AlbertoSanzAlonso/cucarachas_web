@@ -4,7 +4,9 @@
     "cta_free": "Demanar Diagnòstic Gratuït",
     "cta_call": "Trucar Ara",
     "emergency_24h": "Urgències 24h",
-    "certified": "Certificació ROESB"
+    "certified": "Certificació ROESB",
+    "pest_control": "Control de Plagues",
+    "know_more": "Saber-ne més"
   },
   "nav": {
     "services": "Espècies",
@@ -131,7 +133,7 @@
   "about_page": {
     "hero_title": "CECSA: Restaurar l'Equilibri és el nostre Compromís.",
     "hero_subtitle": "Una empresa familiar dedicada al benestar i la salut sanitària de Barcelona.",
-    "family_title": "L'origen: La família Sureda Caleya",
+    "family_title": "L'origen: La família Sureda Celaya Salcedo",
     "family_desc": "Som una empresa familiar formada per 9 professionals apassionats que donem el cent per cent en cada intervenció. No som una corporació freda que apareix i desapareix; som persones compromeses amb el teu benestar real.",
     "vision_title": "Una empresa Conscient",
     "vision_desc": "No creiem en 'matar per matar'. La nostra missió és reestablir l'equilibri que s'ha trencat quan apareix una plaga en un habitatge, negoci o comunitat. Ho fem amb amor pel nostre entorn, minimitzant la crueltat i buscant sempre la solució tècnica més conscient i efectiva.",
@@ -146,7 +148,7 @@
       "workers": "Especialistes",
       "success": "Més del 90%",
       "success_label": "D'Eficàcia Tècnica",
-      "family": "Sureda Caleya",
+      "family": "Sureda Celaya Salcedo",
       "experience": "+20",
       "experience_label": "Anys d'Experiència"
     }
@@ -178,7 +180,15 @@
     "hotels": "Hotels i Resorts",
     "comms": "Comunitats de Veïns",
     "industry": "Indústria Alimentària",
-    "cta": "Veure Plans"
+    "cta": "Veure Plans",
+    "horeca_desc": "Control preventiu estricte per a la màxima seguretat alimentària. Garantim un entorn lliure de paneroles perquè el teu negoci mai s'aturi.",
+    "horeca_points": ["Monitoratge digital 24/7", "Gels d'alta atracció sense olors", "Certificat ROESB obligatori inclòs", "Resposta urgent en menys de 2h"],
+    "hotels_desc": "Discreció absoluta i protecció de la reputació. Protocols especialitzats per al sector hoteler i allotjaments turístics.",
+    "hotels_points": ["Intervencions nocturnes i discretes", "Tractaments preventius zero-residis", "Garantia de satisfacció total", "Informe tècnic per a auditories"],
+    "comms_desc": "Manteniment preventiu estructural de zones comunes i xarxes de clavegueram per evitar invasions massives.",
+    "comms_points": ["Control integral de bajants i arquetes", "Tractaments anuals d'alta eficàcia", "Atenció directa als administradors", "Seguiment post-tractament"],
+    "industry_desc": "Solucions tècniques avançades segons estàndards IFS, BRC i APPCC per a la indústria alimentària i farmacèutica.",
+    "industry_points": ["Auditories de vulnerabilitat de planta", "Gestió documental digitalitzada", "Protocols de biocuresa estricta", "Anàlisi de tendències de plagues"]
   },
   "cta": {
     "wa_label": "Consulta ràpida",

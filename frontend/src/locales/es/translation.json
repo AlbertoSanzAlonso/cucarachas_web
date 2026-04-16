@@ -1,10 +1,12 @@
 {
   "common": {
     "tagline": "Ético y Consciente",
-    "cta_free": "Pedir Diagnóstico Gratuito",
+    "cta_free": "Pedir Diagnóstico Gratis",
     "cta_call": "Llamar Ahora",
     "emergency_24h": "Urgencias 24h",
-    "certified": "Certificación ROESB"
+    "certified": "Certifición ROESB",
+    "pest_control": "Control de Plagas",
+    "know_more": "Saber más"
   },
   "nav": {
     "services": "Especies",
@@ -131,7 +133,7 @@
   "about_page": {
     "hero_title": "CECSA: Restaurar el Equilibrio es nuestro Compromiso.",
     "hero_subtitle": "Una empresa familiar dedicada al bienestar y la salud sanitaria de Barcelona.",
-    "family_title": "El origen: La familia Sureda Caleya",
+    "family_title": "El origen: La familia Sureda Celaya Salcedo",
     "family_desc": "Somos una empresa familiar formada por 9 profesionales apasionados que damos el cien por cien en cada intervención. No somos una corporación fría que aparece y desaparece; somos personas comprometidas con tu bienestar real.",
     "vision_title": "Una empresa Consciente",
     "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo hacemos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
@@ -146,7 +148,7 @@
       "workers": "Especialistas",
       "success": "Más del 90%",
       "success_label": "De Eficacia Técnica",
-      "family": "Sureda Caleya",
+      "family": "Sureda Celaya Salcedo",
       "experience": "+20",
       "experience_label": "Años de Experiencia"
     }
@@ -178,7 +180,15 @@
     "hotels": "Hoteles y Resorts",
     "comms": "Comunidades de Vecinos",
     "industry": "Industria Alimentaria",
-    "cta": "Ver Planes"
+    "cta": "Ver Planes",
+    "horeca_desc": "Control preventivo estricto para la máxima seguridad alimentaria. Garantizamos un entorno libre de cucarachas para que tu negocio nunca se detenga.",
+    "horeca_points": ["Monitoreo digital 24/7", "Geles de alta atracción sin olores", "Certificado ROESB obligatorio incluido", "Respuesta urgente en menos de 2h"],
+    "hotels_desc": "Discreción absoluta y protección de la reputación. Protocolos especializados para el sector hotelero y alojamientos turísticos.",
+    "hotels_points": ["Intervenciones nocturnas y discretas", "Tratamientos preventivos cero-residuos", "Garantía de satisfacción total", "Informe técnico para auditorías"],
+    "comms_desc": "Mantenimiento preventivo estructural de zonas comunes y redes de alcantarillado para evitar invasiones masivas.",
+    "comms_points": ["Control integral de bajantes y arquetas", "Tratamientos anuales de alta eficacia", "Atención directa a los administradores", "Seguimiento post-tratamiento"],
+    "industry_desc": "Soluciones técnicas avanzadas según estándares IFS, BRC y APPCC para la industria alimentaria y farmacéutica.",
+    "industry_points": ["Auditorías de vulnerabilidad de planta", "Gestión documental digitalizada", "Protocolos de bioseguridad estricta", "Análisis de tendencias de plagas"]
   },
   "cta": {
     "wa_label": "Consulta rápida",

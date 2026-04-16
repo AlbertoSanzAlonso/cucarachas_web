@@ -59,7 +59,7 @@ const Footer = ({ className = "" }) => {
                       CEC<span className="text-accent-green">SA</span>
                     </span>
                     <span className="text-[10px] uppercase tracking-[0.3em] font-medium text-white/50">
-                      Control de Plagas
+                      {t('common.pest_control')}
                     </span>
                  </div>
               </div>
@@ -144,14 +144,14 @@ const Footer = ({ className = "" }) => {
               </div>
               <div className="flex flex-col items-center group/badge">
                  <div 
-                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110"
-                   style={{
-                     backgroundImage: 'url(/assets/certificaciones-cecsa.png)',
-                     backgroundSize: '200% 100%',
-                     backgroundPosition: '0% center', // ISO is on the left
-                     backgroundRepeat: 'no-repeat'
-                   }}
-                 ></div>
+                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110 flex items-center justify-center p-4"
+                 >
+                    <img 
+                      src="/assets/iso-9001-2015.png" 
+                      alt="ISO 9001:2015 Certification" 
+                      className="w-full h-full object-contain"
+                    />
+                 </div>
                  <span className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-white/40 group-hover/badge:text-accent-green transition-colors">ISO 9001:2015</span>
               </div>
            </div>
