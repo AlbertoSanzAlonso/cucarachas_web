@@ -125,7 +125,9 @@
       "workers": "Especialistas",
       "success": "Más del 90%",
       "success_label": "De Eficacia Técnica",
-      "family": "Sureda Caleya"
+      "family": "Sureda Caleya",
+      "experience": "+20",
+      "experience_label": "Años de Experiencia"
     }
   }
 }

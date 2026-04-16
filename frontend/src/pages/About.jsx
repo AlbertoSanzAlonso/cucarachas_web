@@ -17,7 +17,7 @@ const About = () => {
   const stats = [
     { icon: <Users />, value: "9", label: t('about_page.stats.workers') },
     { icon: <Activity />, value: t('about_page.stats.success'), label: t('about_page.stats.success_label') },
-    { icon: <Heart />, value: "Sureda", label: t('about_page.stats.family') }
+    { icon: <Heart />, value: t('about_page.stats.experience'), label: t('about_page.stats.experience_label') }
   ];
 
   const sections = [
