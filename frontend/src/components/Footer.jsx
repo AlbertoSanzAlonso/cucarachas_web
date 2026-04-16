@@ -89,7 +89,7 @@ const Footer = () => {
            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
               {[
                 { icon: <Phone />, title: 'Urgencias 24h', value: '933 309 169' },
-                { icon: <Mail />, title: 'Email Soporte', value: 'hola@cecsa.cat' },
+                { icon: <Mail />, title: 'Email Soporte', value: 'info@cucarachasbarcelona.cat' },
                 { icon: <MapPin />, title: 'Sede Central', value: 'C/ Rajolers 16, Local 1, 08028 BCN' },
                 { icon: <Calendar />, title: 'Horarios', value: 'Lun - Ven, 9:00 - 20:00h' }
               ].map((item, i) => (
