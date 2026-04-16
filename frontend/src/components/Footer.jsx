@@ -129,14 +129,30 @@ const Footer = ({ className = "" }) => {
            </div>
 
            {/* Certification Badges */}
-           <div className="flex items-center space-x-8 opacity-40 grayscale group-hover:grayscale-0 transition-all duration-700">
-              <div className="flex flex-col items-center">
-                 <div className="w-16 h-16 bg-white/10 rounded-full mb-2"></div>
-                 <span className="text-[8px] uppercase font-bold tracking-widest">A-256 ROESB</span>
+           <div className="flex items-center space-x-6 md:space-x-10">
+              <div className="flex flex-col items-center group/badge">
+                 <div 
+                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110"
+                   style={{
+                     backgroundImage: 'url(/assets/certificaciones-cecsa.png)',
+                     backgroundSize: '200% 100%',
+                     backgroundPosition: '100% center', // ROESB is on the right in the generated image
+                     backgroundRepeat: 'no-repeat'
+                   }}
+                 ></div>
+                 <span className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-white/40 group-hover/badge:text-accent-green transition-colors">A-256 ROESB</span>
               </div>
-              <div className="flex flex-col items-center">
-                 <div className="w-16 h-16 bg-white/10 rounded-full mb-2"></div>
-                 <span className="text-[8px] uppercase font-bold tracking-widest">ISO 9001:2015</span>
+              <div className="flex flex-col items-center group/badge">
+                 <div 
+                   className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full mb-3 shadow-xl border border-white/10 overflow-hidden transition-transform duration-500 group-hover/badge:scale-110"
+                   style={{
+                     backgroundImage: 'url(/assets/certificaciones-cecsa.png)',
+                     backgroundSize: '200% 100%',
+                     backgroundPosition: '0% center', // ISO is on the left
+                     backgroundRepeat: 'no-repeat'
+                   }}
+                 ></div>
+                 <span className="text-[7px] md:text-[8px] uppercase font-black tracking-widest text-white/40 group-hover/badge:text-accent-green transition-colors">ISO 9001:2015</span>
               </div>
            </div>
 
