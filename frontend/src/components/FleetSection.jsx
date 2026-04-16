@@ -55,8 +55,8 @@ const FleetSection = () => {
                 <Clock size={24} />
               </div>
               <div>
-                <p className="text-[10px] uppercase font-bold text-secondary-gray/50">Tiempo de Respuesta</p>
-                <p className="text-primary-blue font-black tracking-tight underline-offset-4 decoration-accent-green">Menos de 2h</p>
+                <p className="text-[10px] uppercase font-bold text-secondary-gray/50">{t('fleet.response_time')}</p>
+                <p className="text-primary-blue font-black tracking-tight underline-offset-4 decoration-accent-green">{t('fleet.response_value')}</p>
               </div>
            </div>
         </div>
@@ -65,10 +65,10 @@ const FleetSection = () => {
         <div className="space-y-8 lg:pl-12">
           <div className="space-y-4">
              <h2 className="text-4xl md:text-5xl font-black text-primary-blue leading-tight tracking-tighter">
-               {t('fleet.title', 'Protegemos tu entorno en cualquier rincón de Catalunya')}
+               {t('fleet.title')}
              </h2>
              <p className="text-lg text-secondary-gray/80 leading-relaxed font-light">
-               {t('fleet.desc', 'Nuestra flota técnica está distribuida estratégicamente para ofrecer una cobertura inmediata en Barcelona, Girona, Tarragona y Lleida. Cada unidad móvil es un laboratorio técnico avanzado.')}
+               {t('fleet.desc')}
              </p>
           </div>
 
@@ -76,7 +76,7 @@ const FleetSection = () => {
              <div className="space-y-3">
                 <div className="flex items-center space-x-2 text-primary-blue font-bold">
                    <MapPin size={20} className="text-accent-green" />
-                   <span>Provincias</span>
+                   <span>{t('fleet.provinces')}</span>
                 </div>
                 <div className="flex flex-wrap gap-2">
                    {['Barcelona', 'Tarragona', 'Girona', 'Lleida'].map(prov => (
@@ -90,17 +90,17 @@ const FleetSection = () => {
              <div className="space-y-3">
                 <div className="flex items-center space-x-2 text-primary-blue font-bold">
                    <Truck size={20} className="text-accent-green" />
-                   <span>Capacidad</span>
+                   <span>{t('fleet.capacity')}</span>
                 </div>
                 <p className="text-sm font-medium text-secondary-gray/60 italic">
-                  Intervenciones simultáneas en múltiples sectores para máxima eficiencia.
+                  {t("fleet.capacity_value")}
                 </p>
              </div>
           </div>
 
           <div className="pt-6">
             <button className="px-10 py-5 rounded-2xl bg-primary-blue text-white font-black text-lg shadow-xl hover:translate-y-[-4px] transition-all duration-300">
-               Ver Unidades Disponibles
+               {t('fleet.units_btn')}
             </button>
           </div>
         </div>

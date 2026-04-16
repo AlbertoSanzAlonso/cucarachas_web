@@ -16,16 +16,32 @@
   "hero": {
     "title": "Eliminar paneroles a Barcelona ràpida i definitivament.",
     "desc": "A CECSA som especialistes en el control de paneroles, amb servei urgent 24h, tractaments segurs i garantia certificada per recuperar la tranquil·litat al teu habitatge o negoci.",
-    "badge": "Servei urgent 24h a Barcelona"
+    "badge": "Servei urgent 24h a Barcelona",
+    "services_count": "Serveis Realitzats",
+    "active_system": "Sistema Actiu",
+    "slider_1": "Inspecció Tècnica",
+    "slider_2": "Control de Plagues",
+    "slider_3": "Hogar Protegido"
   },
   "focus": {
     "title": "Com eliminar paneroles de forma definitiva",
-    "desc": "Eliminar paneroles no consisteix només a aplicar productes. Cal un tractament professional adaptat a cada situació per eliminar la plaga des de l’origen i evitar que torni a aparèixer."
+    "desc": "Eliminar paneroles no consisteix només a aplicar productes. Cal un tractament professional adaptat a cada situació per eliminar la plaga des de l’origen i evitar que torni a aparèixer.",
+    "subtitle": "Desinsectació Tècnica Especialitzada",
+    "benefits": [
+      "Diagnòstic ràpid en menys de 24h",
+      "Ús de gels d'última generació (sense olors)",
+      "Garantia per escrit d'eliminació total",
+      "Seguiment preventiu després del tractament"
+    ],
+    "prices_btn": "Conèixer Preus",
+    "cases_btn": "Veure casos d'èxit a Barcelona",
+    "efficacy_label": "Eficàcia Màxima",
+    "success_rate": "+99.8% Èxit"
   },
   "method": {
     "title": "El nostre mètode d'eficàcia total",
     "step1_title": "Inspecció inicial",
-    "step1_desc": "Evaluem el nivell d’infestació i localitzem l’origen real de la plaga.",
+    "step1_desc": "Avaluem el nivell d’infestació i localitzem l’origen real de la plaga.",
     "step2_title": "Tractament professional",
     "step2_desc": "Apliquem solucions específiques d’alta eficàcia i segures per a persones i mascotes.",
     "step3_title": "Seguiment i Prevenció",
@@ -140,5 +156,55 @@
     "email": "info@cucarachasbarcelona.cat",
     "notice_desc": "D'acord amb la Llei 34/2002 de Serveis de la Societat de la Informació...",
     "privacy_desc": "La vostra privacitat és la nostra prioritat. Protegim les vostres dades d'acord amb el RGPD..."
+  },
+  "fleet": {
+    "title": "Protegim el teu entorn a qualsevol racó de Catalunya",
+    "desc": "La nostra flota tècnica està distribuïda estratègicament per oferir una cobertura immediata a Barcelona, Girona, Tarragona i Lleida. Cada unitat mòbil és un laboratori tècnic avançat.",
+    "response_time": "Temps de Resposta",
+    "response_value": "Menys de 2h",
+    "provinces": "Províncies",
+    "capacity": "Capacitat",
+    "capacity_value": "Intervencions simultànies en múltiples sectors per a la màxima eficiència.",
+    "units_btn": "Veure Unitats Disponibles"
+  },
+  "sectors_grid": {
+    "title": "Serveis per a empreses",
+    "desc": "Solucions permanents i discretes per a cada sector empresarial a Catalunya.",
+    "horeca": "Bars i Restaurants",
+    "hotels": "Hotels i Resorts",
+    "comms": "Comunitats de Veïns",
+    "industry": "Indústria Alimentària",
+    "cta": "Veure Plans"
+  },
+  "cta": {
+    "wa_label": "Consulta ràpida",
+    "wa_desc": "Atenció per WhatsApp",
+    "badge": "Tècnic de Guàrdia disponible",
+    "call_now": "TRUCAR ARA"
+  },
+  "contact": {
+    "title": "La teva protecció contra plagues, garantida.",
+    "subtitle": "Emplena el formulari i un tècnic especialista et contactarà en menys de 2h per a un diagnòstic gratuït.",
+    "phone_label": "Telèfon",
+    "schedule_label": "Horari",
+    "schedule_value": "Dil - Div, 9:00 - 20:00h",
+    "sede_label": "Seu",
+    "email_label": "Email",
+    "name_placeholder": "Nom i Cognoms",
+    "email_placeholder": "Email de contacte",
+    "phone_placeholder": "Telèfon mòbil",
+    "message_placeholder": "Explica'ns breument el teu problema...",
+    "privacy_consent": "Accepto la política de protecció de dades tècnica de CECSA",
+    "submit_btn": "ENVIAR SOL·LICITUD",
+    "success_btn": "SOL·LICITUD ENVIADA",
+    "commitment_label": "Compromís CECSA",
+    "commitment_value": "Privadesa absoluta i resposta tècnica garantida."
+  },
+  "species_detail": {
+    "view_treatment": "VEURE TRACTAMENT",
+    "modal_certified": "Certificat Entomològic",
+    "modal_protocol": "Protocol d'Actuació",
+    "modal_tech_available": "Tècnics de guàrdia",
+    "modal_status_available": "Disponibles ara"
   }
 }

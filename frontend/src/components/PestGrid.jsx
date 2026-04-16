@@ -147,10 +147,9 @@ const PestGrid = () => {
                         </span>
                       )}
                     </h3>
-                    
-                    <div className="flex justify-center pt-2">
+                                       <div className="flex justify-center pt-2">
                       <span className={`text-[9px] md:text-[10px] uppercase font-bold tracking-[0.2em] transition-all duration-300 group-hover:scale-110 ${pest.darkText ? 'text-primary-blue/60' : 'text-white/70'}`}>
-                        VER TRATAMIENTO
+                        {t('species_detail.view_treatment')}
                       </span>
                     </div>
                  </div>
@@ -194,7 +193,7 @@ const PestGrid = () => {
                   onClick={() => setSelectedPest(null)}
                   className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg border border-gray-100"
                 >
-                  <X size={20} className="text-primary-gray md:w-6 md:h-6" />
+                   <X size={20} className="text-primary-gray md:w-6 md:h-6" />
                 </button>
 
                 {/* Sidebar / Image area */}
@@ -213,7 +212,9 @@ const PestGrid = () => {
                   />
                   
                   <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
-                     <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">Certificado Entomológico</p>
+                     <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">
+                        {t('species_detail.modal_certified')}
+                     </p>
                      {selectedPest.scientific && (
                        <p className="text-secondary-gray/40 text-[10px] md:text-xs italic">{selectedPest.scientific}</p>
                      )}
@@ -233,7 +234,9 @@ const PestGrid = () => {
                   </div>
 
                   <div className="space-y-4 md:space-y-6">
-                     <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">Protocolo de Actuación</h4>
+                     <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
+                        {t('species_detail.modal_protocol')}
+                     </h4>
                      <ul className="space-y-3 md:space-y-4">
                         {selectedPest.details?.map((detail, idx) => (
                           <motion.li 
@@ -273,10 +276,10 @@ const PestGrid = () => {
                        </div>
                        <div className="flex flex-col">
                           <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest leading-none">
-                             Técnicos de guardia
+                             {t('species_detail.modal_tech_available')}
                           </p>
                           <p className="text-[10px] text-accent-green font-black uppercase tracking-widest">
-                             Disponibles ahora
+                             {t('species_detail.modal_status_available')}
                           </p>
                        </div>
                     </div>

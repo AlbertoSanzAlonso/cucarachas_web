@@ -19,8 +19,8 @@ const FloatingCTA = () => {
                    <MessageSquare size={24} />
                 </div>
                 <div className="flex flex-col">
-                   <span className="text-[10px] uppercase font-bold text-secondary-gray/40">Consulta rápida</span>
-                   <span className="text-secondary-gray font-black tracking-tight underline-offset-4 decoration-accent-green">Atención por WhatsApp</span>
+                   <span className="text-[10px] uppercase font-bold text-secondary-gray/40">{t('cta.wa_label', 'Consulta rápida')}</span>
+                   <span className="text-secondary-gray font-black tracking-tight underline-offset-4 decoration-accent-green">{t('cta.wa_desc', 'Atención por WhatsApp')}</span>
                 </div>
              </a>
           </div>
@@ -41,7 +41,7 @@ const FloatingCTA = () => {
                }}
              >
                 <span className="flex flex-col md:flex-row md:items-center text-left md:text-center space-y-1 md:space-y-0">
-                  <span className="md:mr-3 leading-none">LLAMAR AHORA</span>
+                  <span className="md:mr-3 leading-none">{t('cta.call_now', 'LLAMAR AHORA')}</span>
                   <span className="text-primary-gray/50 font-medium text-[10px] md:text-xl leading-none">933 309 169</span>
                 </span>
                 <div className="p-1.5 md:p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform">

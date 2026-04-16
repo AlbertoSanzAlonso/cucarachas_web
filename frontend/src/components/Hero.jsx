@@ -97,7 +97,7 @@ const Hero = () => {
                 className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-accent-green text-primary-gray font-black text-lg uppercase tracking-wider shadow-2xl transition-all duration-300 hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 group"
               >
                 <span className="flex items-center justify-center">
-                  Pedir Diagnóstico Gratis
+                   {t('common.cta_free')}
                   <ArrowRight size={22} className="ml-3 transition-transform group-hover:translate-x-1" />
                 </span>
               </button>
@@ -106,7 +106,9 @@ const Hero = () => {
                 <span className="p-3 bg-white/10 rounded-full">
                   <ShieldCheck size={24} className="text-accent-green" />
                 </span>
-                <span className="text-sm uppercase tracking-widest leading-none">Certificado ROESB</span>
+                <span className="text-sm uppercase tracking-widest leading-none">
+                   {t('common.certified')}
+                </span>
               </button>
             </div>
 
@@ -114,7 +116,9 @@ const Hero = () => {
             <div className="flex items-center space-x-8 pt-8 opacity-60 border-t border-white/10">
               <div className="flex flex-col">
                 <span className="text-2xl md:text-3xl font-black text-white">+12.000</span>
-                <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">Servicios Realizados</span>
+                <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">
+                   {t('hero.services_count')}
+                </span>
               </div>
               <div className="flex flex-col border-l border-white/20 pl-8">
                 <span className="text-2xl md:text-3xl font-black text-white">4.9/5</span>
@@ -158,14 +162,16 @@ const Hero = () => {
                           <Zap size={28} />
                         </div>
                         <div>
-                          <p className="text-[10px] uppercase tracking-widest font-black text-primary-gray/50 mb-1">Sistema Activo</p>
+                          <p className="text-[10px] uppercase tracking-widest font-black text-primary-gray/50 mb-1">
+                             {t('hero.active_system')}
+                          </p>
                           <motion.p 
                             key={currentSlide}
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="text-primary-blue font-black tracking-tight text-xl"
                           >
-                            {currentSlide === 0 ? 'Inspección Técnica' : currentSlide === 1 ? 'Control de Plagas' : 'Hogar Protegido'}
+                            {currentSlide === 0 ? t('hero.slider_1') : currentSlide === 1 ? t('hero.slider_2') : t('hero.slider_3')}
                           </motion.p>
                         </div>
                       </div>

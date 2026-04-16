@@ -16,11 +16,27 @@
   "hero": {
     "title": "Eliminar cucarachas en Barcelona rápida y definitivamente.",
     "desc": "En CECSA somos especialistas en el control de cucarachas, con servicio urgente 24h, tratamientos seguros y garantía certificada para recuperar la tranquilidad en tu vivienda o negocio.",
-    "badge": "Servicio urgente 24h en Barcelona"
+    "badge": "Servicio urgente 24h en Barcelona",
+    "services_count": "Servicios Realizados",
+    "active_system": "Sistema Activo",
+    "slider_1": "Inspección Técnica",
+    "slider_2": "Control de Plagas",
+    "slider_3": "Hogar Protegido"
   },
   "focus": {
     "title": "Cómo eliminar cucarachas de forma definitiva",
-    "desc": "Eliminar cucarachas no consiste solo en aplicar productos. Es necesario un tratamiento profesional adaptado a cada situación para eliminar la plaga desde el origen y evitar que vuelva a aparecer."
+    "desc": "Eliminar cucarachas no consiste solo en aplicar productos. Es necesario un tratamiento profesional adaptado a cada situación para eliminar la plaga desde el origen y evitar que vuelva a aparecer.",
+    "subtitle": "Desinsectación Técnica Especializada",
+    "benefits": [
+      "Diagnóstico rápido en menos de 24h",
+      "Uso de geles de última generación (sin olores)",
+      "Garantía por escrito de eliminación total",
+      "Seguimiento preventivo tras el tratamiento"
+    ],
+    "prices_btn": "Conocer Precios",
+    "cases_btn": "Ver casos de éxito en Barcelona",
+    "efficacy_label": "Eficacia Máxima",
+    "success_rate": "+99.8% Éxito"
   },
   "method": {
     "title": "Nuestro método de eficacia total",
@@ -32,7 +48,7 @@
     "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones."
   },
   "species": {
-    "title": "Tipus de paneroles més comunes a Barcelona",
+    "title": "Tipos de cucarachas más comunes en Barcelona",
     "germanica": "Cucaracha alemana",
     "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
     "germanica_details": [
@@ -114,7 +130,7 @@
     "family_title": "El origen: La familia Sureda Caleya",
     "family_desc": "Somos una empresa familiar formada por 9 profesionales apasionados que damos el cien por cien en cada intervención. No somos una corporación fría que aparece y desaparece; somos personas comprometidas con tu bienestar real.",
     "vision_title": "Una empresa Consciente",
-    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo haceos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
+    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo hacemos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
     "wellness_title": "Más que un tratamiento: Salud Mental",
     "wellness_desc": "Entendemos que una plaga no es solo un riesgo biológico; también es un problema de salud mental que genera angustia e inseguridad. Nuestro eslogan —'Por el bienestar de nuestros clientes'— refleja nuestro compromiso de estar a tu lado siempre, con productos de vanguardia y protocolos que se adaptan a la evolución de la plaga.",
     "honesty_title": "Ética y Honestidad en el Precio",
@@ -140,5 +156,55 @@
     "email": "info@cucarachasbarcelona.cat",
     "notice_desc": "De acuerdo con la Ley 34/2002 de Servicios de la Sociedad de la Información...",
     "privacy_desc": "Su privacidad es nuestra prioridad. Protegemos sus datos de acuerdo con el RGPD..."
+  },
+  "fleet": {
+    "title": "Protegemos tu entorno en cualquier rincón de Catalunya",
+    "desc": "Nuestra flota técnica está distribuida estratégicamente para ofrecer una cobertura inmediata en Barcelona, Girona, Tarragona y Lleida. Cada unidad móvil es un laboratorio técnico avanzado.",
+    "response_time": "Tiempo de Respuesta",
+    "response_value": "Menos de 2h",
+    "provinces": "Provincias",
+    "capacity": "Capacidad",
+    "capacity_value": "Intervenciones simultáneas en múltiples sectores para máxima eficiencia.",
+    "units_btn": "Ver Unidades Disponibles"
+  },
+  "sectors_grid": {
+    "title": "Servicios para empresas",
+    "desc": "Soluciones permanentes y discretas para cada sector empresarial en Catalunya.",
+    "horeca": "Bares y Restaurantes",
+    "hotels": "Hoteles y Resorts",
+    "comms": "Comunidades de Vecinos",
+    "industry": "Industria Alimentaria",
+    "cta": "Ver Planes"
+  },
+  "cta": {
+    "wa_label": "Consulta rápida",
+    "wa_desc": "Atención por WhatsApp",
+    "badge": "Técnico de Guardia disponible",
+    "call_now": "LLAMAR AHORA"
+  },
+  "contact": {
+    "title": "Tu protección contra plagas, garantizada.",
+    "subtitle": "Rellena el formulario y un técnico especialista te contactará en menos de 2h para un diagnóstico gratuito.",
+    "phone_label": "Teléfono",
+    "schedule_label": "Horario",
+    "schedule_value": "Lun - Ven, 9:00 - 20:00h",
+    "sede_label": "Sede",
+    "email_label": "Email",
+    "name_placeholder": "Nombre y Apellidos",
+    "email_placeholder": "Email de contacto",
+    "phone_placeholder": "Teléfono móvil",
+    "message_placeholder": "Explícanos brevemente tu problema...",
+    "privacy_consent": "Acepto la política de protección de datos técnica de CECSA",
+    "submit_btn": "ENVIAR SOLICITUD",
+    "success_btn": "SOLICITUD ENVIADA",
+    "commitment_label": "Compromiso CECSA",
+    "commitment_value": "Privacidad absoluta y respuesta técnica garantizada."
+  },
+  "species_detail": {
+    "view_treatment": "VER TRATAMIENTO",
+    "modal_certified": "Certificado Entomológico",
+    "modal_protocol": "Protocolo de Actuación",
+    "modal_tech_available": "Técnicos de guardia",
+    "modal_status_available": "Disponibles ahora"
   }
 }

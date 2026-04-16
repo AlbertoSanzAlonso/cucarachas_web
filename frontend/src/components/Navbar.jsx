@@ -183,13 +183,13 @@ const Navbar = () => {
           ))}
           <div className="pt-4 flex items-center space-x-6">
             <button 
-              onClick={() => { changeLanguage('ca'); setMobileMenuOpen(false); }} 
+              onClick={() => { changeLanguage('ca'); }} 
               className={`font-bold text-lg ${i18n.language === 'ca' ? 'text-accent-green' : 'text-primary-blue'}`}
             >
               CA
             </button>
             <button 
-              onClick={() => { changeLanguage('es'); setMobileMenuOpen(false); }} 
+              onClick={() => { changeLanguage('es'); }} 
               className={`font-bold text-lg ${i18n.language === 'es' ? 'text-accent-green' : 'text-primary-blue'}`}
             >
               ES

@@ -6,10 +6,10 @@ const SectorGrid = () => {
   const { t } = useTranslation();
 
   const sectors = [
-    { id: 'horeca', name: 'Bares y Restaurantes', icon: <Utensils /> },
-    { id: 'hotels', name: 'Hoteles y Resorts', icon: <Hotel /> },
-    { id: 'comms', name: 'Comunidades de Vecinos', icon: <Users /> },
-    { id: 'industry', name: 'Industria Alimentaria', icon: <Factory /> }
+    { id: 'horeca', name: t('sectors_grid.horeca'), icon: <Utensils /> },
+    { id: 'hotels', name: t('sectors_grid.hotels'), icon: <Hotel /> },
+    { id: 'comms', name: t('sectors_grid.comms'), icon: <Users /> },
+    { id: 'industry', name: t('sectors_grid.industry'), icon: <Factory /> }
   ];
 
   return (
@@ -19,11 +19,11 @@ const SectorGrid = () => {
         <div className="max-w-3xl mx-auto space-y-4">
            <h2 className="text-3xl md:text-5xl font-black text-primary-blue tracking-tight uppercase">
              <span className="inline-block border-b-[8px] md:border-b-[16px] border-accent-green/80 leading-tight pb-1 md:pb-2">
-               Servicios para empresas
+               {t('sectors_grid.title')}
              </span>
            </h2>
            <p className="text-secondary-gray/80 text-lg font-light pt-8">
-             Soluciones permanentes y discretas para cada sector empresarial en Catalunya.
+             {t('sectors_grid.desc')}
            </p>
         </div>
 
@@ -45,7 +45,7 @@ const SectorGrid = () => {
                      {sector.name}
                    </h3>
                    <div className="inline-flex items-center text-[10px] uppercase font-bold tracking-widest text-secondary-gray/40">
-                      Ver Planes <ChevronRight size={14} className="ml-1" />
+                      {t('sectors_grid.cta')} <ChevronRight size={14} className="ml-1" />
                    </div>
                 </div>
 

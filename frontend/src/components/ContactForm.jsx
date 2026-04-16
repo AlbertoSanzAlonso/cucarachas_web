@@ -53,21 +53,21 @@ const ContactForm = () => {
         {/* Text Section */}
         <div className="space-y-12">
            <div className="space-y-6">
-              <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter">
-                Tu protección <br /> contra plagas, <br /> garantizada.
-              </h2>
+              <h2 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter"
+                  dangerouslySetInnerHTML={{ __html: t('contact.title', 'Tu protección <br /> contra plagas, <br /> garantizada.') }}
+              />
               <div className="w-32 h-2 bg-accent-green rounded-full"></div>
               <p className="text-xl font-medium text-white/80 leading-relaxed max-w-md italic">
-                {t('contact.subtitle', 'Rellena el formulario y un técnico especialista te contactará en menos de 2h para un diagnóstico gratuito.')}
+                {t('contact.subtitle')}
               </p>
            </div>
            
            <div className="grid sm:grid-cols-2 gap-8">
               {[
-                { icon: <Phone />, title: 'Teléfono', value: '933 309 169' },
-                { icon: <Clock />, title: 'Horario', value: 'Lun - Ven, 9:00 - 20:00h' },
-                { icon: <MapPin />, title: 'Sede', value: 'Barcelona' },
-                { icon: <Mail />, title: 'Email', value: 'info@cucarachasbarcelona.cat' }
+                { icon: <Phone />, title: t('contact.phone_label'), value: '933 309 169' },
+                { icon: <Clock />, title: t('contact.schedule_label'), value: t('contact.schedule_value') },
+                { icon: <MapPin />, title: t('contact.sede_label'), value: 'Barcelona' },
+                { icon: <Mail />, title: t('contact.email_label'), value: 'info@cucarachasbarcelona.cat' }
               ].map((item, i) => (
                 <div key={i} className="flex items-start space-x-4 group">
                    <div className="p-3 bg-white/10 rounded-xl text-accent-green group-hover:bg-white/20 transition-all border border-white/5">
@@ -91,7 +91,7 @@ const ContactForm = () => {
                    value={formData.name}
                    onChange={handleChange}
                    type="text" 
-                   placeholder="Nombre y Apellidos" 
+                   placeholder={t('contact.name_placeholder')}
                    required
                    className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
@@ -102,7 +102,7 @@ const ContactForm = () => {
                    value={formData.email}
                    onChange={handleChange}
                    type="email" 
-                   placeholder="Email de contacto" 
+                   placeholder={t('contact.email_placeholder')}
                    required
                    className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
@@ -113,7 +113,7 @@ const ContactForm = () => {
                    value={formData.phone}
                    onChange={handleChange}
                    type="tel" 
-                   placeholder="Teléfono móvil" 
+                   placeholder={t('contact.phone_placeholder')}
                    required
                    className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
@@ -124,7 +124,7 @@ const ContactForm = () => {
                    value={formData.message}
                    onChange={handleChange}
                    rows="4" 
-                   placeholder="Explícanos brevemente tu problema..." 
+                   placeholder={t('contact.message_placeholder')}
                    required
                    className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40 resize-none"
                  ></textarea>
@@ -132,7 +132,7 @@ const ContactForm = () => {
               
               <div className="flex items-center space-x-3 text-[10px] font-bold text-primary-gray/50 uppercase tracking-widest pl-2">
                  <input type="checkbox" required className="w-4 h-4 rounded border-gray-300 text-primary-blue focus:ring-primary-blue" />
-                 <span>Acepto la política de protección de datos técnica de CECSA</span>
+                 <span>{t('contact.privacy_consent')}</span>
               </div>
 
               <button 
@@ -144,12 +144,12 @@ const ContactForm = () => {
                    <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
                  ) : isSuccess ? (
                    <>
-                     <span>SOLICITUD ENVIADA</span>
+                     <span>{t('contact.success_btn')}</span>
                      <CheckCircle2 size={22} className="ml-3" />
                    </>
                  ) : (
                    <>
-                     <span>ENVIAR SOLICITUD</span>
+                     <span>{t('contact.submit_btn')}</span>
                      <Send size={22} className="ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                    </>
                  )}
@@ -158,8 +158,8 @@ const ContactForm = () => {
            
            {/* Form caption */}
            <div className="mt-8 text-center space-y-2 opacity-60">
-              <p className="text-xs font-bold text-accent-green uppercase tracking-widest">Compromiso CECSA</p>
-              <p className="text-[10px] text-white font-medium">Privacidad absoluta y respuesta técnica garantizada.</p>
+              <p className="text-xs font-bold text-accent-green uppercase tracking-widest">{t('contact.commitment_label')}</p>
+              <p className="text-[10px] text-white font-medium">{t('contact.commitment_value')}</p>
            </div>
         </div>
 
