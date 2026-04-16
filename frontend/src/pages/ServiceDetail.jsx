@@ -53,7 +53,7 @@ const ServiceDetail = () => {
     }
   }, [sector]);
 
-  if (!sector) return <div>Sector no encontrado</div>;
+  if (!sector) return <div className="min-h-screen flex items-center justify-center font-black text-primary-blue uppercase tracking-widest">{t('service_detail_page.not_found')}</div>;
 
   return (
     <div className="min-h-screen bg-bg-light">
@@ -74,7 +74,7 @@ const ServiceDetail = () => {
          <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
             <Link to="/#sectors" className="inline-flex items-center space-x-2 text-white/60 hover:text-accent-green transition-colors mb-8 group">
                <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-               <span className="text-xs font-bold uppercase tracking-widest">Tornar</span>
+               <span className="text-xs font-bold uppercase tracking-widest">{t('service_detail_page.back')}</span>
             </Link>
             
             <div className="flex flex-col md:flex-row items-center gap-12">
@@ -83,7 +83,7 @@ const ServiceDetail = () => {
                      <div className="text-accent-green">
                         {React.cloneElement(sectorIcons[id] || <Users />, { size: 20 })}
                      </div>
-                     <span className="text-[10px] font-black uppercase tracking-widest">Sector Autoritzat</span>
+                     <span className="text-[10px] font-black uppercase tracking-widest">{t('service_detail_page.authorized_label')}</span>
                   </div>
                   <h1 className="text-5xl md:text-7xl font-black text-white leading-[0.9] tracking-tighter">
                      {sector.title}
@@ -110,7 +110,7 @@ const ServiceDetail = () => {
             <div className="space-y-8">
                <h2 className="text-3xl font-black text-primary-gray tracking-tighter uppercase flex items-center">
                   <span className="w-12 h-1.5 bg-accent-green mr-4 rounded-full"></span>
-                  Protocol Tècnic Especialitzat
+                  {t('service_detail_page.technical_protocol')}
                </h2>
                <div className="grid md:grid-cols-2 gap-6">
                   {sector.points.map((point, i) => (
@@ -131,12 +131,12 @@ const ServiceDetail = () => {
             </div>
 
             <div className="p-10 bg-white rounded-[3rem] border border-gray-100 shadow-xl space-y-8">
-               <h3 className="text-2xl font-black text-primary-gray tracking-tighter">Per què triar CECSA per a {sector.title}?</h3>
+               <h3 className="text-2xl font-black text-primary-gray tracking-tighter">{t('service_detail_page.why_choose', { sector: sector.title })}</h3>
                <div className="grid md:grid-cols-3 gap-8 text-center">
                   {[
-                     { label: 'Resposta <2h', desc: 'Sempre hi som quan ens necessites.' },
-                     { label: 'Garantia Total', desc: 'Si tornen, nosaltres també. Sense cost.' },
-                     { label: 'Ethic & Green', desc: 'Sense residus tòxics ni olors.' }
+                     { label: t('service_detail_page.benefit1_label'), desc: t('service_detail_page.benefit1_desc') },
+                     { label: t('service_detail_page.benefit2_label'), desc: t('service_detail_page.benefit2_desc') },
+                     { label: t('service_detail_page.benefit3_label'), desc: t('service_detail_page.benefit3_desc') }
                   ].map((item, i) => (
                      <div key={i} className="space-y-2">
                         <p className="text-accent-green font-black text-xl tracking-tighter">{item.label}</p>
@@ -152,9 +152,10 @@ const ServiceDetail = () => {
             <div className="sticky top-40 bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 text-center space-y-8 overflow-hidden relative group">
                <div className="absolute top-0 left-0 w-full h-2 bg-accent-green"></div>
                <div className="space-y-2 relative z-10">
-                  <h3 className="text-3xl font-black text-primary-gray tracking-tighter leading-none">Protecció Activa</h3>
-                  <p className="text-secondary-gray/50 text-xs font-bold uppercase tracking-widest">Diagnòstic Gratuït</p>
+                  <h3 className="text-3xl font-black text-primary-gray tracking-tighter leading-none">{t('service_detail_page.active_protection')}</h3>
+                  <p className="text-secondary-gray/50 text-xs font-bold uppercase tracking-widest">{t('service_detail_page.free_diagnosis')}</p>
                </div>
+</div>
                
                <div className="space-y-4 relative z-10">
                   <button className="w-full py-5 px-4 bg-primary-blue text-white font-black text-lg md:text-xl rounded-2xl shadow-xl flex items-center justify-center group/btn leading-tight text-center">

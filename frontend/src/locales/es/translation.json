@@ -266,5 +266,20 @@
     "modal_protocol": "Protocolo de Actuación",
     "modal_tech_available": "Técnicos de guardia",
     "modal_status_available": "Disponibles ahora"
+  },
+  "service_detail_page": {
+    "back": "Volver",
+    "authorized_label": "Sector Autorizado",
+    "technical_protocol": "Protocolo Técnico Especializado",
+    "why_choose": "¿Por qué elegir CECSA para {{sector}}?",
+    "benefit1_label": "Respuesta <2h",
+    "benefit1_desc": "Siempre estamos cuando nos necesitas.",
+    "benefit2_label": "Garantía Total",
+    "benefit2_desc": "Si vuelven, nosotros también. Sin coste.",
+    "benefit3_label": "Ethic & Green",
+    "benefit3_desc": "Sin residuos tóxicos ni olores.",
+    "active_protection": "Protección Activa",
+    "free_diagnosis": "Diagnóstico Gratuito",
+    "not_found": "Sector no encontrado"
   }
 }

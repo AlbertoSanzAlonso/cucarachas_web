@@ -286,5 +286,20 @@
     "modal_protocol": "Protocol d'Actuació",
     "modal_tech_available": "Tècnics de guàrdia",
     "modal_status_available": "Disponibles ara"
+  },
+  "service_detail_page": {
+    "back": "Tornar",
+    "authorized_label": "Sector Autoritzat",
+    "technical_protocol": "Protocol Tècnic Especialitzat",
+    "why_choose": "Per què triar CECSA per a {{sector}}?",
+    "benefit1_label": "Resposta <2h",
+    "benefit1_desc": "Sempre hi som quan ens necessites.",
+    "benefit2_label": "Garantia Total",
+    "benefit2_desc": "Si tornen, nosaltres també. Sense cost.",
+    "benefit3_label": "Ethic & Green",
+    "benefit3_desc": "Sense residus tòxics ni olors.",
+    "active_protection": "Protecció Activa",
+    "free_diagnosis": "Diagnòstic Gratuït",
+    "not_found": "Sector no trobat"
   }
 }
