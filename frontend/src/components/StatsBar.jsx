@@ -16,7 +16,7 @@ const StatsBar = () => {
     <section className="relative overflow-visible pt-56 pb-48 md:pt-80 md:pb-60 z-20">
       {/* Upper white part to hide the parent background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[400px] bg-white z-0 -translate-y-[90%] -skew-y-3 origin-bottom optimize-gpu" 
+        className="absolute top-0 left-0 right-0 h-[700px] bg-white z-0 -translate-y-[85%] -skew-y-3 origin-top-right optimize-gpu" 
       ></div>
 
       {/* Skewed Background Hole - The blue stripe stripe placeholder */}
