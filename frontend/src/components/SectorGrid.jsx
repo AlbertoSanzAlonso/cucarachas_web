@@ -82,7 +82,7 @@ const SectorGrid = () => {
                 </div>
 
                 {/* Background Image Watermark */}
-                <div className="absolute inset-0 opacity-[0.05] group-hover:opacity-[0.08] transition-opacity duration-500">
+                <div className="absolute inset-0 opacity-[0.15] group-hover:opacity-[0.25] transition-opacity duration-500">
                    <img 
                      src={sector.bg} 
                      alt="" 
