@@ -13,18 +13,17 @@ const StatsBar = () => {
   ];
 
   return (
-    <section className="relative overflow-visible py-24 md:py-32 z-20 bg-white">
-      {/* Skewed Background - The blue stripe */}
+    <section className="relative overflow-visible py-24 md:py-32 z-20">
+      {/* Upper white part to hide the parent background */}
+      <div 
+        className="absolute top-0 left-0 right-0 h-40 bg-white z-0 -translate-y-1/2 -skew-y-3 origin-bottom" 
+      ></div>
+
+      {/* Skewed Background Hole - The blue stripe stripe placeholder */}
       <div 
         className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 shadow-[0_20px_50px_rgba(0,128,187,0.4)] overflow-hidden" 
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
-        }}
       >
-         {/* Subtle Background Pattern inside skewed area */}
+         {/* Subtle Background Pattern */}
          <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
          </div>
