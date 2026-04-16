@@ -205,7 +205,7 @@ const PestGrid = () => {
                   <motion.img 
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: selectedPest.imageScale || 1 }}
-                    transition={{ delay: 0.2, duration: 0.5 }}
+                    transition={{ delay: 0.05, duration: 0.3 }}
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
                     className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
@@ -242,7 +242,7 @@ const PestGrid = () => {
                           <motion.li 
                             initial={{ opacity: 0, x: -20 }}
                             animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.3 + (idx * 0.1) }}
+                            transition={{ delay: 0.1 + (idx * 0.02) }}
                             key={idx} 
                             className="flex items-start space-x-3"
                           >

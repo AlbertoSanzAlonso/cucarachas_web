@@ -168,7 +168,7 @@ const SectorGrid = () => {
                       <motion.li 
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.05 * idx }}
+                        transition={{ delay: idx * 0.02 }}
                         key={idx} 
                         className="flex items-start space-x-3"
                       >
