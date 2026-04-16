@@ -5,6 +5,7 @@ import { Heart, ShieldCheck, Users, Activity, ExternalLink, ArrowRight, HeartPul
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FloatingCTA from '../components/FloatingCTA';
+import SEO from '../components/SEO';
 
 const About = () => {
   const { t } = useTranslation();
@@ -13,7 +14,6 @@ const About = () => {
   // Scroll to top and Auto-rotate stats for mobile
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `Sobre Nosaltres - CECSA Control de Plagues`;
 
     const timer = setInterval(() => {
       setActiveStat((prev) => (prev + 1) % 3);
@@ -64,6 +64,11 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-bg-light">
+      <SEO 
+        title={t('nav.about')} 
+        description={t('about_page.hero_subtitle')} 
+        url="/sobre-cecsa"
+      />
       <Navbar />
 
       <main className="pt-40 md:pt-32 pb-0">

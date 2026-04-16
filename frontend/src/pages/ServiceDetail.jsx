@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, ArrowLeft, Mail, Phone, Zap, Utensils, Hotel, Users, Factory } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -48,15 +49,17 @@ const ServiceDetail = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (sector) {
-      document.title = `${sector.title} - CECSA Control de Plagues`;
-    }
-  }, [sector]);
+  }, []);
 
   if (!sector) return <div className="min-h-screen flex items-center justify-center font-black text-primary-blue uppercase tracking-widest">{t('service_detail_page.not_found')}</div>;
 
   return (
     <div className="min-h-screen bg-bg-light">
+      <SEO 
+        title={sector.title} 
+        description={sector.desc} 
+        url={`/serveis/${id}`}
+      />
       <Navbar />
       
       {/* Hero Section */}

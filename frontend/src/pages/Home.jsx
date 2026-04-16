@@ -19,6 +19,7 @@ const ContactForm = lazy(() => import('../components/ContactForm'));
 const Footer = lazy(() => import('../components/Footer'));
 const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
 
+import SEO from '../components/SEO';
 import { SectionSkeleton } from '../components/Skeleton';
 
 // Optimized Section Components with Granular Suspense
@@ -33,7 +34,6 @@ function Home() {
   const location = useLocation();
 
   useEffect(() => {
-    document.title = "Cecsa - Control de Plagues a Barcelona | Ètic i Conscient";
     if (location.hash) {
       const id = location.hash.replace('#', '');
       const element = document.getElementById(id);
@@ -49,6 +49,7 @@ function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
+      <SEO />
       <Navbar />
       
       <main>
