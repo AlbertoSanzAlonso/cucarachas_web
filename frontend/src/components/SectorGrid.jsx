@@ -153,7 +153,7 @@ const SectorGrid = () => {
                      {React.cloneElement(selectedSector.icon, { size: 32, strokeWidth: 1.5 })}
                   </div>
                   <div className="text-center space-y-1">
-                     <p className="text-[8px] md:text-[10px] uppercase font-black tracking-[0.3em] text-accent-green">Sector Autorizado</p>
+                     <p className="text-[8px] md:text-[10px] uppercase font-black tracking-[0.3em] text-accent-green">{t('service_detail_page.authorized_label')}</p>
                      <p className="text-white/60 text-[8px] md:text-[10px] font-medium tracking-widest italic">{selectedSector.name}</p>
                   </div>
                 </div>
@@ -172,7 +172,7 @@ const SectorGrid = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <h4 className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">Protocolos del Plan Sanitario</h4>
+                  <h4 className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">{t('service_detail_page.technical_protocol')}</h4>
                   <ul className="grid grid-cols-1 gap-2 md:gap-4">
                     {selectedSector.points?.map((point, idx) => (
                       <motion.li 

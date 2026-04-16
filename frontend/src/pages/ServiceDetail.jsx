@@ -155,7 +155,6 @@ const ServiceDetail = () => {
                   <h3 className="text-3xl font-black text-primary-gray tracking-tighter leading-none">{t('service_detail_page.active_protection')}</h3>
                   <p className="text-secondary-gray/50 text-xs font-bold uppercase tracking-widest">{t('service_detail_page.free_diagnosis')}</p>
                </div>
-</div>
                
                <div className="space-y-4 relative z-10">
                   <button className="w-full py-5 px-4 bg-primary-blue text-white font-black text-lg md:text-xl rounded-2xl shadow-xl flex items-center justify-center group/btn leading-tight text-center">
