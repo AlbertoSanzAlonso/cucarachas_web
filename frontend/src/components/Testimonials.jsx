@@ -59,10 +59,7 @@ const Testimonials = () => {
                    </p>
                 </div>
 
-                <div className="pt-8 flex items-center space-x-4 relative z-10 border-t border-gray-50 mt-auto">
-                   <div className="w-12 h-12 rounded-full bg-primary-blue/10 flex items-center justify-center text-primary-blue font-black text-xl">
-                      {rev.name.charAt(0)}
-                   </div>
+                <div className="pt-8 flex items-center relative z-10 border-t border-gray-50 mt-auto">
                    <div className="flex flex-col">
                       <h4 className="font-black text-primary-blue tracking-tighter leading-none">{rev.name}</h4>
                       <p className="text-[10px] uppercase font-bold tracking-widest text-secondary-gray/40 mt-1">{rev.city} · {rev.source} Review</p>
