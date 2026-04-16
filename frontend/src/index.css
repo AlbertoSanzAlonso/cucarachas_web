@@ -70,6 +70,23 @@
   .text-white-muted {
     color: rgba(255, 255, 255, 0.7);
   }
+
+  /* Optimized Fixed BG for Mobile */
+  .bg-authority-fixed {
+    background-attachment: fixed;
+  }
+  @media (max-width: 1024px) {
+    .bg-authority-fixed {
+      background-attachment: scroll !important;
+    }
+  }
+
+  /* GPU Acceleration & Flutter Prevention */
+  .optimize-gpu {
+    backface-visibility: hidden;
+    transform: translateZ(0);
+    will-change: transform;
+  }
 }
 
 /* Keyframes */

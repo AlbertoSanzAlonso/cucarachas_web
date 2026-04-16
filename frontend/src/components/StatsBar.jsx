@@ -16,12 +16,12 @@ const StatsBar = () => {
     <section className="relative overflow-visible pt-56 pb-48 md:pt-80 md:pb-60 z-20">
       {/* Upper white part to hide the parent background */}
       <div 
-        className="absolute top-0 left-0 right-0 h-[400px] bg-white z-0 -translate-y-[90%] -skew-y-3 origin-bottom" 
+        className="absolute top-0 left-0 right-0 h-[400px] bg-white z-0 -translate-y-[90%] -skew-y-3 origin-bottom optimize-gpu" 
       ></div>
 
       {/* Skewed Background Hole - The blue stripe stripe placeholder */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-125 z-0 overflow-hidden" 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-125 z-0 overflow-hidden optimize-gpu" 
       >
          {/* Subtle Background Pattern */}
          <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
