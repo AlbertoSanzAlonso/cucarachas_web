@@ -207,7 +207,7 @@ const PestGrid = () => {
                 </button>
 
                 {/* Sidebar / Image area */}
-                <div className="md:w-1/2 bg-white p-6 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[200px] md:min-h-[300px]">
+                <div className="md:w-1/2 bg-white p-4 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[140px] md:min-h-[300px]">
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                   </div>
@@ -215,37 +215,34 @@ const PestGrid = () => {
                   <img 
                     src={selectedPest.image} 
                     alt={selectedPest.name} 
-                    className="w-full max-w-[240px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
+                    className="w-full max-w-[140px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]"
                     style={{ transform: `scale(${selectedPest.imageScale || 1})` }}
                   />
                   
-                  <div className="mt-4 md:mt-8 text-center space-y-1 relative z-10">
-                     <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">
+                  <div className="mt-2 md:mt-8 text-center space-y-1 relative z-10">
+                     <p className="text-[7px] md:text-[10px] uppercase font-bold tracking-[0.3em] text-accent-green">
                         {t('species_detail.modal_certified')}
                      </p>
-                     {selectedPest.scientific && (
-                       <p className="text-secondary-gray/40 text-[10px] md:text-xs italic">{selectedPest.scientific}</p>
-                     )}
                   </div>
                 </div>
 
                 {/* Content area */}
-                <div className="md:w-1/2 p-6 md:p-16 flex flex-col justify-center space-y-6 md:space-y-8 overflow-y-auto">
-                  <div className="space-y-3 md:space-y-4">
-                     <h3 className="text-3xl md:text-5xl font-black text-primary-gray tracking-tighter leading-[0.9]">
+                <div className="md:w-1/2 p-5 md:p-16 flex flex-col justify-center space-y-4 md:space-y-8 overflow-y-auto">
+                  <div className="space-y-2 md:space-y-4">
+                     <h3 className="text-2xl md:text-5xl font-black text-primary-gray tracking-tighter leading-[0.9]">
                        {selectedPest.name}
                      </h3>
-                     <div className="w-20 h-1.5 bg-accent-green rounded-full"></div>
-                     <p className="text-sm md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
+                     <div className="w-16 h-1 bg-accent-green rounded-full"></div>
+                     <p className="text-xs md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
                        "{selectedPest.desc}"
                      </p>
                   </div>
 
-                  <div className="space-y-4 md:space-y-6">
-                     <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
+                  <div className="space-y-3 md:space-y-6">
+                     <h4 className="text-[7px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
                         {t('species_detail.modal_protocol')}
                      </h4>
-                     <ul className="space-y-3 md:space-y-4">
+                     <ul className="space-y-2 md:space-y-4">
                         {selectedPest.details?.map((detail, idx) => (
                           <motion.li 
                             initial={{ opacity: 0, x: -20 }}
@@ -255,26 +252,26 @@ const PestGrid = () => {
                             className="flex items-start space-x-3"
                           >
                              <div className="mt-1 flex-shrink-0 text-accent-green">
-                                <ShieldCheck size={18} className="md:w-5 md:h-5" />
+                                <ShieldCheck size={16} className="md:w-5 md:h-5" />
                              </div>
-                             <span className="text-xs md:text-base text-secondary-gray font-medium leading-tight">{detail}</span>
+                             <span className="text-[11px] md:text-base text-secondary-gray font-medium leading-tight">{detail}</span>
                           </motion.li>
                         ))}
                      </ul>
                   </div>
 
                   {/* Modal CTA */}
-                  <div className="pt-8 border-t border-gray-100">
+                  <div className="pt-4 md:pt-8 border-t border-gray-100">
                     <button 
-                      className="w-full py-5 px-8 rounded-3xl text-white font-black text-xl shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter sm:tracking-widest flex items-center justify-center space-x-4 group"
+                      className="w-full py-4 px-8 rounded-2xl text-white font-black text-lg shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter flex items-center justify-center space-x-4 group"
                       style={{ background: 'var(--color-primary-blue)' }}
                     >
-                      <Zap className="w-6 h-6 md:w-8 md:h-8 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
+                      <Zap className="w-5 h-5 md:w-8 md:h-8 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
                       <span className="leading-tight">
                         {t('common.cta_free')}
                       </span>
                     </button>
-                    <div className="flex justify-center items-center space-x-4 mt-6">
+                    <div className="hidden md:flex justify-center items-center space-x-4 mt-6">
                        <div className="flex -space-x-2">
                          {[1,2,3].map(i => (
                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
