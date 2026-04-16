@@ -64,7 +64,7 @@ const ServiceDetail = () => {
          <div className="absolute inset-0 z-0">
             <img 
                src={sector.bg} 
-               alt={sector.title} 
+               alt={`${sector.title} - Control de Plagues CECSA`} 
                className="w-full h-full object-cover opacity-60 mix-blend-overlay"
             />
             <div className="absolute inset-0 bg-gradient-to-r from-primary-blue via-primary-blue/80 to-transparent"></div>
@@ -154,7 +154,7 @@ const ServiceDetail = () => {
                <div className="absolute inset-0 opacity-[0.08] pointer-events-none group-hover:opacity-[0.12] transition-opacity duration-700">
                   <img 
                      src="/assets/atencion-cliente-cucarachas-barcelona.png" 
-                     alt="" 
+                     alt="Atenció al client CECSA Control de Plagues" 
                      className="w-full h-full object-cover scale-110 group-hover:scale-105 transition-transform duration-1000"
                   />
                </div>

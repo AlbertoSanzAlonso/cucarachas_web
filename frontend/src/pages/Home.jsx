@@ -50,28 +50,30 @@ function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
       <Navbar />
-
-      <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
-      <LazySection Component={CockroachFocus} />
-      <LazySection Component={Testimonials} />
-      <LazySection Component={FleetSection} />
-      <LazySection Component={PestGrid} />
-      <LazySection Component={OtherServices} />
-      <LazySection Component={SectorGrid} />
-      <LazySection Component={OrigenService} />
-      <LazySection Component={Process} />
-      <div 
-        className="relative bg-authority-fixed -mt-[1px]"
-        style={{ 
-          background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat'
-        }}
-      >
-        <LazySection Component={StatsBar} />
-        <LazySection Component={ContactForm} />
-      </div>
+      
+      <main>
+        <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
+        <LazySection Component={CockroachFocus} />
+        <LazySection Component={Testimonials} />
+        <LazySection Component={FleetSection} />
+        <LazySection Component={PestGrid} />
+        <LazySection Component={OtherServices} />
+        <LazySection Component={SectorGrid} />
+        <LazySection Component={OrigenService} />
+        <LazySection Component={Process} />
+        <div 
+          className="relative bg-authority-fixed -mt-[1px]"
+          style={{ 
+            background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.96) 0%, rgba(0, 111, 163, 0.9) 100%), url(/assets/barcelona-authority.webp)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        >
+          <LazySection Component={StatsBar} />
+          <LazySection Component={ContactForm} />
+        </div>
+      </main>
       
       <Footer />
       <FloatingCTA />
