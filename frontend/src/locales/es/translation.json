@@ -119,7 +119,11 @@
     "termites": "Eliminación de termitas",
     "bedbugs": "Control de chinches",
     "ants": "Eliminación de hormigas",
-    "pigeons": "Control de palomas y aves"
+    "pigeons": "Palomas y Aves Urbanas",
+    "catalog_label": "Catálogo de Especies",
+    "view_protocol": "Ver Protocolo",
+    "safety_label": "Protocolos de seguridad total",
+    "view_all_btn": "VER TODOS LOS SERVICIOS"
   },
   "meta": {
     "desc": "Eliminar cucarachas en Barcelona con servicio urgente 24h. Tratamiento profesional, seguro y con garantía. Presupuesto gratuito."

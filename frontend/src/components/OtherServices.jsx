@@ -28,7 +28,7 @@ const OtherServices = () => {
            
            <div className="absolute top-8 left-8 py-2 px-6 glass rounded-full flex items-center space-x-2">
               <span className="flex h-2 w-2 rounded-full bg-accent-green animate-pulse"></span>
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-blue">Catálogo de Especies</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-primary-blue">{t('others.catalog_label')}</span>
            </div>
         </div>
 
@@ -55,7 +55,7 @@ const OtherServices = () => {
                       </span>
                    </div>
                    <div className="transform translate-x-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 transition-all font-black text-accent-green text-xs tracking-widest uppercase">
-                      Ver Protocolo
+                      {t('others.view_protocol')}
                    </div>
                 </div>
               ))}
@@ -64,10 +64,10 @@ const OtherServices = () => {
            <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="flex items-center space-x-3 text-secondary-gray/50">
                  <ShieldAlert size={20} />
-                 <span className="text-xs font-bold uppercase tracking-widest">Protocolos de seguridad total</span>
+                 <span className="text-xs font-bold uppercase tracking-widest">{t('others.safety_label')}</span>
               </div>
               <button className="px-10 py-4 rounded-xl bg-primary-blue text-white font-black text-sm tracking-widest shadow-lg hover:shadow-xl transition-all">
-                 VER TODOS LOS SERVICIOS
+                 {t('others.view_all_btn')}
               </button>
            </div>
         </div>

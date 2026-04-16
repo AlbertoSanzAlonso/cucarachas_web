@@ -119,7 +119,11 @@
     "termites": "Eliminació de tèrmits",
     "bedbugs": "Control de xinxes",
     "ants": "Eliminació de formigues",
-    "pigeons": "Control de coloms i aus"
+    "pigeons": "Coloms i Aus Urbanes",
+    "catalog_label": "Catàleg d'Espècies",
+    "view_protocol": "Veure Protocol",
+    "safety_label": "Protocols de seguretat total",
+    "view_all_btn": "VEURE TOTS ELS SERVEIS"
   },
   "meta": {
     "desc": "Eliminar paneroles (cucarachas) a Barcelona amb servei urgent 24h. Tractament professional, segur i amb garantia. Pressupost gratuït."
