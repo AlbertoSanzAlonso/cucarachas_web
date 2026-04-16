@@ -47,6 +47,20 @@ const ServiceDetail = () => {
 
   const sector = sectorData[id];
 
+  const serviceSchema = sector ? {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": sector.title,
+    "description": sector.desc,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "CECSA Control de Plagas",
+      "url": "https://cucarachasbarcelona.cat"
+    },
+    "areaServed": "Barcelona, Catalunya",
+    "serviceType": "Control de Plagas / Desinsectación"
+  } : null;
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -59,11 +73,23 @@ const ServiceDetail = () => {
         title={sector.title} 
         description={sector.desc} 
         url={`/serveis/${id}`}
+        schemaData={serviceSchema}
       />
       <Navbar />
       
+      {/* Breadcrumbs */}
+      <nav className="pt-24 md:pt-32 bg-bg-light px-6" aria-label="Breadcrumb">
+         <div className="max-w-7xl mx-auto flex items-center space-x-2 text-[10px] uppercase font-bold tracking-widest text-secondary-gray/40">
+            <Link to="/" className="hover:text-primary-blue transition-colors">{t('nav.home')}</Link>
+            <span>/</span>
+            <span className="text-secondary-gray/20">Serveis</span>
+            <span>/</span>
+            <span className="text-primary-blue">{sector.title}</span>
+         </div>
+      </nav>
+
       {/* Hero Section */}
-      <section className="pt-52 md:pt-40 pb-20 bg-primary-blue text-white relative overflow-hidden min-h-[500px] md:h-[600px] flex items-start md:items-center">
+      <section className="pt-12 md:pt-0 pb-20 bg-primary-blue text-white relative overflow-hidden min-h-[500px] md:h-[600px] flex items-start md:items-center">
          <div className="absolute inset-0 z-0">
             <img 
                src={sector.bg} 

@@ -33,6 +33,45 @@ function Home() {
   const { t } = useTranslation();
   const location = useLocation();
 
+  const homeSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "CECSA Control de Plagas",
+    "image": "https://cucarachasbarcelona.cat/assets/og-image.webp",
+    "@id": "https://cucarachasbarcelona.cat",
+    "url": "https://cucarachasbarcelona.cat",
+    "telephone": "+34933309169",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "C/ Rajolers 16, Local 1",
+      "addressLocality": "Barcelona",
+      "postalCode": "08028",
+      "addressCountry": "ES"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 41.378415,
+      "longitude": 2.128523
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday"
+      ],
+      "opens": "08:00",
+      "closes": "19:00"
+    },
+    "sameAs": [
+      "https://www.facebook.com/cecsaddd/",
+      "https://www.instagram.com/tecnicoplagas/",
+      "https://www.linkedin.com/company/desinfecciones-cecsa-sll/"
+    ]
+  };
+
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace('#', '');
@@ -49,7 +88,7 @@ function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">
-      <SEO />
+      <SEO schemaData={homeSchema} />
       <Navbar />
       
       <main>
