@@ -207,7 +207,7 @@ const PestGrid = () => {
                 </button>
 
                 {/* Sidebar / Image area */}
-                <div className="md:w-1/2 bg-white p-4 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[140px] md:min-h-[300px]">
+                <div className="md:w-1/2 bg-white pt-10 pb-4 px-4 md:p-16 flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 min-h-[140px] md:min-h-[300px]">
                   <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                     <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                   </div>
