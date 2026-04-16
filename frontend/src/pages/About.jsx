@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { Heart, ShieldCheck, Users, Activity, ExternalLink, ArrowRight, HeartPulse, Scale, Globe } from 'lucide-react';
+import { Heart, ShieldCheck, Users, Activity, ExternalLink, ArrowRight, HeartPulse, Scale, Globe, Bug } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FloatingCTA from '../components/FloatingCTA';
@@ -66,6 +66,36 @@ const About = () => {
                  className="w-full h-full object-cover opacity-40 mix-blend-overlay"
                />
                <div className="absolute inset-0 bg-gradient-to-r from-primary-blue via-primary-blue/80 to-transparent"></div>
+               
+               {/* Floating Bugs Effect */}
+               <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+                  {[...Array(15)].map((_, i) => (
+                    <motion.div 
+                      key={i} 
+                      className="absolute text-white"
+                      initial={{ opacity: 0 }}
+                      animate={{
+                        x: [0, i % 2 === 0 ? 50 : -50, 0],
+                        y: [0, i % 3 === 0 ? -30 : 30, 0],
+                        rotate: [i * 20, i * 20 + 10, i * 20],
+                        opacity: [0, 0.15, 0.15, 0]
+                      }}
+                      transition={{
+                        duration: 10 + i,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: i * 0.5
+                      }}
+                      style={{
+                        top: `${(i * 12) % 100}%`,
+                        left: `${(i * 18) % 100}%`,
+                        scale: 0.5 + Math.random() * 0.5,
+                      }}
+                    >
+                      <Bug size={30 + (i * 2)} strokeWidth={1} />
+                    </motion.div>
+                  ))}
+               </div>
             </div>
             
             <div className="relative z-10 p-12 md:p-24 max-w-3xl space-y-8">
