@@ -98,7 +98,7 @@ const FleetSection = () => {
              </div>
           </div>
 
-          <div className="pt-6">
+          <div className="pt-6 flex justify-center lg:justify-start">
             <button className="px-10 py-5 rounded-2xl bg-primary-blue text-white font-black text-lg shadow-xl hover:translate-y-[-4px] transition-all duration-300">
                {t('fleet.units_btn')}
             </button>
