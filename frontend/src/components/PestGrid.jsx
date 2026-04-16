@@ -179,7 +179,7 @@ const PestGrid = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedPest(null)}
-              className="absolute inset-0 bg-primary-blue/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
+              className="absolute inset-0 bg-slate-900/90 md:bg-slate-900/40 md:backdrop-blur-xl"
             />
             
               <motion.div 
