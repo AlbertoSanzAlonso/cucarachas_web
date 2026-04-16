@@ -1,7 +1,7 @@
 {
   "common": {
     "tagline": "Ético y Consciente",
-    "cta_free": "Pedir Diagnóstico Gratis",
+    "cta_free": "Pedir Diagnóstico Gratuito",
     "cta_call": "Llamar Ahora",
     "emergency_24h": "Urgencias 24h",
     "certified": "Certificación ROESB"
@@ -14,13 +14,13 @@
     "contact": "Urgencias 24h"
   },
   "hero": {
-    "title": "Eliminar cucarachas en Barcelona de manera rápida y definitiva.",
+    "title": "Eliminar cucarachas en Barcelona rápida y definitivamente.",
     "desc": "En CECSA somos especialistas en el control de cucarachas, con servicio urgente 24h, tratamientos seguros y garantía certificada para recuperar la tranquilidad en tu vivienda o negocio.",
     "badge": "Servicio urgente 24h en Barcelona"
   },
   "focus": {
     "title": "Cómo eliminar cucarachas de forma definitiva",
-    "desc": "Eliminar cucarachas no consiste solo en aplicar productos. Cal un tractament professional adaptat a cada situació per eliminar la plaga des de l’origen i evitar que torni a aparèixer."
+    "desc": "Eliminar cucarachas no consiste solo en aplicar productos. Es necesario un tratamiento profesional adaptado a cada situación para eliminar la plaga desde el origen y evitar que vuelva a aparecer."
   },
   "method": {
     "title": "Nuestro método de eficacia total",
@@ -32,7 +32,7 @@
     "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones."
   },
   "species": {
-    "title": "Tipos de cucarachas más comunes en Barcelona",
+    "title": "Tipus de paneroles més comunes a Barcelona",
     "germanica": "Cucaracha alemana",
     "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
     "germanica_details": [
@@ -62,38 +62,38 @@
       "Control experto para evitar la dispersión por el mobiliario."
     ],
     "monitor": "Monitoreo Técnico",
-    "monitor_desc": "Seguimiento preventivo mediante estaciones de monitoreo.",
+    "monitor_desc": "Seguimiento preventivo mediante estaciones de monitorización.",
     "monitor_details": [
       "Instalación de trampas con feromonas de atracción específica.",
-      "Revisión periódica para detectar actividad antes de que sea plaga.",
+      "Revisión periódica para detectar actividad antes de que se convierta en plaga.",
       "Informes digitales detallados con el nivel de riesgo capturado."
     ],
     "zap": "Eliminación Directa",
     "zap_desc": "Localización precisa y eliminación inmediata de nidos y focos.",
     "zap_details": [
-      "Identificación de lugares de nidificación mediante cámaras técnicas.",
+      "Identificación de los lugares de nidificación mediante cámaras técnicas.",
       "Aplicación localizada de productos de alta eficacia y bajo impacto.",
-      "Eliminación física de residuos y restos biológicos."
+      "Eliminación física de los residuos y restos biológicos."
     ],
     "barrier": "Barreras Activas",
     "barrier_desc": "Tratamientos residuales para evitar la entrada de nuevos insectos.",
     "barrier_details": [
       "Aplicación en puntos críticos: bajantes, grietas y zonas de paso.",
-      "Uso de polímeros de alta persistencia que aguantan limpieza diaria.",
+      "Uso de polímeros de alta persistencia que aguantan la limpieza diaria.",
       "Protección perimetral de larga duración (hasta 6 meses)."
     ],
     "thermal": "Control Integrado",
     "thermal_desc": "Eliminación ecológica mediante calor controlado.",
     "thermal_details": [
-      "Tratamiento 100% libre de químicos, ideal para industria alimentaria.",
+      "Tratamiento 100% libre de químicos, ideal para industrias alimentarias.",
       "Eficacia contra todas las fases del ciclo de vida (huevos incluidos).",
       "Poca preparación necesaria y sin plazos de seguridad."
     ]
   },
   "origen": {
     "title": "CECSA ORIGEN • Servicio Premium",
-    "subtitle": "Recuperación integral de viviendas ocupadas",
-    "desc": "Transformamos espacios deteriorados en viviendas dignas, seguras y preparadas para volver a la vida. Nos encargamos de todo: desalojo de mobiliario, limpieza profunda, pintura y desinsectación profesional.",
+    "subtitle": "Recuperación integral de viviendas okupadas",
+    "desc": "Transformamos espacios deteriorados en viviendas dignas, seguras y preparadas para volver a la vida. Nos encargamos de todo: desalojo, limpieza profunda, pintura y desinsectación profesional.",
     "quote": "Convertimos un problema en una oportunidad, recuperando el valor de tu inmueble con un servicio eficiente y discreto."
   },
   "others": {
@@ -109,18 +109,19 @@
     "desc": "Eliminar cucarachas en Barcelona con servicio urgente 24h. Tratamiento profesional, seguro y con garantía. Presupuesto gratuito."
   },
   "about_page": {
-    "hero_title": "CECSA: Restaurar el Equilibrio es nuestro Compromís.",
+    "hero_title": "CECSA: Restaurar el Equilibrio es nuestro Compromiso.",
     "hero_subtitle": "Una empresa familiar dedicada al bienestar y la salud sanitaria de Barcelona.",
     "family_title": "El origen: La familia Sureda Caleya",
     "family_desc": "Somos una empresa familiar formada por 9 profesionales apasionados que damos el cien por cien en cada intervención. No somos una corporación fría que aparece y desaparece; somos personas comprometidas con tu bienestar real.",
     "vision_title": "Una empresa Consciente",
-    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo hacemos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
+    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo haceos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
     "wellness_title": "Más que un tratamiento: Salud Mental",
     "wellness_desc": "Entendemos que una plaga no es solo un riesgo biológico; también es un problema de salud mental que genera angustia e inseguridad. Nuestro eslogan —'Por el bienestar de nuestros clientes'— refleja nuestro compromiso de estar a tu lado siempre, con productos de vanguardia y protocolos que se adaptan a la evolución de la plaga.",
     "honesty_title": "Ética y Honestidad en el Precio",
     "honesty_desc": "No creemos en el engaño ni en el precio desorbitado. Mientras algunas empresas cobran cantidades desproporcionadas por tratamientos puntuales, nosotros ofrecemos mantenimiento continuado y eficacia real. Para nosotros, tu tranquilidad no tiene precio, pero sí un presupuesto justo.",
     "scope_title": "Ámbito de actuación",
-    "scope_desc": "Damos servicio a toda Barcelona, el Área Metropolitana y nos desplazamos a cualquier punto de Catalunya donde se nos necesite para restaurar el equilibrio.",
+    "scope_desc": "Damos servicio a toda Barcelona, al Área Metropolitana y nos desplazamos a cualquier punto de Catalunya donde se nos necesite para restaurar el equilibrio.",
+    "scope_detail": "Operamos con protocolos de vigilancia activa, asegurando que una vez restablecido el equilibrio, este se mantenga en el tiempo.",
     "stats": {
       "workers": "Especialistas",
       "success": "Más del 90%",
@@ -129,5 +130,15 @@
       "experience": "+20",
       "experience_label": "Años de Experiencia"
     }
+  },
+  "legal": {
+    "notice_title": "Aviso Legal",
+    "privacy_title": "Política de Privacidad",
+    "company_name": "Desinfecciones Cecsa S.L.",
+    "cif": "B64287055",
+    "address": "C/ Rajolers 16, Local 1, 08028 Barcelona",
+    "email": "info@cucarachasbarcelona.cat",
+    "notice_desc": "De acuerdo con la Ley 34/2002 de Servicios de la Sociedad de la Información...",
+    "privacy_desc": "Su privacidad es nuestra prioridad. Protegemos sus datos de acuerdo con el RGPD..."
   }
 }

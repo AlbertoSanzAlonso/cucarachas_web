@@ -1,15 +1,35 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { Facebook, Instagram, Linkedin, Phone, MapPin, Mail, ChevronRight, Calendar, Globe } from 'lucide-react';
 
 const Footer = ({ className = "" }) => {
   const { t } = useTranslation();
 
   const links = [
-    { title: 'Servicios', items: ['Control de Cucarachas', 'Desinsectación Técnica', 'Desinfección COVID', 'Control Térmico'] },
-    { title: 'Sectores', items: ['Restauración - HORECA', 'Hoteles y Resorts', 'Comunidades de Vecinos', 'Industria Alimentaria'] },
-    { title: 'Compañía', items: ['Sobre CECSA', 'Nuestra Filosofía', 'Casos de Éxito', 'Contacto Directo'] },
-    { title: 'Legal', items: ['Política de Privacidad', 'Aviso Legal', 'Cookies', 'Certificación ROESB'] }
+    { 
+      title: 'Servicios', 
+      items: [
+        { label: 'Control de Cucarachas', path: '/#species' },
+        { label: 'Desinsectación Técnica', path: '/#species' },
+        { label: 'Sectores Críticos', path: '/#sectors' }
+      ] 
+    },
+    { 
+      title: 'Compañía', 
+      items: [
+        { label: 'Sobre CECSA', path: '/sobre-cecsa' },
+        { label: 'Nuestro Método', path: '/#process' },
+        { label: 'Contacto', path: '/#contact' }
+      ] 
+    },
+    { 
+      title: 'Legal', 
+      items: [
+        { label: 'Política de Privacidad', path: '/privacitat' },
+        { label: 'Aviso Legal', path: '/avis-legal' }
+      ] 
+    }
   ];
 
   return (
@@ -61,25 +81,28 @@ const Footer = ({ className = "" }) => {
            </div>
 
            {/* Quick Links Grid */}
-           <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-24">
-              {links.map((group, i) => (
-                <div key={i} className="flex flex-col space-y-6">
-                   <h4 className="text-sm font-black uppercase tracking-[0.2em] text-accent-green">
-                     {group.title}
-                   </h4>
-                   <ul className="flex flex-col space-y-4">
-                      {group.items.map((item, j) => (
-                        <li key={j}>
-                           <a href="#" className="text-sm font-medium text-white/50 hover:text-white transition-colors flex items-center group">
-                              <ChevronRight size={14} className="mr-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all text-accent-green" />
-                              {item}
-                           </a>
-                        </li>
-                      ))}
-                   </ul>
-                </div>
-              ))}
-           </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-12 lg:gap-16">
+               {links.map((column, i) => (
+                 <div key={i} className="flex flex-col space-y-6">
+                    <h4 className="text-white font-black text-sm uppercase tracking-[0.2em]">
+                       {column.title}
+                    </h4>
+                    <ul className="space-y-4">
+                       {column.items.map((link, j) => (
+                         <li key={j}>
+                            <Link 
+                              to={link.path} 
+                              className="text-white/50 hover:text-accent-green text-sm font-medium transition-colors flex items-center group"
+                            >
+                               <ChevronRight size={14} className="mr-2 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                               {link.label}
+                            </Link>
+                         </li>
+                       ))}
+                    </ul>
+                 </div>
+               ))}
+            </div>
 
         </div>
 
