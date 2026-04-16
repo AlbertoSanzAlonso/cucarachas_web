@@ -7,6 +7,15 @@ import { Link } from 'react-router-dom';
 const SectorGrid = () => {
   const { t } = useTranslation();
   const [selectedSector, setSelectedSector] = useState(null);
+ 
+  React.useEffect(() => {
+    if (selectedSector) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedSector]);
 
   const sectors = [
     { 
@@ -121,6 +130,7 @@ const SectorGrid = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 1, opacity: 0, y: 60 }}
               className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20 transform-gpu"
+              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
               <button 
                 onClick={() => setSelectedSector(null)}

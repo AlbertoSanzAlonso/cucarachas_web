@@ -6,6 +6,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 const PestGrid = () => {
   const { t } = useTranslation();
   const [selectedPest, setSelectedPest] = useState(null);
+ 
+  React.useEffect(() => {
+    if (selectedPest) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [selectedPest]);
 
   const species = [
     { 
@@ -187,6 +196,7 @@ const PestGrid = () => {
                 animate={{ scale: 1, opacity: 1, y: 0 }}
                 exit={{ scale: 1, opacity: 0, y: 60 }}
                 className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu"
+                style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
               >
                 {/* Close Button - Fixed relative to modal top */}
                 <button 
