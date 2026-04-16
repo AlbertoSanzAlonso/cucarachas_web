@@ -33,6 +33,7 @@ function Home() {
   const location = useLocation();
 
   useEffect(() => {
+    document.title = "Cecsa - Control de Plagues a Barcelona | Ètic i Conscient";
     if (location.hash) {
       const id = location.hash.replace('#', '');
       const element = document.getElementById(id);

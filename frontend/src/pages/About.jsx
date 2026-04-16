@@ -9,9 +9,10 @@ import FloatingCTA from '../components/FloatingCTA';
 const About = () => {
   const { t } = useTranslation();
 
-  // Scroll to top on mount
+  // Scroll to top on mount and set SEO Title
   useEffect(() => {
     window.scrollTo(0, 0);
+    document.title = `Sobre Nosaltres - CECSA Control de Plagues`;
   }, []);
 
   const stats = [
@@ -186,7 +187,7 @@ const About = () => {
         <section className="bg-primary-blue pt-32 pb-0 relative overflow-hidden">
            <div className="absolute inset-0 opacity-10">
               <img 
-                src="/assets/barcelona_authority.webp" 
+                src="/assets/barcelona-authority.webp" 
                 alt="Barcelona" 
                 className="w-full h-full object-cover"
               />

@@ -103,7 +103,7 @@ const Navbar = () => {
             { key: 'nav.services', label: 'Especies', path: '/#species' },
             { key: 'nav.sectors', label: 'Sectores', path: '/#sectors' },
             { key: 'nav.process', label: 'Método', path: '/#process' },
-            { key: 'nav.about', label: 'Sobre CECSA', path: '/about' }
+            { key: 'nav.about', label: 'Sobre CECSA', path: '/sobre-cecsa' }
           ].map((item) => (
             <Link 
               key={item.key} 
@@ -170,7 +170,7 @@ const Navbar = () => {
             { key: 'nav.services', path: '/#species' },
             { key: 'nav.sectors', path: '/#sectors' },
             { key: 'nav.process', path: '/#process' },
-            { key: 'nav.about', path: '/about' }
+            { key: 'nav.about', path: '/sobre-cecsa' }
           ].map((item) => (
             <Link 
               key={item.key} 

@@ -37,7 +37,7 @@ function App() {
           } 
         />
         <Route 
-          path="/about" 
+          path="/sobre-cecsa" 
           element={
             <Suspense fallback={<RootLoader />}>
               <About />

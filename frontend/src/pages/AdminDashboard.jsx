@@ -295,7 +295,7 @@ const AdminDashboard = () => {
                </a>
 
                <div className="mt-12 flex items-center space-x-4 opacity-20">
-                  <img src="/public/assets/isotipo.png" alt="CECSA" className="h-6 filter grayscale" />
+                  <img src="/assets/isotipo.png" alt="CECSA" className="h-6 filter grayscale" />
                   <div className="h-4 w-[1px] bg-primary-gray"></div>
                   <p className="text-[10px] font-black uppercase tracking-[0.3em]">Protocol de Comunicació CECSA</p>
                </div>
