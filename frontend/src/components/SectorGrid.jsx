@@ -129,18 +129,18 @@ const SectorGrid = () => {
               initial={{ scale: 1, opacity: 0, y: 60 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 1, opacity: 0, y: 60 }}
-              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20 transform-gpu"
+              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] transform-gpu"
               style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
               <button 
                 onClick={() => setSelectedSector(null)}
-                className="absolute top-4 right-4 z-40 p-2 bg-white/90 rounded-full shadow-lg border border-gray-100 hover:bg-bg-light transition-colors"
+                className="absolute top-4 right-4 z-40 p-2 bg-white/90 rounded-full shadow-lg hover:bg-bg-light transition-colors"
               >
                 <X size={20} className="text-primary-blue" />
               </button>
  
               {/* Sidebar / Image Area */}
-              <div className="md:w-1/3 min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
+              <div className="md:w-1/3 min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center">
                 <img 
                    src={selectedSector.bg} 
                    alt={selectedSector.name} 
@@ -149,7 +149,7 @@ const SectorGrid = () => {
                 <div className="absolute inset-0 bg-primary-blue/60"></div>
                 
                 <div className="relative z-10 flex flex-col items-center">
-                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl flex items-center justify-center text-white mb-4">
+                  <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-white/10 backdrop-blur-lg shadow-2xl flex items-center justify-center text-white mb-4">
                      {React.cloneElement(selectedSector.icon, { size: 32, strokeWidth: 1.5 })}
                   </div>
                   <div className="text-center space-y-1">
@@ -191,7 +191,7 @@ const SectorGrid = () => {
                   </ul>
                 </div>
 
-                <div className="pt-4 md:pt-8 border-t border-gray-100 flex flex-col sm:flex-row gap-3">
+                <div className="pt-4 md:pt-8 flex flex-col sm:flex-row gap-3">
                   <button 
                     className="flex-[1.5] py-3 md:py-4 bg-primary-blue text-white font-black text-sm md:text-xl rounded-xl md:rounded-2xl shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group px-4 text-center leading-tight"
                   >

@@ -74,7 +74,7 @@ const Navbar = () => {
           <img 
             src="/assets/isotipo.png" 
             alt="CECSA Logo" 
-            className="transition-all duration-500 h-[35px] md:h-[45px]"
+            className="transition-all duration-500 h-[45px] md:h-[60px]"
             style={{ 
               filter: isScrolled ? 'none' : 'brightness(0) invert(1)',
               opacity: isScrolled ? 1 : 0.9

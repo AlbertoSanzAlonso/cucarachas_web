@@ -202,13 +202,13 @@ const PestGrid = () => {
               {/* Close Button - Fixed relative to modal top */}
               <button
                 onClick={() => setSelectedPest(null)}
-                className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg border border-gray-100"
+                className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
               >
                 <X size={20} className="text-primary-gray md:w-6 md:h-6" />
               </button>
 
               {/* Sidebar / Image area */}
-              <div className={`md:w-1/2 bg-white flex flex-col items-center justify-center relative border-b md:border-b-0 md:border-r border-gray-100 ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'min-h-[180px] md:min-h-[400px]' : 'min-h-[140px] md:min-h-[300px] pt-10 pb-4 px-4 md:p-16'}`}>
+              <div className={`md:w-1/2 bg-white flex flex-col items-center justify-center relative ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'min-h-[180px] md:min-h-[400px]' : 'min-h-[140px] md:min-h-[300px] pt-10 pb-4 px-4 md:p-16'}`}>
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                 </div>
@@ -264,7 +264,7 @@ const PestGrid = () => {
                 </div>
 
                 {/* Modal CTA */}
-                <div className="pt-4 md:pt-8 border-t border-gray-100">
+                <div className="pt-4 md:pt-8">
                   <button
                     className="w-full py-4 px-8 rounded-2xl text-white font-black text-lg shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter flex items-center justify-center space-x-4 group"
                     style={{ background: 'var(--color-primary-blue)' }}

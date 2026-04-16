@@ -129,19 +129,19 @@ const ContactForm = () => {
               <button 
                 type="submit" 
                 disabled={isLoading || isSuccess}
-                className={`w-full py-6 rounded-2xl ${isSuccess ? 'bg-accent-green' : 'bg-primary-blue'} text-white font-black text-lg tracking-widest shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group`}
+                className={`w-full py-6 rounded-2xl ${isSuccess ? 'bg-accent-green' : 'bg-primary-blue'} text-white font-black text-base md:text-lg tracking-tight md:tracking-widest shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group relative overflow-hidden`}
               >
                  {isLoading ? (
                    <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
                  ) : isSuccess ? (
                    <>
                      <span>{t('contact.success_btn')}</span>
-                     <CheckCircle2 size={22} className="ml-3" />
+                     <CheckCircle2 size={22} className="ml-2 md:ml-3" />
                    </>
                  ) : (
                    <>
-                     <span>{t('contact.submit_btn')}</span>
-                     <Send size={22} className="ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                     <span className="px-4">{t('contact.submit_btn')}</span>
+                     <Send size={20} className="ml-1 md:ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                    </>
                  )}
               </button>

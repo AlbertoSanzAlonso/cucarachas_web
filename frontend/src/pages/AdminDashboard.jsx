@@ -15,19 +15,36 @@ import {
   Bell,
   X,
   Mail,
-  ArrowRight
+  ArrowRight,
+  ExternalLink,
+  User as UserIcon,
+  Camera,
+  Key,
+  Check
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useGetLeadsQuery } from '../store/apis/leadsApi';
-import { logout } from '../store/slices/authSlice';
+import { logout, setCredentials } from '../store/slices/authSlice';
+import { insforge } from '../lib/insforge';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const { user, token } = useSelector((state) => state.auth);
+
+  const [profileData, setProfileData] = useState({
+    name: user?.name || '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [updateSuccess, setUpdateSuccess] = useState(false);
 
   // Hook up to real data from Redux
   const { data: leads, isLoading, isError } = useGetLeadsQuery();
@@ -35,6 +52,47 @@ const AdminDashboard = () => {
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login');
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setIsUpdating(true);
+    
+    try {
+      // Update Auth Password if provided
+      if (profileData.password) {
+        if (profileData.password !== profileData.confirmPassword) {
+          alert("Las contraseñas no coinciden");
+          return;
+        }
+        await insforge.auth.updateUser({ password: profileData.password });
+      }
+
+      // Update Profile Name in DB
+      const { error } = await insforge.database
+        .from('profiles')
+        .update({ name: profileData.name })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      // Update Redux state
+      dispatch(setCredentials({
+        user: { ...user, name: profileData.name },
+        token
+      }));
+
+      setUpdateSuccess(true);
+      setTimeout(() => {
+        setUpdateSuccess(false);
+        setIsProfileModalOpen(false);
+      }, 2000);
+    } catch (err) {
+      console.error(err);
+      alert("Error al actualizar el perfil");
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   const stats = [
@@ -68,7 +126,7 @@ const AdminDashboard = () => {
       `}>
         <div className="p-8 pb-4 flex justify-between items-center">
           <div className="flex items-center space-x-2 font-black text-2xl tracking-tighter">
-            <span className="text-white">CEC</span><span className="text-accent-green">SA</span>
+            <span className="text-white">CEC<span className="text-accent-green">SA</span></span>
             <span className="text-[10px] bg-white/10 px-2 py-0.5 rounded ml-2 font-medium tracking-normal">ADMIN</span>
           </div>
           <button 
@@ -98,6 +156,15 @@ const AdminDashboard = () => {
         </nav>
 
         <div className="p-4 border-t border-white/10 space-y-2">
+          <a 
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center space-x-3 px-4 py-3 text-white/60 hover:text-white transition-all rounded-xl cursor-pointer"
+          >
+            <ExternalLink size={20} />
+            <span>Anar a la web</span>
+          </a>
           <button className="w-full flex items-center space-x-3 px-4 py-3 text-white/60 hover:text-white transition-all rounded-xl">
             <Settings size={20} />
             <span>Configuració</span>
@@ -113,7 +180,7 @@ const AdminDashboard = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-6 md:p-12">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
         <header className="flex justify-between items-center mb-12">
           <div className="flex items-center space-x-4">
             <button 
@@ -123,8 +190,8 @@ const AdminDashboard = () => {
               <LayoutDashboard size={24} />
             </button>
             <div className="hidden md:block">
-              <h1 className="text-3xl font-black text-primary-gray tracking-tight tracking-tight uppercase">Hola, {user?.name || 'Marc'}</h1>
-              <p className="text-primary-gray/50 font-medium">Benvingut al teu panell de control sanitari de CECSA.</p>
+              <h1 className="text-xl md:text-3xl font-black text-primary-gray tracking-tight uppercase">Hola, {user?.name || 'Marc'}</h1>
+              <p className="text-xs md:text-base text-primary-gray/50 font-medium whitespace-nowrap overflow-hidden text-ellipsis">Benvingut al teu panell de control sanitari.</p>
             </div>
           </div>
           <div className="flex items-center space-x-6">
@@ -132,14 +199,52 @@ const AdminDashboard = () => {
               <Bell size={24} />
               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-[#f8fafc]"></span>
             </button>
-            <div className="flex items-center space-x-3 pl-6 border-l border-gray-200">
-              <div className="text-right">
+            <div className="relative flex items-center space-x-3 pl-6 border-l border-gray-200">
+              <div className="hidden md:block text-right">
                 <p className="text-sm font-bold text-primary-gray">{user?.name || 'Marc'}</p>
                 <p className="text-[10px] text-accent-green font-bold uppercase tracking-widest">{user?.role || 'Director Tècnic'}</p>
               </div>
-              <div className="w-12 h-12 rounded-2xl bg-primary-blue flex items-center justify-center text-white font-black text-lg shadow-lg uppercase">
+              
+              <button 
+                onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
+                className="w-12 h-12 rounded-2xl bg-primary-blue flex items-center justify-center text-white font-black text-lg shadow-lg uppercase shrink-0 hover:scale-105 active:scale-95 transition-all outline-none"
+              >
                 {user?.name?.substring(0,2) || 'AS'}
-              </div>
+              </button>
+
+              {/* Profile Dropdown */}
+              <AnimatePresence>
+                {profileDropdownOpen && (
+                  <>
+                    <div className="fixed inset-0 z-10" onClick={() => setProfileDropdownOpen(false)} />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute right-0 top-full mt-4 w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 p-4 z-20"
+                    >
+                      <div className="p-4 border-b border-gray-50 mb-2">
+                        <p className="font-black text-primary-gray uppercase tracking-tight">{user?.name}</p>
+                        <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest">{user?.email}</p>
+                      </div>
+                      <button 
+                        onClick={() => { setIsProfileModalOpen(true); setProfileDropdownOpen(false); }}
+                        className="w-full flex items-center space-x-3 px-4 py-3 text-primary-gray/70 hover:text-primary-blue hover:bg-primary-blue/5 transition-all rounded-xl font-bold text-sm"
+                      >
+                        <UserIcon size={18} />
+                        <span>Editar Perfil</span>
+                      </button>
+                      <button 
+                         onClick={handleLogout}
+                         className="w-full flex items-center space-x-3 px-4 py-3 text-red-500 hover:bg-red-50 transition-all rounded-xl font-bold text-sm"
+                      >
+                        <LogOut size={18} />
+                        <span>Tancar Sessió</span>
+                      </button>
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         </header>
@@ -147,7 +252,7 @@ const AdminDashboard = () => {
         {activeTab === 'overview' ? (
           <>
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-8 md:mb-12">
               {stats.map((item, i) => (
                 <motion.div 
                   key={i}
@@ -164,8 +269,8 @@ const AdminDashboard = () => {
                       {item.trend}
                     </span>
                   </div>
-                  <p className="text-primary-gray/40 text-sm font-bold uppercase tracking-widest mb-1">{item.title}</p>
-                  <p className="text-4xl font-black text-primary-gray tracking-tighter">{item.value}</p>
+                  <p className="text-primary-gray/40 text-[10px] md:text-sm font-bold uppercase tracking-widest mb-1">{item.title}</p>
+                  <p className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter">{item.value}</p>
                 </motion.div>
               ))}
             </div>
@@ -173,19 +278,19 @@ const AdminDashboard = () => {
             {/* Two Column Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
               {/* Recent Leads */}
-              <section className="lg:col-span-2 bg-white rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
-                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                  <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Leads Recents</h2>
-                  <button className="text-primary-blue font-bold text-sm hover:underline">Veure tots</button>
+              <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+                <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
+                  <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Leads Recents</h2>
+                  <button className="text-primary-blue font-bold text-xs md:text-sm hover:underline">Veure tots</button>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-gray-50/50">
-                        <th className="px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Client</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Plaga / Servei</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Estat</th>
-                        <th className="px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Accions</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Client</th>
+                        <th className="hidden md:table-cell px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Plaga</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest text-center">Estat</th>
+                        <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest"></th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
@@ -197,15 +302,15 @@ const AdminDashboard = () => {
                         <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha leads pendents.</td></tr>
                       ) : leads?.slice(0, 4).map((lead) => (
                         <tr key={lead.id} className="hover:bg-gray-50/30 transition-colors">
-                          <td className="px-8 py-5">
-                            <p className="font-bold text-primary-gray">{lead.name}</p>
+                          <td className="px-4 md:px-8 py-5">
+                            <p className="font-bold text-sm md:text-base text-primary-gray leading-none mb-1">{lead.name}</p>
                             <p className="text-[10px] text-primary-gray/40">{lead.created_at || 'Recient'}</p>
                           </td>
-                          <td className="px-8 py-5">
+                          <td className="hidden md:table-cell px-8 py-5">
                             <span className="text-sm text-primary-gray/70 font-medium">{lead.pest_type || lead.type}</span>
                           </td>
-                          <td className="px-8 py-5">
-                            <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
+                          <td className="px-4 md:px-8 py-5 text-center">
+                            <span className={`text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 rounded-full uppercase tracking-widest ${
                               lead.status === 'Urgente' || lead.status === 'urgent' ? 'bg-red-100 text-red-600' : 
                               lead.status === 'Pendiente' || lead.status === 'pending' ? 'bg-orange-100 text-orange-600' :
                               lead.status === 'Completado' || lead.status === 'completed' ? 'bg-green-100 text-green-600' :
@@ -214,7 +319,7 @@ const AdminDashboard = () => {
                               {lead.status}
                             </span>
                           </td>
-                          <td className="px-8 py-5">
+                          <td className="px-4 md:px-8 py-5 text-right">
                             <button className="p-2 hover:bg-primary-blue/5 rounded-xl text-primary-blue transition-colors">
                               <ChevronRight size={20} />
                             </button>
@@ -227,7 +332,7 @@ const AdminDashboard = () => {
               </section>
 
               {/* Activity Feed */}
-              <section className="bg-white rounded-[3rem] shadow-sm border border-gray-100 flex flex-col">
+              <section className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 flex flex-col">
                 <div className="p-8 border-b border-gray-50">
                   <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Activitat Flota</h2>
                 </div>
@@ -311,6 +416,122 @@ const AdminDashboard = () => {
           </div>
         )}
       </main>
+
+      {/* Profile Edit Modal */}
+      <AnimatePresence>
+        {isProfileModalOpen && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsProfileModalOpen(false)}
+              className="absolute inset-0 bg-primary-gray/20 backdrop-blur-md"
+            />
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 50, scale: 0.9 }}
+              className="relative w-full max-w-xl bg-white rounded-[3.5rem] shadow-2xl overflow-hidden"
+            >
+               <div className="p-8 md:p-12">
+                  <div className="flex justify-between items-center mb-10">
+                    <div>
+                      <h2 className="text-3xl font-black text-primary-gray uppercase tracking-tighter leading-none">Editar Perfil</h2>
+                      <p className="text-primary-gray/40 font-bold text-[10px] uppercase tracking-widest mt-2">{user?.role}</p>
+                    </div>
+                    <button 
+                      onClick={() => setIsProfileModalOpen(false)}
+                      className="p-3 bg-gray-50 rounded-2xl text-primary-gray/30 hover:text-red-500 transition-colors"
+                    >
+                      <X size={24} />
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleUpdateProfile} className="space-y-8">
+                    {/* Avatar Upload Placeholder */}
+                    <div className="flex items-center space-x-8 pb-4">
+                       <div className="w-24 h-24 rounded-[2rem] bg-primary-blue flex items-center justify-center text-white text-3xl font-black shadow-xl relative group overflow-hidden">
+                          {user?.name?.substring(0,2)}
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer">
+                             <Camera size={24} className="text-white" />
+                          </div>
+                       </div>
+                       <div>
+                          <p className="text-sm font-bold text-primary-gray">Foto de perfil</p>
+                          <p className="text-xs text-primary-gray/40">S'utilitza per identificar-te en el sistema.</p>
+                       </div>
+                    </div>
+
+                    <div className="grid md:grid-cols-1 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40 ml-4">Nom Complet</label>
+                        <div className="relative">
+                          <UserIcon size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                          <input 
+                            type="text" 
+                            value={profileData.name}
+                            onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+                            className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 pt-4 border-t border-gray-50">
+                      <p className="text-xs font-black uppercase tracking-widest text-primary-gray/20">Canviar Contrasenya</p>
+                      <div className="grid md:grid-cols-2 gap-4">
+                        <div className="relative">
+                          <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                          <input 
+                            type="password" 
+                            placeholder="Nova contrasenya"
+                            value={profileData.password}
+                            onChange={(e) => setProfileData({...profileData, password: e.target.value})}
+                            className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray text-sm transition-all"
+                          />
+                        </div>
+                        <div className="relative">
+                          <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                          <input 
+                            type="password" 
+                            placeholder="Repetir contrasenya"
+                            value={profileData.confirmPassword}
+                            onChange={(e) => setProfileData({...profileData, confirmPassword: e.target.value})}
+                            className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray text-sm transition-all"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-6">
+                      <button 
+                        type="submit" 
+                        disabled={isUpdating}
+                        className={`w-full py-5 rounded-2xl ${updateSuccess ? 'bg-accent-green' : 'bg-primary-blue'} text-white font-black text-lg tracking-widest shadow-2xl shadow-primary-blue/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center space-x-3`}
+                      >
+                        {isUpdating ? (
+                          <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
+                        ) : updateSuccess ? (
+                          <>
+                            <span>PERFIL ACTUALITZAT</span>
+                            <Check size={20} />
+                          </>
+                        ) : (
+                          <>
+                            <span>GUARDAR CANVIS</span>
+                            <ArrowRight size={20} />
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+               </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

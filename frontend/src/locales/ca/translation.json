@@ -149,7 +149,7 @@
       "success": "Més del 90%",
       "success_label": "D'Eficàcia Tècnica",
       "family": "Sureda Celaya Salcedo",
-      "experience": "+20",
+      "experience": "+15",
       "experience_label": "Anys d'Experiència"
     }
   },
@@ -182,13 +182,33 @@
     "industry": "Indústria Alimentària",
     "cta": "Veure Plans",
     "horeca_desc": "Control preventiu estricte per a la màxima seguretat alimentària. Garantim un entorn lliure de paneroles perquè el teu negoci mai s'aturi.",
-    "horeca_points": ["Monitoratge digital 24/7", "Gels d'alta atracció sense olors", "Certificat ROESB obligatori inclòs", "Resposta urgent en menys de 2h"],
+    "horeca_points": [
+      "Monitoratge digital 24/7",
+      "Gels d'alta atracció sense olors",
+      "Certificat ROESB obligatori inclòs",
+      "Resposta urgent en menys de 2h"
+    ],
     "hotels_desc": "Discreció absoluta i protecció de la reputació. Protocols especialitzats per al sector hoteler i allotjaments turístics.",
-    "hotels_points": ["Intervencions nocturnes i discretes", "Tractaments preventius zero-residis", "Garantia de satisfacció total", "Informe tècnic per a auditories"],
+    "hotels_points": [
+      "Intervencions nocturnes i discretes",
+      "Tractaments preventius zero-residis",
+      "Garantia de satisfacció total",
+      "Informe tècnic per a auditories"
+    ],
     "comms_desc": "Manteniment preventiu estructural de zones comunes i xarxes de clavegueram per evitar invasions massives.",
-    "comms_points": ["Control integral de bajants i arquetes", "Tractaments anuals d'alta eficàcia", "Atenció directa als administradors", "Seguiment post-tractament"],
+    "comms_points": [
+      "Control integral de bajants i arquetes",
+      "Tractaments anuals d'alta eficàcia",
+      "Atenció directa als administradors",
+      "Seguiment post-tractament"
+    ],
     "industry_desc": "Solucions tècniques avançades segons estàndards IFS, BRC i APPCC per a la indústria alimentària i farmacèutica.",
-    "industry_points": ["Auditories de vulnerabilitat de planta", "Gestió documental digitalitzada", "Protocols de biocuresa estricta", "Anàlisi de tendències de plagues"]
+    "industry_points": [
+      "Auditories de vulnerabilitat de planta",
+      "Gestió documental digitalitzada",
+      "Protocols de biocuresa estricta",
+      "Anàlisi de tendències de plagues"
+    ]
   },
   "cta": {
     "wa_label": "Consulta ràpida",

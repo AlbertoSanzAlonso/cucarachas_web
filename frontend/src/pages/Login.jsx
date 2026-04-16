@@ -80,7 +80,7 @@ const Login = () => {
           {/* Logo Section */}
           <div className="text-center mb-10">
             <div className="inline-flex items-center space-x-2 font-black text-3xl tracking-tighter text-primary-blue mb-2">
-              <span>CEC</span><span className="text-accent-green">SA</span>
+              <span>CEC<span className="text-accent-green">SA</span></span>
             </div>
             <p className="text-primary-gray/40 text-xs font-bold uppercase tracking-[0.2em]">Sistema de Control Sanitari</p>
           </div>
