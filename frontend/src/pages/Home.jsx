@@ -1,5 +1,7 @@
 import React, { Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 // Lazy load components for performance
 const Navbar = lazy(() => import('../components/Navbar'));
@@ -28,6 +30,21 @@ const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
 
 function Home() {
   const { t } = useTranslation();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
 
   return (
     <div className="flex flex-col min-h-screen bg-bg-light overflow-x-hidden selection:bg-accent-green/30">

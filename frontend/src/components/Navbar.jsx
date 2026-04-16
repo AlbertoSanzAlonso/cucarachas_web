@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Menu, X, Phone, Bug } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
@@ -69,7 +70,7 @@ const Navbar = () => {
       </motion.div>
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo Section */}
-        <div className="flex items-center space-x-3 group cursor-pointer">
+        <Link to="/" className="flex items-center space-x-3 group cursor-pointer border-none bg-transparent p-0">
           <img 
             src="/assets/isotipo.png" 
             alt="CECSA Logo" 
@@ -94,23 +95,23 @@ const Navbar = () => {
               Control de Plagas
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center space-x-10">
           {[
-            { key: 'nav.services', label: 'Especies' },
-            { key: 'nav.sectors', label: 'Sectores' },
-            { key: 'nav.process', label: 'Método' },
-            { key: 'nav.about', label: 'Sobre CECSA' }
+            { key: 'nav.services', label: 'Especies', path: '/#species' },
+            { key: 'nav.sectors', label: 'Sectores', path: '/#sectors' },
+            { key: 'nav.process', label: 'Método', path: '/#process' },
+            { key: 'nav.about', label: 'Sobre CECSA', path: '/about' }
           ].map((item) => (
-            <a 
+            <Link 
               key={item.key} 
-              href={`#${item.key.split('.')[1]}`} 
+              to={item.path} 
               className={`text-sm font-semibold uppercase tracking-widest transition-all duration-300 hover:scale-105 ${isScrolled ? 'text-secondary-gray hover:text-primary-blue' : 'text-white/90 hover:text-white'}`}
             >
               {t(item.key, item.label)}
-            </a>
+            </Link>
           ))}
         </div>
 
@@ -166,19 +167,19 @@ const Navbar = () => {
       >
         <div className="flex flex-col p-6 space-y-6">
           {[
-            { key: 'nav.services', id: 'species' },
-            { key: 'nav.sectors', id: 'sectors' },
-            { key: 'nav.process', id: 'process' },
-            { key: 'nav.about', id: 'about' }
+            { key: 'nav.services', path: '/#species' },
+            { key: 'nav.sectors', path: '/#sectors' },
+            { key: 'nav.process', path: '/#process' },
+            { key: 'nav.about', path: '/about' }
           ].map((item) => (
-            <a 
+            <Link 
               key={item.key} 
-              href={`#${item.id}`} 
+              to={item.path} 
               onClick={() => setMobileMenuOpen(false)}
-              className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-50 uppercase tracking-tighter"
+              className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-00 uppercase tracking-tighter"
             >
               {t(item.key)}
-            </a>
+            </Link>
           ))}
           <div className="pt-4 flex items-center space-x-6">
             <button 

@@ -8,6 +8,7 @@ import './index.css';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
+const About = lazy(() => import('./pages/About'));
 
 /**
  * CECSA - Speed Optimized SPA Router
@@ -32,6 +33,14 @@ function App() {
           element={
             <Suspense fallback={<RootLoader />}>
               <Home />
+            </Suspense>
+          } 
+        />
+        <Route 
+          path="/about" 
+          element={
+            <Suspense fallback={<RootLoader />}>
+              <About />
             </Suspense>
           } 
         />

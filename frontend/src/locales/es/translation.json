@@ -107,5 +107,25 @@
   },
   "meta": {
     "desc": "Eliminar cucarachas en Barcelona con servicio urgente 24h. Tratamiento profesional, seguro y con garantía. Presupuesto gratuito."
+  },
+  "about_page": {
+    "hero_title": "CECSA: Restaurar el Equilibrio es nuestro Compromís.",
+    "hero_subtitle": "Una empresa familiar dedicada al bienestar y la salud sanitaria de Barcelona.",
+    "family_title": "El origen: La familia Sureda Caleya",
+    "family_desc": "Somos una empresa familiar formada por 9 profesionales apasionados que damos el cien por cien en cada intervención. No somos una corporación fría que aparece y desaparece; somos personas comprometidas con tu bienestar real.",
+    "vision_title": "Una empresa Consciente",
+    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo hacemos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
+    "wellness_title": "Más que un tratamiento: Salud Mental",
+    "wellness_desc": "Entendemos que una plaga no es solo un riesgo biológico; también es un problema de salud mental que genera angustia e inseguridad. Nuestro eslogan —'Por el bienestar de nuestros clientes'— refleja nuestro compromiso de estar a tu lado siempre, con productos de vanguardia y protocolos que se adaptan a la evolución de la plaga.",
+    "honesty_title": "Ética y Honestidad en el Precio",
+    "honesty_desc": "No creemos en el engaño ni en el precio desorbitado. Mientras algunas empresas cobran cantidades desproporcionadas por tratamientos puntuales, nosotros ofrecemos mantenimiento continuado y eficacia real. Para nosotros, tu tranquilidad no tiene precio, pero sí un presupuesto justo.",
+    "scope_title": "Ámbito de actuación",
+    "scope_desc": "Damos servicio a toda Barcelona, el Área Metropolitana y nos desplazamos a cualquier punto de Catalunya donde se nos necesite para restaurar el equilibrio.",
+    "stats": {
+      "workers": "Especialistas",
+      "success": "Más del 90%",
+      "success_label": "De Eficacia Técnica",
+      "family": "Sureda Caleya"
+    }
   }
 }
