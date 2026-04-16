@@ -52,7 +52,8 @@
   "species": {
     "title": "Tipus de panerola més comuns i solucions",
     "label_pest": "Plaga",
-    "label_solution": "Solució Técnica",
+    "label_solution": "Solució Tècnica",
+    "label_solution_short": "Solució",
     "germanica": "Panerola alemanya",
     "germanica_desc": "La més comuna en cuines i habitatges de Barcelona.",
     "germanica_details": [

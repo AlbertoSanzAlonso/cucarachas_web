@@ -148,7 +148,12 @@ const PestGrid = () => {
                   {/* Category Label */}
                   <div className="absolute top-4 left-6 md:top-6 md:left-8 opacity-40 z-20">
                     <span className={`text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
-                      {i < 4 ? t('species.label_pest') : t('species.label_solution')}
+                      {i < 4 ? t('species.label_pest') : (
+                        <>
+                          <span className="hidden md:inline">{t('species.label_solution')}</span>
+                          <span className="md:hidden">{t('species.label_solution_short')}</span>
+                        </>
+                      )}
                     </span>
                   </div>
 

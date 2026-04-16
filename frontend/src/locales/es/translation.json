@@ -53,6 +53,7 @@
     "title": "Tipos de cucaracha más comunes y soluciones",
     "label_pest": "Plaga",
     "label_solution": "Solución Técnica",
+    "label_solution_short": "Solución",
     "germanica": "Cucaracha alemana",
     "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
     "germanica_details": [
