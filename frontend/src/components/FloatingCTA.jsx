@@ -6,7 +6,7 @@ const FloatingCTA = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="fixed bottom-8 left-0 right-0 z-[100] px-6 md:px-0 flex justify-center pointer-events-none">
+    <div className="fixed bottom-8 left-0 right-0 z-[100] px-6 md:px-12 xl:px-0 flex justify-center pointer-events-none">
        <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-end md:items-center justify-end md:justify-between space-y-4 md:space-y-0">
           
           {/* WhatsApp / Direct Contact (Left on Desktop) */}
