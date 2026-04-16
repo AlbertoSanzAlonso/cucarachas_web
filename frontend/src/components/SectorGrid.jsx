@@ -113,13 +113,13 @@ const SectorGrid = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedSector(null)}
-              className="absolute inset-0 bg-primary-blue/60 md:bg-primary-blue/40 backdrop-blur-md md:backdrop-blur-xl"
+              className="absolute inset-0 bg-primary-blue/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
             />
             
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 40 }}
+              initial={{ scale: 1, opacity: 0, y: 60 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 40 }}
+              exit={{ scale: 1, opacity: 0, y: 60 }}
               className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20 transform-gpu"
             >
               <button 
