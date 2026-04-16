@@ -146,7 +146,7 @@ const PestGrid = () => {
                   style={{ background: pest.color }}
                 >
                   {/* Category Label */}
-                  <div className="absolute top-4 left-6 md:top-6 md:left-8 opacity-40 z-20">
+                  <div className="absolute top-3 left-6 md:top-6 md:left-8 opacity-40 z-20">
                     <span className={`text-[7px] md:text-[9px] font-black uppercase tracking-[0.2em] ${pest.darkText ? 'text-primary-blue' : 'text-white'}`}>
                       {i < 4 ? t('species.label_pest') : (
                         <>
@@ -163,7 +163,7 @@ const PestGrid = () => {
                   )}
 
                   {/* Corner Search Icon */}
-                  <div className="absolute top-4 right-4 md:top-6 md:right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 z-20">
+                  <div className="absolute top-3 right-4 md:top-6 md:right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 z-20">
                     <Search size={20} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
                   </div>
 
