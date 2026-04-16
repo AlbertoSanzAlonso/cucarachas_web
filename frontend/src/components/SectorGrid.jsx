@@ -113,22 +113,22 @@ const SectorGrid = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedSector(null)}
-              className="absolute inset-0 bg-primary-blue/40 backdrop-blur-xl"
+              className="absolute inset-0 bg-primary-blue/60 md:bg-primary-blue/40 backdrop-blur-md md:backdrop-blur-xl"
             />
             
             <motion.div 
               initial={{ scale: 0.9, opacity: 0, y: 40 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 40 }}
-              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20"
+              className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[92vh] md:max-h-[90vh] z-[210] border border-white/20 transform-gpu"
             >
               <button 
                 onClick={() => setSelectedSector(null)}
-                className="absolute top-4 right-4 z-40 p-2 bg-white/90 backdrop-blur-md rounded-full shadow-lg border border-gray-100 hover:bg-bg-light transition-colors"
+                className="absolute top-4 right-4 z-40 p-2 bg-white/90 rounded-full shadow-lg border border-gray-100 hover:bg-bg-light transition-colors"
               >
                 <X size={20} className="text-primary-blue" />
               </button>
-
+ 
               {/* Sidebar / Image Area */}
               <div className="md:w-1/3 min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center border-b md:border-b-0 md:border-r border-gray-100">
                 <img 
@@ -136,7 +136,7 @@ const SectorGrid = () => {
                    alt={selectedSector.name} 
                    className="absolute inset-0 w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-primary-blue/60 backdrop-blur-[2px]"></div>
+                <div className="absolute inset-0 bg-primary-blue/60"></div>
                 
                 <div className="relative z-10 flex flex-col items-center">
                   <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl flex items-center justify-center text-white mb-4">
