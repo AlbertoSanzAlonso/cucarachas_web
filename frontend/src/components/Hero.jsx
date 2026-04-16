@@ -24,7 +24,7 @@ const Hero = () => {
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
       <div 
-        className="relative min-h-[80vh] md:min-h-[75vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
+        className="relative min-h-[500px] md:min-h-[600px] xl:min-h-[75vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)'
         }}
@@ -72,7 +72,7 @@ const Hero = () => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
 
         {/* Content Container (Now inside the bounded box) */}
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-20 xl:py-12 grid xl:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12 xl:py-20 grid xl:grid-cols-2 gap-16 items-center">
           
           {/* Text Side */}
           <div className="space-y-8 animate-fade-in">
@@ -128,7 +128,7 @@ const Hero = () => {
           </div>
 
           {/* Visual/Image Side - Slider Implementation */}
-          <div className="relative hidden lg:block animate-slide-up">
+          <div className="relative hidden xl:block animate-slide-up">
              <div className="relative z-10 transform translate-x-10 translate-y-10">
                 <div 
                   className="aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white/20 relative rotate-3 hover:rotate-0 transition-all duration-700"
