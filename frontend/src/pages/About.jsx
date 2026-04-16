@@ -61,9 +61,9 @@ const About = () => {
           <div className="relative rounded-[4rem] overflow-hidden bg-primary-blue h-[600px] flex items-center shadow-2xl">
             <div className="absolute inset-0 z-0">
                <img 
-                 src="/assets/about_hero.png" 
-                 alt="CECSA Headquarters" 
-                 className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+                 src="/assets/tecnics-cecsa.webp" 
+                 alt="Tècnics de CECSA" 
+                 className="w-full h-full object-cover opacity-60 mix-blend-overlay"
                />
                <div className="absolute inset-0 bg-gradient-to-r from-primary-blue via-primary-blue/80 to-transparent"></div>
                
