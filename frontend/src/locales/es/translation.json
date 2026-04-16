@@ -50,7 +50,9 @@
     "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones."
   },
   "species": {
-    "title": "Tipos de cucarachas más comunes en Barcelona",
+    "title": "Tipos de cucaracha más comunes y soluciones",
+    "label_pest": "Plaga",
+    "label_solution": "Solución Técnica",
     "germanica": "Cucaracha alemana",
     "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
     "germanica_details": [
@@ -257,7 +259,8 @@
     "commitment_value": "Privacidad absoluta y respuesta técnica garantizada."
   },
   "species_detail": {
-    "view_treatment": "VER TRATAMIENTO",
+    "view_treatment": "Ver Tratamiento",
+    "view_pest": "Ver Ficha Técnica",
     "modal_certified": "Certificado Entomológico",
     "modal_protocol": "Protocolo de Actuación",
     "modal_tech_available": "Técnicos de guardia",

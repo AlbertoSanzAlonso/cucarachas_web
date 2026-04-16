@@ -50,7 +50,9 @@
     "step3_desc": "Supervisem l’evolució per garantir l’eliminació total i t’ajudem a evitar futures infestacions."
   },
   "species": {
-    "title": "Tipus de paneroles més comunes a Barcelona",
+    "title": "Tipus de panerola més comuns i solucions",
+    "label_pest": "Plaga",
+    "label_solution": "Solució Técnica",
     "germanica": "Panerola alemanya",
     "germanica_desc": "La més comuna en cuines i habitatges de Barcelona.",
     "germanica_details": [
@@ -277,7 +279,8 @@
     "commitment_value": "Privadesa absoluta i resposta tècnica garantida."
   },
   "species_detail": {
-    "view_treatment": "VEURE TRACTAMENT",
+    "view_treatment": "Veure Tractament",
+    "view_pest": "Veure Fitxa Tècnica",
     "modal_certified": "Certificat Entomològic",
     "modal_protocol": "Protocol d'Actuació",
     "modal_tech_available": "Tècnics de guàrdia",

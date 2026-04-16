@@ -152,7 +152,7 @@ const OtherServices = () => {
                 <X size={24} />
               </button>
 
-              <div className="md:w-5/12 relative min-h-[200px] md:min-h-full">
+              <div className="md:w-5/12 relative min-h-[140px] md:min-h-full">
                 <img 
                   src={selectedService.image} 
                   alt={selectedService.label}
@@ -161,20 +161,20 @@ const OtherServices = () => {
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent"></div>
               </div>
 
-              <div className="md:w-7/12 p-8 md:p-16 flex flex-col justify-center space-y-8 overflow-y-auto">
-                <div className="space-y-4">
-                  <h3 className="text-3xl md:text-5xl font-black text-primary-gray leading-tight tracking-tighter">
+              <div className="md:w-7/12 p-6 md:p-16 flex flex-col justify-center space-y-5 md:space-y-8 overflow-y-auto">
+                <div className="space-y-2 md:space-y-4">
+                  <h3 className="text-2xl md:text-5xl font-black text-primary-gray leading-tight tracking-tighter">
                     {selectedService.title}
                   </h3>
-                  <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
-                  <p className="text-lg text-secondary-gray/80 font-light italic leading-relaxed">
+                  <div className="w-12 md:w-16 h-1 md:h-1.5 bg-accent-green rounded-full"></div>
+                  <p className="text-sm md:text-lg text-secondary-gray/80 font-light italic leading-relaxed">
                     "{selectedService.desc}"
                   </p>
                 </div>
 
-                <div className="space-y-6">
+                <div className="space-y-4 md:space-y-6">
                   <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-gray/30">{t('species_detail.modal_protocol')}</h4>
-                  <ul className="space-y-4">
+                  <ul className="space-y-2 md:space-y-4">
                     {selectedService.details?.map((detail, idx) => (
                       <motion.li 
                         key={idx}
@@ -183,23 +183,23 @@ const OtherServices = () => {
                         transition={{ delay: 0.1 + (idx * 0.1) }}
                         className="flex items-start space-x-3"
                       >
-                         <ShieldCheck className="text-accent-green shrink-0 mt-1" size={20} />
-                         <span className="font-medium text-secondary-gray leading-tight text-sm md:text-base">{detail}</span>
+                         <ShieldCheck className="text-accent-green shrink-0 mt-0.5" size={18} />
+                         <span className="font-medium text-secondary-gray leading-tight text-xs md:text-base">{detail}</span>
                       </motion.li>
                     ))}
                   </ul>
                 </div>
 
-                <div className="pt-4">
+                <div className="pt-2 md:pt-4">
                    <button 
                      onClick={() => {
                         setSelectedService(null);
                         setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
                      }}
-                     className="w-full py-5 bg-primary-blue text-white rounded-2xl font-black text-lg tracking-widest shadow-2xl shadow-primary-blue/20 flex items-center justify-center space-x-4 group overflow-hidden relative"
+                     className="w-full py-4 md:py-5 px-6 md:px-8 bg-primary-blue text-white rounded-xl md:rounded-2xl font-black text-xs md:text-lg tracking-widest shadow-2xl shadow-primary-blue/20 flex items-center justify-center space-x-3 md:space-x-4 group overflow-hidden relative"
                    >
-                     <Zap className="text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform" size={24} />
-                     <span>{t('common.cta_free')}</span>
+                     <Zap className="text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-4 h-4 md:w-6 md:h-6" />
+                     <span className="leading-tight truncate">{t('common.cta_free')}</span>
                    </button>
                 </div>
               </div>
