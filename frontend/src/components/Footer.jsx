@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Facebook, Instagram, Linkedin, Phone, MapPin, Mail, ChevronRight, Calendar, Globe } from 'lucide-react';
 
-const Footer = () => {
+const Footer = ({ className = "" }) => {
   const { t } = useTranslation();
 
   const links = [
@@ -13,7 +13,7 @@ const Footer = () => {
   ];
 
   return (
-    <footer className="pt-24 pb-12 relative overflow-hidden text-white" style={{ background: '#0a1a2f' }}>
+    <footer className={`pt-24 pb-12 relative overflow-hidden text-white ${className}`} style={{ background: '#0a1a2f' }}>
       
       {/* Decorative Grid Overlay */}
       <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">

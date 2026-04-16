@@ -55,7 +55,7 @@ const About = () => {
     <div className="min-h-screen bg-bg-light">
       <Navbar />
 
-      <main className="pt-32 pb-24">
+      <main className="pt-32 pb-0">
         {/* Page Hero */}
         <section className="max-w-7xl mx-auto px-6 mb-24">
           <div className="relative rounded-[4rem] overflow-hidden bg-primary-blue h-[600px] flex items-center shadow-2xl">
@@ -183,7 +183,7 @@ const About = () => {
         </section>
 
         {/* Reach Section */}
-        <section className="bg-primary-blue py-32 relative overflow-hidden">
+        <section className="bg-primary-blue pt-32 pb-0 relative overflow-hidden">
            <div className="absolute inset-0 opacity-10">
               <img 
                 src="/assets/barcelona_authority.webp" 
@@ -225,7 +225,7 @@ const About = () => {
 
       </main>
 
-      <Footer />
+      <Footer className="pt-0" />
       <FloatingCTA />
     </div>
   );
