@@ -130,7 +130,8 @@ const PestGrid = () => {
                  initial={{ opacity: 0, y: 20 }}
                  whileInView={{ opacity: 1, y: 0 }}
                  transition={{ delay: i * 0.1 }}
-                 viewport={{ once: true }                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[160px] md:aspect-square flex flex-col items-center justify-between p-5 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
+                 viewport={{ once: true }}
+                 className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[160px] md:aspect-square flex flex-col items-center justify-between p-5 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
                style={{ background: pest.color }}
              >
                   {/* Corner Search Icon */}
