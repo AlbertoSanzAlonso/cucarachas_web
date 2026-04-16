@@ -110,7 +110,7 @@ const Footer = ({ className = "" }) => {
         {/* Bottom Contact Section */}
         <div className="flex flex-col md:flex-row items-center justify-between gap-12 pt-16 border-t border-white/10">
            
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 w-full">
+           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 w-full">
               {[
                 { icon: <Phone />, title: 'Urgencias 24h', value: '933 309 169' },
                 { icon: <Mail />, title: 'Email Soporte', value: 'info@cucarachasbarcelona.cat' },
