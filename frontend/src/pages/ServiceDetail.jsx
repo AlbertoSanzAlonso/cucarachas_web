@@ -150,6 +150,14 @@ const ServiceDetail = () => {
          {/* Sticky Sidebar CTA */}
          <div className="space-y-8">
             <div className="sticky top-40 bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 text-center space-y-8 overflow-hidden relative group">
+               {/* Background Operadora (Very Subtle) */}
+               <div className="absolute inset-0 opacity-[0.08] pointer-events-none group-hover:opacity-[0.12] transition-opacity duration-700">
+                  <img 
+                     src="/assets/atencion-cliente-cucarachas-barcelona.png" 
+                     alt="" 
+                     className="w-full h-full object-cover scale-110 group-hover:scale-105 transition-transform duration-1000"
+                  />
+               </div>
                <div className="space-y-2 relative z-10">
                   <h3 className="text-3xl font-black text-primary-gray tracking-tighter leading-none">{t('service_detail_page.active_protection')}</h3>
                   <p className="text-secondary-gray/50 text-xs font-bold uppercase tracking-widest">{t('service_detail_page.free_diagnosis')}</p>
