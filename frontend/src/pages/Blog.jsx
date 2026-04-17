@@ -161,9 +161,6 @@ const Blog = () => {
               </p>
             </motion.div>
           </div>
-          
-          {/* Skewed Bottom Divider - Sector Style */}
-          <div className="absolute inset-x-0 bottom-0 h-48 bg-white origin-bottom-right -skew-y-3 transform translate-y-24 shadow-[0_-30px_60px_rgba(0,0,0,0.15)] z-20"></div>
         </section>
 
         {/* Filters and Search - Positioned after the Hero Padding */}
