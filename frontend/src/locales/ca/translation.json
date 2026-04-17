@@ -308,5 +308,8 @@
     "services": "Serveis Realitzats",
     "guarantee": "Garantia d'Èxit",
     "response": "Temps de Resposta"
+  },
+  "testimonials": {
+    "title": "Particulares satisfets amb el nostre servei"
   }
 }

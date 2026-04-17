@@ -27,7 +27,7 @@ const Process = () => {
 
         {/* Diagonal Divider at bottom - With subtle shadow for depth */}
         <div 
-          className="absolute bottom-0 left-0 right-0 h-32 bg-white z-10 translate-y-1/2 -skew-y-3 origin-bottom-left scale-x-110 shadow-[0_-10px_40px_rgba(0,0,0,0.08),0_10px_40px_rgba(0,0,0,0.08)]"
+          className="absolute bottom-0 left-0 right-0 h-64 bg-white z-10 translate-y-1/2 -skew-y-3 origin-bottom-left scale-x-110 shadow-[0_-10px_40px_rgba(0,0,0,0.08),0_10px_40px_rgba(0,0,0,0.08)] optimize-gpu"
         ></div>
 
         <div className="grid md:grid-cols-3 gap-16 relative">

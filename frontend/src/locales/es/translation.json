@@ -288,5 +288,8 @@
     "services": "Servicios Realizados",
     "guarantee": "Garantía de Éxito",
     "response": "Tiempo de Respuesta"
+  },
+  "testimonials": {
+    "title": "Particulares satisfechos con nuestro servicio"
   }
 }

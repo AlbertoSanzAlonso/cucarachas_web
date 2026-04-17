@@ -13,13 +13,13 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="py-24 bg-bg-light" id="testimonials">
+    <section className="py-32 md:py-48 bg-bg-light" id="testimonials">
       <div className="max-w-7xl mx-auto px-6 space-y-20">
         
         <div className="flex flex-col md:flex-row items-end justify-between gap-8 pb-10 border-b border-gray-200">
            <div className="space-y-4 max-w-2xl">
               <h2 className="text-4xl md:text-5xl font-black text-primary-gray tracking-tighter">
-                Particulares satisfechos con nuestro servicio
+                {t('testimonials.title', 'Particulares satisfechos con nuestro servicio')}
               </h2>
               <p className="text-secondary-gray/80 text-lg font-light">
                  La confianza de nuestros clientes es lo que nos define como referentes en el sector.
