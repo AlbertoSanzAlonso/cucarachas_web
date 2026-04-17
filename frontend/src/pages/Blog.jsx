@@ -91,7 +91,7 @@ const Blog = () => {
       category: 'tecnico',
       date: '28 Mar 2026',
       author: 'Equipo Social',
-      image: '/assets/barcelona-view.webp',
+      image: '/assets/barcelona-authority.webp',
       readTime: '10 min'
     }
   ];
@@ -125,14 +125,14 @@ const Blog = () => {
 
       <main>
         {/* Blog Hero - Enhanced with Background */}
-        <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
+        <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
           <div 
-            className="absolute inset-0 bg-cover bg-fixed bg-center transition-transform duration-1000 scale-105"
+            className="absolute inset-0 bg-cover bg-fixed bg-center transition-transform duration-1000"
             style={{ 
-              backgroundImage: 'url(/assets/barcelona-view.webp)',
+              backgroundImage: 'url(/assets/urban-pests.webp)',
             }}
           ></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-primary-blue/80 via-primary-blue/60 to-bg-light"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-primary-blue/70 via-primary-blue/40 to-white/10"></div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8 pt-20">
             <motion.div
@@ -140,29 +140,29 @@ const Blog = () => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-4"
             >
-              <span className="inline-block py-2 px-6 glass rounded-full text-white font-black text-[10px] tracking-[0.3em] uppercase border border-white/10">
+              <span className="inline-block py-2 px-8 glass-dark rounded-full text-white font-black text-[10px] tracking-[0.4em] uppercase border border-white/5 shadow-2xl">
                 Actualidad y Conocimiento
               </span>
-              <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
-                Blog <span className="text-accent-green">Consciente</span>
+              <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
+                Blog <span className="text-secondary-gray">Consciente</span>
               </h1>
-              <p className="max-w-2xl mx-auto text-xl text-white/80 font-light leading-relaxed">
-                Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en el corazón de Barcelona.
+              <p className="max-w-2xl mx-auto text-xl text-white font-light leading-relaxed drop-shadow-lg">
+                Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.
               </p>
             </motion.div>
           </div>
         </section>
 
         {/* Filters and Search - Overlapping Hero */}
-        <section className="max-w-7xl mx-auto px-6 -mt-16 relative z-30 mb-12">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-6 rounded-[3rem] shadow-2xl border border-gray-100">
+        <section className="max-w-7xl mx-auto px-6 -mt-20 relative z-30 mb-8">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-6 rounded-[2.5rem] shadow-2xl border border-gray-100/50 backdrop-blur-xl">
             {/* Categories */}
-            <div className="flex items-center space-x-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
+            <div className="flex items-center space-x-3 overflow-x-auto pb-4 lg:pb-0 no-scrollbar w-full lg:w-auto px-2">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-lg' : 'bg-bg-light text-secondary-gray/60 hover:text-primary-blue'}`}
+                  className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-xl scale-105' : 'bg-bg-light text-secondary-gray/40 hover:text-primary-blue hover:bg-white border border-transparent hover:border-gray-200'}`}
                 >
                   {cat.label}
                 </button>
