@@ -97,8 +97,8 @@ function Home() {
         <LazySection Component={Testimonials} />
         <LazySection Component={FleetSection} />
         <LazySection Component={PestGrid} />
-        <LazySection Component={OtherServices} />
         <LazySection Component={SectorGrid} />
+        <LazySection Component={OtherServices} />
         <LazySection Component={OrigenService} />
         <LazySection Component={Process} />
         
