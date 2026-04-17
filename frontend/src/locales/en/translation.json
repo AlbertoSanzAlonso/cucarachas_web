@@ -47,6 +47,44 @@
       "tecnic": "Technical Methods",
       "preus": "Budgets",
       "garantia": "Guarantees"
-    }
+    },
+    "items": [
+      {
+        "id": 1,
+        "category": "seguretat",
+        "question": "Are the products you use a health hazard?",
+        "answer": "No. At CECSA we exclusively use latest generation gels and biographical methods that require no safety period. They are fully compatible with the presence of people, children, and pets from the first minute."
+      },
+      {
+        "id": 2,
+        "category": "tecnic",
+        "question": "Do I need to empty my kitchen cabinets before treatment?",
+        "answer": "No, it is not necessary. Our gel technology allows us to act surgically without removing utensils or food, as long as they are protected or in non-critical areas."
+      },
+      {
+        "id": 3,
+        "category": "garantia",
+        "question": "What warranty does the disinfestation service offer?",
+        "answer": "All our cockroach control treatments include a certified one-year warranty. If the pest reappears during this period, we perform the necessary reinforcements at no additional cost."
+      },
+      {
+        "id": 4,
+        "category": "preus",
+        "question": "What is the average price of a service in Barcelona?",
+        "answer": "The cost depends on the magnitude of the infestation and the square footage. For a standard home, prices start at €85. We offer a fixed-price quote without commitment after a telephone diagnosis."
+      },
+      {
+        "id": 5,
+        "category": "seguretat",
+        "question": "How long does it take for cockroaches to die after the gel?",
+        "answer": "The cascade effect begins immediately. You will notice an 80% reduction in the first 48-72 hours. Total elimination of the nest is completed in about 10-15 days depending on the biological cycle."
+      },
+      {
+        "id": 6,
+        "category": "tecnic",
+        "question": "Is gel better than traditional fumigation?",
+        "answer": "Fumigation tends to be invasive and non-selective. Gel is infinitely superior for cockroaches, as it leverages the social behavior of the insect (coprophagy and necrophagy) to eliminate the nest from within without airborne chemicals."
+      }
+    ]
   }
 }

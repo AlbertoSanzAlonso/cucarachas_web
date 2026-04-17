@@ -31,52 +31,18 @@ const FAQ = () => {
     { id: 'garantia' }
   ];
 
-  const faqs = [
-    {
-      id: 1,
-      category: 'seguretat',
-      question: 'Representen un perill per a la salut els productes que utilitzeu?',
-      answer: 'No. En CECSA utilitzem exclusivament gels de darrera generació i mètodes biogràfics que no requereixen termini de seguretat. Són totalment compatibles amb la presència de persones, nens i animals domèstics des del primer minut.',
-      icon: <ShieldCheck size={20} />
-    },
-    {
-      id: 2,
-      category: 'tecnic',
-      question: 'He de buidar els armaris de la cuina abans del tractament?',
-      answer: 'No és necessari. La nostra tecnologia de gels ens permet actuar de forma quirúrgica sense desallotjar estris ni aliments, sempre que estiguin protegits o en zones no crítiques.',
-      icon: <Zap size={20} />
-    },
-    {
-      id: 3,
-      category: 'garantia',
-      question: 'Quina garantia ofereix el servei de desinsectació?',
-      answer: 'Tots els nostres tractaments de control de paneroles inclouen una garantia certificada d\'un any. Si la plaga reapareix durant aquest període, realitzem els reforços necessaris sense cost addicional.',
-      icon: <ShieldCheck size={20} />
-    },
-    {
-      id: 4,
-      category: 'preus',
-      question: 'Quin és el preu mitjà d\'un servei a Barcelona?',
-      answer: 'El cost depèn de la magnitud de la infestació i els metres quadrats. Per a un habitatge estàndard, els preus comencen des dels 85€. Oferim pressupost tancat sense compromís després d\'una diagnosi telefònica.',
-      icon: <Clock size={20} />
-    },
-    {
-      id: 5,
-      category: 'seguretat',
-      question: 'Quan de temps triguen a morir les cucarachas després del gel?',
-      answer: 'L\'efecte cascada comença immediatament. Notaràs una reducció del 80% en les primeres 48-72 hores. L\'eliminació total del niu es completa en uns 10-15 dies segons el cicle biològic.',
-      icon: <Zap size={20} />
-    },
-    {
-      id: 6,
-      category: 'tecnic',
-      question: 'És millor el gel o la fumigació tradicional?',
-      answer: 'La fumigació sol ser invasiva i poc selectiva. El gel és infinitament superior per a paneroles, ja que aprofita el comportament social de l\'insecte (coprofàgia i necrofàgia) per eliminar el niu des de dins sense químics a l\'aire.',
-      icon: <HelpCircle size={20} />
-    }
-  ];
+  const faqItems = t('faq.items', { returnObjects: true }) || [];
 
-  const filteredFaqs = faqs.filter(faq => {
+  // Map icons to categories
+  const categoryIcons = {
+    seguretat: <ShieldCheck size={20} />,
+    tecnic: <Zap size={20} />,
+    garantia: <ShieldCheck size={20} />,
+    preus: <Clock size={20} />,
+    default: <HelpCircle size={20} />
+  };
+
+  const filteredFaqs = faqItems.filter(faq => {
     const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
                           faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
@@ -186,7 +152,7 @@ const FAQ = () => {
                     >
                       <div className="flex items-center space-x-6">
                         <div className={`p-4 rounded-2xl transition-colors ${openId === faq.id ? 'bg-white/10 text-accent-green' : 'bg-white text-primary-blue shadow-sm'}`}>
-                          {faq.icon}
+                          {categoryIcons[faq.category] || categoryIcons.default}
                         </div>
                         <h3 className={`text-lg md:text-xl font-black leading-tight tracking-tight ${openId === faq.id ? 'text-white' : 'text-primary-blue group-hover:text-primary-blue-hv'}`}>
                           {faq.question}

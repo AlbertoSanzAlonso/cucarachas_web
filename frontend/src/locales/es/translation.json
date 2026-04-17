@@ -330,6 +330,44 @@
       "tecnic": "Métodos Técnicos",
       "preus": "Presupuestos",
       "garantia": "Garantías"
-    }
+    },
+    "items": [
+      {
+        "id": 1,
+        "category": "seguretat",
+        "question": "¿Representan un peligro para la salud los productos que utilizáis?",
+        "answer": "No. En CECSA utilizamos exclusivamente geles de última generación y métodos biográficos que no requieren plazo de seguridad. Son totalmente compatibles con la presencia de personas, niños y mascotas desde el primer minuto."
+      },
+      {
+        "id": 2,
+        "category": "tecnic",
+        "question": "¿Debo vaciar los armarios de la cocina antes del tratamiento?",
+        "answer": "No es necesario. Nuestra tecnología de geles nos permite actuar de forma quirúrgica sin desalojar utensilios ni alimentos, siempre que estén protegidos o en zonas no críticas."
+      },
+      {
+        "id": 3,
+        "category": "garantia",
+        "question": "¿Qué garantía ofrece el servicio de desinsectación?",
+        "answer": "Todos nuestros tratamientos de control de cucarachas incluyen una garantía certificada de un año. Si la plaga reaparece durante este periodo, realizamos los refuerzos necesarios sin coste adicional."
+      },
+      {
+        "id": 4,
+        "category": "preus",
+        "question": "¿Cuál es el precio medio de un servicio en Barcelona?",
+        "answer": "El coste depende de la magnitud de la infestación y los metros cuadrados. Para una vivienda estándar, los precios comienzan desde los 85€. Ofrecemos presupuesto cerrado sin compromiso tras un diagnóstico telefónico."
+      },
+      {
+        "id": 5,
+        "category": "seguretat",
+        "question": "¿Cuánto tiempo tardan en morir las cucarachas tras el gel?",
+        "answer": "El efecto cascada comienza inmediatamente. Notarás una reducción del 80% en las primeras 48-72 horas. La eliminación total del nido se completa en unos 10-15 días según el ciclo biológico."
+      },
+      {
+        "id": 6,
+        "category": "tecnic",
+        "question": "¿Es mejor el gel o la fumigación tradicional?",
+        "answer": "La fumigación suele ser invasiva y poco selectiva. El gel es infinitamente superior para cucarachas, ya que aprovecha el comportamiento social del insecto (coprofagia y necrofagia) para eliminar el nido desde dentro sin químicos en el aire."
+      }
+    ]
   }
 }
