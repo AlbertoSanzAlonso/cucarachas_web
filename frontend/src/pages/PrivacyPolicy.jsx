@@ -24,8 +24,8 @@ const PrivacyPolicy = () => {
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-[3rem] p-12 md:p-20 shadow-xl border border-gray-100"
           >
-            <div className="flex items-center space-x-6 mb-12">
-               <div className="p-4 bg-accent-green/5 text-accent-green rounded-2xl">
+            <div className="flex items-center md:space-x-6 mb-12">
+               <div className="hidden md:block p-4 bg-accent-green/5 text-accent-green rounded-2xl">
                   <ShieldCheck size={40} />
                </div>
                <div>
