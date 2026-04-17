@@ -42,6 +42,7 @@
   },
   "method": {
     "title": "Nuestro método de eficacia total",
+    "desc": "Metodología científica aplicada para resultados inmediatos.",
     "step1_title": "Inspección inicial",
     "step1_desc": "Evaluamos el nivel de infestación y localizamos el origen real de la plaga.",
     "step2_title": "Tratamiento profesional",
@@ -281,5 +282,11 @@
     "active_protection": "Protección Activa",
     "free_diagnosis": "Diagnóstico Gratuito",
     "not_found": "Sector no encontrado"
+  },
+  "stats_bar": {
+    "years": "Años de Experiencia",
+    "services": "Servicios Realizados",
+    "guarantee": "Garantía de Éxito",
+    "response": "Tiempo de Respuesta"
   }
 }

@@ -7,14 +7,48 @@ const PestGrid = () => {
   const { t } = useTranslation();
   const [selectedPest, setSelectedPest] = useState(null);
 
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
+
   React.useEffect(() => {
     if (selectedPest) {
       document.body.style.overflow = 'hidden';
+      setImageLoaded(true); // Since we wait before opening
     } else {
       document.body.style.overflow = 'unset';
+      setImageLoaded(false);
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [selectedPest]);
+
+  const handlePestClick = (pest) => {
+    if (isOpening) return;
+    setIsOpening(true);
+    
+    // Check if hero image is ready
+    const img = new Image();
+    img.src = pest.image;
+    
+    const finalize = () => {
+      setSelectedPest(pest);
+      setIsOpening(false);
+    };
+
+    if (img.complete) {
+      finalize();
+    } else {
+      img.onload = finalize;
+      img.onerror = finalize; // Don't block forever if error
+    }
+  };
+
+  // Preload all species images on mount to ensure instant loading in modals
+  React.useEffect(() => {
+    species.forEach(pest => {
+      const img = new Image();
+      img.src = pest.image;
+    });
+  }, []);
 
   const species = [
     {
@@ -137,12 +171,12 @@ const PestGrid = () => {
                   </div>
                 )}
                 <motion.div
-                  onClick={() => setSelectedPest(pest)}
+                  onClick={() => handlePestClick(pest)}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                   viewport={{ once: true }}
-                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[160px] md:aspect-square flex flex-col items-center justify-between p-5 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]}`}
+                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[160px] md:aspect-square flex flex-col items-center justify-between p-5 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]} ${isOpening ? 'cursor-wait opacity-80' : ''}`}
                   style={{ background: pest.color }}
                 >
                   {/* Category Label */}
@@ -242,14 +276,17 @@ const PestGrid = () => {
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                 </div>
 
-                  <img
-                    src={selectedPest.image}
-                    alt={selectedPest.name}
-                    className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id)
-                      ? 'absolute inset-0 w-full h-full object-cover md:scale-110'
-                      : 'w-full max-w-[100px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
-                    style={{ transform: !['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? `scale(${selectedPest.imageScale || 1})` : undefined }}
-                  />
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img
+                      src={selectedPest.image}
+                      alt={selectedPest.name}
+                      onLoad={() => setImageLoaded(true)}
+                      className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id)
+                        ? 'absolute inset-0 w-full h-full object-cover md:scale-110'
+                        : 'w-full max-w-[100px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
+                      style={{ transform: !['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? `scale(${selectedPest.imageScale || 1})` : undefined }}
+                    />
+                  </div>
 
                   <div className={`text-center space-y-1 relative z-10 ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'mt-auto mb-2 md:mb-4 bg-primary-blue/60 backdrop-blur-md px-4 py-1 rounded-full' : 'mt-1 md:mt-8'}`}>
                     <p className={`text-[7px] md:text-[10px] uppercase font-bold tracking-[0.3em] ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'text-white' : 'text-accent-green'}`}>

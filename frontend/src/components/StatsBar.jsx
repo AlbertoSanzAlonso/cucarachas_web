@@ -6,28 +6,15 @@ const StatsBar = () => {
   const { t } = useTranslation();
 
   const stats = [
-    { id: 'years', value: '+15', label: 'Años de Experiencia', icon: <Calendar /> },
-    { id: 'services', value: '12k+', label: 'Servicios de Plagas', icon: <UserCheck /> },
-    { id: 'guarantee', value: '100%', label: 'Garantía de Éxito', icon: <ShieldCheck /> },
-    { id: 'response', value: '<2h', label: 'Tiempo de Respuesta', icon: <Zap /> }
+    { id: 'years', value: '+15', label: t('stats_bar.years'), icon: <Calendar /> },
+    { id: 'services', value: '12k+', label: t('stats_bar.services'), icon: <UserCheck /> },
+    { id: 'guarantee', value: '100%', label: t('stats_bar.guarantee'), icon: <ShieldCheck /> },
+    { id: 'response', value: '<2h', label: t('stats_bar.response'), icon: <Zap /> }
   ];
 
   return (
-    <section className="relative overflow-visible pt-56 pb-48 md:pt-80 md:pb-60 z-20">
-      {/* Upper white part to hide the parent background */}
-      <div 
-        className="absolute top-0 left-0 right-0 h-[700px] bg-white z-0 -translate-y-[85%] -skew-y-3 origin-top-right optimize-gpu" 
-      ></div>
+    <section className="relative overflow-visible py-32 md:py-48 z-20">
 
-      {/* Skewed Background Hole - The blue stripe stripe placeholder */}
-      <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-125 z-0 overflow-hidden optimize-gpu" 
-      >
-         {/* Subtle Background Pattern */}
-         <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
-           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
-         </div>
-      </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8">

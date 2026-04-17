@@ -7,14 +7,42 @@ const OtherServices = () => {
   const { t } = useTranslation();
   const [selectedService, setSelectedService] = useState(null);
 
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
+
   useEffect(() => {
     if (selectedService) {
       document.body.style.overflow = 'hidden';
+      setImageLoaded(true);
     } else {
       document.body.style.overflow = 'unset';
+      setImageLoaded(false);
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [selectedService]);
+
+  const handleServiceClick = (service) => {
+    if (isOpening) return;
+    setIsOpening(true);
+    const img = new Image();
+    img.src = service.image;
+    const finalize = () => {
+      setSelectedService(service);
+      setIsOpening(false);
+    };
+    if (img.complete) finalize();
+    else {
+      img.onload = finalize;
+      img.onerror = finalize;
+    }
+  };
+
+  useEffect(() => {
+    otherServices.forEach(service => {
+      const img = new Image();
+      img.src = service.image;
+    });
+  }, []);
 
   const otherServices = [
     { 
@@ -93,8 +121,8 @@ const OtherServices = () => {
               {otherServices.map((service, i) => (
                 <div 
                   key={service.key} 
-                  onClick={() => setSelectedService(service)}
-                  className="flex items-center justify-between p-6 rounded-2xl bg-bg-light border border-gray-100 hover:border-accent-green/30 transition-all group cursor-pointer"
+                  onClick={() => handleServiceClick(service)}
+                  className={`flex items-center justify-between p-6 rounded-2xl bg-bg-light border border-gray-100 hover:border-accent-green/30 transition-all group cursor-pointer ${isOpening ? 'cursor-wait opacity-80' : ''}`}
                 >
                    <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary-blue group-hover:text-accent-green transition-colors">
@@ -153,11 +181,14 @@ const OtherServices = () => {
               </button>
 
               <div className="md:w-5/12 relative min-h-[140px] md:min-h-full">
-                <img 
-                  src={selectedService.image} 
-                  alt={selectedService.label}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
+                <div className="absolute inset-0">
+                  <img 
+                    src={selectedService.image} 
+                    alt={selectedService.label}
+                    onLoad={() => setImageLoaded(true)}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent"></div>
               </div>
 

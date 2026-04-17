@@ -55,5 +55,6 @@ Construcción de sistemas de diseño escalables con Tailwind CSS v4, tokens de d
 - **Inline styles** en componentes de layout (Navbar, Footer, FloatingCTA).
 - **i18n**: Usar siempre `t('clave.traduccion')`.
 - **Media**: Usar formato `.webp` para todas las imágenes.
+- **Modales Premium**: Implementar siempre la estrategia **"Wait before Open"**. Al hacer clic, verificar la madurez de la imagen (`img.complete`) antes de activar el estado que abre el modal. Esto garantiza que el modal aparezca ya renderizado al 100% y perfectamente sincronizado.
 - **Scroll del Navbar**: Animación progresiva mediante `scrollProgress`.
 - **Isotipo**: `/public/assets/isotipo.png` con `filter: brightness(0) invert(1)`. Altura máxima de `60px` en Navbar y `40px` en Footer.

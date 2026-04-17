@@ -36,9 +36,11 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="py-24 relative overflow-visible z-10 -mt-20" 
+    <section className="py-24 md:py-32 relative bg-transparent" 
       id="contact"
     >
+
+
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-20 items-center relative z-10">
         
         {/* Text Section */}

@@ -16,7 +16,7 @@ const OrigenService = () => {
     <section className="relative overflow-visible py-32 md:py-40 z-20" id="origin">
       {/* Skewed Background - The blue stripe (Matches StatsBar style) */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 shadow-[0_20px_50px_rgba(0,128,187,0.3)]" 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 shadow-[0_-30px_60px_rgba(0,128,187,0.2),0_30px_60px_rgba(0,128,187,0.2)]" 
         style={{ background: 'var(--color-primary-blue)' }}
       >
          {/* Subtle Background Pattern inside skewed area */}

@@ -42,6 +42,7 @@
   },
   "method": {
     "title": "El nostre mètode d'eficàcia total",
+    "desc": "Metodologia científica aplicada per a resultats immediats.",
     "step1_title": "Inspecció inicial",
     "step1_desc": "Avaluem el nivell d’infestació i localitzem l’origen real de la plaga.",
     "step2_title": "Tractament professional",
@@ -301,5 +302,11 @@
     "active_protection": "Protecció Activa",
     "free_diagnosis": "Diagnòstic Gratuït",
     "not_found": "Sector no trobat"
+  },
+  "stats_bar": {
+    "years": "Anys d'Experiència",
+    "services": "Serveis Realitzats",
+    "guarantee": "Garantia d'Èxit",
+    "response": "Temps de Resposta"
   }
 }

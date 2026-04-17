@@ -8,14 +8,42 @@ const SectorGrid = () => {
   const { t } = useTranslation();
   const [selectedSector, setSelectedSector] = useState(null);
  
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isOpening, setIsOpening] = useState(false);
+
   React.useEffect(() => {
     if (selectedSector) {
       document.body.style.overflow = 'hidden';
+      setImageLoaded(true);
     } else {
       document.body.style.overflow = 'unset';
+      setImageLoaded(false);
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [selectedSector]);
+
+  const handleSectorClick = (sector) => {
+    if (isOpening) return;
+    setIsOpening(true);
+    const img = new Image();
+    img.src = sector.bg;
+    const finalize = () => {
+      setSelectedSector(sector);
+      setIsOpening(false);
+    };
+    if (img.complete) finalize();
+    else {
+      img.onload = finalize;
+      img.onerror = finalize;
+    }
+  };
+
+  React.useEffect(() => {
+    sectors.forEach(sector => {
+      const img = new Image();
+      img.src = sector.bg;
+    });
+  }, []);
 
   const sectors = [
     { 
@@ -71,8 +99,8 @@ const SectorGrid = () => {
            {sectors.map((sector, i) => (
              <div 
                key={sector.id} 
-               onClick={() => setSelectedSector(sector)}
-               className="group p-10 bg-bg-light rounded-[2.5rem] border border-gray-100 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-10px] cursor-pointer relative overflow-hidden"
+               onClick={() => handleSectorClick(sector)}
+               className={`group p-10 bg-bg-light rounded-[2.5rem] border border-gray-100 transition-all duration-500 hover:shadow-2xl hover:translate-y-[-10px] cursor-pointer relative overflow-hidden ${isOpening ? 'cursor-wait opacity-80' : ''}`}
              >
                 {/* Background Image Watermark */}
                 <div className="absolute inset-0 opacity-[0.15] group-hover:opacity-[0.25] transition-opacity duration-500 z-0">
@@ -141,11 +169,14 @@ const SectorGrid = () => {
  
               {/* Sidebar / Image Area */}
               <div className="md:w-1/3 min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center">
-                <img 
-                   src={selectedSector.bg} 
-                   alt={selectedSector.name} 
-                   className="absolute inset-0 w-full h-full object-cover"
-                />
+                <div className="absolute inset-0">
+                  <img 
+                     src={selectedSector.bg} 
+                     alt={selectedSector.name} 
+                     onLoad={() => setImageLoaded(true)}
+                     className="absolute inset-0 w-full h-full object-cover"
+                  />
+                </div>
                 <div className="absolute inset-0 bg-primary-blue/60"></div>
                 
                 <div className="relative z-10 flex flex-col items-center">
