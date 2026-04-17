@@ -1,5 +1,8 @@
 {
   "common": {
     "tagline": "Ethical and Conscious"
+  },
+  "nav": {
+    "home": "Home"
   }
 }
