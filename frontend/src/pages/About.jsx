@@ -254,7 +254,7 @@ const About = () => {
         </section>
 
         {/* Reach Section */}
-        <section className="max-w-7xl mx-auto px-6 mb-48 md:mb-64 overflow-hidden">
+        <section className="max-w-7xl mx-auto px-6 mb-0 overflow-hidden">
            <div className="bg-primary-blue py-20 md:py-32 rounded-[3.5rem] md:rounded-[5rem] relative overflow-hidden shadow-2xl">
               <div className="absolute inset-0 opacity-10">
                  <img 
