@@ -18,7 +18,7 @@ const Blog = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 3;
+  const itemsPerPage = 6;
 
   // Scroll to top on load or page change
   useEffect(() => {
@@ -123,36 +123,46 @@ const Blog = () => {
         <Navbar />
       </Suspense>
 
-      <main className="pt-32 pb-24">
-        {/* Blog Hero */}
-        <section className="max-w-7xl mx-auto px-6 mb-16">
-          <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center space-y-6"
-          >
-            <span className="inline-block py-2 px-6 glass rounded-full text-primary-blue font-black text-[10px] tracking-[0.3em] uppercase">
-              Actualidad y Conocimiento
-            </span>
-            <h1 className="text-5xl md:text-7xl font-black text-primary-blue tracking-tighter leading-none">
-              Blog <span className="text-accent-green">Consciente</span>
-            </h1>
-            <p className="max-w-2xl mx-auto text-lg text-secondary-gray/80 font-light leading-relaxed">
-              Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en el corazón de Barcelona.
-            </p>
-          </motion.div>
+      <main>
+        {/* Blog Hero - Enhanced with Background */}
+        <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
+          <div 
+            className="absolute inset-0 bg-cover bg-fixed bg-center transition-transform duration-1000 scale-105"
+            style={{ 
+              backgroundImage: 'url(/assets/barcelona-view.webp)',
+            }}
+          ></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-primary-blue/80 via-primary-blue/60 to-bg-light"></div>
+          
+          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8 pt-20">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <span className="inline-block py-2 px-6 glass rounded-full text-white font-black text-[10px] tracking-[0.3em] uppercase border border-white/10">
+                Actualidad y Conocimiento
+              </span>
+              <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none">
+                Blog <span className="text-accent-green">Consciente</span>
+              </h1>
+              <p className="max-w-2xl mx-auto text-xl text-white/80 font-light leading-relaxed">
+                Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en el corazón de Barcelona.
+              </p>
+            </motion.div>
+          </div>
         </section>
 
-        {/* Filters and Search */}
-        <section className="max-w-7xl mx-auto px-6 mb-12">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-4 rounded-[2.5rem] shadow-xl border border-gray-100">
+        {/* Filters and Search - Overlapping Hero */}
+        <section className="max-w-7xl mx-auto px-6 -mt-16 relative z-30 mb-12">
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-6 rounded-[3rem] shadow-2xl border border-gray-100">
             {/* Categories */}
             <div className="flex items-center space-x-2 overflow-x-auto pb-2 lg:pb-0 no-scrollbar w-full lg:w-auto">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-lg' : 'bg-bg-light text-secondary-gray/60 hover:text-primary-blue'}`}
+                  className={`px-8 py-4 rounded-full text-xs font-bold uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-lg' : 'bg-bg-light text-secondary-gray/60 hover:text-primary-blue'}`}
                 >
                   {cat.label}
                 </button>
@@ -161,13 +171,13 @@ const Blog = () => {
 
             {/* Search Input */}
             <div className="relative w-full lg:w-80">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-gray/30" size={20} />
+              <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/30" size={20} />
               <input 
                 type="text" 
                 placeholder="Buscar artículo..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-6 py-4 bg-bg-light rounded-full border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-semibold text-primary-gray"
+                className="w-full pl-14 pr-8 py-5 bg-bg-light rounded-full border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-semibold text-primary-gray"
               />
             </div>
           </div>
