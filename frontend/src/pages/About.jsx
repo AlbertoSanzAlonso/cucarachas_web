@@ -297,7 +297,7 @@ const About = () => {
         </section>
 
         {/* Otros Servicios */}
-        <div className="mb-24 md:mb-40">
+        <div>
            <LazySection Component={OtherServices} />
         </div>
       </main>

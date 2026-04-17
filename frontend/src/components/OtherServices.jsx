@@ -88,7 +88,7 @@ const OtherServices = () => {
   ];
 
   return (
-    <section className="pt-24 pb-48 md:pb-64 bg-white" id="others">
+    <section className="pt-24 pb-12 md:pb-16 bg-white" id="others">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
         
         {/* Image Side */}
