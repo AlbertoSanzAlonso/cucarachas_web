@@ -13,7 +13,7 @@ const StatsBar = () => {
   ];
 
   return (
-    <section className="relative overflow-visible py-32 md:py-48 z-20">
+    <section className="relative overflow-visible pt-32 pb-8 md:pt-48 md:pb-12 z-20">
 
 
       <div className="max-w-7xl mx-auto px-6 relative z-10">
