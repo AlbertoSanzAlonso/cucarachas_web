@@ -43,23 +43,23 @@ const LegalNotice = () => {
                      <Shield size={24} className="text-accent-green" />
                      <span>1. Titularitat del Lloc Web</span>
                   </h2>
-                  <div className="bg-bg-light p-8 rounded-3xl space-y-4 border border-gray-100">
+                  <div className="bg-bg-light p-5 md:p-8 rounded-3xl space-y-4 border border-gray-100">
                      <div className="grid md:grid-cols-2 gap-6">
                         <div className="space-y-1">
                            <span className="text-[10px] font-bold text-primary-gray/40 uppercase tracking-widest block">Raó Social</span>
-                           <span className="font-bold text-primary-gray">{t('legal.company_name')}</span>
+                           <span className="font-bold text-primary-gray break-words block">{t('legal.company_name')}</span>
                         </div>
                         <div className="space-y-1">
                            <span className="text-[10px] font-bold text-primary-gray/40 uppercase tracking-widest block">CIF / NIF</span>
-                           <span className="font-bold text-primary-gray">{t('legal.cif')}</span>
+                           <span className="font-bold text-primary-gray break-words block">{t('legal.cif')}</span>
                         </div>
                         <div className="space-y-1">
                            <span className="text-[10px] font-bold text-primary-gray/40 uppercase tracking-widest block">Domicili Fiscal</span>
-                           <span className="font-bold text-primary-gray">{t('legal.address')}</span>
+                           <span className="font-bold text-primary-gray break-words block leading-relaxed">{t('legal.address')}</span>
                         </div>
                         <div className="space-y-1">
                            <span className="text-[10px] font-bold text-primary-gray/40 uppercase tracking-widest block">Email de contacte</span>
-                           <span className="font-bold text-primary-blue break-all">{t('legal.email')}</span>
+                           <span className="font-bold text-primary-blue break-all block">{t('legal.email')}</span>
                         </div>
                      </div>
                   </div>

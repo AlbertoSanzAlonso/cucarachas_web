@@ -49,12 +49,12 @@ const PrivacyPolicy = () => {
                </div>
 
                {/* Responsable */}
-               <div className="bg-bg-light p-8 rounded-3xl border border-gray-100 space-y-4">
+               <div className="bg-bg-light p-5 md:p-8 rounded-3xl border border-gray-100 space-y-4">
                   <h3 className="font-black text-primary-gray uppercase tracking-widest text-xs">Responsable del Tractament</h3>
                   <div className="space-y-2 text-sm">
-                     <p className="font-bold">{t('legal.company_name')}</p>
-                     <p>NIF: {t('legal.cif')}</p>
-                     <p>{t('legal.address')}</p>
+                     <p className="font-bold break-words">{t('legal.company_name')}</p>
+                     <p className="break-words">NIF: {t('legal.cif')}</p>
+                     <p className="break-words leading-relaxed">{t('legal.address')}</p>
                      <p className="text-primary-blue font-bold break-all">{t('legal.email')}</p>
                   </div>
                </div>
