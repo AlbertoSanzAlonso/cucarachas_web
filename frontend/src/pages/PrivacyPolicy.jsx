@@ -17,7 +17,7 @@ const PrivacyPolicy = () => {
     <div className="min-h-screen bg-bg-light">
       <Navbar />
 
-      <main className="pt-40 md:pt-32 pb-24">
+      <main className="pt-40 md:pt-32 pb-64 md:pb-80">
         <section className="max-w-4xl mx-auto px-6">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
