@@ -168,18 +168,16 @@ const SectorGrid = () => {
               </button>
  
               {/* Sidebar / Image Area */}
-              <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden flex flex-col items-center justify-center bg-white">
-                <div className="absolute inset-0">
-                  <img 
-                     src={selectedSector.bg} 
-                     alt={selectedSector.name} 
-                     onLoad={() => setImageLoaded(true)}
-                     className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-primary-blue/60"></div>
-                </div>
+              <div className="md:w-1/3 h-40 md:h-auto relative overflow-hidden flex flex-col items-center justify-center bg-white">
+                <img 
+                   src={selectedSector.bg} 
+                   alt={selectedSector.name} 
+                   onLoad={() => setImageLoaded(true)}
+                   className="absolute -inset-y-1 inset-x-0 w-full h-[calc(100%+8px)] object-cover"
+                />
+                <div className="absolute inset-0 bg-primary-blue/60 z-10"></div>
                 
-                <div className="relative z-10 flex flex-col items-center">
+                <div className="relative z-20 flex flex-col items-center">
                   <div className="w-20 h-20 md:w-32 md:h-32 rounded-3xl bg-white/10 backdrop-blur-lg shadow-2xl flex items-center justify-center text-white mb-4">
                      {React.cloneElement(selectedSector.icon, { size: 32, strokeWidth: 1.5 })}
                   </div>
@@ -191,7 +189,7 @@ const SectorGrid = () => {
               </div>
 
               {/* Content Area */}
-              <div className="md:w-2/3 p-6 md:p-12 flex flex-col justify-center space-y-4 md:space-y-8 overflow-y-auto bg-white">
+              <div className="md:w-2/3 p-4 md:p-12 flex flex-col justify-center space-y-3 md:space-y-8 overflow-y-auto bg-white">
                 <div className="space-y-2 md:space-y-4">
                   <h3 className="text-2xl md:text-5xl font-black text-primary-blue tracking-tighter leading-[0.9]">
                     {selectedSector.name}

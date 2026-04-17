@@ -271,27 +271,39 @@ const PestGrid = () => {
               </button>
 
               {/* Sidebar / Image area */}
-              <div className={`md:w-1/2 relative overflow-hidden flex flex-col items-center justify-center ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'h-56 md:h-auto' : 'bg-white pt-10 pb-6 px-4 md:p-16'}`}>
-                <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
+              <div className={`md:w-1/2 relative overflow-hidden flex flex-col ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'h-40 md:h-auto' : 'bg-white pt-6 pb-4'}`}>
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0">
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                 </div>
 
-                <div className="relative w-full h-full flex items-center justify-center">
+                {/* Main Content (Image) */}
+                {['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? (
                   <img
                     src={selectedPest.image}
                     alt={selectedPest.name}
                     onLoad={() => setImageLoaded(true)}
-                    className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id)
-                      ? 'absolute inset-0 w-full h-full object-cover'
-                      : 'w-full max-w-[120px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
-                    style={{ transform: !['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? `scale(${selectedPest.imageScale || 1})` : undefined }}
+                    className="absolute inset-0 w-full h-full object-cover z-0"
                   />
-                </div>
+                ) : (
+                  <div className="relative z-10 w-full flex-1 flex items-center justify-center p-6 md:p-16">
+                    <img
+                      src={selectedPest.image}
+                      alt={selectedPest.name}
+                      onLoad={() => setImageLoaded(true)}
+                      className="w-full max-w-[120px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
+                      style={{ transform: `scale(${selectedPest.imageScale || 1})` }}
+                    />
+                  </div>
+                )}
 
-                <div className={`text-center space-y-1 relative z-10 ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'mt-auto mb-4 bg-primary-blue/60 backdrop-blur-md px-4 py-1 rounded-full' : 'mt-4 md:mt-8'}`}>
-                  <p className={`text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'text-white' : 'text-accent-green'}`}>
-                    {t('species_detail.modal_certified')}
-                  </p>
+                {/* Label Overlay */}
+                <div className={`relative z-20 mt-auto w-full flex justify-center pb-4 md:pb-8`}>
+                  <div className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'bg-primary-blue/60 backdrop-blur-md text-white' : 'text-accent-green'} px-4 py-1.5 rounded-full`}>
+                    <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] leading-none">
+                      {t('species_detail.modal_certified')}
+                    </p>
+                  </div>
                 </div>
               </div>
 
