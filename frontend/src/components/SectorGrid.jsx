@@ -168,13 +168,13 @@ const SectorGrid = () => {
               </button>
  
               {/* Sidebar / Image Area */}
-              <div className="md:w-1/3 self-stretch min-h-[160px] md:min-h-full relative overflow-hidden flex flex-col items-center justify-center bg-primary-blue">
-                <div className="absolute -inset-[2px] pointer-events-none">
+              <div className="md:w-1/3 h-48 md:h-auto relative overflow-hidden flex flex-col items-center justify-center bg-white">
+                <div className="absolute inset-0">
                   <img 
                      src={selectedSector.bg} 
                      alt={selectedSector.name} 
                      onLoad={() => setImageLoaded(true)}
-                     className="absolute inset-0 w-[calc(100%+4px)] h-[calc(100%+4px)] object-cover scale-105"
+                     className="absolute inset-0 w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 bg-primary-blue/60"></div>
                 </div>

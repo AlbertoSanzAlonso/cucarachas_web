@@ -180,16 +180,14 @@ const OtherServices = () => {
                 <X size={24} />
               </button>
 
-              <div className="md:w-5/12 self-stretch relative min-h-[140px] md:min-h-full bg-primary-blue overflow-hidden">
-                <div className="absolute -inset-[2px] pointer-events-none">
-                  <img 
-                    src={selectedService.image} 
-                    alt={selectedService.label}
-                    onLoad={() => setImageLoaded(true)}
-                    className="absolute inset-0 w-[calc(100%+4px)] h-[calc(100%+4px)] object-cover scale-105"
-                  />
-                </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent"></div>
+              <div className="md:w-5/12 relative h-48 md:h-auto overflow-hidden bg-white">
+                <img 
+                  src={selectedService.image} 
+                  alt={selectedService.label}
+                  onLoad={() => setImageLoaded(true)}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-primary-blue/30"></div>
               </div>
 
               <div className="md:w-7/12 p-6 md:p-16 flex flex-col justify-center space-y-5 md:space-y-8 overflow-y-auto">
