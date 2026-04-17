@@ -256,9 +256,10 @@ const PestGrid = () => {
             />
 
             <motion.div
-              initial={{ scale: 1, opacity: 0, y: 60 }}
+              initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 1, opacity: 0, y: 60 }}
+              exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
+              transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
               className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu"
               style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
@@ -326,9 +327,9 @@ const PestGrid = () => {
                   <ul className="space-y-1.5 md:space-y-4">
                     {selectedPest.details?.map((detail, idx) => (
                       <motion.li
-                        initial={{ opacity: 0, x: -20 }}
+                        initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 + (idx * 0.02) }}
+                        transition={window.innerWidth < 768 ? { duration: 0 } : { delay: 0.1 + (idx * 0.02) }}
                         key={idx}
                         className="flex items-start space-x-3"
                       >

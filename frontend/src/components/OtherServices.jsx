@@ -164,13 +164,14 @@ const OtherServices = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setSelectedService(null)}
-              className="absolute inset-0 bg-primary-blue/30 backdrop-blur-xl"
+              className="absolute inset-0 bg-primary-blue/30 md:backdrop-blur-xl"
             />
 
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 50 }}
+              initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 0.9, opacity: 0, y: 50 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 50 }}
+              exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 0.9, opacity: 0, y: 50 }}
+              transition={window.innerWidth < 768 ? { duration: 0.2 } : { duration: 0.3 }}
               className="relative w-full max-w-4xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row max-h-[85vh] md:max-h-none"
             >
               <button
@@ -207,9 +208,9 @@ const OtherServices = () => {
                     {selectedService.details?.map((detail, idx) => (
                       <motion.li 
                         key={idx}
-                        initial={{ opacity: 0, x: -10 }}
+                        initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -10 }}
                         animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: 0.1 + (idx * 0.1) }}
+                        transition={window.innerWidth < 768 ? { duration: 0 } : { delay: 0.1 + (idx * 0.1) }}
                         className="flex items-start space-x-3"
                       >
                          <ShieldCheck className="text-accent-green shrink-0 mt-0.5" size={18} />
