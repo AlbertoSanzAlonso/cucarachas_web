@@ -94,12 +94,12 @@ function Home() {
       <main>
         <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
         <LazySection Component={CockroachFocus} />
+        <LazySection Component={Testimonials} />
         <LazySection Component={FleetSection} />
         <LazySection Component={PestGrid} />
         <LazySection Component={OtherServices} />
         <LazySection Component={SectorGrid} />
         <LazySection Component={OrigenService} />
-        <LazySection Component={Testimonials} />
         <LazySection Component={Process} />
         
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
