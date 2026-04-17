@@ -33,14 +33,14 @@ const Footer = ({ className = "" }) => {
   ];
 
   return (
-    <footer className={`relative mt-[-80px] text-white ${className} z-50`}>
-      {/* Skewed Top Transition with INTENSE Shadow */}
+    <footer className={`relative mt-24 md:mt-32 text-white overflow-visible ${className} z-50`}>
+      {/* Skewed Top Transition with BOLD Shadow and Border */}
       <div 
-        className="absolute inset-x-0 top-0 h-64 -skew-y-3 origin-top-right transform z-0 shadow-[0_-40px_100px_rgba(0,128,187,0.3)]"
+        className="absolute inset-x-0 top-0 h-64 md:h-80 -skew-y-3 origin-top-right transform -translate-y-12 md:-translate-y-16 z-0 shadow-[0_-40px_100px_rgba(0,0,0,0.4)] border-t border-white/10"
         style={{ background: '#0a1a2f' }}
       ></div>
 
-      <div className="relative pt-64 pb-12 overflow-hidden z-10" style={{ background: '#0a1a2f' }}>
+      <div className="relative pt-32 pb-12 overflow-hidden z-10" style={{ background: '#0a1a2f' }}>
         {/* Decorative Grid Overlay */}
         <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
