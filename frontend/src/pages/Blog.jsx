@@ -153,7 +153,7 @@ const Blog = () => {
                 {t('blog.hero_badge')}
               </span>
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
-                Blog <span className="text-accent-green">Consciente</span>
+                {t('blog.hero_title_main')} <span className="text-accent-green">{t('blog.hero_title_accent')}</span>
               </h1>
               <p className="max-w-2xl mx-auto text-xl text-white/70 font-light leading-relaxed drop-shadow-lg">
                 {t('blog.hero_desc')}

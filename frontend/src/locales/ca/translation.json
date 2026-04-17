@@ -319,8 +319,9 @@
   },
   "blog": {
     "hero_badge": "Actualitat i Coneixement",
-    "hero_title": "Blog Consciente",
-    "hero_desc": "Explora els nostres articles sobre desinsectació tècnica, benestar ambiental i protocols ètics a Barcelona.",
+    "hero_title_main": "Blog",
+    "hero_title_accent": "Conscient",
+    "hero_desc": "Explora els nostres articles sobre desinsectación tècnica, benestar ambiental i protocols ètics a Barcelona.",
     "search_placeholder": "Buscar article...",
     "read_more": "Seguir llegint",
     "no_results": "No hem trobat articles",
@@ -335,7 +336,8 @@
   },
   "faq": {
     "hero_badge": "Centre d'Ajuda Tècnica",
-    "hero_title": "FAQ Consciente",
+    "hero_title_main": "FAQ",
+    "hero_title_accent": "Conscient",
     "hero_desc": "Resol els teus dubtes sobre els nostres protocols d'actuació ètica i eficaç a Catalunya.",
     "search_placeholder": "Busca la teva pregunta...",
     "cta_title": "Encara tens dubtes?",

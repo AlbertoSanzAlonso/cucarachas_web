@@ -16,7 +16,8 @@
   },
   "blog": {
     "hero_badge": "Current News & Knowledge",
-    "hero_title": "Conscious Blog",
+    "hero_title_main": "Conscious",
+    "hero_title_accent": "Blog",
     "hero_desc": "Explore our articles on technical pest control, environmental well-being, and ethical protocols in Barcelona.",
     "search_placeholder": "Search article...",
     "read_more": "Read more",
@@ -32,7 +33,8 @@
   },
   "faq": {
     "hero_badge": "Technical Help Center",
-    "hero_title": "Conscious FAQ",
+    "hero_title_main": "Conscious",
+    "hero_title_accent": "FAQ",
     "hero_desc": "Solve your doubts about our ethical and effective action protocols in Catalonia.",
     "search_placeholder": "Search your question...",
     "cta_title": "Still have questions?",
