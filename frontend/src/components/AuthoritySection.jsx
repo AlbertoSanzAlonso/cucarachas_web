@@ -9,10 +9,10 @@ import ContactForm from './ContactForm';
  */
 const AuthoritySection = () => {
   return (
-    <div className="relative mt-[-100px] z-40" id="contact">
-      {/* Skewed Background Transition */}
+    <div className="relative mt-[-100px] md:mt-[-160px] z-40" id="contact">
+      {/* Skewed Background Transition with INTENSE TOP SHADOW */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5 pointer-events-none"
+        className="absolute inset-0 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-60px_100px_rgba(0,0,0,0.3),0_-120px_160px_rgba(0,128,187,0.4)] border-t-2 border-white/10 pointer-events-none"
         style={{ 
           background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
           backgroundSize: 'cover',
