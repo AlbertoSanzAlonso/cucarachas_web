@@ -271,7 +271,7 @@ const PestGrid = () => {
               </button>
 
               {/* Sidebar / Image area */}
-              <div className={`md:w-1/2 bg-white flex flex-col items-center justify-center relative ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'min-h-[120px] md:min-h-[400px]' : 'min-h-[100px] md:min-h-[300px] pt-6 pb-2 px-4 md:p-16'}`}>
+              <div className={`md:w-1/2 self-stretch flex flex-col items-center justify-center relative ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'min-h-[120px] md:min-h-full bg-primary-blue' : 'bg-white min-h-[100px] md:min-h-[300px] pt-6 pb-2 px-4 md:p-16'}`}>
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none">
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                 </div>

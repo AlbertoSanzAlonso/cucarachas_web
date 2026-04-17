@@ -180,7 +180,7 @@ const OtherServices = () => {
                 <X size={24} />
               </button>
 
-              <div className="md:w-5/12 relative min-h-[140px] md:min-h-full">
+              <div className="md:w-5/12 self-stretch relative min-h-[140px] md:min-h-full bg-primary-blue">
                 <div className="absolute inset-0">
                   <img 
                     src={selectedService.image} 
