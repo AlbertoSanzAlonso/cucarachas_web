@@ -25,7 +25,7 @@ const FleetSection = () => {
     <section className="py-24 md:py-32 relative overflow-visible bg-white">
       {/* Skewed Background - Technical light blue stripe */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-y-110 z-0 bg-[#eef7ff] border-y border-primary-blue/5 shadow-[0_0_50px_rgba(0,0,0,0.02)]" 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 bg-[#eef7ff] border-y border-primary-blue/5 shadow-[0_0_50px_rgba(0,0,0,0.02)] optimize-gpu" 
       >
          {/* Subtle Technical Pattern */}
          <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
