@@ -12,10 +12,9 @@ const PestGrid = lazy(() => import('../components/PestGrid'));
 const SectorGrid = lazy(() => import('../components/SectorGrid'));
 const OrigenService = lazy(() => import('../components/OrigenService'));
 const OtherServices = lazy(() => import('../components/OtherServices'));
-const StatsBar = lazy(() => import('../components/StatsBar'));
 const Process = lazy(() => import('../components/Process'));
+const AuthoritySection = lazy(() => import('../components/AuthoritySection'));
 const Testimonials = lazy(() => import('../components/Testimonials'));
-const ContactForm = lazy(() => import('../components/ContactForm'));
 const Footer = lazy(() => import('../components/Footer'));
 const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
 
@@ -102,23 +101,7 @@ function Home() {
         <LazySection Component={OrigenService} />
         <LazySection Component={Process} />
         
-        {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
-        <div className="relative mt-[-100px] z-40">
-          <div 
-            className="absolute inset-0 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
-            style={{ 
-              background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          ></div>
-          
-          <div className="relative z-10">
-            <LazySection Component={StatsBar} />
-            <LazySection Component={ContactForm} />
-          </div>
-        </div>
+        <LazySection Component={AuthoritySection} />
       </main>
       
       <Footer />

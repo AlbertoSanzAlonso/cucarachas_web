@@ -6,6 +6,7 @@ import { ShieldCheck, ArrowLeft, Mail, Phone, Zap, Utensils, Hotel, Users, Facto
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import AuthoritySection from '../components/AuthoritySection';
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -206,7 +207,8 @@ const ServiceDetail = () => {
          </div>
 
       </section>
-
+      
+      <AuthoritySection />
       <Footer />
     </div>
   );
