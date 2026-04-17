@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShieldCheck, Users, Activity, ExternalLink, ArrowRight, HeartPulse, Scale, Globe, Bug } from 'lucide-react';
@@ -6,6 +6,15 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FloatingCTA from '../components/FloatingCTA';
 import SEO from '../components/SEO';
+import { SectionSkeleton } from '../components/Skeleton';
+
+const OtherServices = lazy(() => import('../components/OtherServices'));
+
+const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
+  <Suspense fallback={fallback}>
+    <Component />
+  </Suspense>
+);
 
 const About = () => {
   const { t } = useTranslation();
@@ -286,6 +295,11 @@ const About = () => {
               </div>
            </div>
         </section>
+
+        {/* Otros Servicios */}
+        <div className="mb-24 md:mb-40">
+           <LazySection Component={OtherServices} />
+        </div>
       </main>
 
       <Footer />

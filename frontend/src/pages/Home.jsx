@@ -11,7 +11,6 @@ const FleetSection = lazy(() => import('../components/FleetSection'));
 const PestGrid = lazy(() => import('../components/PestGrid'));
 const SectorGrid = lazy(() => import('../components/SectorGrid'));
 const OrigenService = lazy(() => import('../components/OrigenService'));
-const OtherServices = lazy(() => import('../components/OtherServices'));
 const StatsBar = lazy(() => import('../components/StatsBar'));
 const Process = lazy(() => import('../components/Process'));
 const Testimonials = lazy(() => import('../components/Testimonials'));
@@ -98,7 +97,6 @@ function Home() {
         <LazySection Component={FleetSection} />
         <LazySection Component={PestGrid} />
         <LazySection Component={SectorGrid} />
-        <LazySection Component={OtherServices} />
         <LazySection Component={OrigenService} />
         <LazySection Component={Process} />
         
