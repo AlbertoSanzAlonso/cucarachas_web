@@ -101,17 +101,23 @@ function Home() {
         <LazySection Component={OrigenService} />
         <LazySection Component={Testimonials} />
         <LazySection Component={Process} />
-        <div 
-          className="relative bg-authority-fixed -mt-[1px]"
-          style={{ 
-            background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat'
-          }}
-        >
-          <LazySection Component={StatsBar} />
-          <LazySection Component={ContactForm} />
+        
+        {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
+        <div className="relative mt-[-100px] z-40">
+          <div 
+            className="absolute inset-0 -skew-y-3 origin-top-right bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
+            style={{ 
+              background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat'
+            }}
+          ></div>
+          
+          <div className="relative z-10">
+            <LazySection Component={StatsBar} />
+            <LazySection Component={ContactForm} />
+          </div>
         </div>
       </main>
       

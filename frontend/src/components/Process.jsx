@@ -12,7 +12,7 @@ const Process = () => {
   ];
 
   return (
-    <section className="pt-40 pb-32 bg-white relative z-30" id="process">
+    <section className="pt-40 pb-24 bg-white relative z-30" id="process">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-20">
         
         <div className="max-w-3xl mx-auto space-y-4">
@@ -24,11 +24,6 @@ const Process = () => {
              {t('method.desc', 'Metodología científica aplicada para resultados inmediatos.')}
            </p>
         </div>
-
-        {/* Diagonal Divider at bottom - With subtle shadow for depth */}
-        <div 
-          className="absolute bottom-0 left-0 right-0 h-64 bg-white z-10 translate-y-1/2 -skew-y-3 origin-bottom-left scale-x-110 shadow-[0_-10px_40px_rgba(0,0,0,0.08),0_10px_40px_rgba(0,0,0,0.08)] optimize-gpu"
-        ></div>
 
         <div className="grid md:grid-cols-3 gap-16 relative">
             {/* Decorative connector line (Desktop only) */}
