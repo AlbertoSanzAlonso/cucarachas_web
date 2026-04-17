@@ -125,9 +125,12 @@ const Blog = () => {
 
       <main>
         {/* Blog Hero - Industry/Sector Style (Overflow allowed for skew) */}
-        <section className="relative pt-32 pb-64 md:pt-40 md:pb-80 bg-primary-blue text-white z-30">
-          {/* Background Elements */}
-          <div className="absolute inset-0 z-0 overflow-hidden">
+        <section className="relative pt-32 pb-64 md:pt-40 md:pb-80 z-30">
+          {/* Background Elements - Skewed directly */}
+          <div 
+            className="absolute inset-x-0 top-0 bottom-0 z-0 origin-bottom-right -skew-y-3 transform scale-y-110 shadow-[0_30px_60px_rgba(0,0,0,0.1)] overflow-hidden"
+            style={{ background: 'linear-gradient(to bottom right, var(--primary-blue), var(--primary-blue-hv))' }}
+          >
             <img 
               src="/assets/blog-hero-technical.png" 
               alt="Blog Técnico CECSA - Control de Plagues" 
@@ -137,12 +140,6 @@ const Blog = () => {
             <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-primary-blue/90 to-primary-blue-hv/80"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20px_20px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:40px_40px]"></div>
           </div>
-          
-          {/* Skewed Bottom Divider - Direct Blue-over-White Overlap */}
-          <div 
-            className="absolute inset-x-0 bottom-0 h-48 origin-bottom-right -skew-y-3 transform translate-y-24 z-50 pointer-events-none"
-            style={{ background: 'linear-gradient(to bottom right, var(--primary-blue), var(--primary-blue-hv))' }}
-          ></div>
           
           <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8">
             <motion.div
