@@ -163,9 +163,9 @@ const SectorGrid = () => {
             >
               <button 
                 onClick={() => setSelectedSector(null)}
-                className="absolute top-4 right-4 z-40 p-2 bg-white/90 rounded-full shadow-lg hover:bg-bg-light transition-colors"
+                className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
               >
-                <X size={20} className="text-primary-blue" />
+                <X size={20} className="text-primary-gray md:w-6 md:h-6" />
               </button>
  
               {/* Sidebar / Image Area */}

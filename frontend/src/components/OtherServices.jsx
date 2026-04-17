@@ -176,9 +176,9 @@ const OtherServices = () => {
             >
               <button
                 onClick={() => setSelectedService(null)}
-                className="absolute top-6 right-6 z-20 p-3 bg-white/90 backdrop-blur-md rounded-full shadow-lg text-primary-gray hover:text-red-500 transition-colors"
+                className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
               >
-                <X size={24} />
+                <X size={20} className="text-primary-gray md:w-6 md:h-6" />
               </button>
 
               <div className="md:w-5/12 relative h-40 md:h-auto overflow-hidden bg-white">
