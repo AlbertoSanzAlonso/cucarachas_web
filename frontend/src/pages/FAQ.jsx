@@ -167,7 +167,7 @@ const FAQ = () => {
         </section>
 
         {/* FAQ Grid/Accordion */}
-        <section className="bg-white pt-24 pb-80 md:pb-[35rem] relative z-10 -mt-32">
+        <section className="bg-white pt-32 md:pt-48 pb-80 md:pb-[35rem] relative z-10 -mt-32">
           <div className="max-w-4xl mx-auto px-6 relative z-10">
             <div className="space-y-4">
               <AnimatePresence>
