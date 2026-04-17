@@ -26,11 +26,11 @@ const Blog = () => {
   }, [currentPage]);
 
   const categories = [
-    { id: 'all', label: 'Todos' },
-    { id: 'prevencion', label: 'Prevención' },
-    { id: 'tecnico', label: 'Técnico' },
-    { id: 'curiosidades', label: 'Curiosidades' },
-    { id: 'salud', label: 'Salud Ambiental' }
+    { id: 'all' },
+    { id: 'prevencion' },
+    { id: 'tecnico' },
+    { id: 'curiosidades' },
+    { id: 'salud' }
   ];
 
   const articles = [
@@ -150,13 +150,13 @@ const Blog = () => {
               className="space-y-6"
             >
               <span className="inline-block py-2 px-8 glass-dark rounded-full text-white font-black text-[10px] tracking-[0.4em] uppercase border border-white/5 shadow-2xl">
-                Actualidad y Conocimiento
+                {t('blog.hero_badge')}
               </span>
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
                 Blog <span className="text-accent-green">Consciente</span>
               </h1>
               <p className="max-w-2xl mx-auto text-xl text-white/70 font-light leading-relaxed drop-shadow-lg">
-                Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.
+                {t('blog.hero_desc')}
               </p>
             </motion.div>
           </div>
@@ -174,7 +174,7 @@ const Blog = () => {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-5 py-3 lg:px-8 lg:py-4 rounded-xl lg:rounded-2xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-xl scale-105' : 'bg-bg-light text-secondary-gray/40 hover:text-primary-blue hover:bg-white border border-transparent hover:border-gray-200'}`}
                 >
-                  {cat.label}
+                  {t(`blog.categories.${cat.id}`)}
                 </button>
               ))}
             </div>
@@ -184,7 +184,7 @@ const Blog = () => {
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/30" size={20} />
               <input 
                 type="text" 
-                placeholder="Buscar artículo..."
+                placeholder={t('blog.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-14 pr-8 py-5 bg-bg-light rounded-full border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-semibold text-primary-gray"
@@ -249,7 +249,7 @@ const Blog = () => {
 
                       <div className="pt-6 mt-auto">
                         <button className="flex items-center space-x-2 text-xs font-black uppercase tracking-[0.2em] text-primary-blue group/btn">
-                          <span>Seguir leyendo</span>
+                          <span>{t('blog.read_more')}</span>
                           <ChevronRight size={16} className="transition-transform group-hover/btn:translate-x-2" />
                         </button>
                       </div>
@@ -297,8 +297,8 @@ const Blog = () => {
                 <div className="w-20 h-20 bg-primary-blue/5 rounded-full flex items-center justify-center mx-auto text-primary-blue/20">
                   <Search size={40} />
                 </div>
-                <h3 className="text-xl font-bold text-primary-gray">No hemos encontrado artículos</h3>
-                <p className="text-secondary-gray/60">Prueba con otros términos o categorías</p>
+                <h3 className="text-xl font-bold text-primary-gray">{t('blog.no_results')}</h3>
+                <p className="text-secondary-gray/60">{t('blog.no_results_desc')}</p>
               </div>
             )}
             {/* FAQ Prompt Banner - Moved inside for better layering */}

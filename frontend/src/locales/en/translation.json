@@ -13,5 +13,38 @@
     "about": "About CECSA",
     "contact": "24h Emergency",
     "home": "Home"
+  },
+  "blog": {
+    "hero_badge": "Current News & Knowledge",
+    "hero_title": "Conscious Blog",
+    "hero_desc": "Explore our articles on technical pest control, environmental well-being, and ethical protocols in Barcelona.",
+    "search_placeholder": "Search article...",
+    "read_more": "Read more",
+    "no_results": "No articles found",
+    "no_results_desc": "Try other terms or categories",
+    "categories": {
+      "all": "All",
+      "prevencion": "Prevention",
+      "tecnico": "Technical",
+      "curiosidades": "Curiosities",
+      "salud": "Environmental Health"
+    }
+  },
+  "faq": {
+    "hero_badge": "Technical Help Center",
+    "hero_title": "Conscious FAQ",
+    "hero_desc": "Solve your doubts about our ethical and effective action protocols in Catalonia.",
+    "search_placeholder": "Search your question...",
+    "cta_title": "Still have questions?",
+    "cta_desc": "Our technical team will assist you personally.",
+    "cta_btn": "Talk now",
+    "no_results": "No answers found",
+    "categories": {
+      "all": "All",
+      "seguretat": "Safety & Health",
+      "tecnic": "Technical Methods",
+      "preus": "Budgets",
+      "garantia": "Guarantees"
+    }
   }
 }

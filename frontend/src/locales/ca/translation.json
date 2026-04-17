@@ -316,5 +316,38 @@
   },
   "testimonials": {
     "title": "Particulares satisfets amb el nostre servei"
+  },
+  "blog": {
+    "hero_badge": "Actualitat i Coneixement",
+    "hero_title": "Blog Consciente",
+    "hero_desc": "Explora els nostres articles sobre desinsectació tècnica, benestar ambiental i protocols ètics a Barcelona.",
+    "search_placeholder": "Buscar article...",
+    "read_more": "Seguir llegint",
+    "no_results": "No hem trobat articles",
+    "no_results_desc": "Prova amb altres termes o categories",
+    "categories": {
+      "all": "Tots",
+      "prevencion": "Prevenció",
+      "tecnico": "Tècnic",
+      "curiosidades": "Curiositats",
+      "salud": "Salut Ambiental"
+    }
+  },
+  "faq": {
+    "hero_badge": "Centre d'Ajuda Tècnica",
+    "hero_title": "FAQ Consciente",
+    "hero_desc": "Resol els teus dubtes sobre els nostres protocols d'actuació ètica i eficaç a Catalunya.",
+    "search_placeholder": "Busca la teva pregunta...",
+    "cta_title": "Encara tens dubtes?",
+    "cta_desc": "El nostre equip tècnic t'atendrà de forma personalitzada.",
+    "cta_btn": "Parlem ara",
+    "no_results": "No hem trobat respostes",
+    "categories": {
+      "all": "Totes",
+      "seguretat": "Seguretat i Salut",
+      "tecnic": "Mètodes Tècnics",
+      "preus": "Pressupostos",
+      "garantia": "Garanties"
+    }
   }
 }

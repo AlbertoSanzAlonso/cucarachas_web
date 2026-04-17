@@ -24,11 +24,11 @@ const FAQ = () => {
   }, []);
 
   const categories = [
-    { id: 'all', label: 'Totes' },
-    { id: 'seguretat', label: 'Seguretat i Salut' },
-    { id: 'tecnic', label: 'Mètodes Tècnics' },
-    { id: 'preus', label: 'Pressupostos' },
-    { id: 'garantia', label: 'Garanties' }
+    { id: 'all' },
+    { id: 'seguretat' },
+    { id: 'tecnic' },
+    { id: 'preus' },
+    { id: 'garantia' }
   ];
 
   const faqs = [
@@ -124,13 +124,13 @@ const FAQ = () => {
               className="space-y-6"
             >
               <span className="inline-block py-2 px-8 glass-dark rounded-full text-white font-black text-[10px] tracking-[0.4em] uppercase border border-white/5 shadow-2xl">
-                Centre d'Ajuda Tècnica
+                {t('faq.hero_badge')}
               </span>
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
                 FAQ <span className="text-accent-green">Conscient</span>
               </h1>
               <p className="max-w-2xl mx-auto text-xl text-white/70 font-light leading-relaxed drop-shadow-lg">
-                Resol els teus dubtes sobre els nostres protocols d'actuació ètica i eficaç a Catalunya.
+                {t('faq.hero_desc')}
               </p>
             </motion.div>
           </div>
@@ -147,7 +147,7 @@ const FAQ = () => {
                   onClick={() => setActiveCategory(cat.id)}
                   className={`px-5 py-3 lg:px-8 lg:py-4 rounded-xl lg:rounded-2xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-xl scale-105' : 'bg-bg-light text-secondary-gray/40 hover:text-primary-blue hover:bg-white border border-transparent hover:border-gray-200'}`}
                 >
-                  {cat.label}
+                  {t(`faq.categories.${cat.id}`)}
                 </button>
               ))}
             </div>
@@ -157,7 +157,7 @@ const FAQ = () => {
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/30" size={20} />
               <input 
                 type="text" 
-                placeholder="Busca la teva pregunta..."
+                placeholder={t('faq.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-14 pr-8 py-5 bg-bg-light rounded-full border-none focus:ring-2 focus:ring-primary-blue/20 text-sm font-semibold text-primary-gray"
@@ -224,8 +224,8 @@ const FAQ = () => {
                   <div className="w-20 h-20 bg-primary-blue/5 rounded-full flex items-center justify-center mx-auto text-primary-blue/20">
                     <Search size={40} />
                   </div>
-                  <h3 className="text-xl font-bold text-primary-gray">No hem trobat respostes</h3>
-                  <p className="text-secondary-gray/60">Prova amb altres termes o categories</p>
+                  <h3 className="text-xl font-bold text-primary-gray">{t('faq.no_results')}</h3>
+                  <p className="text-secondary-gray/60">{t('faq.no_results_desc')}</p>
                 </div>
               )}
             </div>
@@ -233,14 +233,14 @@ const FAQ = () => {
             {/* Secondary Contact CTA */}
             <div className="mt-24 p-12 bg-bg-light rounded-[3rem] border border-gray-100 flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="space-y-2 text-center md:text-left">
-                <h4 className="text-2xl font-black text-primary-blue tracking-tight">Encara tens dubtes?</h4>
-                <p className="text-secondary-gray/50">El nostre equip tècnic t'atendrà de forma personalitzada.</p>
+                <h4 className="text-2xl font-black text-primary-blue tracking-tight">{t('faq.cta_title')}</h4>
+                <p className="text-secondary-gray/50">{t('faq.cta_desc')}</p>
               </div>
               <button 
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-10 py-5 bg-primary-blue text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl hover:bg-primary-blue-hv transition-all transform hover:scale-105"
               >
-                Parlam ara
+                {t('faq.cta_btn')}
               </button>
             </div>
           </div>
