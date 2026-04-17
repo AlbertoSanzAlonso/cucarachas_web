@@ -36,7 +36,7 @@ const ContactForm = () => {
   };
 
   return (
-    <section className="pb-24 pt-8 md:pb-32 md:pt-12 relative bg-transparent" 
+    <section className="pb-48 pt-8 md:pb-64 md:pt-12 relative bg-transparent" 
       id="contact"
     >
 

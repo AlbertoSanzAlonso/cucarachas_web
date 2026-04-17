@@ -127,7 +127,7 @@ const ServiceDetail = () => {
       </section>
 
       {/* Content Section */}
-      <section className="py-24 max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
+      <section className="pt-24 pb-48 md:pb-64 max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
          
          {/* Main Technical Details */}
          <div className="lg:col-span-2 space-y-16">

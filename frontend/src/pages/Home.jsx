@@ -105,7 +105,7 @@ function Home() {
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
         <div className="relative mt-[-100px] z-40">
           <div 
-            className="absolute inset-0 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
+            className="absolute top-0 left-0 right-0 -bottom-96 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
             style={{ 
               background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
               backgroundSize: 'cover',
