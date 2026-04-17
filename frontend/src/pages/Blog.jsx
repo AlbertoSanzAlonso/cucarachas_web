@@ -138,9 +138,9 @@ const Blog = () => {
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20px_20px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:40px_40px]"></div>
           </div>
           
-          {/* Skewed Bottom Divider - Blue Industry Style Overlap */}
+          {/* Skewed Bottom Divider - Direct Blue-over-White Overlap */}
           <div 
-            className="absolute inset-x-0 bottom-0 h-48 origin-bottom-right -skew-y-3 transform translate-y-24 z-20"
+            className="absolute inset-x-0 bottom-0 h-48 origin-bottom-right -skew-y-3 transform translate-y-24 z-50 pointer-events-none"
             style={{ background: 'linear-gradient(to bottom right, var(--primary-blue), var(--primary-blue-hv))' }}
           ></div>
           
