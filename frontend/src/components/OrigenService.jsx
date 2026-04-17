@@ -13,10 +13,10 @@ const OrigenService = () => {
   ];
 
   return (
-    <section className="relative overflow-visible pt-32 pb-48 md:pt-40 md:pb-64 z-20" id="origin">
+    <section className="relative overflow-visible pt-32 pb-48 md:pt-40 md:pb-64 z-40" id="origin">
       {/* Skewed Background - The blue stripe (Matches StatsBar style) */}
       <div 
-        className="absolute inset-0 -skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 shadow-[0_-30px_60px_rgba(0,128,187,0.2),0_30px_60px_rgba(0,128,187,0.2)]" 
+        className="absolute inset-0 -skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 shadow-[0_-20px_50px_rgba(0,128,187,0.15),0_40px_80px_rgba(0,128,187,0.25)]" 
         style={{ background: 'var(--color-primary-blue)' }}
       >
          {/* Subtle Background Pattern inside skewed area */}
