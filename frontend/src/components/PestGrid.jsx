@@ -276,14 +276,14 @@ const PestGrid = () => {
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
                 </div>
 
-                  <div className="relative w-full h-full flex items-center justify-center">
-                    <img
-                      src={selectedPest.image}
-                      alt={selectedPest.name}
-                      onLoad={() => setImageLoaded(true)}
-                      className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id)
-                        ? 'absolute inset-0 w-full h-full object-cover md:scale-110'
-                        : 'w-full max-w-[100px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
+                      <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                        <img
+                          src={selectedPest.image}
+                          alt={selectedPest.name}
+                          onLoad={() => setImageLoaded(true)}
+                          className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id)
+                            ? 'absolute -inset-[2px] w-[calc(100%+4px)] h-[calc(100%+4px)] object-cover'
+                            : 'w-full max-w-[100px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10 rounded-2xl md:rounded-[3rem]'}`}
                       style={{ transform: !['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? `scale(${selectedPest.imageScale || 1})` : undefined }}
                     />
                   </div>
