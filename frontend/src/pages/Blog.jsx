@@ -166,13 +166,13 @@ const Blog = () => {
         {/* Filters and Search - Positioned after the Hero Padding */}
         <section className="max-w-7xl mx-auto px-6 -mt-12 md:-mt-24 relative z-40 mb-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-6 rounded-[2.5rem] shadow-2xl border border-gray-100/50 backdrop-blur-xl">
-            {/* Categories */}
-            <div className="flex items-center space-x-3 overflow-x-auto pb-4 lg:pb-0 no-scrollbar w-full lg:w-auto px-2">
+            {/* Categories - Wrapped on Mobile, Row on Desktop */}
+            <div className="flex flex-wrap items-center gap-2 lg:gap-3 w-full lg:w-auto px-2 justify-center lg:justify-start">
               {categories.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-xl scale-105' : 'bg-bg-light text-secondary-gray/40 hover:text-primary-blue hover:bg-white border border-transparent hover:border-gray-200'}`}
+                  className={`px-5 py-3 lg:px-8 lg:py-4 rounded-xl lg:rounded-2xl text-[9px] lg:text-[10px] font-black uppercase tracking-widest transition-all ${activeCategory === cat.id ? 'bg-primary-blue text-white shadow-xl scale-105' : 'bg-bg-light text-secondary-gray/40 hover:text-primary-blue hover:bg-white border border-transparent hover:border-gray-200'}`}
                 >
                   {cat.label}
                 </button>
