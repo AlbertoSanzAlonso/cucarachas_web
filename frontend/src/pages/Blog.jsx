@@ -124,17 +124,19 @@ const Blog = () => {
       </Suspense>
 
       <main>
-        {/* Blog Hero - Industry/Sector Style (Overflow allowed for skew) */}
-        <section className="relative pt-32 pb-64 md:pt-40 md:pb-80 z-30">
-          {/* Background Elements - Skewed directly */}
-          <div 
-            className="absolute inset-x-0 top-0 bottom-0 z-0 origin-bottom-right -skew-y-3 transform scale-y-110 shadow-[0_30px_60px_rgba(0,0,0,0.1)] overflow-hidden"
-            style={{ background: 'linear-gradient(to bottom right, var(--primary-blue), var(--primary-blue-hv))' }}
-          >
+        {/* Blog Hero - Absolute Clip-Path Style for Real Inclination */}
+        <section 
+          className="relative pt-32 pb-56 md:pt-40 md:pb-72 bg-primary-blue overflow-hidden z-20"
+          style={{ 
+            clipPath: 'polygon(0 0, 100% 0, 100% 85%, 0 100%)',
+          }}
+        >
+          {/* Background Elements */}
+          <div className="absolute inset-0 z-0">
             <img 
               src="/assets/blog-hero-technical.png" 
               alt="Blog Técnico CECSA - Control de Plagues" 
-              className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+              className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             />
             {/* Clinical Gradient and Patterns */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-primary-blue/90 to-primary-blue-hv/80"></div>
@@ -159,6 +161,7 @@ const Blog = () => {
             </motion.div>
           </div>
         </section>
+
 
         {/* Filters and Search - Positioned after the Hero Padding */}
         <section className="max-w-7xl mx-auto px-6 -mt-12 md:-mt-24 relative z-40 mb-8">
