@@ -6,7 +6,6 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import FloatingCTA from '../components/FloatingCTA';
 import SEO from '../components/SEO';
-import AuthoritySection from '../components/AuthoritySection';
 
 const About = () => {
   const { t } = useTranslation();
@@ -289,7 +288,6 @@ const About = () => {
         </section>
       </main>
 
-      <AuthoritySection />
       <Footer />
       <FloatingCTA />
     </div>
