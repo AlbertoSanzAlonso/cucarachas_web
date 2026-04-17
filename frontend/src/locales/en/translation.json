@@ -3,6 +3,15 @@
     "tagline": "Ethical and Conscious"
   },
   "nav": {
+    "blog": "Blog",
+    "articles": "Articles",
+    "faq": "FAQ",
+    "residential": "Residential",
+    "commercial": "Commercial",
+    "sectors": "Services",
+    "process": "Method",
+    "about": "About CECSA",
+    "contact": "24h Emergency",
     "home": "Home"
   }
 }

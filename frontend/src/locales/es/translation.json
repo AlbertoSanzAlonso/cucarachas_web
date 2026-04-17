@@ -9,8 +9,12 @@
     "know_more": "Saber más"
   },
   "nav": {
-    "services": "Especies",
-    "sectors": "Sectores",
+    "blog": "Blog",
+    "articles": "Artículos",
+    "faq": "Preguntas Frecuentes",
+    "residential": "Particulares",
+    "commercial": "Empresas",
+    "sectors": "Servicios",
     "process": "Método",
     "about": "Sobre CECSA",
     "contact": "Urgencias 24h",

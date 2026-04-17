@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Menu, X, Phone, Bug } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Menu, X, Phone, Bug, ChevronDown } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 
 const Navbar = () => {
   const { t, i18n } = useTranslation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSubmenu, setActiveSubmenu] = useState(null);
+  const [mobileExpanded, setMobileExpanded] = useState(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,9 +23,29 @@ const Navbar = () => {
     i18n.changeLanguage(lng);
   };
 
+  const menuItems = [
+    { 
+      key: 'nav.sectors', 
+      path: '/#sectors',
+      submenu: [
+        { key: 'nav.residential', path: '/#species' },
+        { key: 'nav.commercial', path: '/#sectors' }
+      ]
+    },
+    { 
+      key: 'nav.blog', 
+      path: '/blog',
+      submenu: [
+        { key: 'nav.articles', path: '/blog' },
+        { key: 'nav.faq', path: '/blog/faq' }
+      ]
+    },
+    { key: 'nav.about', path: '/sobre-cecsa' }
+  ];
+
   return (
     <nav 
-      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${mobileMenuOpen ? '' : 'overflow-hidden'} ${isScrolled ? 'py-4 shadow-xl' : 'py-4 shadow-lg'}`}
+      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${(mobileMenuOpen || activeSubmenu) ? '' : 'overflow-hidden'} ${isScrolled ? 'py-4 shadow-xl' : 'py-4 shadow-lg'}`}
       style={{
         background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'var(--color-primary-blue)',
         backdropFilter: isScrolled ? 'blur(15px)' : 'none',
@@ -79,14 +101,7 @@ const Navbar = () => {
               filter: isScrolled ? 'none' : 'brightness(0) invert(1)',
               opacity: isScrolled ? 1 : 0.9
             }}
-            onError={(e) => {
-              e.target.style.display = 'none';
-              e.target.nextSibling.style.display = 'block';
-            }}
           />
-          <div className="hidden" style={{ color: isScrolled ? 'var(--color-primary-blue)' : 'white' }}>
-            <span className="font-black text-2xl tracking-tighter">CEC<span className="text-accent-green">SA</span></span>
-          </div>
           <div className="flex flex-col leading-none">
             <span className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 ${isScrolled ? 'text-primary-blue' : 'text-white'}`}>
               CEC<span className="text-accent-green">SA</span>
@@ -99,19 +114,49 @@ const Navbar = () => {
 
         {/* Desktop Navigation */}
         <div className="hidden xl:flex items-center space-x-10">
-          {[
-            { key: 'nav.services', label: 'Especies', path: '/#species' },
-            { key: 'nav.sectors', label: 'Sectores', path: '/#sectors' },
-            { key: 'nav.process', label: 'Método', path: '/#process' },
-            { key: 'nav.about', label: 'Sobre CECSA', path: '/sobre-cecsa' }
-          ].map((item) => (
-            <Link 
+          {menuItems.map((item) => (
+            <div 
               key={item.key} 
-              to={item.path} 
-              className={`text-sm font-semibold uppercase tracking-widest transition-all duration-300 hover:scale-105 ${isScrolled ? 'text-secondary-gray hover:text-primary-blue' : 'text-white/90 hover:text-white'}`}
+              className="relative group py-2"
+              onMouseEnter={() => item.submenu && setActiveSubmenu(item.key)}
+              onMouseLeave={() => setActiveSubmenu(null)}
             >
-              {t(item.key, item.label)}
-            </Link>
+              <Link 
+                to={item.path} 
+                className={`text-sm font-semibold uppercase tracking-widest transition-all duration-300 flex items-center space-x-1 ${isScrolled ? 'text-secondary-gray hover:text-primary-blue' : 'text-white/90 hover:text-white'}`}
+              >
+                <span>{t(item.key)}</span>
+                {item.submenu && <ChevronDown size={14} className={`transition-transform duration-300 ${activeSubmenu === item.key ? 'rotate-180' : ''}`} />}
+              </Link>
+
+              {/* Dropdown Menu */}
+              <AnimatePresence>
+                {item.submenu && activeSubmenu === item.key && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 15 }}
+                    transition={{ duration: 0.2 }}
+                    className="absolute top-full left-[-20px] pt-4 min-w-[220px]"
+                  >
+                    <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 p-2 overflow-hidden">
+                      {item.submenu.map((sub) => (
+                        <Link
+                          key={sub.key}
+                          to={sub.path}
+                          className="flex items-center space-x-3 p-3 rounded-xl hover:bg-bg-light transition-all group"
+                        >
+                          <div className="w-1 h-1 bg-accent-green rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                          <span className="text-sm font-bold text-primary-gray hover:text-primary-blue transition-colors">
+                            {t(sub.key)}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ))}
         </div>
 
@@ -165,21 +210,49 @@ const Navbar = () => {
       <div 
         className={`xl:hidden fixed inset-x-0 top-[108px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
       >
-        <div className="flex flex-col p-6 space-y-6">
-          {[
-            { key: 'nav.services', path: '/#species' },
-            { key: 'nav.sectors', path: '/#sectors' },
-            { key: 'nav.process', path: '/#process' },
-            { key: 'nav.about', path: '/sobre-cecsa' }
-          ].map((item) => (
-            <Link 
-              key={item.key} 
-              to={item.path} 
-              onClick={() => setMobileMenuOpen(false)}
-              className="text-xl font-bold text-primary-blue border-b pb-2 border-gray-00 uppercase tracking-tighter"
-            >
-              {t(item.key)}
-            </Link>
+        <div className="flex flex-col p-6 space-y-4">
+          {menuItems.map((item) => (
+            <div key={item.key} className="border-b border-gray-50 last:border-0">
+              <div className="flex items-center justify-between py-4">
+                <Link 
+                  to={item.path} 
+                  onClick={() => !item.submenu && setMobileMenuOpen(false)}
+                  className="text-xl font-bold text-primary-gray uppercase tracking-tighter"
+                >
+                  {t(item.key)}
+                </Link>
+                {item.submenu && (
+                  <button 
+                    onClick={() => setMobileExpanded(mobileExpanded === item.key ? null : item.key)}
+                    className="p-2 text-primary-blue"
+                  >
+                    <ChevronDown className={`transition-transform duration-300 ${mobileExpanded === item.key ? 'rotate-180' : ''}`} />
+                  </button>
+                )}
+              </div>
+              
+              <AnimatePresence>
+                {item.submenu && mobileExpanded === item.key && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    className="overflow-hidden pl-4 pb-4 space-y-3"
+                  >
+                    {item.submenu.map((sub) => (
+                      <Link 
+                        key={sub.key}
+                        to={sub.path}
+                        onClick={() => setMobileMenuOpen(false)}
+                        className="block text-lg font-medium text-secondary-gray/80 italic border-l-2 border-accent-green/30 pl-4 py-1"
+                      >
+                        {t(sub.key)}
+                      </Link>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           ))}
           <div className="pt-4 flex items-center space-x-6">
             <button 
