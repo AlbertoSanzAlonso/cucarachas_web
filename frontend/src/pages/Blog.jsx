@@ -124,21 +124,28 @@ const Blog = () => {
       </Suspense>
 
       <main>
-        {/* Blog Hero - Enhanced with Background */}
-        <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
-          <div 
-            className="absolute inset-0 bg-cover bg-fixed bg-center transition-transform duration-1000"
-            style={{ 
-              backgroundImage: 'url(/assets/urban-pests.webp)',
-            }}
-          ></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-primary-blue/70 via-primary-blue/40 to-white/10"></div>
+        {/* Blog Hero - Industry/Sector Style */}
+        <section className="relative pt-32 pb-48 md:pt-40 md:pb-64 bg-primary-blue text-white overflow-hidden z-20">
+          {/* Background Elements */}
+          <div className="absolute inset-0 z-0">
+            <img 
+              src="/assets/blog-hero-technical.png" 
+              alt="Blog Técnico CECSA - Control de Plagues" 
+              className="w-full h-full object-cover opacity-40 mix-blend-overlay"
+            />
+            {/* Clinical Gradient and Patterns */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-primary-blue/90 to-primary-blue-hv/80"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20px_20px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:40px_40px]"></div>
+            
+            {/* Skewed Bottom Divider - Sector Style */}
+            <div className="absolute inset-x-0 bottom-0 h-48 bg-bg-light origin-bottom-right -skew-y-3 transform translate-y-24 shadow-[0_-30px_60px_rgba(0,0,0,0.15)]"></div>
+          </div>
           
-          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8 pt-20">
+          <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-4"
+              className="space-y-6"
             >
               <span className="inline-block py-2 px-8 glass-dark rounded-full text-white font-black text-[10px] tracking-[0.4em] uppercase border border-white/5 shadow-2xl">
                 Actualidad y Conocimiento
@@ -146,15 +153,15 @@ const Blog = () => {
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
                 Blog <span className="text-secondary-gray">Consciente</span>
               </h1>
-              <p className="max-w-2xl mx-auto text-xl text-white font-light leading-relaxed drop-shadow-lg">
+              <p className="max-w-2xl mx-auto text-xl text-white/70 font-light leading-relaxed drop-shadow-lg">
                 Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.
               </p>
             </motion.div>
           </div>
         </section>
 
-        {/* Filters and Search - Overlapping Hero */}
-        <section className="max-w-7xl mx-auto px-6 -mt-20 relative z-30 mb-8">
+        {/* Filters and Search - Positioned after the Hero Padding */}
+        <section className="max-w-7xl mx-auto px-6 -mt-32 md:-mt-48 relative z-30 mb-8">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 bg-white p-6 rounded-[2.5rem] shadow-2xl border border-gray-100/50 backdrop-blur-xl">
             {/* Categories */}
             <div className="flex items-center space-x-3 overflow-x-auto pb-4 lg:pb-0 no-scrollbar w-full lg:w-auto px-2">
