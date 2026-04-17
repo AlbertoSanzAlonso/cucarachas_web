@@ -88,7 +88,7 @@ const OtherServices = () => {
   ];
 
   return (
-    <section className="pt-24 pb-32 md:pb-48 bg-white" id="others">
+    <section className="pt-24 pb-32 md:pb-48 bg-bg-light" id="others">
       <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
         
         {/* Image Side */}
@@ -122,10 +122,10 @@ const OtherServices = () => {
                 <div 
                   key={service.key} 
                   onClick={() => handleServiceClick(service)}
-                  className={`flex items-center justify-between p-6 rounded-2xl bg-bg-light border border-gray-100 hover:border-accent-green/30 transition-all group cursor-pointer ${isOpening ? 'cursor-wait opacity-80' : ''}`}
+                  className={`flex items-center justify-between p-6 rounded-2xl bg-white border border-gray-100 hover:border-accent-green/30 transition-all group cursor-pointer ${isOpening ? 'cursor-wait opacity-80' : ''}`}
                 >
                    <div className="flex items-center space-x-4">
-                      <div className="w-12 h-12 rounded-xl bg-white shadow-sm flex items-center justify-center text-primary-blue group-hover:text-accent-green transition-colors">
+                      <div className="w-12 h-12 rounded-xl bg-bg-light shadow-sm flex items-center justify-center text-primary-blue group-hover:text-accent-green transition-colors">
                          <CheckCircle size={24} strokeWidth={1.5} />
                       </div>
                       <span className="font-bold text-primary-gray tracking-tight md:text-xl">
