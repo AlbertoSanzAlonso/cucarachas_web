@@ -151,13 +151,16 @@ const Blog = () => {
                 Actualidad y Conocimiento
               </span>
               <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none drop-shadow-2xl">
-                Blog <span className="text-secondary-gray">Consciente</span>
+                Blog <span className="text-accent-green">Consciente</span>
               </h1>
               <p className="max-w-2xl mx-auto text-xl text-white/70 font-light leading-relaxed drop-shadow-lg">
                 Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.
               </p>
             </motion.div>
           </div>
+          
+          {/* Skewed Bottom Divider - Sector Style */}
+          <div className="absolute inset-x-0 bottom-0 h-48 bg-white origin-bottom-right -skew-y-3 transform translate-y-24 shadow-[0_-30px_60px_rgba(0,0,0,0.15)] z-20"></div>
         </section>
 
         {/* Filters and Search - Positioned after the Hero Padding */}
@@ -191,7 +194,7 @@ const Blog = () => {
         </section>
 
         {/* Articles Grid - White Background covering gaps */}
-        <section className="bg-white pt-24 pb-80 md:pb-[35rem] relative z-20">
+        <section className="bg-white pt-48 pb-80 md:pb-[35rem] relative z-10">
           <div className="max-w-7xl mx-auto px-6 relative z-10">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               <AnimatePresence mode="popLayout" initial={false}>
