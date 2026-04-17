@@ -59,7 +59,7 @@ const LegalNotice = () => {
                         </div>
                         <div className="space-y-1">
                            <span className="text-[10px] font-bold text-primary-gray/40 uppercase tracking-widest block">Email de contacte</span>
-                           <span className="font-bold text-primary-blue">{t('legal.email')}</span>
+                           <span className="font-bold text-primary-blue break-all">{t('legal.email')}</span>
                         </div>
                      </div>
                   </div>

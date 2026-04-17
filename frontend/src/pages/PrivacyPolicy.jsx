@@ -55,7 +55,7 @@ const PrivacyPolicy = () => {
                      <p className="font-bold">{t('legal.company_name')}</p>
                      <p>NIF: {t('legal.cif')}</p>
                      <p>{t('legal.address')}</p>
-                     <p className="text-primary-blue font-bold">{t('legal.email')}</p>
+                     <p className="text-primary-blue font-bold break-all">{t('legal.email')}</p>
                   </div>
                </div>
 
