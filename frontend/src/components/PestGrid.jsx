@@ -220,14 +220,14 @@ const PestGrid = () => {
                   </div>
 
                   {/* Main Icon */}
-                  <div className={`mt-2 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-7 h-7 md:w-14 md:h-14 [@media(max-height:600px)_and_(orientation:landscape)]:w-6 [@media(max-height:600px)_and_(orientation:landscape)]:h-6 [@media(max-height:600px)_and_(orientation:landscape)]:mt-4`}>
+                  <div className={`mt-2 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-7 h-7 md:w-14 md:h-14 [@media(max-height:600px)_and_(orientation:landscape)]:w-7 [@media(max-height:600px)_and_(orientation:landscape)]:h-7 [@media(max-height:600px)_and_(orientation:landscape)]:mt-6`}>
                     {React.cloneElement(pest.icon, {
                       size: '100%',
                       strokeWidth: 2
                     })}
                   </div>
 
-                  <div className="text-center space-y-1 md:space-y-6 relative z-10 w-full px-1 [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0">
+                  <div className="text-center space-y-1 md:space-y-6 relative z-10 w-full px-1 [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:mb-1">
                     <h3 className={`font-extrabold text-xs md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'} [@media(max-height:600px)_and_(orientation:landscape)]:text-[10px]`} style={{ hyphens: 'auto' }}>
                       {pest.name}
                       {pest.scientific && (
@@ -264,7 +264,7 @@ const PestGrid = () => {
       {/* Species Detail Modal */}
       <AnimatePresence>
         {selectedPest && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 overflow-hidden [@media(max-height:600px)_and_(orientation:landscape)]:p-0">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -278,7 +278,7 @@ const PestGrid = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
               transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
-              className={`relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:flex-row' : ''}`}
+              className={`relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:flex-row' : ''} [@media(max-height:600px)_and_(orientation:landscape)]:rounded-none [@media(max-height:600px)_and_(orientation:landscape)]:max-w-none [@media(max-height:600px)_and_(orientation:landscape)]:h-full [@media(max-height:600px)_and_(orientation:landscape)]:max-h-none`}
               style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
               {/* Close Button - Fixed relative to modal top */}
