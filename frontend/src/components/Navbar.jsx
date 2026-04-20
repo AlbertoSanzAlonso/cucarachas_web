@@ -215,8 +215,15 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`xl:hidden fixed inset-x-0 top-[108px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'}`}
+        className={`xl:hidden fixed inset-x-0 top-[80px] md:top-[108px] mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] ${mobileMenuOpen ? 'max-h-screen shadow-2xl pb-10 border border-gray-100' : 'max-h-0'} [@media(max-height:600px)_and_(orientation:landscape)]:top-0 [@media(max-height:600px)_and_(orientation:landscape)]:w-full [@media(max-height:600px)_and_(orientation:landscape)]:h-full [@media(max-height:600px)_and_(orientation:landscape)]:max-h-none [@media(max-height:600px)_and_(orientation:landscape)]:rounded-none [@media(max-height:600px)_and_(orientation:landscape)]:z-[200] [@media(max-height:600px)_and_(orientation:landscape)]:overflow-y-auto`}
       >
+        {/* Mobile Landscape Close Button */}
+        <button 
+          className="hidden [@media(max-height:600px)_and_(orientation:landscape)]:block absolute top-4 right-6 p-2 text-primary-gray"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <X size={32} />
+        </button>
         <div className="flex flex-col p-6 space-y-4">
           {menuItems.map((item) => (
             <div key={item.key} className="border-b border-gray-50 last:border-0">

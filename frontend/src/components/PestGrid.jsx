@@ -194,7 +194,7 @@ const PestGrid = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.1 }}
                   viewport={{ once: true }}
-                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[140px] md:aspect-square flex flex-col items-center justify-between p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]} ${isOpening ? 'cursor-wait opacity-80' : ''} [@media(max-height:600px)_and_(orientation:landscape)]:min-h-[110px] [@media(max-height:600px)_and_(orientation:landscape)]:p-3`}
+                  className={`group relative overflow-hidden rounded-[2rem] md:rounded-[3rem] h-auto min-h-[140px] md:aspect-square flex flex-col items-center justify-between [@media(max-height:600px)_and_(orientation:landscape)]:justify-center p-4 md:p-10 transition-all duration-500 hover:shadow-[0_25px_60px_-15px_rgba(0,128,187,0.3)] hover:translate-y-[-8px] cursor-pointer ${pest.darkText ? 'border border-primary-gray/10 bg-white' : ''} ${orderClasses[i]} ${isOpening ? 'cursor-wait opacity-80' : ''} [@media(max-height:600px)_and_(orientation:landscape)]:min-h-[110px] [@media(max-height:600px)_and_(orientation:landscape)]:p-3`}
                   style={{ background: pest.color }}
                 >
                   {/* Category Label */}
@@ -220,14 +220,14 @@ const PestGrid = () => {
                   </div>
 
                   {/* Main Icon */}
-                  <div className={`mt-2 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-7 h-7 md:w-14 md:h-14 [@media(max-height:600px)_and_(orientation:landscape)]:w-7 [@media(max-height:600px)_and_(orientation:landscape)]:h-7 [@media(max-height:600px)_and_(orientation:landscape)]:mt-6`}>
+                  <div className={`mt-2 md:mt-8 transform transition-transform duration-500 group-hover:scale-110 drop-shadow-lg ${pest.darkText ? 'text-primary-blue' : 'text-white'} w-7 h-7 md:w-14 md:h-14 [@media(max-height:600px)_and_(orientation:landscape)]:w-8 [@media(max-height:600px)_and_(orientation:landscape)]:h-8 [@media(max-height:600px)_and_(orientation:landscape)]:mt-0`}>
                     {React.cloneElement(pest.icon, {
                       size: '100%',
                       strokeWidth: 2
                     })}
                   </div>
 
-                  <div className="text-center space-y-1 md:space-y-6 relative z-10 w-full px-1 [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:mb-1">
+                  <div className="text-center space-y-1 md:space-y-6 relative z-10 w-full px-1 [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:mt-2">
                     <h3 className={`font-extrabold text-xs md:text-xl tracking-tight leading-tight break-words hyphens-auto ${pest.darkText ? 'text-primary-blue' : 'text-white'} [@media(max-height:600px)_and_(orientation:landscape)]:text-[10px]`} style={{ hyphens: 'auto' }}>
                       {pest.name}
                       {pest.scientific && (
