@@ -17,6 +17,7 @@ const SEO = ({ title, description, image, url, type = 'website', schemaData }) =
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={metaDesc} />
+      <meta name="author" content="Alberto Sanz (albertosanz.dev)" />
       <meta name="robots" content="index, follow" />
       <link rel="canonical" href={canonicalUrl} />
       <html lang={i18n.language} />

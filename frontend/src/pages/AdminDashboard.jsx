@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import { 
   Users, 
   Bug, 
@@ -106,6 +107,11 @@ const AdminDashboard = () => {
 
   return (
     <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
+      <Helmet>
+        <title>Admin Dashboard | CECSA</title>
+        <meta name="author" content="Alberto Sanz (albertosanz.dev)" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* Mobile Sidebar Overlay */}
       <AnimatePresence>
         {sidebarOpen && (

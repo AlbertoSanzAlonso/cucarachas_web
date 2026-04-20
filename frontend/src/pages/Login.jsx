@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import { insforge } from '../lib/insforge';
 import { setCredentials } from '../store/slices/authSlice';
 
@@ -64,6 +65,11 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-6 relative overflow-hidden">
+      <Helmet>
+        <title>Login | CECSA Admin</title>
+        <meta name="author" content="Alberto Sanz (albertosanz.dev)" />
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
       {/* Background Decorative Elements */}
       <div className="absolute top-0 left-0 w-full h-full opacity-[0.03] pointer-events-none">
         <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
