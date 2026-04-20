@@ -46,7 +46,7 @@ const Navbar = () => {
 
   return (
     <nav 
-      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${(mobileMenuOpen || activeSubmenu) ? '' : 'overflow-hidden'} ${isScrolled ? 'py-4 shadow-xl' : 'py-4 shadow-lg'}`}
+      className={`fixed top-4 left-0 right-0 z-[100] mx-auto w-[92%] md:w-[94%] max-w-7xl transition-all duration-500 rounded-full ${(mobileMenuOpen || activeSubmenu) ? '' : 'overflow-hidden'} ${isScrolled ? 'py-4 shadow-xl' : 'py-4 shadow-lg'} [@media(max-height:600px)_and_(orientation:landscape)]:!absolute [@media(max-height:600px)_and_(orientation:landscape)]:!top-2 [@media(max-height:600px)_and_(orientation:landscape)]:!py-2`}
       style={{
         background: isScrolled ? 'rgba(255, 255, 255, 0.98)' : 'var(--color-primary-blue)',
         backdropFilter: isScrolled ? 'blur(15px)' : 'none',
@@ -97,17 +97,17 @@ const Navbar = () => {
           <img 
             src="/assets/isotipo.png" 
             alt="CECSA Logo" 
-            className="transition-all duration-500 h-[45px] md:h-[60px]"
+            className="transition-all duration-500 h-[45px] md:h-[60px] [@media(max-height:600px)_and_(orientation:landscape)]:!h-[32px]"
             style={{ 
               filter: isScrolled ? 'invert(27%) sepia(97%) saturate(2770%) hue-rotate(180deg) brightness(96%) contrast(101%)' : 'brightness(0) invert(1)',
               opacity: isScrolled ? 1 : 0.9
             }}
           />
           <div className="flex flex-col leading-none">
-            <span className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 ${isScrolled ? 'text-primary-blue' : 'text-white'}`}>
+            <span className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 ${isScrolled ? 'text-primary-blue' : 'text-white'} [@media(max-height:600px)_and_(orientation:landscape)]:!text-lg`}>
               CEC<span className="text-accent-green">SA</span>
             </span>
-            <span className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 ${isScrolled ? 'text-secondary-gray/70' : 'text-white/70'}`}>
+            <span className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 ${isScrolled ? 'text-secondary-gray/70' : 'text-white/70'} [@media(max-height:600px)_and_(orientation:landscape)]:hidden`}>
               {t('common.pest_control')}
             </span>
           </div>
