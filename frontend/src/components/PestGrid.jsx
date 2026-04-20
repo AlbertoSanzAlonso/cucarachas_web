@@ -168,7 +168,7 @@ const PestGrid = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 [@media(max-height:600px)_and_(orientation:landscape)]:grid-cols-4">
           {species.map((pest, i) => {
             const orderClasses = [
               'order-1', 'order-2', 'order-3', 'order-4',
@@ -178,7 +178,7 @@ const PestGrid = () => {
             return (
               <React.Fragment key={pest.id}>
                 {i === 4 && (
-                  <div className="col-span-2 lg:col-span-4 order-5 flex items-center justify-center py-4 px-12 md:px-0">
+                  <div className="col-span-2 lg:col-span-4 [@media(max-height:600px)_and_(orientation:landscape)]:col-span-4 order-5 flex items-center justify-center py-4 px-12 md:px-0">
                     <div className="h-px bg-gradient-to-r from-transparent via-primary-blue/10 to-transparent flex-1"></div>
                     <div className="mx-6 flex items-center space-x-2 opacity-40">
                       <div className="w-1.5 h-1.5 rounded-full bg-accent-green"></div>

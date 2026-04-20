@@ -258,7 +258,6 @@ const Process = () => {
                         </button>
                       </div>
                     </div>
-                    </div>
                   </div>
                 </div>
               </motion.div>
