@@ -13,7 +13,7 @@ const Testimonials = () => {
   ];
 
   return (
-    <section className="py-32 md:py-48 bg-bg-light" id="testimonials">
+    <section className="pt-24 md:pt-32 pb-12 md:pb-16 bg-bg-light" id="testimonials">
       <div className="max-w-7xl mx-auto px-6 space-y-20">
         
         <div className="flex flex-col md:flex-row items-end justify-between gap-8 pb-10 border-b border-gray-200">

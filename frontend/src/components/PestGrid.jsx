@@ -155,7 +155,7 @@ const PestGrid = () => {
   ];
 
   return (
-    <section className="py-24 bg-bg-light relative overflow-hidden" id="species">
+    <section className="pt-12 md:pt-16 pb-24 bg-bg-light relative overflow-hidden" id="species">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
 
         <div className="max-w-3xl mx-auto space-y-4">
