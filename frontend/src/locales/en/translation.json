@@ -86,5 +86,10 @@
         "answer": "Fumigation tends to be invasive and non-selective. Gel is infinitely superior for cockroaches, as it leverages the social behavior of the insect (coprophagy and necrophagy) to eliminate the nest from within without airborne chemicals."
       }
     ]
+  },
+  "species_detail": {
+    "reveal_image": "Reveal image",
+    "zoom_in": "Zoom In",
+    "zoom_out": "Zoom Out"
   }
 }

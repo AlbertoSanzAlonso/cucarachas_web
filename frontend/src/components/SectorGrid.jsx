@@ -190,61 +190,63 @@ const SectorGrid = () => {
               </div>
 
               {/* Content Area */}
-              <div className="md:w-2/3 p-4 md:p-12 flex flex-col justify-center space-y-3 md:space-y-8 overflow-y-auto bg-white">
-                <div className="space-y-2 md:space-y-4">
-                  <h3 className="text-2xl md:text-5xl font-black text-primary-blue tracking-tighter leading-[0.9]">
-                    {selectedSector.name}
-                  </h3>
-                  <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
-                  <p className="text-xs md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
-                    "{selectedSector.desc}"
-                  </p>
-                </div>
+              <div className="md:w-2/3 flex flex-col overflow-y-auto bg-white">
+                <div className="my-auto p-4 md:p-12 flex flex-col space-y-3 md:space-y-8">
+                  <div className="space-y-2 md:space-y-4">
+                    <h3 className="text-2xl md:text-5xl font-black text-primary-blue tracking-tighter leading-none pt-1">
+                      {selectedSector.name}
+                    </h3>
+                    <div className="w-16 h-1.5 bg-accent-green rounded-full"></div>
+                    <p className="text-xs md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
+                      "{selectedSector.desc}"
+                    </p>
+                  </div>
 
-                <div className="space-y-4">
-                  <h4 className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">{t('service_detail_page.technical_protocol')}</h4>
-                  <ul className="grid grid-cols-1 gap-2 md:gap-4">
-                    {selectedSector.points?.map((point, idx) => (
-                      <motion.li 
-                        initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={window.innerWidth < 768 ? { duration: 0 } : { delay: idx * 0.02 }}
-                        key={idx} 
-                        className="flex items-start space-x-3"
-                      >
-                         <div className="mt-1 flex-shrink-0 text-accent-green">
-                           <ShieldCheck size={16} />
-                         </div>
-                         <span className="text-[11px] md:text-lg text-secondary-gray font-bold tracking-tight">{point}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="space-y-4">
+                    <h4 className="text-[9px] uppercase font-bold tracking-[0.2em] text-primary-blue/30">{t('service_detail_page.technical_protocol')}</h4>
+                    <ul className="grid grid-cols-1 gap-2 md:gap-4">
+                      {selectedSector.points?.map((point, idx) => (
+                        <motion.li 
+                          initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={window.innerWidth < 768 ? { duration: 0 } : { delay: idx * 0.02 }}
+                          key={idx} 
+                          className="flex items-start space-x-3"
+                        >
+                           <div className="mt-1 flex-shrink-0 text-accent-green">
+                             <ShieldCheck size={16} />
+                           </div>
+                           <span className="text-[11px] md:text-lg text-secondary-gray font-bold tracking-tight">{point}</span>
+                        </motion.li>
+                      ))}
+                    </ul>
+                  </div>
 
-                <div className="pt-4 md:pt-8 flex flex-col sm:flex-row gap-3">
-                  <button 
-                    className="flex-[1.5] py-3 md:py-4 bg-primary-blue text-white font-black text-sm md:text-xl rounded-xl md:rounded-2xl shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group px-4 text-center leading-tight"
-                  >
-                    <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-5 h-5 md:w-6 md:h-6" />
-                    <span>{t('common.cta_free')}</span>
-                  </button>
-                  <a 
-                    href="tel:+34933309169"
-                    className="flex-1 py-3 md:py-4 bg-bg-light border border-gray-200 text-primary-blue font-black text-sm md:text-xl rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors px-4 text-center leading-tight"
-                  >
-                    {t('common.cta_call')}
-                  </a>
-                </div>
+                  <div className="pt-4 md:pt-8 flex flex-col sm:flex-row gap-3">
+                    <button 
+                      className="flex-[1.5] py-3 md:py-4 bg-primary-blue text-white font-black text-sm md:text-xl rounded-xl md:rounded-2xl shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group px-4 text-center leading-tight"
+                    >
+                      <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-5 h-5 md:w-6 md:h-6" />
+                      <span>{t('common.cta_free')}</span>
+                    </button>
+                    <a 
+                      href="tel:+34933309169"
+                      className="flex-1 py-3 md:py-4 bg-bg-light border border-gray-200 text-primary-blue font-black text-sm md:text-xl rounded-xl md:rounded-2xl flex items-center justify-center hover:bg-gray-50 transition-colors px-4 text-center leading-tight"
+                    >
+                      {t('common.cta_call')}
+                    </a>
+                  </div>
 
-                {/* Saber más link for SEO */}
-                <div className="flex justify-center pt-2">
-                   <Link 
-                     to={`/serveis/${selectedSector.id}`}
-                     className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary-blue/40 hover:text-accent-green transition-colors flex items-center group/link p-2"
-                   >
-                     {t('common.know_more')}
-                     <ChevronRight size={14} className="ml-1 transform group-hover/link:translate-x-1 transition-transform" />
-                   </Link>
+                  {/* Saber más link for SEO */}
+                  <div className="flex justify-center pt-2">
+                     <Link 
+                       to={`/serveis/${selectedSector.id}`}
+                       className="text-[10px] md:text-xs font-black uppercase tracking-widest text-primary-blue/40 hover:text-accent-green transition-colors flex items-center group/link p-2"
+                     >
+                       {t('common.know_more')}
+                       <ChevronRight size={14} className="ml-1 transform group-hover/link:translate-x-1 transition-transform" />
+                     </Link>
+                  </div>
                 </div>
               </div>
             </motion.div>

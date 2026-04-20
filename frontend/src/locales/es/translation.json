@@ -271,7 +271,10 @@
     "modal_certified": "Certificado Entomológico",
     "modal_protocol": "Protocolo de Actuación",
     "modal_tech_available": "Técnicos de guardia",
-    "modal_status_available": "Disponibles ahora"
+    "modal_status_available": "Disponibles ahora",
+    "reveal_image": "Ver imagen",
+    "zoom_in": "Ampliar",
+    "zoom_out": "Reducir"
   },
   "service_detail_page": {
     "back": "Volver",

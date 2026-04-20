@@ -291,7 +291,10 @@
     "modal_certified": "Certificat Entomològic",
     "modal_protocol": "Protocol d'Actuació",
     "modal_tech_available": "Tècnics de guàrdia",
-    "modal_status_available": "Disponibles ara"
+    "modal_status_available": "Disponibles ara",
+    "reveal_image": "Veure imatge",
+    "zoom_in": "Ampliar",
+    "zoom_out": "Reduir"
   },
   "service_detail_page": {
     "back": "Tornar",
