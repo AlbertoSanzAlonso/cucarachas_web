@@ -245,7 +245,7 @@ const Navbar = () => {
               <div className="flex items-center justify-between py-4">
                 <Link 
                   to={item.path} 
-                  onClick={() => !item.submenu && setMobileMenuOpen(false)}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="text-xl font-bold text-primary-gray uppercase tracking-tighter"
                 >
                   {t(item.key)}
