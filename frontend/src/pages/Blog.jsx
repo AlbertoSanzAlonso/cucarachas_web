@@ -117,6 +117,7 @@ const Blog = () => {
       <SEO 
         title="Blog de Control de Plagas | CECSA Barcelona" 
         description="Artículos técnicos, consejos de prevención y curiosidades sobre el control de cucarachas y salud ambiental en Barcelona."
+        url="/blog"
       />
 
       <Suspense fallback={<div className="h-20 bg-primary-blue" />}>

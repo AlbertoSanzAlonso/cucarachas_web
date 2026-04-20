@@ -124,9 +124,13 @@ const SectorGrid = () => {
                      <h3 className="text-primary-blue font-black text-xl tracking-tighter group-hover:text-accent-green transition-colors">
                        {sector.name}
                      </h3>
-                     <div className="inline-flex items-center text-[10px] uppercase font-bold tracking-widest text-secondary-gray/40">
+                     <Link 
+                        to={`/serveis/${sector.id}`}
+                        onClick={(e) => e.stopPropagation()} 
+                        className="inline-flex items-center text-[10px] uppercase font-bold tracking-widest text-secondary-gray/40 hover:text-accent-green transition-colors relative z-20"
+                     >
                         {t('sectors_grid.cta')} <ChevronRight size={14} className="ml-1" />
-                     </div>
+                     </Link>
                   </div>
                 </div>
 

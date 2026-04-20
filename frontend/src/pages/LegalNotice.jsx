@@ -4,17 +4,22 @@ import { motion } from 'framer-motion';
 import { Shield, FileText, Scale, MapPin, Mail, Fingerprint } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const LegalNotice = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `${t('legal.notice_title')} - CECSA Control de Plagues`;
-  }, [t]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg-light">
+      <SEO 
+        title={t('legal.notice_title')} 
+        description={t('legal.notice_desc')} 
+        url="/avis-legal"
+      />
       <Navbar />
 
       <main className="pt-40 md:pt-32 pb-64 md:pb-80">

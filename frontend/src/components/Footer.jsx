@@ -171,7 +171,7 @@ const Footer = ({ className = "" }) => {
              <p className="flex items-center space-x-4">
                 <a href="#" className="hover:text-white transition-colors">GDPR Compliant</a>
                 <span>·</span>
-                <a href="#" className="hover:text-white transition-colors">Sitemap</a>
+                <a href="/sitemap.xml" className="hover:text-white transition-colors">Sitemap</a>
              </p>
           </div>
 

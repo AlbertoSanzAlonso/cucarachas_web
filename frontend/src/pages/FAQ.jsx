@@ -58,6 +58,7 @@ const FAQ = () => {
       <SEO 
         title="FAQ - Preguntes Freqüents | CECSA Barcelona" 
         description="Resol els teus dubtes sobre el control de paneroles, seguretat dels tractaments i preus a Barcelona amb el nostre centre d'ajuda."
+        url="/faq"
       />
 
       <Suspense fallback={<div className="h-20 bg-primary-blue" />}>

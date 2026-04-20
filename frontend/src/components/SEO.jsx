@@ -17,10 +17,12 @@ const SEO = ({ title, description, image, url, type = 'website', schemaData }) =
       {/* Basic Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={metaDesc} />
+      <meta name="robots" content="index, follow" />
       <link rel="canonical" href={canonicalUrl} />
       <html lang={i18n.language} />
 
       {/* Open Graph / Facebook */}
+      <meta property="og:locale" content={i18n.language === 'ca' ? 'ca_ES' : i18n.language === 'es' ? 'es_ES' : 'en_US'} />
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={fullTitle} />

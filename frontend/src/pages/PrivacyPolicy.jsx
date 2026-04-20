@@ -4,17 +4,22 @@ import { motion } from 'framer-motion';
 import { ShieldCheck, Lock, Eye, CheckCircle, Database, HelpCircle } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
 
 const PrivacyPolicy = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    document.title = `${t('legal.privacy_title')} - CECSA Control de Plagues`;
-  }, [t]);
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg-light">
+      <SEO 
+        title={t('legal.privacy_title')} 
+        description={t('legal.privacy_desc')} 
+        url="/privacitat"
+      />
       <Navbar />
 
       <main className="pt-40 md:pt-32 pb-64 md:pb-80">
