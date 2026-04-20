@@ -227,7 +227,7 @@ const Navbar = () => {
         >
           <X size={24} />
         </button>
-        <div className="flex flex-col p-6 space-y-4">
+        <div className="flex flex-col p-6 space-y-4 [@media(max-height:600px)_and_(orientation:landscape)]:pt-20">
           {menuItems.map((item) => (
             <div key={item.key} className="border-b border-gray-50 last:border-0">
               <div className="flex items-center justify-between py-4">
