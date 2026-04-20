@@ -125,6 +125,25 @@ const Process = () => {
                 className="absolute inset-0 bg-slate-900/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
               />
 
+              {/* Navigation Arrows (Desktop/Tablet Floating Outside) */}
+              {hasPrev && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex - 1]); }}
+                  className="hidden md:flex absolute left-4 lg:left-8 xl:left-12 top-1/2 -translate-y-1/2 z-[10010] p-3 lg:p-4 bg-white/10 backdrop-blur-sm hover:bg-white/30 text-white rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
+                >
+                  <ChevronLeft size={32} />
+                </button>
+              )}
+
+              {hasNext && (
+                <button
+                  onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex + 1]); }}
+                  className="hidden md:flex absolute right-4 lg:right-8 xl:right-12 top-1/2 -translate-y-1/2 z-[10010] p-3 lg:p-4 bg-white/10 backdrop-blur-sm hover:bg-white/30 text-white rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
+                >
+                  <ChevronRight size={32} />
+                </button>
+              )}
+
               {/* Added a container wrapper for AnimatePresence mode="wait" to work smoothly across step changes */}
               <motion.div
                 key={selectedStep.id}
@@ -203,14 +222,14 @@ const Process = () => {
                       </ul>
                     </div>
 
-                    {/* Modal CTA & Navigation */}
-                    <div className="pt-6 md:pt-10 flex flex-col xl:flex-row gap-4 items-center">
+                    {/* Modal CTA & Mobile Navigation */}
+                    <div className="pt-6 md:pt-10 flex flex-col gap-4 items-center">
                       <button
                         onClick={() => {
                           setSelectedStep(null);
                           setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
                         }}
-                        className="w-full xl:flex-1 py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-sm shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-wider flex items-center justify-center space-x-3 md:space-x-4 group"
+                        className="w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-sm shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-wider flex items-center justify-center space-x-3 md:space-x-4 group"
                         style={{ background: 'var(--color-primary-blue)' }}
                       >
                         <Zap className="w-4 h-4 md:w-6 md:h-6 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
@@ -219,20 +238,21 @@ const Process = () => {
                         </span>
                       </button>
                       
-                      <div className="flex space-x-2 w-full xl:w-auto justify-center">
+                      {/* Mobile Only Navigation */}
+                      <div className="flex md:hidden space-x-2 w-full justify-center">
                         <button
                           onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex - 1]); }}
                           disabled={!hasPrev}
-                          className={`p-3 md:p-4 rounded-xl md:rounded-2xl flex items-center justify-center transition-all w-1/2 xl:w-auto ${hasPrev ? 'bg-primary-blue/10 text-primary-blue hover:bg-primary-blue hover:text-white hover:shadow-lg' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}`}
+                          className={`p-3 rounded-xl flex items-center justify-center transition-all w-1/2 ${hasPrev ? 'bg-primary-blue/10 text-primary-blue hover:bg-primary-blue hover:text-white hover:shadow-lg' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}`}
                         >
-                          <ChevronLeft size={20} className="md:w-6 md:h-6" />
+                          <ChevronLeft size={20} />
                         </button>
                         <button
                           onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex + 1]); }}
                           disabled={!hasNext}
-                          className={`p-3 md:p-4 rounded-xl md:rounded-2xl flex items-center justify-center transition-all w-1/2 xl:w-auto ${hasNext ? 'bg-primary-blue/10 text-primary-blue hover:bg-primary-blue hover:text-white hover:shadow-lg' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}`}
+                          className={`p-3 rounded-xl flex items-center justify-center transition-all w-1/2 ${hasNext ? 'bg-primary-blue/10 text-primary-blue hover:bg-primary-blue hover:text-white hover:shadow-lg' : 'bg-gray-50 text-gray-300 cursor-not-allowed'}`}
                         >
-                          <ChevronRight size={20} className="md:w-6 md:h-6" />
+                          <ChevronRight size={20} />
                         </button>
                       </div>
                     </div>
