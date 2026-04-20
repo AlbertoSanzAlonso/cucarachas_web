@@ -163,7 +163,7 @@ const Process = () => {
                 </button>
 
                 {/* Sidebar / Image area */}
-                <div className="md:w-1/2 relative overflow-hidden flex flex-col h-48 md:h-auto">
+                <div className="md:w-1/2 relative overflow-hidden flex flex-col h-48 md:h-auto [@media(max-height:600px)_and_(orientation:landscape)]:hidden">
                   <div 
                     className="relative flex-1 flex items-center justify-center overflow-hidden h-full w-full bg-black/5"
                   >
@@ -188,9 +188,10 @@ const Process = () => {
                 </div>
 
                 {/* Content area */}
-                <div className="md:w-1/2 flex flex-col overflow-y-auto">
-                  <div className="my-auto p-6 md:p-16 flex flex-col space-y-4 md:space-y-8">
-                    <div className="space-y-2 md:space-y-4">
+                <div className="md:w-1/2 flex flex-col overflow-y-auto [@media(max-height:600px)_and_(orientation:landscape)]:w-full">
+                  <div className="my-auto p-6 md:p-16 flex flex-col space-y-4 md:space-y-8 [@media(max-height:600px)_and_(orientation:landscape)]:flex-row [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:space-x-6 [@media(max-height:600px)_and_(orientation:landscape)]:p-6">
+                    {/* Left Column */}
+                    <div className="space-y-2 md:space-y-4 [@media(max-height:600px)_and_(orientation:landscape)]:w-1/2 [@media(max-height:600px)_and_(orientation:landscape)]:flex [@media(max-height:600px)_and_(orientation:landscape)]:flex-col [@media(max-height:600px)_and_(orientation:landscape)]:justify-center">
                       <h3 className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter leading-tight">
                         {selectedStep.name}
                       </h3>
@@ -200,7 +201,8 @@ const Process = () => {
                       </p>
                     </div>
 
-                    <div className="space-y-3 md:space-y-6 pt-2">
+                    {/* Right Column */}
+                    <div className="flex flex-col [@media(max-height:600px)_and_(orientation:landscape)]:w-1/2 [@media(max-height:600px)_and_(orientation:landscape)]:justify-between">
                       <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
                         Protocolo de actuación
                       </h4>
@@ -223,7 +225,7 @@ const Process = () => {
                     </div>
 
                     {/* Modal CTA & Mobile Navigation */}
-                    <div className="pt-6 md:pt-10 flex flex-col gap-4 items-center">
+                    <div className="pt-6 md:pt-10 flex flex-col gap-4 items-center [@media(max-height:600px)_and_(orientation:landscape)]:pt-4">
                       <button
                         onClick={() => {
                           setSelectedStep(null);
@@ -255,6 +257,7 @@ const Process = () => {
                           <ChevronRight size={20} />
                         </button>
                       </div>
+                    </div>
                     </div>
                   </div>
                 </div>

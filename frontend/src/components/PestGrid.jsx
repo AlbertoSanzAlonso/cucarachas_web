@@ -278,7 +278,7 @@ const PestGrid = () => {
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
               transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu"
+              className={`relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:flex-row' : ''}`}
               style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
             >
               {/* Close Button - Fixed relative to modal top */}
@@ -290,7 +290,7 @@ const PestGrid = () => {
               </button>
 
               {/* Sidebar / Image area */}
-              <div className={`md:w-1/2 relative overflow-hidden flex flex-col ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'h-40 md:h-auto' : 'bg-white pt-6 pb-4'}`}>
+              <div className={`md:w-1/2 relative overflow-hidden flex flex-col ${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'h-40 md:h-auto' : 'bg-white pt-6 pb-4'} ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:w-1/2' : '[@media(max-height:600px)_and_(orientation:landscape)]:hidden'}`}>
                 {/* Background Pattern */}
                 <div className="absolute inset-0 opacity-[0.03] pointer-events-none z-0">
                   <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
@@ -364,9 +364,10 @@ const PestGrid = () => {
               </div>
 
               {/* Content area */}
-              <div className="md:w-1/2 flex flex-col overflow-y-auto">
-                <div className="my-auto p-5 md:p-16 flex flex-col space-y-3 md:space-y-8">
-                  <div className="space-y-1 md:space-y-4">
+              <div className={`md:w-1/2 flex flex-col overflow-y-auto ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:w-1/2' : '[@media(max-height:600px)_and_(orientation:landscape)]:w-full'}`}>
+                <div className={`my-auto p-5 md:p-16 flex flex-col space-y-3 md:space-y-8 ${!selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:flex-row [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:space-x-6 [@media(max-height:600px)_and_(orientation:landscape)]:p-6' : '[@media(max-height:600px)_and_(orientation:landscape)]:p-4 [@media(max-height:600px)_and_(orientation:landscape)]:space-y-2'}`}>
+                  {/* Left Column for non-species landscape */}
+                  <div className={!selectedPest.scientific ? 'space-y-1 md:space-y-4 [@media(max-height:600px)_and_(orientation:landscape)]:w-1/2 [@media(max-height:600px)_and_(orientation:landscape)]:flex [@media(max-height:600px)_and_(orientation:landscape)]:flex-col [@media(max-height:600px)_and_(orientation:landscape)]:justify-center' : 'space-y-1 md:space-y-4'}>
                     <h3 className="text-2xl md:text-5xl font-black text-primary-gray tracking-tighter leading-none pt-1">
                       {selectedPest.name}
                     </h3>
@@ -376,7 +377,9 @@ const PestGrid = () => {
                     </p>
                   </div>
 
-                  <div className="space-y-2 md:space-y-6">
+                  {/* Right Column for non-species landscape */}
+                  <div className={!selectedPest.scientific ? 'flex flex-col [@media(max-height:600px)_and_(orientation:landscape)]:w-1/2 [@media(max-height:600px)_and_(orientation:landscape)]:justify-between' : 'space-y-2 md:space-y-6'}>
+                    <div className={!selectedPest.scientific ? 'space-y-2 md:space-y-6 [@media(max-height:600px)_and_(orientation:landscape)]:pt-0' : 'space-y-2 md:space-y-6'}>
                     <h4 className="text-[7px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
                       {t('species_detail.modal_protocol')}
                     </h4>
@@ -396,38 +399,39 @@ const PestGrid = () => {
                         </motion.li>
                       ))}
                     </ul>
-                  </div>
+                    </div>
 
-                  {/* Modal CTA */}
-                  <div className="pt-2 md:pt-8">
-                    <button
-                      onClick={() => {
-                        setSelectedPest(null);
-                        setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
-                      }}
-                      className="w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-lg shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter flex items-center justify-center space-x-3 md:space-x-4 group"
-                      style={{ background: 'var(--color-primary-blue)' }}
-                    >
-                      <Zap className="w-5 h-5 md:w-8 md:h-8 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
-                      <span className="leading-tight truncate">
-                        {t('common.cta_free')}
-                      </span>
-                    </button>
-                    <div className="hidden md:flex justify-center items-center space-x-4 mt-6">
-                      <div className="flex -space-x-2">
-                        {[1, 2, 3].map(i => (
-                          <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
-                            <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Expert" className="w-full h-full object-cover" />
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest leading-none">
-                          {t('species_detail.modal_tech_available')}
-                        </p>
-                        <p className="text-[10px] text-accent-green font-black uppercase tracking-widest">
-                          {t('species_detail.modal_status_available')}
-                        </p>
+                    {/* Modal CTA */}
+                    <div className={`pt-2 md:pt-8 ${!selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:pt-4' : ''}`}>
+                      <button
+                        onClick={() => {
+                          setSelectedPest(null);
+                          setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
+                        }}
+                        className={`w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-lg shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter flex items-center justify-center space-x-3 md:space-x-4 group ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:py-2 [@media(max-height:600px)_and_(orientation:landscape)]:mt-2' : ''}`}
+                        style={{ background: 'var(--color-primary-blue)' }}
+                      >
+                        <Zap className="w-5 h-5 md:w-8 md:h-8 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
+                        <span className="leading-tight truncate">
+                          {t('common.cta_free')}
+                        </span>
+                      </button>
+                      <div className={`hidden md:flex justify-center items-center space-x-4 mt-6 ${selectedPest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:hidden' : ''}`}>
+                        <div className="flex -space-x-2">
+                          {[1, 2, 3].map(i => (
+                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm">
+                              <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Expert" className="w-full h-full object-cover" />
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex flex-col">
+                          <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest leading-none">
+                            {t('species_detail.modal_tech_available')}
+                          </p>
+                          <p className="text-[10px] text-accent-green font-black uppercase tracking-widest">
+                            {t('species_detail.modal_status_available')}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
