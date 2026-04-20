@@ -50,10 +50,25 @@
     "desc": "Metodología científica aplicada para resultados inmediatos.",
     "step1_title": "Inspección inicial",
     "step1_desc": "Evaluamos el nivel de infestación y localizamos el origen real de la plaga.",
+    "step1_details": [
+      "Diagnóstico completo del grado de infestación.",
+      "Detección de los focos principales y vías de acceso.",
+      "Evaluación de riesgos estructurales y ambientales."
+    ],
     "step2_title": "Tratamiento profesional",
     "step2_desc": "Aplicamos soluciones específicas de alta eficacia y seguras para personas y mascotas.",
+    "step2_details": [
+      "Aplicación de geles inodoros de última generación.",
+      "Actuación localizada sin necesidad de desalojar.",
+      "Productos biológicos seguros para el entorno."
+    ],
     "step3_title": "Seguimiento y Prevención",
-    "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones."
+    "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones.",
+    "step3_details": [
+      "Monitoreo activo para garantizar la erradicación.",
+      "Asesoramiento sobre medidas higiénico-estructurales preventivas.",
+      "Emisión de certificado de garantía ROESB."
+    ]
   },
   "species": {
     "title": "Tipos de cucaracha más comunes y soluciones",

@@ -50,10 +50,25 @@
     "desc": "Metodologia científica aplicada per a resultats immediats.",
     "step1_title": "Inspecció inicial",
     "step1_desc": "Avaluem el nivell d’infestació i localitzem l’origen real de la plaga.",
+    "step1_details": [
+      "Diagnòstic complet del grau d'infestació.",
+      "Detecció dels focus principals i vies d'accés.",
+      "Avaluació de riscos estructurals i ambientals."
+    ],
     "step2_title": "Tractament professional",
     "step2_desc": "Apliquem solucions específiques d’alta eficàcia i segures per a persones i mascotes.",
+    "step2_details": [
+      "Aplicació de gels inodors d'última generació.",
+      "Actuació localitzada sense necessitat de desallotjar.",
+      "Productes biològics segurs per a l'entorn."
+    ],
     "step3_title": "Seguiment i Prevenció",
-    "step3_desc": "Supervisem l’evolució per garantir l’eliminació total i t’ajudem a evitar futures infestacions."
+    "step3_desc": "Supervisem l’evolució per garantir l’eliminació total i t’ajudem a evitar futures infestacions.",
+    "step3_details": [
+      "Monitoratge actiu per garantir l'eradicació.",
+      "Assessorament sobre mesures higienicoestructurals preventives.",
+      "Emissió de certificat de garantia ROESB."
+    ]
   },
   "species": {
     "title": "Tipus de panerola més comuns i solucions",

@@ -31,6 +31,31 @@
       "salud": "Environmental Health"
     }
   },
+  "method": {
+    "title": "Our total efficacy method",
+    "desc": "Scientific methodology applied for immediate results.",
+    "step1_title": "Initial Inspection",
+    "step1_desc": "We assess the level of infestation and locate the true origin of the pest.",
+    "step1_details": [
+      "Complete diagnosis of the degree of infestation.",
+      "Detection of main foci and access routes.",
+      "Evaluation of structural and environmental risks."
+    ],
+    "step2_title": "Professional Treatment",
+    "step2_desc": "We apply specific high-efficacy solutions safe for people and pets.",
+    "step2_details": [
+      "Application of latest generation odorless gels.",
+      "Localized action without the need to vacate.",
+      "Biological products safe for the environment."
+    ],
+    "step3_title": "Monitoring and Prevention",
+    "step3_desc": "We supervise the evolution to guarantee total elimination and help you prevent future infestations.",
+    "step3_details": [
+      "Active monitoring to guarantee eradication.",
+      "Advice on preventive hygienic-structural measures.",
+      "Issuance of ROESB guarantee certificate."
+    ]
+  },
   "faq": {
     "hero_badge": "Technical Help Center",
     "hero_title_main": "Conscious",
