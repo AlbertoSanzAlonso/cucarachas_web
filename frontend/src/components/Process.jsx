@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Search, PenTool, Zap, CheckCircle2, X, ShieldCheck } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -107,115 +108,119 @@ const Process = () => {
         </div>
       </div>
 
-      {/* Step Detail Modal */}
-      <AnimatePresence>
-        {selectedStep && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6 overflow-hidden">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setSelectedStep(null)}
-              className="absolute inset-0 bg-slate-900/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
-            />
-
-            <motion.div
-              initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
-              transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
-              className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[210] transform-gpu"
-              style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
-            >
-              {/* Close Button */}
-              <button
+      {/* Step Detail Modal via Portal */}
+      {createPortal(
+        <AnimatePresence>
+          {selectedStep && (
+            <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6 overflow-hidden">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
                 onClick={() => setSelectedStep(null)}
-                className="absolute top-3 right-3 md:top-6 md:right-6 z-[220] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
-              >
-                <X size={20} className="text-primary-gray md:w-6 md:h-6" />
-              </button>
+                className="absolute inset-0 bg-slate-900/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
+              />
 
-              {/* Sidebar / Image area */}
-              <div className="md:w-1/2 relative overflow-hidden flex flex-col h-48 md:h-auto">
-                <div 
-                  className="relative flex-1 flex items-center justify-center overflow-hidden h-full w-full bg-primary-blue/10"
+              <motion.div
+                initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
+                transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
+                className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[10000] transform-gpu"
+                style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
+              >
+                {/* Close Button */}
+                <button
+                  onClick={() => setSelectedStep(null)}
+                  className="absolute top-3 right-3 md:top-6 md:right-6 z-[10010] p-2 md:p-3 bg-white/90 backdrop-blur-md hover:bg-white rounded-full transition-colors shadow-lg"
                 >
-                  <img
-                    src={selectedStep.image}
-                    alt={selectedStep.name}
-                    className="absolute inset-0 w-full h-full object-cover z-0"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/80 to-transparent z-10"></div>
-                  
-                  {/* Label Overlay */}
-                  <div className="absolute bottom-6 left-0 w-full flex justify-center z-20">
-                    <div className="bg-white/20 backdrop-blur-md text-white px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
-                      <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] leading-none flex items-center space-x-2">
-                        {React.cloneElement(selectedStep.icon, { size: 12 })}
-                        <span>{selectedStep.name}</span>
-                      </p>
+                  <X size={20} className="text-primary-gray md:w-6 md:h-6" />
+                </button>
+
+                {/* Sidebar / Image area */}
+                <div className="md:w-1/2 relative overflow-hidden flex flex-col h-48 md:h-auto">
+                  <div 
+                    className="relative flex-1 flex items-center justify-center overflow-hidden h-full w-full bg-black/5"
+                  >
+                    <img
+                      src={selectedStep.image}
+                      alt={selectedStep.name}
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                    />
+                    {/* Subtle black gradient instead of blue to make the label readable without altering the image colors much */}
+                    <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/60 to-transparent z-10"></div>
+                    
+                    {/* Label Overlay */}
+                    <div className="absolute bottom-6 left-0 w-full flex justify-center z-20">
+                      <div className="bg-white/20 backdrop-blur-md text-white px-4 py-1.5 rounded-full border border-white/20 shadow-lg">
+                        <p className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.3em] leading-none flex items-center space-x-2">
+                          {React.cloneElement(selectedStep.icon, { size: 12 })}
+                          <span>{selectedStep.name}</span>
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Content area */}
-              <div className="md:w-1/2 flex flex-col overflow-y-auto">
-                <div className="my-auto p-6 md:p-16 flex flex-col space-y-4 md:space-y-8">
-                  <div className="space-y-2 md:space-y-4">
-                    <h3 className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter leading-tight">
-                      {selectedStep.name}
-                    </h3>
-                    <div className="w-12 md:w-16 h-1 bg-accent-green rounded-full"></div>
-                    <p className="text-sm md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
-                      "{selectedStep.desc}"
-                    </p>
-                  </div>
+                {/* Content area */}
+                <div className="md:w-1/2 flex flex-col overflow-y-auto">
+                  <div className="my-auto p-6 md:p-16 flex flex-col space-y-4 md:space-y-8">
+                    <div className="space-y-2 md:space-y-4">
+                      <h3 className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter leading-tight">
+                        {selectedStep.name}
+                      </h3>
+                      <div className="w-12 md:w-16 h-1 bg-accent-green rounded-full"></div>
+                      <p className="text-sm md:text-lg text-secondary-gray/80 leading-relaxed font-light italic">
+                        "{selectedStep.desc}"
+                      </p>
+                    </div>
 
-                  <div className="space-y-3 md:space-y-6 pt-2">
-                    <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
-                      Protocolo de actuación
-                    </h4>
-                    <ul className="space-y-2 md:space-y-4">
-                      {Array.isArray(selectedStep.details) && selectedStep.details.map((detail, idx) => (
-                        <motion.li
-                          initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -20 }}
-                          animate={{ opacity: 1, x: 0 }}
-                          transition={window.innerWidth < 768 ? { duration: 0 } : { delay: 0.1 + (idx * 0.05) }}
-                          key={idx}
-                          className="flex items-start space-x-3"
-                        >
-                          <div className="mt-0.5 flex-shrink-0 text-accent-green">
-                            <ShieldCheck size={16} className="md:w-5 md:h-5" />
-                          </div>
-                          <span className="text-xs md:text-base text-secondary-gray font-medium leading-snug">{detail}</span>
-                        </motion.li>
-                      ))}
-                    </ul>
-                  </div>
+                    <div className="space-y-3 md:space-y-6 pt-2">
+                      <h4 className="text-[8px] md:text-[10px] uppercase font-bold tracking-[0.2em] text-primary-gray/40">
+                        Protocolo de actuación
+                      </h4>
+                      <ul className="space-y-2 md:space-y-4">
+                        {Array.isArray(selectedStep.details) && selectedStep.details.map((detail, idx) => (
+                          <motion.li
+                            initial={window.innerWidth < 768 ? { opacity: 1 } : { opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={window.innerWidth < 768 ? { duration: 0 } : { delay: 0.1 + (idx * 0.05) }}
+                            key={idx}
+                            className="flex items-start space-x-3"
+                          >
+                            <div className="mt-0.5 flex-shrink-0 text-accent-green">
+                              <ShieldCheck size={16} className="md:w-5 md:h-5" />
+                            </div>
+                            <span className="text-xs md:text-base text-secondary-gray font-medium leading-snug">{detail}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
 
-                  {/* Modal CTA */}
-                  <div className="pt-6 md:pt-10">
-                    <button
-                      onClick={() => {
-                        setSelectedStep(null);
-                        setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
-                      }}
-                      className="w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-sm shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-wider flex items-center justify-center space-x-3 md:space-x-4 group"
-                      style={{ background: 'var(--color-primary-blue)' }}
-                    >
-                      <Zap className="w-4 h-4 md:w-6 md:h-6 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
-                      <span className="leading-tight truncate">
-                        {t('common.cta_free')}
-                      </span>
-                    </button>
+                    {/* Modal CTA */}
+                    <div className="pt-6 md:pt-10">
+                      <button
+                        onClick={() => {
+                          setSelectedStep(null);
+                          setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
+                        }}
+                        className="w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-sm shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-wider flex items-center justify-center space-x-3 md:space-x-4 group"
+                        style={{ background: 'var(--color-primary-blue)' }}
+                      >
+                        <Zap className="w-4 h-4 md:w-6 md:h-6 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0" />
+                        <span className="leading-tight truncate">
+                          {t('common.cta_free')}
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </section>
   );
 };
