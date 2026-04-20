@@ -227,10 +227,10 @@ const Navbar = () => {
 
       {/* Mobile Menu */}
       <div 
-        className={`xl:hidden fixed inset-x-0 mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[110] 
+        className={`xl:hidden fixed inset-x-0 mx-auto w-[92%] bg-white transition-all duration-500 rounded-3xl overflow-hidden z-[9999] 
           ${mobileMenuOpen 
-            ? 'top-[84px] md:top-[108px] max-h-screen shadow-2xl pb-10 border border-gray-100 opacity-100 [@media(max-height:600px)_and_(orientation:landscape)]:top-[60px] [@media(max-height:600px)_and_(orientation:landscape)]:w-[94%] [@media(max-height:600px)_and_(orientation:landscape)]:h-auto [@media(max-height:600px)_and_(orientation:landscape)]:max-h-[85vh] [@media(max-height:600px)_and_(orientation:landscape)]:rounded-3xl [@media(max-height:600px)_and_(orientation:landscape)]:z-[200] [@media(max-height:600px)_and_(orientation:landscape)]:overflow-y-auto [@media(max-height:600px)_and_(orientation:landscape)]:overscroll-contain' 
-            : 'top-[84px] md:top-[108px] max-h-0 opacity-0 pointer-events-none md:pointer-events-auto md:opacity-100 [@media(max-height:600px)_and_(orientation:landscape)]:opacity-0 [@media(max-height:600px)_and_(orientation:landscape)]:pointer-events-none'}`}
+            ? 'top-[108px] max-h-screen shadow-2xl pb-10 border border-gray-100 opacity-100 [@media(max-height:600px)_and_(orientation:landscape)]:top-[60px] [@media(max-height:600px)_and_(orientation:landscape)]:w-[94%] [@media(max-height:600px)_and_(orientation:landscape)]:h-auto [@media(max-height:600px)_and_(orientation:landscape)]:max-h-[85vh] [@media(max-height:600px)_and_(orientation:landscape)]:rounded-3xl [@media(max-height:600px)_and_(orientation:landscape)]:overflow-y-auto [@media(max-height:600px)_and_(orientation:landscape)]:overscroll-contain' 
+            : 'top-[108px] max-h-0 opacity-0 pointer-events-none md:pointer-events-auto md:opacity-100 [@media(max-height:600px)_and_(orientation:landscape)]:opacity-0 [@media(max-height:600px)_and_(orientation:landscape)]:pointer-events-none'}`}
       >
         {/* Mobile Landscape Close Button */}
         <button 
