@@ -26,20 +26,20 @@ const FloatingCTA = () => {
           </div>
 
           {/* Core Urgent Floating CTA (Right) */}
-          <div className="flex flex-col space-y-2 items-end pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:flex-row [@media(max-height:600px)_and_(orientation:landscape)]:items-center [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:space-x-2">
+          <div className="ml-auto flex flex-col space-y-2 items-end pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:flex-row [@media(max-height:600px)_and_(orientation:landscape)]:items-center [@media(max-height:600px)_and_(orientation:landscape)]:space-y-0 [@media(max-height:600px)_and_(orientation:landscape)]:space-x-2">
              {/* Dynamic Tooltip (Normal) */}
              <div className="bg-primary-blue text-white text-[7px] md:text-[10px] font-black uppercase tracking-[0.2em] px-3 py-1 md:px-4 md:py-2 rounded-full shadow-xl animate-bounce [@media(max-height:600px)_and_(orientation:landscape)]:hidden">
                 {t('cta.badge', 'Servicio 24h Activo')}
              </div>
              
              {/* Landscape Thin Line Alternative */}
-             <div className="hidden [@media(max-height:600px)_and_(orientation:landscape)]:block text-primary-blue text-[10px] font-black uppercase tracking-widest bg-white/90 backdrop-blur px-3 py-1 rounded-full shadow-md whitespace-nowrap">
+             <div className="hidden [@media(max-height:600px)_and_(orientation:landscape)]:block text-primary-blue text-[8px] font-black uppercase tracking-widest bg-white/90 backdrop-blur px-2 py-0.5 rounded-full shadow-md whitespace-nowrap">
                 {t('cta.badge', 'Servicio 24h Activo')}
              </div>
              
              <a 
                href="tel:+34933309169" 
-               className="flex items-center space-x-3 md:space-x-5 px-4 py-2.5 md:px-8 md:py-5 rounded-full bg-accent-green text-primary-gray font-black text-xs md:text-xl shadow-2xl hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 transition-all group [@media(max-height:600px)_and_(orientation:landscape)]:!w-10 [@media(max-height:600px)_and_(orientation:landscape)]:!h-10 [@media(max-height:600px)_and_(orientation:landscape)]:!p-0 [@media(max-height:600px)_and_(orientation:landscape)]:!justify-center"
+               className="flex items-center space-x-3 md:space-x-5 px-4 py-2.5 md:px-8 md:py-5 rounded-full bg-accent-green text-primary-gray font-black text-xs md:text-xl shadow-2xl hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 transition-all group [@media(max-height:600px)_and_(orientation:landscape)]:!w-8 [@media(max-height:600px)_and_(orientation:landscape)]:!h-8 [@media(max-height:600px)_and_(orientation:landscape)]:!p-0 [@media(max-height:600px)_and_(orientation:landscape)]:!justify-center [@media(max-height:600px)_and_(orientation:landscape)]:!space-x-0"
                style={{ 
                  background: 'var(--color-accent-green)', 
                  boxShadow: '0 15px 30px rgba(52, 211, 153, 0.4)'
@@ -49,8 +49,8 @@ const FloatingCTA = () => {
                   <span className="md:mr-3 leading-none">{t('cta.call_now', 'LLAMAR')}</span>
                   <span className="text-primary-gray/50 font-medium text-[9px] md:text-xl leading-none">933 309 169</span>
                 </span>
-                <div className="p-1 md:p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform [@media(max-height:600px)_and_(orientation:landscape)]:bg-transparent [@media(max-height:600px)_and_(orientation:landscape)]:p-0">
-                   <Phone size={14} className="md:w-6 md:h-6 [@media(max-height:600px)_and_(orientation:landscape)]:w-4 [@media(max-height:600px)_and_(orientation:landscape)]:h-4" fill="currentColor" />
+                <div className="p-1 md:p-2 bg-white/20 rounded-full group-hover:rotate-12 transition-transform flex items-center justify-center [@media(max-height:600px)_and_(orientation:landscape)]:bg-transparent [@media(max-height:600px)_and_(orientation:landscape)]:p-0">
+                   <Phone size={14} className="md:w-6 md:h-6 [@media(max-height:600px)_and_(orientation:landscape)]:!w-3.5 [@media(max-height:600px)_and_(orientation:landscape)]:!h-3.5" fill="currentColor" />
                 </div>
              </a>
           </div>
