@@ -29,7 +29,8 @@ const Navbar = () => {
       path: '/#sectors',
       submenu: [
         { key: 'nav.residential', path: '/#species' },
-        { key: 'nav.commercial', path: '/#sectors' }
+        { key: 'nav.commercial', path: '/#sectors' },
+        { key: 'nav.process', path: '/#process' }
       ]
     },
     { 
