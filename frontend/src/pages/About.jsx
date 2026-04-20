@@ -1,4 +1,5 @@
 import React, { useEffect, useState, Suspense, lazy } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShieldCheck, Users, Activity, ExternalLink, ArrowRight, HeartPulse, Scale, Globe, Bug } from 'lucide-react';
@@ -9,6 +10,7 @@ import SEO from '../components/SEO';
 import { SectionSkeleton } from '../components/Skeleton';
 
 const OtherServices = lazy(() => import('../components/OtherServices'));
+const Process = lazy(() => import('../components/Process'));
 
 const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
   <Suspense fallback={fallback}>
@@ -20,15 +22,27 @@ const About = () => {
   const { t } = useTranslation();
   const [activeStat, setActiveStat] = useState(0);
 
-  // Scroll to top and Auto-rotate stats for mobile
+  const location = useLocation();
+
+  // Scroll to top or hash and Auto-rotate stats for mobile
   useEffect(() => {
-    window.scrollTo(0, 0);
+    if (location.hash) {
+      const id = location.hash.replace('#', '');
+      const element = document.getElementById(id);
+      if (element) {
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+      }
+    } else {
+      window.scrollTo(0, 0);
+    }
 
     const timer = setInterval(() => {
       setActiveStat((prev) => (prev + 1) % 3);
     }, 3000);
     return () => clearInterval(timer);
-  }, []);
+  }, [location]);
 
   const stats = [
     { icon: <Users />, value: "9", label: t('about_page.stats.workers') },
@@ -295,6 +309,9 @@ const About = () => {
               </div>
            </div>
         </section>
+
+        {/* Nuestro Método */}
+        <LazySection Component={Process} />
 
         {/* Otros Servicios */}
         <div>

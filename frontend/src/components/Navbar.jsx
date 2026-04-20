@@ -29,8 +29,7 @@ const Navbar = () => {
       path: '/#sectors',
       submenu: [
         { key: 'nav.residential', path: '/#species' },
-        { key: 'nav.commercial', path: '/#sectors' },
-        { key: 'nav.process', path: '/#process' }
+        { key: 'nav.commercial', path: '/#sectors' }
       ]
     },
     { 
@@ -41,7 +40,14 @@ const Navbar = () => {
         { key: 'nav.faq', path: '/blog/faq' }
       ]
     },
-    { key: 'nav.about', path: '/sobre-cecsa' }
+    { 
+      key: 'nav.about', 
+      path: '/sobre-cecsa',
+      submenu: [
+        { key: 'nav.us', path: '/sobre-cecsa' },
+        { key: 'nav.process', path: '/sobre-cecsa#process' }
+      ]
+    }
   ];
 
   return (

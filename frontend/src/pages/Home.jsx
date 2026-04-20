@@ -12,7 +12,6 @@ const PestGrid = lazy(() => import('../components/PestGrid'));
 const SectorGrid = lazy(() => import('../components/SectorGrid'));
 const OrigenService = lazy(() => import('../components/OrigenService'));
 const StatsBar = lazy(() => import('../components/StatsBar'));
-const Process = lazy(() => import('../components/Process'));
 const Testimonials = lazy(() => import('../components/Testimonials'));
 const ContactForm = lazy(() => import('../components/ContactForm'));
 const Footer = lazy(() => import('../components/Footer'));
@@ -98,8 +97,6 @@ function Home() {
         <LazySection Component={PestGrid} />
         <LazySection Component={SectorGrid} />
         <LazySection Component={OrigenService} />
-        <LazySection Component={Process} />
-        
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
         <div className="relative mt-[-100px] z-40">
           <div 
