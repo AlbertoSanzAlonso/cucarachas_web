@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
-import { Search, PenTool, Zap, CheckCircle2, X, ShieldCheck } from 'lucide-react';
+import { Search, PenTool, Zap, CheckCircle2, X, ShieldCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Process = () => {
@@ -43,6 +43,10 @@ const Process = () => {
       details: t('method.step3_details', { returnObjects: true }) || []
     }
   ];
+
+  const currentIndex = selectedStep ? steps.findIndex(s => s.id === selectedStep.id) : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext = currentIndex !== -1 && currentIndex < steps.length - 1;
 
   return (
     <section className="pt-40 pb-24 bg-white relative z-30" id="process">
@@ -110,7 +114,7 @@ const Process = () => {
 
       {/* Step Detail Modal via Portal */}
       {createPortal(
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {selectedStep && (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-6 overflow-hidden">
               <motion.div
@@ -121,14 +125,34 @@ const Process = () => {
                 className="absolute inset-0 bg-slate-900/90 md:bg-primary-blue/40 md:backdrop-blur-xl"
               />
 
+              {/* Added a container wrapper for AnimatePresence mode="wait" to work smoothly across step changes */}
               <motion.div
-                initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
-                animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, y: 60 }}
+                key={selectedStep.id}
+                initial={window.innerWidth < 768 ? { opacity: 0, y: 20 } : { scale: 1, opacity: 0, x: 20 }}
+                animate={{ scale: 1, opacity: 1, x: 0, y: 0 }}
+                exit={window.innerWidth < 768 ? { opacity: 0, y: -20 } : { scale: 1, opacity: 0, x: -20 }}
                 transition={window.innerWidth < 768 ? { duration: 0.2 } : { type: 'spring', damping: 25, stiffness: 300 }}
                 className="relative w-full max-w-5xl bg-white rounded-[2rem] md:rounded-[4rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto max-h-[85vh] md:max-h-[90vh] z-[10000] transform-gpu"
                 style={{ backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden' }}
               >
+                {/* Navigation Arrows */}
+                {hasPrev && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex - 1]); }}
+                    className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-[10010] p-2 bg-white/90 backdrop-blur-md hover:bg-white text-primary-blue rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
+                  >
+                    <ChevronLeft size={20} className="md:w-8 md:h-8" />
+                  </button>
+                )}
+                {hasNext && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedStep(steps[currentIndex + 1]); }}
+                    className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-[10010] p-2 bg-white/90 backdrop-blur-md hover:bg-white text-primary-blue rounded-full shadow-lg transition-all hover:scale-110 active:scale-95"
+                  >
+                    <ChevronRight size={20} className="md:w-8 md:h-8" />
+                  </button>
+                )}
+
                 {/* Close Button */}
                 <button
                   onClick={() => setSelectedStep(null)}
