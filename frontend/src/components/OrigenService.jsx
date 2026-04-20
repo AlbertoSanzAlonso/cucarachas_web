@@ -14,15 +14,21 @@ const OrigenService = () => {
 
   return (
     <section className="relative overflow-visible pt-32 pb-48 md:pt-40 md:pb-64 z-40" id="origin">
-      {/* Skewed Background - The blue stripe (Matches StatsBar style) */}
+      {/* Top Background - Original skew for the top border */}
       <div 
-        className="absolute inset-0 skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 shadow-[0_-20px_50px_rgba(0,128,187,0.15),0_40px_80px_rgba(0,128,187,0.25)]" 
+        className="absolute inset-x-0 top-0 h-[60%] -skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 shadow-[0_-20px_50px_rgba(0,128,187,0.15)]" 
         style={{ background: 'var(--color-primary-blue)' }}
-      >
-         {/* Subtle Background Pattern inside skewed area */}
-         <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
-           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
-         </div>
+      ></div>
+
+      {/* Bottom Background - Inverted skew for the bottom border */}
+      <div 
+        className="absolute inset-x-0 bottom-0 h-[60%] skew-y-3 origin-center transform scale-x-110 scale-y-110 z-0 shadow-[0_40px_80px_rgba(0,128,187,0.25)]" 
+        style={{ background: 'var(--color-primary-blue)' }}
+      ></div>
+
+      {/* Subtle Background Pattern */}
+      <div className="absolute inset-0 z-0 opacity-[0.05] pointer-events-none select-none -skew-y-3 origin-center transform scale-x-110 scale-y-110">
+        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,#fff_1px,transparent_0)] bg-[length:40px_40px]"></div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 grid xl:grid-cols-2 gap-16 items-center relative z-10 text-white">
