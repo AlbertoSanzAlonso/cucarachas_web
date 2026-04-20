@@ -215,7 +215,7 @@ const PestGrid = () => {
                   )}
 
                   {/* Corner Search Icon */}
-                  <div className="absolute top-3 right-4 md:top-6 md:right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 z-20 [@media(max-height:600px)_and_(orientation:landscape)]:top-2 [@media(max-height:600px)_and_(orientation:landscape)]:right-3">
+                  <div className="absolute top-3 right-4 md:top-6 md:right-6 opacity-30 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-110 z-20 [@media(max-height:600px)_and_(orientation:landscape)]:hidden">
                     <Search size={16} className={pest.darkText ? 'text-primary-blue' : 'text-white/80'} strokeWidth={3} />
                   </div>
 
