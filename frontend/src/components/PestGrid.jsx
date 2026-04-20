@@ -65,7 +65,9 @@ const PestGrid = () => {
       color: 'var(--color-primary-blue)',
       image: '/assets/eliminar-cucaracha-alemana-barcelona.webp',
       imageScale: 1.35,
-      mobileZoomX: -30,
+      zoomScale: 2.7,
+      mobileZoomX: -20,
+      mobileZoomY: 20,
       desc: t('species.germanica_desc'),
       details: t('species.germanica_details', { returnObjects: true })
     },
@@ -77,6 +79,8 @@ const PestGrid = () => {
       color: 'var(--color-accent-green)',
       image: '/assets/control-cucaracha-americana-catalunya.webp',
       zoomX: 40,
+      mobileZoomX: 0,
+      mobileZoomY: 20,
       desc: t('species.americana_desc'),
       details: t('species.americana_details', { returnObjects: true })
     },
@@ -88,6 +92,8 @@ const PestGrid = () => {
       color: '#ffffff',
       image: '/assets/desinsectacion-cucaracha-oriental.webp',
       zoomX: 40,
+      mobileZoomX: 0,
+      mobileZoomY: 20,
       desc: t('species.orientalis_desc'),
       darkText: true,
       details: t('species.orientalis_details', { returnObjects: true })
@@ -101,6 +107,8 @@ const PestGrid = () => {
       image: '/assets/eliminar-cucaracha-banda-cafe.webp',
       imageScale: 1,
       zoomX: 40,
+      mobileZoomX: 0,
+      mobileZoomY: 20,
       desc: t('species.banded_desc'),
       details: t('species.banded_details', { returnObjects: true })
     },
@@ -305,11 +313,12 @@ const PestGrid = () => {
                     src={selectedPest.image}
                     alt={selectedPest.name}
                     onLoad={() => setImageLoaded(true)}
-                    initial={false}
+                    initial={{ scale: selectedPest.imageScale || 1, x: 0, y: 0, filter: 'blur(30px)' }}
                     animate={{ 
                       filter: (selectedPest.scientific && !isRevealed) ? 'blur(30px)' : 'blur(0px)',
-                      scale: isZoomed ? 2.5 : (selectedPest.imageScale || 1),
-                      x: isZoomed ? (window.innerWidth < 768 ? (selectedPest.mobileZoomX || selectedPest.zoomX || 0) : (selectedPest.zoomX || 0)) : 0
+                      scale: isZoomed ? (selectedPest.zoomScale || 2.5) : (selectedPest.imageScale || 1),
+                      x: isZoomed ? (window.innerWidth < 768 ? (selectedPest.mobileZoomX || 0) : (selectedPest.zoomX || 0)) : 0,
+                      y: isZoomed ? (window.innerWidth < 768 ? (selectedPest.mobileZoomY || 0) : 0) : 0
                     }}
                     transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                     className={`${['nests', 'prevent', 'urgent'].includes(selectedPest.id) ? 'absolute inset-0 w-full h-full object-cover z-0' : 'w-full max-w-[120px] md:max-w-[400px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative z-10'}`}

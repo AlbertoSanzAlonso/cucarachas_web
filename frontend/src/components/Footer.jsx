@@ -36,7 +36,7 @@ const Footer = ({ className = "" }) => {
     <footer className={`relative text-white overflow-visible ${className} z-50`}>
       {/* Skewed Top Transition with BOLD Shadow and Border */}
       <div 
-        className="absolute inset-x-0 top-0 h-[600px] -skew-y-3 origin-top-right transform -translate-y-24 md:-translate-y-32 z-0 shadow-[0_-40px_100px_rgba(0,0,0,0.4)] border-t border-white/10"
+        className="absolute inset-x-0 top-0 h-[600px] skew-y-3 origin-top-left transform -translate-y-24 md:-translate-y-32 z-0 shadow-[0_-40px_100px_rgba(0,0,0,0.4)] border-t border-white/10"
         style={{ background: '#0a1a2f' }}
       ></div>
 
