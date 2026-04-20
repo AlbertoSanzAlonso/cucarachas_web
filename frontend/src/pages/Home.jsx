@@ -93,10 +93,10 @@ function Home() {
         <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
         <LazySection Component={CockroachFocus} />
         <LazySection Component={Testimonials} />
-        <LazySection Component={FleetSection} />
         <LazySection Component={PestGrid} />
         <LazySection Component={SectorGrid} />
         <LazySection Component={OrigenService} />
+        <LazySection Component={FleetSection} />
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
         <div className="relative mt-[-100px] z-40">
           <div 
