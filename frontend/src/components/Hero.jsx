@@ -75,7 +75,7 @@ const Hero = () => {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12 xl:py-20 grid xl:grid-cols-2 gap-16 items-center">
           
           {/* Text Side */}
-          <div className="space-y-8 animate-fade-in">
+          <div className="space-y-8 animate-fade-in xl:text-left text-center">
             <div className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm transition-all hover:bg-white/15">
               <span className="flex h-2 w-2 rounded-full bg-accent-green animate-ping"></span>
               <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">
@@ -92,7 +92,7 @@ const Hero = () => {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
+            <div className="flex flex-col sm:flex-row items-center justify-center xl:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
               <button 
                 className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-accent-green text-primary-gray font-black text-lg uppercase tracking-wider shadow-2xl transition-all duration-300 hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 group"
               >
@@ -113,14 +113,14 @@ const Hero = () => {
             </div>
 
             {/* Social Proof Pills */}
-            <div className="flex items-center space-x-8 pt-8 opacity-60 border-t border-white/10">
-              <div className="flex flex-col">
+            <div className="flex items-center justify-center xl:justify-start space-x-8 pt-8 opacity-60 border-t border-white/10">
+              <div className="flex flex-col items-center xl:items-start">
                 <span className="text-2xl md:text-3xl font-black text-white">+12.000</span>
                 <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">
                    {t('hero.services_count')}
                 </span>
               </div>
-              <div className="flex flex-col border-l border-white/20 pl-8">
+              <div className="flex flex-col items-center xl:items-start border-l border-white/20 pl-8">
                 <span className="text-2xl md:text-3xl font-black text-white">4.9/5</span>
                 <span className="text-[9px] uppercase font-bold tracking-widest text-white/70">Google Reviews</span>
               </div>
