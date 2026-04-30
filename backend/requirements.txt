@@ -1,0 +1,8 @@
+django>=5.0
+djangorestframework
+django-cors-headers
+dj-database-url
+gunicorn
+whitenoise[brotli]
+psycopg2-binary
+python-decouple
