@@ -10,4 +10,4 @@ pgvector
 pydantic-ai
 google-generativeai
 python-dotenv
-uvicorn
+uvicorn[standard]
