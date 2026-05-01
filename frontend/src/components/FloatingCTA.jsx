@@ -60,7 +60,7 @@ const FloatingCTA = () => {
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                      className="fixed md:absolute bottom-20 md:bottom-full left-4 right-4 md:left-0 md:right-auto md:mb-4 md:w-96 h-[400px] md:h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom z-[120]"
+                      className="fixed md:absolute bottom-20 md:bottom-full left-4 right-4 md:left-0 md:right-auto md:mb-4 md:w-96 h-[75vh] md:h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom z-[120]"
                     >
                       {/* Header */}
                       <div className="p-4 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
