@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import FloatingCTA from '@/components/FloatingCTA';
-import ChatWidget from '@/components/ChatWidget';
 import SEO from '@/components/SEO';
 import { SectionSkeleton } from '@/components/Skeleton';
 
@@ -118,7 +117,6 @@ function Home() {
       
       <Footer />
       <FloatingCTA />
-      <ChatWidget />
     </div>
   );
 }
