@@ -54,14 +54,14 @@ const ChatWidget = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-28 right-6 md:bottom-36 md:right-10 z-[110] w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-primary-blue text-white rounded-full shadow-2xl hover:bg-primary-blue-hv transition-all group overflow-hidden"
+        className="fixed bottom-28 left-6 md:bottom-36 md:left-10 z-[110] w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-primary-blue text-white rounded-full shadow-2xl hover:bg-primary-blue-hv transition-all group overflow-hidden"
         style={{ boxShadow: '0 15px 35px rgba(0, 128, 187, 0.4)' }}
       >
         <div className="flex items-center justify-center w-full h-full">
            {isOpen ? <X size={32} /> : <MessageSquare size={32} className="[@media(max-height:600px)_and_(orientation:landscape)]:w-6 [@media(max-height:600px)_and_(orientation:landscape)]:h-6" />}
         </div>
         {!isOpen && (
-           <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-primary-blue px-3 py-1 rounded-lg text-xs font-black shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity hidden md:block border border-blue-50">
+           <span className="absolute left-full ml-4 top-1/2 -translate-y-1/2 bg-white text-primary-blue px-3 py-1 rounded-lg text-xs font-black shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity hidden md:block border border-blue-50">
              {t('chat.help', 'Necessites ajuda?')}
            </span>
         )}
@@ -74,7 +74,7 @@ const ChatWidget = () => {
             initial={{ opacity: 0, y: 100, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 100, scale: 0.9 }}
-            className="fixed bottom-24 right-4 md:bottom-32 md:right-8 z-[110] w-[calc(100vw-2rem)] md:w-96 h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col [@media(max-height:600px)_and_(orientation:landscape)]:h-[80vh] [@media(max-height:600px)_and_(orientation:landscape)]:bottom-4"
+            className="fixed bottom-28 left-6 md:bottom-36 md:left-10 z-[110] w-[calc(100vw-2rem)] md:w-96 h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col [@media(max-height:600px)_and_(orientation:landscape)]:h-[80vh] [@media(max-height:600px)_and_(orientation:landscape)]:bottom-4"
           >
             {/* Header */}
             <div className="p-5 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
