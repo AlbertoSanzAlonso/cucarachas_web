@@ -54,10 +54,12 @@ const ChatWidget = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-28 right-6 md:bottom-36 md:right-10 z-[110] w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-primary-blue text-white rounded-full shadow-2xl hover:bg-primary-blue-hv transition-all group [@media(max-height:600px)_and_(orientation:landscape)]:bottom-4 [@media(max-height:600px)_and_(orientation:landscape)]:w-10 [@media(max-height:600px)_and_(orientation:landscape)]:h-10"
+        className="fixed bottom-28 right-6 md:bottom-36 md:right-10 z-[110] w-14 h-14 md:w-16 md:h-16 flex items-center justify-center bg-primary-blue text-white rounded-full shadow-2xl hover:bg-primary-blue-hv transition-all group overflow-hidden"
         style={{ boxShadow: '0 15px 35px rgba(0, 128, 187, 0.4)' }}
       >
-        {isOpen ? <X size={28} /> : <MessageSquare size={28} className="[@media(max-height:600px)_and_(orientation:landscape)]:w-5 [@media(max-height:600px)_and_(orientation:landscape)]:h-5" />}
+        <div className="flex items-center justify-center w-full h-full">
+           {isOpen ? <X size={32} /> : <MessageSquare size={32} className="[@media(max-height:600px)_and_(orientation:landscape)]:w-6 [@media(max-height:600px)_and_(orientation:landscape)]:h-6" />}
+        </div>
         {!isOpen && (
            <span className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-primary-blue px-3 py-1 rounded-lg text-xs font-black shadow-xl whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity hidden md:block border border-blue-50">
              {t('chat.help', 'Necessites ajuda?')}
