@@ -1,13 +1,10 @@
 from pydantic_ai import Agent, RunContext
-from pydantic_ai.models.google import GoogleGenerativeAIModel
 from .models import AgentState, ReceptionistOutput, Intent
-
-gemini_model = GoogleGenerativeAIModel('gemini-1.5-flash')
 
 # Agente 1: Recepcionista
 # Rol: Saludar, detectar intención y captar datos básicos.
 receptionist_agent = Agent(
-    gemini_model,
+    'google-gla:gemini-1.5-flash',
     output_type=ReceptionistOutput,
     system_prompt=(
         "Ets el Recepcionista de CECSA Control de Plagues. "
