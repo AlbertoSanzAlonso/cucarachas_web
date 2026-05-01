@@ -13,6 +13,7 @@ const FloatingCTA = () => {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -21,6 +22,16 @@ const FloatingCTA = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Pequeño timeout para esperar a que la animación de apertura termine
+      const timer = setTimeout(() => {
+        inputRef.current?.focus();
+      }, 300);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
 
   const handleSend = async (e) => {
     e.preventDefault();
