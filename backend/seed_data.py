@@ -6,7 +6,7 @@ import json
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from api.models import Species, Service
+from api.models import Species, Tratamiento
 
 def seed():
     # Cockroach species from translation.json
@@ -50,46 +50,6 @@ def seed():
                 "Prefereixen llocs càlids i secs, a diferència de l'alemanya.",
                 "Control expert per evitar la dispersió pel mobiliari."
             ]
-        },
-        {
-            "name": "Monitoreig Tècnic",
-            "slug": "monitor",
-            "description": "Seguiment preventiu mitjançant estacions de monitorització.",
-            "details": [
-                "Instal·lació de trampes amb feromones d'atracció específica.",
-                "Revisió periòdica per detectar activitat abans que es converteixi en plaga.",
-                "Informes digitals detallats amb el nivell de risc capturat."
-            ]
-        },
-        {
-            "name": "Eliminació Directa",
-            "slug": "zap",
-            "description": "Localitzación precisa i eliminació immediata de nius i focus.",
-            "details": [
-                "Identificació dels llocs de nidificació mitjançant càmeres tècniques.",
-                "Aplicació localitzada de productes d'alta eficàcia i baix impacte.",
-                "Eliminació física dels residus i restes biològiques."
-            ]
-        },
-        {
-            "name": "Barreres Actives",
-            "slug": "barrier",
-            "description": "Tractaments residuals per evitar l'entrada de nous insectes.",
-            "details": [
-                "Aplicació en punts crítics: baixants, esquerdes i zones de pas.",
-                "Ús de polímers d'alta persistència que aguanten la neteja diària.",
-                "Protecció perimetral de llarga durada (fins a 6 mesos)."
-            ]
-        },
-        {
-            "name": "Control Integrat",
-            "slug": "thermal",
-            "description": "Eliminació ecològica mitjançant calor controlada.",
-            "details": [
-                "Tractament 100% lliure de químicos, ideal per a indústries alimentàries.",
-                "Eficàcia contra totes las fases del cicle de vida (ous inclosos).",
-                "Poca preparació necessària i sense terminis de seguretat."
-            ]
         }
     ]
 
@@ -103,18 +63,42 @@ def seed():
             }
         )
     
-    # Generic services
-    services_data = [
-        {"title": "Particulars", "icon": "Home"},
-        {"title": "Empreses", "icon": "Building"},
-        {"title": "Comunitats", "icon": "Users"},
-        {"title": "Urgències 24h", "icon": "Zap"}
+    # Treatments (previously called services in old model)
+    treatments_data = [
+        {
+            "nombre": "Monitoreig Tècnic",
+            "descripcion": "Seguiment preventiu mitjançant estacions de monitorització.",
+            "precio_base": 45.00,
+            "icon": "Activity"
+        },
+        {
+            "nombre": "Eliminació Directa",
+            "descripcion": "Localitzación precisa i eliminació immediata de nius i focus.",
+            "precio_base": 120.00,
+            "icon": "Zap"
+        },
+        {
+            "nombre": "Barreres Actives",
+            "descripcion": "Tractaments residuals per evitar l'entrada de nous insectes.",
+            "precio_base": 85.00,
+            "icon": "Shield"
+        },
+        {
+            "nombre": "Control Integrat",
+            "descripcion": "Eliminació ecològica mitjançant calor controlada.",
+            "precio_base": 150.00,
+            "icon": "Thermometer"
+        }
     ]
 
-    for item in services_data:
-        Service.objects.get_or_create(
-            title=item['title'],
-            defaults={'icon': item['icon']}
+    for item in treatments_data:
+        Tratamiento.objects.get_or_create(
+            nombre=item['nombre'],
+            defaults={
+                'descripcion': item['descripcion'],
+                'precio_base': item['precio_base'],
+                'icon': item['icon']
+            }
         )
 
     print("Database seeded successfully!")

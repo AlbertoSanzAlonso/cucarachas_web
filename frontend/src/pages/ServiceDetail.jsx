@@ -1,11 +1,16 @@
 import React, { useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { motion } from 'framer-motion';
-import { ShieldCheck, ArrowLeft, Mail, Phone, Zap, Utensils, Hotel, Users, Factory } from 'lucide-react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import SEO from '../components/SEO';
+import { Utensils, Hotel, Users, Factory } from 'lucide-react';
+
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import SEO from '@/components/SEO';
+
+// Modular Sections
+import ServiceHero from '@/components/ServiceDetail/ServiceHero';
+import ServiceContent from '@/components/ServiceDetail/ServiceContent';
+import ServiceSidebar from '@/components/ServiceDetail/ServiceSidebar';
 
 const ServiceDetail = () => {
   const { id } = useParams();
@@ -63,9 +68,13 @@ const ServiceDetail = () => {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+  }, [id]);
 
-  if (!sector) return <div className="min-h-screen flex items-center justify-center font-black text-primary-blue uppercase tracking-widest">{t('service_detail_page.not_found')}</div>;
+  if (!sector) return (
+    <div className="min-h-screen flex items-center justify-center font-black text-primary-blue uppercase tracking-widest">
+      {t('service_detail_page.not_found')}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-bg-light">
@@ -75,154 +84,32 @@ const ServiceDetail = () => {
         url={`/serveis/${id}`}
         schemaData={serviceSchema}
       />
+      
       <Navbar />
       
-      {/* Improved Hero Section with Skewed Bottom and Shadow */}
-      <section className="relative pt-32 pb-48 md:pt-40 md:pb-64 bg-primary-blue text-white overflow-hidden z-20">
-         {/* Background Elements */}
-         <div className="absolute inset-0 z-0">
-            <img 
-               src={sector.bg} 
-               alt={`${sector.title} - Control de Plagues CECSA`} 
-               className="w-full h-full object-cover opacity-40 mix-blend-overlay"
-            />
-            {/* Clinical Gradient and Patterns */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-primary-blue/90 to-primary-blue-hv/80"></div>
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20px_20px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:40px_40px]"></div>
-            
-            {/* Skewed Bottom Divider */}
-            <div className="absolute inset-x-0 bottom-0 h-48 bg-bg-light origin-bottom-right -skew-y-3 transform translate-y-24 shadow-[0_-30px_60px_rgba(0,0,0,0.15)]"></div>
-         </div>
-         
-         <div className="max-w-7xl mx-auto px-6 relative z-10 w-full">
-            <Link to="/#sectors" className="inline-flex items-center space-x-3 text-white/50 hover:text-white transition-all bg-white/5 hover:bg-white/10 px-6 py-2 rounded-full border border-white/10 mb-12 group">
-               <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
-               <span className="text-[10px] font-black uppercase tracking-[0.2em]">{t('service_detail_page.back')}</span>
-            </Link>
-            
-            <div className="flex flex-col lg:flex-row items-center gap-16">
-               <div className="lg:w-2/3 space-y-8">
-                  <div className="inline-flex items-center space-x-3 py-2 px-6 bg-accent-green/20 rounded-full border border-accent-green/30 backdrop-blur-sm">
-                     <div className="text-accent-green">
-                        {React.cloneElement(sectorIcons[id] || <Users />, { size: 18, strokeWidth: 2.5 })}
-                     </div>
-                     <span className="text-[10px] font-black uppercase tracking-[0.3em] text-accent-green">{t('service_detail_page.authorized_label')}</span>
-                  </div>
-                  <h1 className="text-6xl md:text-8xl font-black text-white leading-[0.85] tracking-tighter drop-shadow-2xl">
-                     {sector.title}
-                  </h1>
-                  <p className="text-xl md:text-2xl text-white/70 font-light leading-relaxed max-w-2xl italic border-l-2 border-accent-green/30 pl-8">
-                     "{sector.desc}"
-                  </p>
-               </div>
-               
-               <div className="hidden lg:flex lg:w-1/3 justify-end">
-                  <div className="w-72 h-72 md:w-96 md:h-96 bg-white/5 rounded-[4rem] border border-white/10 flex items-center justify-center text-accent-green/40 backdrop-blur-3xl shadow-2xl relative group/icon">
-                     {React.cloneElement(sectorIcons[id] || <Users />, { size: 160, strokeWidth: 0.5, className: "group-hover:scale-110 transition-transform duration-700" })}
-                     <div className="absolute inset-0 bg-accent-green/5 rounded-[4rem] animate-pulse"></div>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </section>
+      <main>
+        <ServiceHero 
+          sector={sector} 
+          id={id} 
+          sectorIcons={sectorIcons} 
+          t={t} 
+        />
 
-      {/* Content Section */}
-      <section className="pt-24 pb-48 md:pb-64 max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
-         
-         {/* Main Technical Details */}
-         <div className="lg:col-span-2 space-y-16">
-            <div className="space-y-8">
-               <h2 className="text-3xl font-black text-primary-gray tracking-tighter uppercase flex items-center">
-                  <span className="w-12 h-1.5 bg-accent-green mr-4 rounded-full"></span>
-                  {t('service_detail_page.technical_protocol')}
-               </h2>
-               <div className="grid md:grid-cols-2 gap-6">
-                  {sector.points.map((point, i) => (
-                     <motion.div 
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.1 }}
-                        key={i} 
-                        className="p-8 bg-white rounded-3xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow group"
-                     >
-                        <ShieldCheck size={32} className="text-accent-green mb-4 group-hover:scale-110 transition-transform" />
-                        <h4 className="text-lg font-black text-primary-gray tracking-tight leading-tight">
-                           {point}
-                        </h4>
-                     </motion.div>
-                  ))}
-               </div>
-            </div>
-
-            <div className="p-10 bg-white rounded-[3rem] border border-gray-100 shadow-xl space-y-8">
-               <h3 className="text-2xl font-black text-primary-gray tracking-tighter">{t('service_detail_page.why_choose', { sector: sector.title })}</h3>
-               <div className="grid md:grid-cols-3 gap-8 text-center">
-                  {[
-                     { label: t('service_detail_page.benefit1_label'), desc: t('service_detail_page.benefit1_desc') },
-                     { label: t('service_detail_page.benefit2_label'), desc: t('service_detail_page.benefit2_desc') },
-                     { label: t('service_detail_page.benefit3_label'), desc: t('service_detail_page.benefit3_desc') }
-                  ].map((item, i) => (
-                     <div key={i} className="space-y-2">
-                        <p className="text-accent-green font-black text-xl tracking-tighter">{item.label}</p>
-                        <p className="text-xs text-secondary-gray/60 font-medium leading-tight">{item.desc}</p>
-                     </div>
-                  ))}
-               </div>
-            </div>
-         </div>
-
-         {/* Sticky Sidebar CTA */}
-         <div className="space-y-8">
-            <div className="sticky top-40 space-y-8">
-               <div className="bg-white p-10 rounded-[3rem] shadow-2xl border border-gray-100 text-center space-y-8 overflow-hidden relative group">
-                  {/* Background Operadora (Very Subtle) */}
-                  <div className="absolute inset-0 opacity-[0.08] pointer-events-none group-hover:opacity-[0.12] transition-opacity duration-700">
-                     <img 
-                        src="/assets/atencion-cliente-cucarachas-barcelona.png" 
-                        alt="Atenció al client CECSA Control de Plagues" 
-                        className="w-full h-full object-cover scale-110 group-hover:scale-105 transition-transform duration-1000"
-                     />
-                  </div>
-                  <div className="space-y-2 relative z-10">
-                     <h3 className="text-3xl font-black text-primary-gray tracking-tighter leading-none">{t('service_detail_page.active_protection')}</h3>
-                     <p className="text-secondary-gray/50 text-xs font-bold uppercase tracking-widest">{t('service_detail_page.free_diagnosis')}</p>
-                  </div>
-                  
-                  <div className="space-y-4 relative z-10">
-                     <button className="w-full py-5 px-4 bg-primary-blue text-white font-black text-lg md:text-xl rounded-2xl shadow-xl flex items-center justify-center group/btn leading-tight text-center">
-                        <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-6 h-6" />
-                        <span>{t('common.cta_free')}</span>
-                     </button>
-                     <a href="tel:+34933309169" className="w-full py-5 px-4 bg-bg-light border border-gray-200 text-primary-blue font-black text-lg md:text-xl rounded-2xl flex items-center justify-center hover:bg-gray-100 transition-colors text-center">
-                        {t('common.cta_call')}
-                     </a>
-                  </div>
-               </div>
-
-               {/* Other Sectors Navigation for SEO and UX */}
-               <div className="bg-white p-8 rounded-[2.5rem] shadow-xl border border-gray-100 space-y-6">
-                  <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary-blue/40 border-b border-gray-100 pb-4">
-                     {t('sectors_grid.title')}
-                  </h4>
-                  <div className="space-y-3">
-                     {Object.keys(sectorData).map((key) => (
-                        <Link 
-                           key={key} 
-                           to={`/serveis/${key}`}
-                           className={`flex items-center space-x-3 p-3 rounded-2xl transition-all ${id === key ? 'bg-primary-blue/5 text-primary-blue font-black' : 'hover:bg-bg-light text-secondary-gray'}`}
-                        >
-                           <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${id === key ? 'bg-primary-blue text-white' : 'bg-gray-100 text-gray-400'}`}>
-                              {React.cloneElement(sectorIcons[key] || <Users />, { size: 16 })}
-                           </div>
-                           <span className="text-sm">{sectorData[key].title}</span>
-                        </Link>
-                     ))}
-                  </div>
-               </div>
-            </div>
-         </div>
-
-      </section>
+        {/* Layout Section */}
+        <section className="pt-24 pb-48 md:pb-64 max-w-7xl mx-auto px-6 grid lg:grid-cols-3 gap-16">
+          <ServiceContent 
+            sector={sector} 
+            t={t} 
+          />
+          
+          <ServiceSidebar 
+            id={id} 
+            sectorData={sectorData} 
+            sectorIcons={sectorIcons} 
+            t={t} 
+          />
+        </section>
+      </main>
       
       <Footer />
     </div>

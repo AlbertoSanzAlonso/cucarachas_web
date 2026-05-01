@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Send, Phone, MapPin, Mail, Clock, CheckCircle2 } from 'lucide-react';
-import { useCreateLeadMutation } from '../store/apis/leadsApi';
+import { useCreateLeadMutation } from '@/store/apis/leadsApi';
+
+import Input from '@/components/ui/Input';
+import Textarea from '@/components/ui/Textarea';
+import Button from '@/components/ui/Button';
 
 const ContactForm = () => {
   const { t } = useTranslation();
@@ -79,48 +83,43 @@ const ContactForm = () => {
         <div className="animate-slide-up">
            <form onSubmit={handleSubmit} className="glass p-12 rounded-[3.5rem] space-y-6 border-white/40 shadow-2xl">
               <div className="space-y-2">
-                 <input 
+                 <Input 
                    name="name"
                    value={formData.name}
                    onChange={handleChange}
-                   type="text" 
                    placeholder={t('contact.name_placeholder')}
                    required
-                   className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
               </div>
               <div className="space-y-2">
-                 <input 
+                 <Input 
                    name="email"
                    value={formData.email}
                    onChange={handleChange}
                    type="email" 
                    placeholder={t('contact.email_placeholder')}
                    required
-                   className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
               </div>
               <div className="space-y-2">
-                 <input 
+                 <Input 
                    name="phone"
                    value={formData.phone}
                    onChange={handleChange}
                    type="tel" 
                    placeholder={t('contact.phone_placeholder')}
                    required
-                   className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40"
                  />
               </div>
               <div className="space-y-2">
-                 <textarea 
+                 <Textarea 
                    name="message"
                    value={formData.message}
                    onChange={handleChange}
                    rows="4" 
                    placeholder={t('contact.message_placeholder')}
                    required
-                   className="w-full px-6 py-4 rounded-2xl bg-white/50 border border-white/20 focus:outline-none focus:ring-2 focus:ring-primary-blue text-primary-gray font-medium placeholder:text-primary-gray/40 resize-none"
-                 ></textarea>
+                 />
               </div>
               
               <div className="flex items-center space-x-3 text-[10px] font-bold text-primary-gray/50 uppercase tracking-widest pl-2">
@@ -128,10 +127,11 @@ const ContactForm = () => {
                  <span>{t('contact.privacy_consent')}</span>
               </div>
 
-              <button 
+              <Button 
                 type="submit" 
                 disabled={isLoading || isSuccess}
-                className={`w-full py-6 rounded-2xl ${isSuccess ? 'bg-accent-green' : 'bg-primary-blue'} text-white font-black text-base md:text-lg tracking-tight md:tracking-widest shadow-xl hover:translate-y-[-4px] transition-all flex items-center justify-center group relative overflow-hidden`}
+                variant={isSuccess ? 'accent' : 'primary'}
+                className="w-full py-6 text-base md:text-lg tracking-tight md:tracking-widest shadow-xl group relative overflow-hidden"
               >
                  {isLoading ? (
                    <div className="w-6 h-6 border-4 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -146,8 +146,9 @@ const ContactForm = () => {
                      <Send size={20} className="ml-1 md:ml-3 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                    </>
                  )}
-              </button>
+              </Button>
            </form>
+
            
            {/* Form caption */}
            <div className="mt-8 text-center space-y-2 opacity-60">

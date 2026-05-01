@@ -4,8 +4,8 @@ import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { insforge } from '../lib/insforge';
-import { setCredentials } from '../store/slices/authSlice';
+import { insforge } from '@/lib/insforge';
+import { setCredentials } from '@/store/slices/authSlice';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

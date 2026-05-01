@@ -2,7 +2,6 @@ import React, { Suspense, lazy, useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, HelpCircle, ShieldCheck, Clock, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
 
 const Navbar = lazy(() => import('../components/Navbar'));
 const StatsBar = lazy(() => import('../components/StatsBar'));
@@ -43,8 +42,8 @@ const FAQ = () => {
   };
 
   const filteredFaqs = faqItems.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
@@ -55,8 +54,8 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-bg-light">
-      <SEO 
-        title="FAQ - Preguntes Freqüents | CECSA Barcelona" 
+      <SEO
+        title="FAQ - Preguntes Freqüents | CECSA Barcelona"
         description="Resol els teus dubtes sobre el control de paneroles, seguretat dels tractaments i preus a Barcelona amb el nostre centre d'ajuda."
         url="/faq"
       />
@@ -67,23 +66,23 @@ const FAQ = () => {
 
       <main>
         {/* FAQ Hero - Same as Blog Style */}
-        <section 
+        <section
           className="relative pt-32 pb-56 md:pt-40 md:pb-72 bg-primary-blue overflow-hidden z-20"
-          style={{ 
+          style={{
             clipPath: 'polygon(0 0, 100% 0, 100% 85%, 0 100%)',
           }}
         >
           {/* Background Elements */}
           <div className="absolute inset-0 z-0">
-            <img 
-              src="/assets/blog-hero-technical.png" 
-              alt="FAQ CECSA - Control de Plagues" 
+            <img
+              src="/assets/blog-hero-technical.png"
+              alt="FAQ CECSA - Control de Plagues"
               className="w-full h-full object-cover opacity-30 mix-blend-overlay"
             />
             <div className="absolute inset-0 bg-gradient-to-br from-primary-blue via-primary-blue/90 to-primary-blue-hv/80"></div>
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_20px_20px,rgba(255,255,255,0.05)_1px,transparent_0)] bg-[length:40px_40px]"></div>
           </div>
-          
+
           <div className="relative z-10 max-w-7xl mx-auto px-6 text-center space-y-8">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -122,8 +121,8 @@ const FAQ = () => {
             {/* Search Input */}
             <div className="relative w-full lg:w-80">
               <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/30" size={20} />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder={t('faq.search_placeholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -159,12 +158,12 @@ const FAQ = () => {
                           {faq.question}
                         </h3>
                       </div>
-                      <ChevronDown 
-                        size={24} 
-                        className={`transition-transform duration-500 ${openId === faq.id ? 'rotate-180 text-white' : 'text-secondary-gray/30'}`} 
+                      <ChevronDown
+                        size={24}
+                        className={`transition-transform duration-500 ${openId === faq.id ? 'rotate-180 text-white' : 'text-secondary-gray/30'}`}
                       />
                     </button>
-                    
+
                     <AnimatePresence>
                       {openId === faq.id && (
                         <motion.div
@@ -203,7 +202,7 @@ const FAQ = () => {
                 <h4 className="text-2xl font-black text-primary-blue tracking-tight">{t('faq.cta_title')}</h4>
                 <p className="text-secondary-gray/50">{t('faq.cta_desc')}</p>
               </div>
-              <button 
+              <button
                 onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                 className="px-10 py-5 bg-primary-blue text-white font-black text-xs uppercase tracking-widest rounded-2xl shadow-xl hover:bg-primary-blue-hv transition-all transform hover:scale-105"
               >
@@ -215,16 +214,16 @@ const FAQ = () => {
 
         {/* Unified Authority Section (Stats + Contact) */}
         <div className="relative mt-[-150px] md:mt-[-250px] z-40">
-          <div 
+          <div
             className="absolute top-0 left-0 right-0 -bottom-96 -skew-y-3 origin-top-right scale-x-110 shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
-            style={{ 
+            style={{
               background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat'
             }}
           ></div>
-          
+
           <div className="relative z-10">
             <Suspense fallback={<SectionSkeleton />}>
               <StatsBar />

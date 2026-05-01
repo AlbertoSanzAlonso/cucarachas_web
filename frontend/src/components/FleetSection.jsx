@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Truck, MapPin, Clock } from 'lucide-react';
+import Button from '@/components/ui/Button';
 
 const FleetSection = () => {
   const { t } = useTranslation();
@@ -29,7 +30,7 @@ const FleetSection = () => {
       >
          {/* Subtle Technical Pattern */}
          <div className="absolute inset-0 opacity-[0.05] pointer-events-none select-none">
-           <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
+            <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_20px_20px,var(--color-primary-blue)_1px,transparent_0)] bg-[length:40px_40px]"></div>
          </div>
       </div>
 
@@ -99,9 +100,12 @@ const FleetSection = () => {
           </div>
 
           <div className="pt-6 flex justify-center lg:justify-start">
-            <button className="px-10 py-5 rounded-2xl bg-primary-blue text-white font-black text-lg shadow-xl hover:translate-y-[-4px] transition-all duration-300">
+            <Button 
+              variant="primary"
+              size="lg"
+            >
                {t('fleet.units_btn')}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -109,5 +113,6 @@ const FleetSection = () => {
     </section>
   );
 };
+
 
 export default FleetSection;

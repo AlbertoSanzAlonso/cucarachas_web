@@ -1,0 +1,118 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { Activity, MessageSquare, Shield, TrendingUp, ChevronRight } from 'lucide-react';
+
+const DashboardOverview = ({ leads, isLoading, isError }) => {
+  const stats = [
+    { title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...' },
+    { title: 'Leads Pendents', value: leads?.length || '0', icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual' },
+    { title: 'Eficiència Control', value: '--', icon: <Shield className="text-accent-green" />, trend: '...' },
+    { title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...' },
+  ];
+
+  return (
+    <>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 mb-8 md:mb-12">
+        {stats.map((item, i) => (
+          <motion.div 
+            key={i}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: i * 0.1 }}
+            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-primary-blue/5 transition-all group"
+          >
+            <div className="flex justify-between items-start mb-4">
+              <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-primary-blue/5 transition-colors">
+                {item.icon}
+              </div>
+              <span className={`text-[10px] font-black px-2 py-1 rounded-full ${item.trend.includes('+') ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
+                {item.trend}
+              </span>
+            </div>
+            <p className="text-primary-gray/40 text-[10px] md:text-sm font-bold uppercase tracking-widest mb-1">{item.title}</p>
+            <p className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter">{item.value}</p>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Two Column Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Recent Leads */}
+        <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
+            <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Leads Recents</h2>
+            <button className="text-primary-blue font-bold text-xs md:text-sm hover:underline">Veure tots</button>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-gray-50/50">
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Client</th>
+                  <th className="hidden md:table-cell px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Plaga</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest text-center">Estat</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest"></th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {isLoading ? (
+                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40 font-bold uppercase tracking-widest animate-pulse">Carregant dades sanitàries...</td></tr>
+                ) : isError ? (
+                  <tr><td colSpan="4" className="text-center py-10 text-red-500 font-bold">Error al connectar amb el sistema de control.</td></tr>
+                ) : leads?.length === 0 ? (
+                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha leads pendents.</td></tr>
+                ) : leads?.slice(0, 4).map((lead) => (
+                  <tr key={lead.id} className="hover:bg-gray-50/30 transition-colors">
+                    <td className="px-4 md:px-8 py-5">
+                      <p className="font-bold text-sm md:text-base text-primary-gray leading-none mb-1">{lead.name}</p>
+                      <p className="text-[10px] text-primary-gray/40">{lead.created_at || 'Recient'}</p>
+                    </td>
+                    <td className="hidden md:table-cell px-8 py-5">
+                      <span className="text-sm text-primary-gray/70 font-medium">{lead.pest_type || lead.type}</span>
+                    </td>
+                    <td className="px-4 md:px-8 py-5 text-center">
+                      <span className={`text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 rounded-full uppercase tracking-widest ${
+                        lead.status === 'Urgente' || lead.status === 'urgent' ? 'bg-red-100 text-red-600' : 
+                        lead.status === 'Pendiente' || lead.status === 'pending' ? 'bg-orange-100 text-orange-600' :
+                        lead.status === 'Completado' || lead.status === 'completed' ? 'bg-green-100 text-green-600' :
+                        'bg-blue-100 text-blue-600'
+                      }`}>
+                        {lead.status}
+                      </span>
+                    </td>
+                    <td className="px-4 md:px-8 py-5 text-right">
+                      <button className="p-2 hover:bg-primary-blue/5 rounded-xl text-primary-blue transition-colors">
+                        <ChevronRight size={20} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        {/* Activity Feed */}
+        <section className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 flex flex-col">
+          <div className="p-8 border-b border-gray-50">
+            <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Activitat Flota</h2>
+          </div>
+          <div className="p-8 space-y-8 flex-1">
+             <div className="flex flex-col items-center justify-center h-full text-center opacity-30 py-10">
+                <TrendingUp size={32} className="mb-4" />
+                <p className="text-xs font-bold uppercase tracking-widest">Sense activitat de flota registrada</p>
+             </div>
+          </div>
+          <div className="p-4">
+            <div className="bg-primary-blue rounded-[2rem] p-6 text-white text-center">
+              <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">Resum de la setmana</p>
+              <p className="text-2xl font-black tracking-tight">+144.5% eficiencia</p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </>
+  );
+};
+
+export default DashboardOverview;

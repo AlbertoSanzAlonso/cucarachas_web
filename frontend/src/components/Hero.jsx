@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Zap, ArrowRight, Bug } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Button from '@/components/ui/Button';
+import Badge from '@/components/ui/Badge';
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -76,12 +78,9 @@ const Hero = () => {
           
           {/* Text Side */}
           <div className="space-y-8 animate-fade-in xl:text-left text-center">
-            <div className="inline-flex items-center space-x-3 px-6 py-2 rounded-full border border-white/25 bg-white/10 backdrop-blur-sm transition-all hover:bg-white/15">
-              <span className="flex h-2 w-2 rounded-full bg-accent-green animate-ping"></span>
-              <span className="text-white text-[10px] md:text-xs font-bold uppercase tracking-[0.2em]">
-                {t('hero.badge')}
-              </span>
-            </div>
+            <Badge pulse>
+              {t('hero.badge')}
+            </Badge>
 
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl xl:text-6xl font-black text-white leading-[1.1] tracking-tighter">
@@ -93,24 +92,27 @@ const Hero = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row items-center justify-center xl:justify-start space-y-4 sm:space-y-0 sm:space-x-4 pt-4">
-              <button 
-                className="w-full sm:w-auto px-10 py-5 rounded-2xl bg-accent-green text-primary-gray font-black text-lg uppercase tracking-wider shadow-2xl transition-all duration-300 hover:bg-accent-green-hv hover:translate-y-[-4px] active:scale-95 group"
+              <Button 
+                variant="accent"
+                size="lg"
+                className="w-full sm:w-auto group"
               >
                 <span className="flex items-center justify-center">
                    {t('common.cta_free')}
                   <ArrowRight size={22} className="ml-3 transition-transform group-hover:translate-x-1" />
                 </span>
-              </button>
+              </Button>
               
-              <button className="flex items-center space-x-3 px-8 py-4 text-white font-bold transition-all hover:opacity-80">
-                <span className="p-3 bg-white/10 rounded-full">
+              <Button variant="ghost" className="px-8 py-4 flex items-center space-x-3 group">
+                <span className="p-3 bg-white/10 rounded-full transition-colors group-hover:bg-white/20">
                   <ShieldCheck size={24} className="text-accent-green" />
                 </span>
                 <span className="text-sm uppercase tracking-widest leading-none">
                    {t('common.certified')}
                 </span>
-              </button>
+              </Button>
             </div>
+
 
             {/* Social Proof Pills */}
             <div className="flex items-center justify-center xl:justify-start space-x-8 pt-8 opacity-60 border-t border-white/10">

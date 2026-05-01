@@ -1,24 +1,24 @@
-import React, { Suspense, lazy } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
-// Lazy load components for performance
-const Navbar = lazy(() => import('../components/Navbar'));
-const Hero = lazy(() => import('../components/Hero'));
-const CockroachFocus = lazy(() => import('../components/CockroachFocus'));
-const FleetSection = lazy(() => import('../components/FleetSection'));
-const PestGrid = lazy(() => import('../components/PestGrid'));
-const SectorGrid = lazy(() => import('../components/SectorGrid'));
-const OrigenService = lazy(() => import('../components/OrigenService'));
-const StatsBar = lazy(() => import('../components/StatsBar'));
-const Testimonials = lazy(() => import('../components/Testimonials'));
-const ContactForm = lazy(() => import('../components/ContactForm'));
-const Footer = lazy(() => import('../components/Footer'));
-const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
+import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
+import FloatingCTA from '@/components/FloatingCTA';
+import ChatWidget from '@/components/ChatWidget';
+import SEO from '@/components/SEO';
+import { SectionSkeleton } from '@/components/Skeleton';
 
-import SEO from '../components/SEO';
-import { SectionSkeleton } from '../components/Skeleton';
+// Lazy load components for performance
+const Hero = lazy(() => import('@/components/Hero'));
+const CockroachFocus = lazy(() => import('@/components/CockroachFocus'));
+const FleetSection = lazy(() => import('@/components/FleetSection'));
+const PestGrid = lazy(() => import('@/components/PestGrid'));
+const SectorGrid = lazy(() => import('@/components/SectorGrid'));
+const OrigenService = lazy(() => import('@/components/OrigenService'));
+const StatsBar = lazy(() => import('@/components/StatsBar'));
+const Testimonials = lazy(() => import('@/components/Testimonials'));
+const ContactForm = lazy(() => import('@/components/ContactForm'));
 
 // Optimized Section Components with Granular Suspense
 const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
@@ -100,7 +100,7 @@ function Home() {
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}
         <div className="relative mt-[-100px] z-40">
           <div 
-            className="absolute top-0 left-0 right-0 -bottom-96 -skew-y-3 origin-top-right scale-x-110 bg-authority-fixed shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
+            className="absolute top-0 left-0 right-0 -bottom-96 -skew-y-3 origin-top-right scale-x-110 shadow-[0_-30px_60px_rgba(0,128,187,0.25)] border-t border-white/5"
             style={{ 
               background: 'linear-gradient(135deg, rgba(0, 128, 187, 0.98) 0%, rgba(0, 111, 163, 0.92) 100%), url(/assets/barcelona-authority.webp)',
               backgroundSize: 'cover',
@@ -118,6 +118,7 @@ function Home() {
       
       <Footer />
       <FloatingCTA />
+      <ChatWidget />
     </div>
   );
 }

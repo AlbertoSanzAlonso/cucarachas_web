@@ -1,19 +1,19 @@
 import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { DashboardSkeleton } from './components/Skeleton';
+import { DashboardSkeleton } from '@/components/Skeleton';
 import './index.css';
 
 // Lazy load pages for maximum performance and code splitting
-const Home = lazy(() => import('./pages/Home'));
-const Login = lazy(() => import('./pages/Login'));
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
-const About = lazy(() => import('./pages/About'));
-const LegalNotice = lazy(() => import('./pages/LegalNotice'));
-const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
-const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
-const Blog = lazy(() => import('./pages/Blog'));
-const FAQ = lazy(() => import('./pages/FAQ'));
+const Home = lazy(() => import('@/pages/Home'));
+const Login = lazy(() => import('@/pages/Login'));
+const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
+const About = lazy(() => import('@/pages/About'));
+const LegalNotice = lazy(() => import('@/pages/LegalNotice'));
+const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
+const ServiceDetail = lazy(() => import('@/pages/ServiceDetail'));
+const Blog = lazy(() => import('@/pages/Blog'));
+const FAQ = lazy(() => import('@/pages/FAQ'));
 
 /**
  * CECSA - Speed Optimized SPA Router

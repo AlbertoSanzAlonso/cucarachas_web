@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { createPortal } from 'react-dom';
+import Button from '@/components/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { Search, PenTool, Zap, CheckCircle2, X, ShieldCheck, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
