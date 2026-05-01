@@ -98,11 +98,25 @@ const FloatingCTA = () => {
                       </div>
 
                       {/* Input */}
-                      <form onSubmit={handleSend} className="p-3 bg-white border-t border-gray-100 flex items-center space-x-2">
-                        <input type="text" value={input} onChange={(e) => setInput(e.target.value)} placeholder="Escriu..." className="flex-1 bg-gray-50 border-none rounded-xl px-3 py-2 text-[11px] focus:ring-0 outline-none" />
-                        <button type="submit" className="p-2 bg-accent-green text-primary-gray rounded-lg">
-                          <Send size={14} />
-                        </button>
+                      <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white">
+                        <div className="flex items-center bg-gray-50 rounded-full px-4 py-1 border border-gray-200 focus-within:border-primary-blue transition-colors">
+                          <input
+                            ref={inputRef}
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            placeholder={t('cta.chat_placeholder') || "Escriu un missatge..."}
+                            className="flex-1 bg-transparent border-none focus:ring-0 text-secondary-gray py-2 px-1 text-[11px]"
+                            disabled={isLoading}
+                          />
+                          <button 
+                            type="submit"
+                            disabled={isLoading || !input.trim()}
+                            className="ml-2 p-2 text-primary-blue hover:text-blue-700 disabled:text-gray-300 transition-colors"
+                          >
+                            <Send size={14} />
+                          </button>
+                        </div>
                       </form>
                     </motion.div>
                   )}
