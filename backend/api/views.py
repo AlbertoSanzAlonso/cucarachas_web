@@ -51,11 +51,14 @@ import json
 
 import asyncio
 
-@api_view(['POST'])
+@api_view(['GET', 'POST'])
 def chat_with_agents(request):
     """
     Endpoint principal para interactuar con el ecosistema de agentes de CECSA.
     """
+    if request.method == 'GET':
+        return Response({"status": "API is online", "message": "CECSA Agentic API is ready for POST requests."})
+
     message = request.data.get('message')
     if not message:
         return Response({"error": "No message provided"}, status=400)

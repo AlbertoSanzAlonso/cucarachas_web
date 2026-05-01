@@ -11,7 +11,10 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-fo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1 178.104.249.230 api.cucarachasbarcelona.cat cucarachasbarcelona.cat').split()
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '178.104.249.230', 'api.cucarachasbarcelona.cat', 'cucarachasbarcelona.cat']
+env_hosts = os.environ.get('ALLOWED_HOSTS')
+if env_hosts:
+    ALLOWED_HOSTS.extend(env_hosts.split())
 
 # Application definition
 
