@@ -5,7 +5,7 @@ from api.models import Tratamiento
 # Agente 3: Presupuestador
 # Rol: Calcular precio basado en reglas de negocio y catálogo oficial.
 pricer_agent = Agent(
-    'google-gla:gemini-2.0-flash',
+    'google-gla:gemini-flash-latest',
     output_type=PricingOutput,
     system_prompt=(
         "Ets el Calculador de Pressupostos de CECSA. "

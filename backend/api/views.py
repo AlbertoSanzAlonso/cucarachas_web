@@ -57,24 +57,7 @@ def chat_with_agents(request):
     Endpoint principal para interactuar con el ecosistema de agentes de CECSA.
     """
     if request.method == 'GET':
-        import google.generativeai as genai
-        import os
-        api_key = os.environ.get('GOOGLE_API_KEY')
-        models = []
-        if api_key:
-            genai.configure(api_key=api_key)
-            try:
-                for m in genai.list_models():
-                    if 'generateContent' in m.supported_generation_methods:
-                        models.append(m.name)
-            except Exception as e:
-                models.append(f"Error listing: {str(e)}")
-        
-        return Response({
-            "status": "API is online", 
-            "available_models": models,
-            "current_key_prefix": api_key[:10] if api_key else "None"
-        })
+        return Response({"status": "API is online", "message": "CECSA Agentic API is ready for POST requests."})
 
     message = request.data.get('message')
     if not message:
@@ -100,9 +83,7 @@ def chat_with_agents(request):
         })
     except Exception as e:
         import traceback
-        error_details = traceback.format_exc()
-        print(error_details) # También saldrá en logs
+        print(traceback.format_exc()) # Mantenemos log interno
         return Response({
-            "reply": f"Error interno: {str(e)}",
-            "debug_error": error_details
+            "reply": "Ho sento, he tingut un error intern. Si us plau, truca al 933 309 169 per a una assistència immediata.",
         }, status=500)
