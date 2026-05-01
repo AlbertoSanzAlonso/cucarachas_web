@@ -6,7 +6,7 @@ from knowledge.retriever import retrieve_relevant_knowledge
 # Agente 2: Diagnóstico Técnico
 # Rol: Hacer preguntas inteligentes y clasificar la plaga/gravedad.
 diagnostician_agent = Agent(
-    'gemini-1.5-flash',
+    'google-gla:gemini-1.5-flash-latest',
     # Gemini 2.5 para diagnóstico técnico
     output_type=DiagnosisOutput,
     system_prompt=(

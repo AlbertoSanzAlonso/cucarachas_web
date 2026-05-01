@@ -5,7 +5,7 @@ from typing import Optional
 # Agente 1: Recepcionista
 # Rol: Saludar, detectar intención y captar datos básicos.
 receptionist_agent = Agent(
-    'gemini-1.5-flash', 
+    'google-gla:gemini-1.5-flash-latest', 
     output_type=ReceptionistOutput,
     system_prompt=(
         "Ets el Recepcionista de CECSA Control de Plagues. "
