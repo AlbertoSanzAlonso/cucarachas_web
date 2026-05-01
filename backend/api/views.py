@@ -63,19 +63,28 @@ def chat_with_agents(request):
     if not message:
         return Response({"error": "No message provided"}, status=400)
 
-    # Recuperar estado de la sesión si existe
-    state_data = request.session.get('agent_state')
-    orchestrator = CECSAOrchestrator()
-    if state_data:
-        orchestrator.state = AgentState(**state_data)
+    try:
+        # Recuperar estado de la sesión si existe
+        state_data = request.session.get('agent_state')
+        orchestrator = CECSAOrchestrator()
+        if state_data:
+            orchestrator.state = AgentState(**state_data)
 
-    # Procesar mensaje de forma síncrona para DRF
-    reply = asyncio.run(orchestrator.process_message(message))
+        # Procesar mensaje de forma síncrona para DRF
+        reply = asyncio.run(orchestrator.process_message(message))
 
-    # Guardar nuevo estado
-    request.session['agent_state'] = orchestrator.state.model_dump()
-    
-    return Response({
-        "reply": reply,
-        "state": orchestrator.state.model_dump()
-    })
+        # Guardar nuevo estado
+        request.session['agent_state'] = orchestrator.state.model_dump()
+        
+        return Response({
+            "reply": reply,
+            "state": orchestrator.state.model_dump()
+        })
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        print(error_details) # También saldrá en logs
+        return Response({
+            "reply": f"Error interno: {str(e)}",
+            "debug_error": error_details
+        }, status=500)
