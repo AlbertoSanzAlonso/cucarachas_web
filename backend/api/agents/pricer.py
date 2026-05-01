@@ -1,11 +1,14 @@
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.models.google import GoogleGenerativeAIModel
 from .models import AgentState, PricingOutput
 from api.models import Tratamiento
+
+gemini_model = GoogleGenerativeAIModel('gemini-1.5-flash')
 
 # Agente 3: Presupuestador
 # Rol: Calcular precio basado en reglas de negocio y catálogo oficial.
 pricer_agent = Agent(
-    'google-gla:gemini-1.5-flash-latest',
+    gemini_model,
     output_type=PricingOutput,
     system_prompt=(
         "Ets el Calculador de Pressupostos de CECSA. "

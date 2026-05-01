@@ -1,12 +1,15 @@
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.models.google import GoogleGenerativeAIModel
 from .models import AgentState, DiagnosisOutput, PestType, Severity
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
 
+gemini_model = GoogleGenerativeAIModel('gemini-1.5-flash')
+
 # Agente 2: Diagnóstico Técnico
 # Rol: Hacer preguntas inteligentes y clasificar la plaga/gravedad.
 diagnostician_agent = Agent(
-    'google-gla:gemini-1.5-flash-latest',
+    gemini_model,
     # Gemini 2.5 para diagnóstico técnico
     output_type=DiagnosisOutput,
     system_prompt=(
