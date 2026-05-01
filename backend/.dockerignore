@@ -1,0 +1,10 @@
+.git
+.env
+__pycache__
+*.pyc
+venv
+.vscode
+.gemini
+node_modules
+staticfiles
+db.sqlite3
