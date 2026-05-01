@@ -57,7 +57,24 @@ def chat_with_agents(request):
     Endpoint principal para interactuar con el ecosistema de agentes de CECSA.
     """
     if request.method == 'GET':
-        return Response({"status": "API is online", "message": "CECSA Agentic API is ready for POST requests."})
+        import google.generativeai as genai
+        import os
+        api_key = os.environ.get('GOOGLE_API_KEY')
+        models = []
+        if api_key:
+            genai.configure(api_key=api_key)
+            try:
+                for m in genai.list_models():
+                    if 'generateContent' in m.supported_generation_methods:
+                        models.append(m.name)
+            except Exception as e:
+                models.append(f"Error listing: {str(e)}")
+        
+        return Response({
+            "status": "API is online", 
+            "available_models": models,
+            "current_key_prefix": api_key[:10] if api_key else "None"
+        })
 
     message = request.data.get('message')
     if not message:
