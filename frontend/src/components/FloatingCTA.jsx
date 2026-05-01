@@ -53,14 +53,14 @@ const FloatingCTA = () => {
           <div className="flex flex-col items-start space-y-3 pointer-events-auto animate-fade-in animate-slide-up [@media(max-height:600px)_and_(orientation:landscape)]:hidden">
              
              {/* Integrated Chat Widget */}
-             <div className="relative w-full md:w-auto">
+             <div className="relative w-full md:w-auto flex flex-col items-start">
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: 20, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                      className="absolute bottom-full mb-4 left-0 md:left-0 w-[calc(100vw-2rem)] md:w-96 h-[450px] md:h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-left z-[120]"
+                      className="fixed md:absolute bottom-20 md:bottom-full left-4 right-4 md:left-0 md:right-auto md:mb-4 md:w-96 h-[450px] md:h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom z-[120]"
                     >
                       {/* Header */}
                       <div className="p-4 md:p-5 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
