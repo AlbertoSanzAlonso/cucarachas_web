@@ -6,3 +6,7 @@ gunicorn
 whitenoise[brotli]
 psycopg2-binary
 python-decouple
+pgvector
+pydantic-ai
+google-generativeai
+python-dotenv
