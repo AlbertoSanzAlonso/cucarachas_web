@@ -70,8 +70,9 @@ def chat_with_agents(request):
         if state_data:
             orchestrator.state = AgentState(**state_data)
 
-        # Procesar mensaje de forma síncrona para DRF
-        reply = asyncio.run(orchestrator.process_message(message))
+        # Procesar mensaje usando async_to_sync para compatibilidad con Uvicorn
+        from asgiref.sync import async_to_sync
+        reply = async_to_sync(orchestrator.process_message)(message)
 
         # Guardar nuevo estado
         request.session['agent_state'] = orchestrator.state.model_dump()
