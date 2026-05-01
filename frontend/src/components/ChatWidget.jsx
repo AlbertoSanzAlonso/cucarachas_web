@@ -32,7 +32,7 @@ const ChatWidget = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://178.104.249.230:8001/api/chat/', {
+      const response = await axios.post('https://api.cucarachasbarcelona.cat/api/chat/', {
         message: userMessage
       }, { withCredentials: true });
 
