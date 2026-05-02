@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { useSelector } from 'react-redux';
 import { DashboardSkeleton } from '@/components/Skeleton';
 import AgentHeroModal from '@/components/Agent/AgentHeroModal';
+import { CalProvider } from '@calcom/atoms';
 import './index.css';
 
 // Lazy load pages for maximum performance and code splitting
@@ -30,6 +31,7 @@ const PublicRoute = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   return isAuthenticated ? <Navigate to="/admin" replace /> : children;
 };
+
 function App() {
   const [isAgentOpen, setIsAgentOpen] = React.useState(true);
   const [hasDismissedAgent, setHasDismissedAgent] = React.useState(() => {
@@ -54,10 +56,12 @@ function App() {
 
   return (
     <Router>
-      <AppContent
-        isAgentOpen={isAgentOpen}
-        handleCloseAgent={handleCloseAgent}
-      />
+      <CalProvider accessToken={import.meta.env.VITE_CAL_ACCESS_TOKEN || ""}>
+        <AppContent
+          isAgentOpen={isAgentOpen}
+          handleCloseAgent={handleCloseAgent}
+        />
+      </CalProvider>
     </Router>
   );
 }
