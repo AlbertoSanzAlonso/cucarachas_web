@@ -1,23 +1,20 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
+
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: fetchBaseQuery({
-    baseUrl: `${import.meta.env.VITE_INSFORGE_URL}/rest/v1/`,
+    baseUrl: `${API_BASE}/api/`,
     prepareHeaders: (headers, { getState }) => {
       const token = getState().auth.token;
-      const anonKey = import.meta.env.VITE_INSFORGE_ANON_KEY;
-      
-      if (anonKey) {
-        headers.set('apikey', anonKey);
-      }
-      
       if (token) {
-        headers.set('authorization', `Bearer ${token}`);
+        headers.set('Authorization', `Token ${token}`);
       }
+      headers.set('Content-Type', 'application/json');
       return headers;
     },
   }),
-  tagTypes: ['Leads', 'Species'],
+  tagTypes: ['Leads', 'Species', 'Citas'],
   endpoints: () => ({}),
 });

@@ -4,8 +4,9 @@ import { useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { insforge } from '@/lib/insforge';
 import { setCredentials } from '@/store/slices/authSlice';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,36 +23,20 @@ const Login = () => {
     setError('');
     
     try {
-      const { data, error: authError } = await insforge.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch(`${API_BASE}/api/auth/login/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
       });
-
-      if (authError) {
-        setError(authError.message === 'Invalid login credentials' 
-          ? 'Correu o contrasenya incorrectes' 
-          : 'Error al connectar amb el sistema sanitari');
-      } else if (data && data.user) {
-        // Fetch real profile from public.profiles
-        const { data: profile, error: profileError } = await insforge
-          .database
-          .from('profiles')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError) {
-          console.warn('Profile not found, using defaults', profileError);
-        }
-
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setError(data.error || 'Correu o contrasenya incorrectes');
+      } else {
         dispatch(setCredentials({
-          user: {
-            email: data.user.email,
-            id: data.user.id,
-            name: profile?.name || (data.user.email === 'info@cucarachasbarcelona.cat' ? 'Marc' : 'Administrador'),
-            role: profile?.role || 'Sistemes'
-          },
-          token: data.accessToken
+          user: data.user,
+          token: data.token
         }));
         navigate('/admin');
       }
