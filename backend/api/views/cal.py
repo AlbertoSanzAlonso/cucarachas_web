@@ -72,21 +72,22 @@ def get_cal_bookings(request):
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
-    url = "https://api.cal.com/v2/bookings"
+    # Intentar con la v1 de la API que es compatible con claves cal_live_ personales
+    url = f"https://api.cal.com/v1/bookings?apiKey={api_key}"
     
     try:
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "cal-api-version": "2024-08-13"
-        }
-        print(f"DEBUG: Connecting to Cal.com with key starting with: {api_key[:8]}...")
-        response = requests.get(url, headers=headers)
-        print(f"DEBUG: Cal.com response status: {response.status_code}")
+        print(f"DEBUG: Connecting to Cal.com v1 with key starting with: {api_key[:8]}...")
+        response = requests.get(url)
+        print(f"DEBUG: Cal.com v1 response status: {response.status_code}")
+        
         if response.status_code != 200:
-            print(f"DEBUG: Cal.com error body: {response.text}")
+            print(f"DEBUG: Cal.com v1 error body: {response.text}")
+            return Response(response.json() if response.text else {"error": "Cal.com v1 error"}, status=response.status_code)
             
-        return Response(response.json(), status=response.status_code)
+        # La v1 devuelve una estructura distinta, la normalizamos para el frontend
+        data = response.json()
+        bookings = data.get('bookings', [])
+        return Response({"status": "success", "data": bookings}, status=200)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 
