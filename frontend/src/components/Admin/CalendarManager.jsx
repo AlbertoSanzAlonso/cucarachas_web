@@ -28,8 +28,13 @@ const CalendarManager = () => {
       console.log("DEBUG: Cal.com data received:", data);
 
       if (data.status === 'success') {
-        // En la v2, las citas vienen en data.data que es un array
-        const bookingsList = Array.isArray(data.data) ? data.data : [];
+        // En la v2, las citas vienen en data.data.bookings
+        let bookingsList = [];
+        if (data.data && Array.isArray(data.data.bookings)) {
+          bookingsList = data.data.bookings;
+        } else if (Array.isArray(data.data)) {
+          bookingsList = data.data;
+        }
         setBookings(bookingsList);
       } else {
         throw new Error(data.message || data.error || 'Error fetching bookings');
