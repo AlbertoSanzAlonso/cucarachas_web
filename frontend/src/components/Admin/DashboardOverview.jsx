@@ -2,12 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Activity, MessageSquare, Shield, TrendingUp, ChevronRight, Calendar } from 'lucide-react';
 
-const DashboardOverview = ({ leads, isLoading, isError }) => {
+const DashboardOverview = ({ leads, isLoading, isError, setActiveTab }) => {
   const stats = [
-    { title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...' },
-    { title: 'Leads Pendents', value: leads?.length || '0', icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual' },
-    { title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Cal.com' },
-    { title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...' },
+    { id: 'active', title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...' },
+    { id: 'leads', title: 'Leads Pendents', value: leads?.length || '0', icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual' },
+    { id: 'calendar', title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Cal.com' },
+    { id: 'teams', title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...' },
   ];
 
   return (
@@ -20,7 +20,8 @@ const DashboardOverview = ({ leads, isLoading, isError }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-primary-blue/5 transition-all group"
+            onClick={() => item.id === 'calendar' ? setActiveTab('calendar') : null}
+            className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-primary-blue/5 transition-all group cursor-pointer"
           >
             <div className="flex justify-between items-start mb-4">
               <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-primary-blue/5 transition-colors">
@@ -105,7 +106,10 @@ const DashboardOverview = ({ leads, isLoading, isError }) => {
              </div>
           </div>
           <div className="p-4">
-            <button className="w-full bg-primary-blue rounded-[2rem] p-6 text-white text-center font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
+            <button 
+              onClick={() => setActiveTab('calendar')}
+              className="w-full bg-primary-blue rounded-[2rem] p-6 text-white text-center font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
               Gestionar Agenda
             </button>
           </div>

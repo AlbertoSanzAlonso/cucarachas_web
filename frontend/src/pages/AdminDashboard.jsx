@@ -73,7 +73,7 @@ const AdminDashboard = () => {
         />
 
         {activeTab === 'overview' ? (
-          <DashboardOverview leads={leads} isLoading={isLoading} isError={isError} />
+          <DashboardOverview leads={leads} isLoading={isLoading} isError={isError} setActiveTab={setActiveTab} />
         ) : activeTab === 'mail' ? (
           <WebmailAccess />
         ) : activeTab === 'calendar' ? (
