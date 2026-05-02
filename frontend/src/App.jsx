@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { useSelector } from 'react-redux';
 import { DashboardSkeleton } from '@/components/Skeleton';
 import AgentHeroModal from '@/components/Agent/AgentHeroModal';
-import { CalProvider } from '@calcom/atoms';
 import './index.css';
 
 // Lazy load pages for maximum performance and code splitting
@@ -56,18 +55,10 @@ function App() {
 
   return (
     <Router>
-      <CalProvider 
-        clientId={import.meta.env.VITE_CAL_CLIENT_ID || ""}
-        options={{
-          apiUrl: "https://api.cal.com/v2"
-        }}
-        accessToken={import.meta.env.VITE_CAL_ACCESS_TOKEN || ""}
-      >
-        <AppContent
-          isAgentOpen={isAgentOpen}
-          handleCloseAgent={handleCloseAgent}
-        />
-      </CalProvider>
+      <AppContent
+        isAgentOpen={isAgentOpen}
+        handleCloseAgent={handleCloseAgent}
+      />
     </Router>
   );
 }
