@@ -50,7 +50,7 @@ def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
         data = resp.json()
 
         if data.get("status") != "success":
-            return f"Error de l'API: {data.get('error', {}).get('message', 'No s\\'ha pogut obtenir la disponibilitat')}"
+            return f'Error de l\'API: {data.get("error", {}).get("message", "No s\'ha pogut obtenir la disponibilitat")}'
 
         # En la v2 los slots vienen en data.data o data.data.slots
         slots_data = data.get("data", {})
