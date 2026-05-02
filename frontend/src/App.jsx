@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DashboardSkeleton } from '@/components/Skeleton';
+import AgentHeroModal from '@/components/Agent/AgentHeroModal';
 import './index.css';
 
 // Lazy load pages for maximum performance and code splitting
@@ -30,8 +31,30 @@ const PublicRoute = ({ children }) => {
   return isAuthenticated ? <Navigate to="/admin" replace /> : children;
 };
 function App() {
+  const [isAgentOpen, setIsAgentOpen] = React.useState(true);
+  const [hasDismissedAgent, setHasDismissedAgent] = React.useState(() => {
+    return !!localStorage.getItem('cecsa_agent_dismissed');
+  });
+
+  const handleCloseAgent = () => {
+    setIsAgentOpen(false);
+    setHasDismissedAgent(true);
+    localStorage.setItem('cecsa_agent_dismissed', 'true');
+  };
+
+  React.useEffect(() => {
+    if (isAgentOpen) {
+      document.body.classList.add('agent-open');
+      window.scrollTo(0, 0); // Ensure background starts at top
+    } else {
+      document.body.classList.remove('agent-open');
+    }
+    return () => document.body.classList.remove('agent-open');
+  }, [isAgentOpen]);
+
   return (
     <Router>
+      <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
       <Routes>
         <Route 
           path="/" 

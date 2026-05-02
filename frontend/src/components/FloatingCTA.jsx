@@ -7,6 +7,7 @@ import axios from 'axios';
 const FloatingCTA = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const [messages, setMessages] = useState([
     { role: 'assistant', content: 'Hola! Sóc l\'assistent virtual de CECSA. Com et puc ajudar avui amb el control de plagues?' }
   ]);
@@ -14,6 +15,27 @@ const FloatingCTA = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  useEffect(() => {
+    // Show hint if the agent has been dismissed (meaning it's in bubble mode)
+    const dismissed = localStorage.getItem('cecsa_agent_dismissed');
+    if (dismissed && !isOpen) {
+      const timer = setTimeout(() => setShowHint(true), 1000);
+      
+      const handleScroll = () => {
+        if (window.scrollY > 100) {
+          setShowHint(false);
+          window.removeEventListener('scroll', handleScroll);
+        }
+      };
+      
+      window.addEventListener('scroll', handleScroll);
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    }
+  }, [isOpen]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,6 +54,7 @@ const FloatingCTA = () => {
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -57,7 +80,7 @@ const FloatingCTA = () => {
   };
 
   return (
-    <div className="fixed bottom-4 md:bottom-8 left-0 right-0 z-[100] px-4 md:px-12 xl:px-0 flex justify-center pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
+    <div id="floating-cta" className="fixed bottom-4 md:bottom-8 left-0 right-0 z-[100] px-4 md:px-12 xl:px-0 flex justify-center pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
        <div className="max-w-7xl mx-auto w-full flex items-end justify-between md:items-end">
           
           {/* LEFT SIDE: Chat & WhatsApp */}
@@ -65,6 +88,32 @@ const FloatingCTA = () => {
              
              {/* Integrated Chat Widget */}
              <div className="relative w-full">
+                <AnimatePresence>
+                  {showHint && !isOpen && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                      className="absolute bottom-full left-0 mb-4 bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 min-w-[200px] pointer-events-auto"
+                    >
+                      <div className="flex items-center space-x-3">
+                        <div className="p-2 bg-primary-blue/5 rounded-xl">
+                          <Sparkles size={16} className="text-primary-blue animate-pulse" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] font-black text-primary-blue uppercase tracking-widest leading-tight">
+                            {t('agent.persistent_msg')}
+                          </p>
+                          <p className="text-[9px] text-gray-400 font-medium mt-0.5">
+                            {t('agent.minimized_hint')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="absolute top-full left-6 w-3 h-3 bg-white border-r border-b border-gray-100 transform rotate-45 -mt-1.5"></div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
@@ -79,7 +128,7 @@ const FloatingCTA = () => {
                             <Bot size={18} className="text-accent-green" />
                             <h3 className="font-black text-xs uppercase">Assistent CECSA</h3>
                          </div>
-                         <button onClick={() => setIsOpen(false)} className="relative z-10 p-1 hover:bg-white/10 rounded-lg">
+                         <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="relative z-10 p-1 hover:bg-white/10 rounded-lg">
                            <X size={18} />
                          </button>
                       </div>
@@ -99,14 +148,14 @@ const FloatingCTA = () => {
 
                       {/* Input */}
                       <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white">
-                        <div className="flex items-center bg-gray-50 rounded-full px-4 py-1 border border-gray-200 focus-within:border-primary-blue transition-colors">
+                        <div className="flex items-center bg-gray-50 rounded-full px-4 py-1 border border-gray-200 transition-colors">
                           <input
                             ref={inputRef}
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
                             placeholder={t('cta.chat_placeholder') || "Escriu un missatge..."}
-                            className="flex-1 bg-transparent border-none focus:ring-0 text-secondary-gray py-2 px-1 text-[11px]"
+                            className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-2 px-1 text-[11px]"
                             disabled={isLoading}
                           />
                           <button 
@@ -126,7 +175,7 @@ const FloatingCTA = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsOpen(!isOpen)}
+                  onClick={() => { setIsOpen(!isOpen); setShowHint(false); }}
                   className="flex items-center bg-primary-blue text-white shadow-xl rounded-xl p-1.5 md:p-2 border border-blue-400/20 w-full md:w-auto"
                 >
                    <div className="bg-white/20 p-1.5 md:p-2 rounded-lg">

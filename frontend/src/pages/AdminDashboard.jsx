@@ -13,6 +13,7 @@ import TopBar from '@/components/Admin/TopBar';
 import DashboardOverview from '@/components/Admin/DashboardOverview';
 import WebmailAccess from '@/components/Admin/WebmailAccess';
 import ProfileModal from '@/components/Admin/ProfileModal';
+import CalendarManager from '@/components/Admin/CalendarManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -109,6 +110,8 @@ const AdminDashboard = () => {
           <DashboardOverview leads={leads} isLoading={isLoading} isError={isError} />
         ) : activeTab === 'mail' ? (
           <WebmailAccess />
+        ) : activeTab === 'calendar' ? (
+          <CalendarManager />
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <div className="p-6 bg-gray-100 rounded-full mb-6">

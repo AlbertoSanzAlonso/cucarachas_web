@@ -249,13 +249,33 @@
     "industry": "Industria Alimentaria",
     "cta": "Ver Planes",
     "horeca_desc": "Control preventivo estricto para la máxima seguridad alimentaria. Garantizamos un entorno libre de cucarachas para que tu negocio nunca se detenga.",
-    "horeca_points": ["Monitoreo digital 24/7", "Geles de alta atracción sin olores", "Certificado ROESB obligatorio incluido", "Respuesta urgente en menos de 2h"],
+    "horeca_points": [
+      "Monitoreo digital 24/7",
+      "Geles de alta atracción sin olores",
+      "Certificado ROESB obligatorio incluido",
+      "Respuesta urgente en menos de 2h"
+    ],
     "hotels_desc": "Discreción absoluta y protección de la reputación. Protocolos especializados para el sector hotelero y alojamientos turísticos.",
-    "hotels_points": ["Intervenciones nocturnas y discretas", "Tratamientos preventivos cero-residuos", "Garantía de satisfacción total", "Informe técnico para auditorías"],
+    "hotels_points": [
+      "Intervenciones nocturnas y discretas",
+      "Tratamientos preventivos cero-residuos",
+      "Garantía de satisfacción total",
+      "Informe técnico para auditorías"
+    ],
     "comms_desc": "Mantenimiento preventivo estructural de zonas comunes y redes de alcantarillado para evitar invasiones masivas.",
-    "comms_points": ["Control integral de bajantes y arquetas", "Tratamientos anuales de alta eficacia", "Atención directa a los administradores", "Seguimiento post-tratamiento"],
+    "comms_points": [
+      "Control integral de bajantes y arquetas",
+      "Tratamientos anuales de alta eficacia",
+      "Atención directa a los administradores",
+      "Seguimiento post-tratamiento"
+    ],
     "industry_desc": "Soluciones técnicas avanzadas según estándares IFS, BRC y APPCC para la industria alimentaria y farmacéutica.",
-    "industry_points": ["Auditorías de vulnerabilidad de planta", "Gestión documental digitalizada", "Protocolos de bioseguridad estricta", "Análisis de tendencias de plagas"]
+    "industry_points": [
+      "Auditorías de vulnerabilidad de planta",
+      "Gestión documental digitalizada",
+      "Protocolos de bioseguridad estricta",
+      "Análisis de tendencias de plagas"
+    ]
   },
   "cta": {
     "wa_label": "Consulta rápida",
@@ -388,5 +408,34 @@
         "answer": "La fumigación suele ser invasiva y poco selectiva. El gel es infinitamente superior para cucarachas, ya que aprovecha el comportamiento social del insecto (coprofagia y necrofagia) para eliminar el nido desde dentro sin químicos en el aire."
       }
     ]
+  },
+  "agent": {
+    "welcome": "¡Hola! Soy tu asistente bio-consciente.",
+    "intro": "Antes de empezar, necesito entender mejor tu situación para ofrecerte la solución más ética y eficaz.",
+    "skip": "Saltar e ir a la web",
+    "step1_q": "¿Qué plaga te preocupa hoy?",
+    "step2_q": "¿Dónde has detectado la actividad?",
+    "step3_q": "¿Con qué frecuencia las ves?",
+    "pests": {
+      "cucarachas": "Cucarachas",
+      "hormigas": "Hormigas",
+      "ratas": "Ratas/Ratones",
+      "otros": "Otros / No lo sé"
+    },
+    "locations": {
+      "cocina": "Cocina",
+      "negocio": "Negocio / Local",
+      "comunidad": "Comunidad",
+      "otros": "Otras zonas"
+    },
+    "frequency": {
+      "diario": "A diario",
+      "noche": "Solo de noche",
+      "ocasional": "De vez en cuando",
+      "primera": "Es la primera vez"
+    },
+    "finish_cta": "Generar Diagnóstico",
+    "persistent_msg": "Estoy aquí si me necesitas",
+    "minimized_hint": "Haz clic para hablar con el asistente"
   }
 }

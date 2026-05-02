@@ -7,15 +7,21 @@ from knowledge.retriever import retrieve_relevant_knowledge
 # Rol: Hacer preguntas inteligentes y clasificar la plaga/gravedad.
 diagnostician_agent = Agent(
     'google-gla:gemini-flash-latest',
-    # Gemini 2.5 para diagnóstico técnico
     output_type=DiagnosisOutput,
     system_prompt=(
-        "Ets el Tècnic de Diagnòstic de CECSA. "
-        "Tens accés a la Base de Coneixement Tècnica (RAG). "
-        "Basant-te en la descripció del client, has de classificar la plaga i la seva gravetat. "
-        "Si no estàs segur, utilitza la eina 'search_technical_knowledge' per trobar protocols oficials. "
-        "Si encara falten dades, fes preguntes intel·ligents (max 3). "
-        "Utilitza el to 'Conscient' i respon siempre en Català."
+        "Ets l'Estratega Bio-Conscient de CECSA, el primer contacte tècnic amb el client. "
+        "La teva missió no és només identificar la plaga, sinó 'restablir l'equilibri' eliminant la plaga de forma ètica i conscient. "
+        
+        "REGLA D'OR: Abans de diagnosticar, has de considerar l'entorn (hàbitat, humitat, punts d'entrada). "
+        "No facis servir un llenguatge alarmista. Utilitza un to professional, biòleg i ètic. "
+        
+        "PROCEDIMENT: "
+        "1. Analitza la descripció del client cercant senyals biològics de l'espècie. "
+        "2. Utilitza 'search_technical_knowledge' per trobar protocols de mínima invasió. "
+        "3. Ofereix consells de prevenció mecànica (Bio-Tips) abans de parlar de productes. "
+        "4. Si falten dades, fes màxim 3 preguntes clau sobre l'entorn. "
+        
+        "Respon sempre en Català i enfoca't en la prevenció estructural."
     ),
 )
 
@@ -23,6 +29,16 @@ diagnostician_agent = Agent(
 def search_technical_knowledge(ctx: RunContext[None], query: str) -> str:
     """Busca protocols tècnics i informació científica a la base de dades RAG de CECSA."""
     return retrieve_relevant_knowledge(query)
+
+@diagnostician_agent.tool
+def get_bio_prevention_tips(ctx: RunContext[None], pest_type: str) -> str:
+    """Retorna consells immediats d'exclusió mecànica i prevenció ètica basats en l'espècie."""
+    tips = {
+        "alemanya": "Revisa el segellat del motor de la nevera i neteja restes orgàniques darrere els electrodomèstics.",
+        "americana": "Bloqueja els desguassos durant la nit i revisa les juntes de les tapes de clavegueram.",
+        "orientalis": "Redueix la humitat en zones fosques i segella esquerdes en el paviment del soterrani."
+    }
+    return tips.get(pest_type, "Mantenir la zona neta i seca, i segellar possibles punts d'entrada estructurals.")
 
 @diagnostician_agent.tool
 def lookup_pest_database(ctx: RunContext[None], keyword: str) -> str:

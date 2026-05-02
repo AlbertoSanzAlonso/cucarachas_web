@@ -87,3 +87,90 @@ def chat_with_agents(request):
         return Response({
             "reply": "Ho sento, he tingut un error intern. Si us plau, truca al 933 309 169 per a una assistència immediata.",
         }, status=500)
+@api_view(['GET', 'POST'])
+def cal_webhook(request):
+    """
+    Webhook para recibir eventos de Cal.com.
+    - GET: responde al Ping de verificación de Cal.com.
+    - POST: procesa eventos de reserva.
+    """
+    # Cal.com realiza un GET o POST de ping para verificar el endpoint
+    if request.method == 'GET':
+        return Response({"status": "ok", "message": "CECSA Cal.com Webhook actiu"})
+
+    payload = request.data
+    trigger_event = payload.get('triggerEvent')
+    data = payload.get('payload', {})
+
+    # Responder OK inmediatamente al ping de prueba
+    if not trigger_event or trigger_event == 'PING':
+        return Response({"status": "ok", "message": "Ping rebut correctament"})
+
+    try:
+        if trigger_event == 'BOOKING_CREATED':
+            attendee = data.get('attendees', [{}])[0]
+            cliente, _ = Cliente.objects.get_or_create(
+                email=attendee.get('email'),
+                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
+            )
+            Cita.objects.create(
+                cliente=cliente,
+                fecha_hora=data.get('startTime'),
+                notas=f"Reserva automàtica via Cal.com. UID: {data.get('uid', data.get('id', ''))}",
+                estado='Confirmada'
+            )
+
+        elif trigger_event in ('BOOKING_CANCELLED', 'BOOKING_REJECTED'):
+            attendee = data.get('attendees', [{}])[0]
+            uid = data.get('uid', '')
+            # Intentamos cancelar por UID en notas, fallback por email+hora
+            citas = Cita.objects.filter(notas__icontains=uid) if uid else \
+                    Cita.objects.filter(cliente__email=attendee.get('email'), fecha_hora=data.get('startTime'))
+            citas.update(estado='Cancelada')
+
+        elif trigger_event == 'BOOKING_REQUESTED':
+            attendee = data.get('attendees', [{}])[0]
+            cliente, _ = Cliente.objects.get_or_create(
+                email=attendee.get('email'),
+                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
+            )
+            Cita.objects.get_or_create(
+                notas__icontains=data.get('uid', ''),
+                defaults={
+                    'cliente': cliente,
+                    'fecha_hora': data.get('startTime'),
+                    'notas': f"Sol·licitud pendent. UID: {data.get('uid', '')}",
+                    'estado': 'Pendent'
+                }
+            )
+
+        return Response({"status": "success", "event": trigger_event})
+    except Exception as e:
+        print(f"ERROR Webhook Cal.com [{trigger_event}]: {str(e)}")
+        return Response({"status": "error", "message": str(e)}, status=400)
+import requests
+from django.conf import settings
+import os
+
+@api_view(['GET'])
+def get_cal_slots(request):
+    """
+    Proxy para obtener slots de Cal.com evitando problemas de CORS en el frontend.
+    """
+    event_type_id = request.query_params.get('eventTypeId', '277401')
+    start_time = request.query_params.get('startTime')
+    end_time = request.query_params.get('endTime')
+    
+    api_key = os.getenv('CAL_API_KEY', 'cal_live_e17cc48d9dd1068857af7b67f396b787')
+    
+    url = f"https://api.cal.com/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.get(url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)

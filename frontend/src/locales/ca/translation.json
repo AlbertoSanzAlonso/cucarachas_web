@@ -408,5 +408,34 @@
         "answer": "La fumigació sol ser invasiva i poc selectiva. El gel és infinitament superior per a paneroles, ja que aprofita el comportament social de l'insecte (coprofàgia i necrofàgia) per eliminar el niu des de dins sense químics a l'aire."
       }
     ]
+  },
+  "agent": {
+    "welcome": "Hola! Sóc el teu assistent bio-conscient.",
+    "intro": "Abans de començar, necessito entendre millor la teva situació per oferir-te la solució més ètica i eficaç.",
+    "skip": "Saltar i anar a la web",
+    "step1_q": "Quina plaga et preocupa avui?",
+    "step2_q": "On has detectat l'activitat?",
+    "step3_q": "Amb quina freqüència les veus?",
+    "pests": {
+      "cucarachas": "Paneroles",
+      "hormigas": "Formigues",
+      "ratas": "Rates/Ratolins",
+      "otros": "Altres / No ho sé"
+    },
+    "locations": {
+      "cocina": "Cuina",
+      "negocio": "Negoci / Local",
+      "comunidad": "Comunitat",
+      "otros": "Altres zones"
+    },
+    "frequency": {
+      "diario": "Cada dia",
+      "noche": "Només de nit",
+      "ocasional": "De tant en tant",
+      "primera": "És la primera vegada"
+    },
+    "finish_cta": "Generar Diagnòstic",
+    "persistent_msg": "Estic aquí si em necessites",
+    "minimized_hint": "Fes clic per parlar amb l'assistent"
   }
 }

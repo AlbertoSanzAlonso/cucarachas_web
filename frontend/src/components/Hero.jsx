@@ -26,7 +26,7 @@ const Hero = () => {
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
       <div 
-        className="relative min-h-[500px] md:min-h-[600px] xl:min-h-[75vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
+        className="relative min-h-[550px] md:min-h-[650px] xl:min-h-[80vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)'
         }}
