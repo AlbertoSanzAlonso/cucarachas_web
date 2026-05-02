@@ -1,0 +1,128 @@
+import os
+import requests
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from ..models import Cliente, Cita
+
+@api_view(['GET', 'POST'])
+def cal_webhook(request):
+    """
+    Webhook para recibir eventos de Cal.com.
+    - GET: responde al Ping de verificación de Cal.com.
+    - POST: procesa eventos de reserva.
+    """
+    if request.method == 'GET':
+        return Response({"status": "ok", "message": "CECSA Cal.com Webhook actiu"})
+
+    payload = request.data
+    trigger_event = payload.get('triggerEvent')
+    data = payload.get('payload', {})
+
+    if not trigger_event or trigger_event == 'PING':
+        return Response({"status": "ok", "message": "Ping rebut correctament"})
+
+    try:
+        if trigger_event == 'BOOKING_CREATED':
+            attendee = data.get('attendees', [{}])[0]
+            cliente, _ = Cliente.objects.get_or_create(
+                email=attendee.get('email'),
+                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
+            )
+            Cita.objects.create(
+                cliente=cliente,
+                fecha_hora=data.get('startTime'),
+                notas=f"Reserva automàtica via Cal.com. UID: {data.get('uid', data.get('id', ''))}",
+                estado='Confirmada'
+            )
+
+        elif trigger_event in ('BOOKING_CANCELLED', 'BOOKING_REJECTED'):
+            attendee = data.get('attendees', [{}])[0]
+            uid = data.get('uid', '')
+            citas = Cita.objects.filter(notas__icontains=uid) if uid else \
+                    Cita.objects.filter(cliente__email=attendee.get('email'), fecha_hora=data.get('startTime'))
+            citas.update(estado='Cancelada')
+
+        elif trigger_event == 'BOOKING_REQUESTED':
+            attendee = data.get('attendees', [{}])[0]
+            cliente, _ = Cliente.objects.get_or_create(
+                email=attendee.get('email'),
+                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
+            )
+            Cita.objects.get_or_create(
+                notas__icontains=data.get('uid', ''),
+                defaults={
+                    'cliente': cliente,
+                    'fecha_hora': data.get('startTime'),
+                    'notas': f"Sol·licitud pendent. UID: {data.get('uid', '')}",
+                    'estado': 'Pendent'
+                }
+            )
+
+        return Response({"status": "success", "event": trigger_event})
+    except Exception as e:
+        print(f"ERROR Webhook Cal.com [{trigger_event}]: {str(e)}")
+        return Response({"status": "error", "message": str(e)}, status=400)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cal_bookings(request):
+    """Proxy para obtener las reservas de Cal.com."""
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
+    
+    url = "https://api.cal.com/v2/bookings"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.get(url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cancel_cal_booking(request, booking_id):
+    """Proxy para cancelar una reserva en Cal.com."""
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
+    
+    url = f"https://api.cal.com/v2/bookings/{booking_id}/cancel"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.post(url, headers=headers)
+        return Response(status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['GET'])
+def get_cal_slots(request):
+    """Proxy para obtener slots de Cal.com evitando problemas de CORS."""
+    event_type_id = request.query_params.get('eventTypeId', '277401')
+    start_time = request.query_params.get('startTime')
+    end_time = request.query_params.get('endTime')
+    
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
+    
+    url = f"https://api.cal.com/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.get(url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
