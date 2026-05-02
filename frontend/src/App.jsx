@@ -56,7 +56,13 @@ function App() {
 
   return (
     <Router>
-      <CalProvider accessToken={import.meta.env.VITE_CAL_ACCESS_TOKEN || ""}>
+      <CalProvider 
+        clientId={import.meta.env.VITE_CAL_CLIENT_ID || ""}
+        options={{
+          apiUrl: "https://api.cal.com/v2"
+        }}
+        accessToken={import.meta.env.VITE_CAL_ACCESS_TOKEN || ""}
+      >
         <AppContent
           isAgentOpen={isAgentOpen}
           handleCloseAgent={handleCloseAgent}
