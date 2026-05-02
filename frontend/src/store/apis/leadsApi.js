@@ -23,7 +23,7 @@ export const leadsApi = baseApi.injectEndpoints({
       invalidatesTags: ['Leads'],
     }),
   }),
-);
+});
 
 export const { 
   useGetLeadsQuery, 
