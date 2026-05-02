@@ -77,7 +77,8 @@ def get_cal_bookings(request):
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "cal-api-version": "2024-08-13"
         }
         response = requests.get(url, headers=headers)
         return Response(response.json(), status=response.status_code)
@@ -97,7 +98,8 @@ def cancel_cal_booking(request, booking_id):
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "cal-api-version": "2024-08-13"
         }
         response = requests.post(url, headers=headers)
         return Response(status=response.status_code)
@@ -120,7 +122,8 @@ def get_cal_slots(request):
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "cal-api-version": "2024-08-13"
         }
         response = requests.get(url, headers=headers)
         return Response(response.json(), status=response.status_code)
