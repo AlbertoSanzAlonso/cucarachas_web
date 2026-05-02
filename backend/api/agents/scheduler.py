@@ -52,19 +52,18 @@ def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
         if data.get("status") != "success":
             return f'Error de l\'API: {data.get("error", {}).get("message", "No s\'ha pogut obtenir la disponibilitat")}'
 
-        # En la v2 los slots vienen en data.data o data.data.slots
+        # En la v2 los slots vienen en data.data.slots (que es un dict por días)
         slots_data = data.get("data", {})
+        slots_by_day = {}
+        
         if isinstance(slots_data, dict):
             slots_by_day = slots_data.get("slots", {})
-        else:
-            slots_by_day = slots_data # A veces viene directo si es un array o dict por dia
-
-        if not slots_by_day:
+        
+        if not slots_by_day or not isinstance(slots_by_day, dict):
             return "Actualment no hi ha horaris disponibles pels propers dies."
 
         result = []
         count = 0
-        # slots_by_day suele ser {"2024-05-01": [{"time": "..."}, ...]}
         for day in sorted(slots_by_day.keys()):
             for slot in slots_by_day[day]:
                 if count >= 8: break
