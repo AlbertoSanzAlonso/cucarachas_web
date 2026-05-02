@@ -84,15 +84,16 @@ def get_cal_bookings(request):
         }
         print(f"DEBUG: Re-connecting to Cal.com v2 with key: {api_key[:8]}...")
         response = requests.get(url, headers=headers)
-        print(f"DEBUG: Cal.com v2 response status: {response.status_code}")
+        print(f"DEBUG: Cal.com v2 status: {response.status_code}")
+        print(f"DEBUG: Cal.com v2 response headers: {dict(response.headers)}")
         
         try:
             res_data = response.json()
         except:
-            res_data = {"error": "Invalid JSON from Cal.com", "text": response.text}
+            res_data = {"error": "Invalid JSON", "raw": response.text}
 
         if response.status_code != 200:
-            print(f"DEBUG: Cal.com v2 error details: {res_data}")
+            print(f"DEBUG: Cal.com v2 FULL ERROR: {response.text}")
             return Response(res_data, status=response.status_code)
             
         return Response(res_data, status=200)
