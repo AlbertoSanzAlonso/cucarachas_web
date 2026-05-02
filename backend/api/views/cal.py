@@ -80,7 +80,12 @@ def get_cal_bookings(request):
             "Content-Type": "application/json",
             "cal-api-version": "2024-08-13"
         }
+        print(f"DEBUG: Connecting to Cal.com with key starting with: {api_key[:8]}...")
         response = requests.get(url, headers=headers)
+        print(f"DEBUG: Cal.com response status: {response.status_code}")
+        if response.status_code != 200:
+            print(f"DEBUG: Cal.com error body: {response.text}")
+            
         return Response(response.json(), status=response.status_code)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
