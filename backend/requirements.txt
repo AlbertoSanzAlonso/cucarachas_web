@@ -11,3 +11,4 @@ pydantic-ai
 google-generativeai
 python-dotenv
 uvicorn[standard]
+requests>=2.31.0
