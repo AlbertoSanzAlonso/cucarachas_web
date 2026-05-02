@@ -82,7 +82,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     fetch(`${apiBase}/api/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `Reserva: ${slot.slotTime || slot.date} ${slot.time}` })
+      body: JSON.stringify({ message: `Reserva: ${slot.slot_time || slot.date} ${slot.time}` })
     })
       .then(r => r.json())
       .then(data => {
