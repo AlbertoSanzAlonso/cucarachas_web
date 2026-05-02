@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { DashboardSkeleton } from '@/components/Skeleton';
 import AgentHeroModal from '@/components/Agent/AgentHeroModal';
@@ -54,7 +54,23 @@ function App() {
 
   return (
     <Router>
-      <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
+      <AppContent
+        isAgentOpen={isAgentOpen}
+        handleCloseAgent={handleCloseAgent}
+      />
+    </Router>
+  );
+}
+
+function AppContent({ isAgentOpen, handleCloseAgent }) {
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
+
+  return (
+    <>
+      {!isAdminRoute && (
+        <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
+      )}
       <Routes>
         <Route 
           path="/" 
@@ -148,7 +164,7 @@ function App() {
           } 
         />
       </Routes>
-    </Router>
+    </>
   );
 }
 
