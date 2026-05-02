@@ -4,8 +4,7 @@ import { LayoutDashboard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useGetLeadsQuery } from '@/store/apis/leadsApi';
-import { logout, setCredentials } from '@/store/slices/authSlice';
-import { insforge } from '@/lib/insforge';
+import { logout } from '@/store/slices/authSlice';
 
 // Modular Components
 import Sidebar from '@/components/Admin/Sidebar';
@@ -43,40 +42,7 @@ const AdminDashboard = () => {
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    setIsUpdating(true);
-    
-    try {
-      if (profileData.password) {
-        if (profileData.password !== profileData.confirmPassword) {
-          alert("Las contraseñas no coinciden");
-          return;
-        }
-        await insforge.auth.updateUser({ password: profileData.password });
-      }
-
-      const { error } = await insforge.database
-        .from('profiles')
-        .update({ name: profileData.name })
-        .eq('id', user.id);
-
-      if (error) throw error;
-
-      dispatch(setCredentials({
-        user: { ...user, name: profileData.name },
-        token
-      }));
-
-      setUpdateSuccess(true);
-      setTimeout(() => {
-        setUpdateSuccess(false);
-        setIsProfileModalOpen(false);
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      alert("Error al actualizar el perfil");
-    } finally {
-      setIsUpdating(false);
-    }
+    alert("Gestió de perfil directament via Django Admin o implementació pendent.");
   };
 
   return (

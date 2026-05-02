@@ -20,9 +20,9 @@ const Sidebar = ({
 }) => {
   const menuItems = [
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+    { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
     { id: 'leads', icon: <MessageSquare size={20} />, label: 'Leads' },
     { id: 'mail', icon: <Mail size={20} />, label: 'Correu' },
-    { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
   ];
 
   return (

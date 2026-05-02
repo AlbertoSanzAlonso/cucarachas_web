@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Activity, MessageSquare, Shield, TrendingUp, ChevronRight } from 'lucide-react';
+import { Activity, MessageSquare, Shield, TrendingUp, ChevronRight, Calendar } from 'lucide-react';
 
 const DashboardOverview = ({ leads, isLoading, isError }) => {
   const stats = [
     { title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...' },
     { title: 'Leads Pendents', value: leads?.length || '0', icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual' },
-    { title: 'Eficiència Control', value: '--', icon: <Shield className="text-accent-green" />, trend: '...' },
+    { title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Cal.com' },
     { title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...' },
   ];
 
@@ -92,22 +92,22 @@ const DashboardOverview = ({ leads, isLoading, isError }) => {
           </div>
         </section>
 
-        {/* Activity Feed */}
+        {/* Calendar Summary Section */}
         <section className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 flex flex-col">
-          <div className="p-8 border-b border-gray-50">
-            <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Activitat Flota</h2>
+          <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+            <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Pròximes Cites</h2>
+            <Calendar size={20} className="text-primary-blue" />
           </div>
-          <div className="p-8 space-y-8 flex-1">
-             <div className="flex flex-col items-center justify-center h-full text-center opacity-30 py-10">
-                <TrendingUp size={32} className="mb-4" />
-                <p className="text-xs font-bold uppercase tracking-widest">Sense activitat de flota registrada</p>
+          <div className="p-8 space-y-4 flex-1">
+             <div className="flex flex-col items-center justify-center h-full text-center opacity-30 py-6">
+                <Calendar size={32} className="mb-4" />
+                <p className="text-xs font-bold uppercase tracking-widest leading-relaxed">Consulta la secció Agenda<br/>per veure les teves cites</p>
              </div>
           </div>
           <div className="p-4">
-            <div className="bg-primary-blue rounded-[2rem] p-6 text-white text-center">
-              <p className="text-xs font-bold uppercase tracking-widest opacity-60 mb-2">Resum de la setmana</p>
-              <p className="text-2xl font-black tracking-tight">+144.5% eficiencia</p>
-            </div>
+            <button className="w-full bg-primary-blue rounded-[2rem] p-6 text-white text-center font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all">
+              Gestionar Agenda
+            </button>
           </div>
         </section>
       </div>
