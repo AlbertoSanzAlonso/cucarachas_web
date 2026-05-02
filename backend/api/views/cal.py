@@ -72,8 +72,8 @@ def get_cal_bookings(request):
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
-    # Volvemos a la v2 porque la v1 ha sido desactivada oficialmente (410 Gone)
-    url = "https://api.cal.com/v2/bookings"
+    # Probamos con el endpoint europeo por si la clave es regional
+    url = "https://api.cal.eu/v2/bookings"
     
     try:
         api_key = os.getenv('CAL_API_KEY', '').strip()
@@ -82,7 +82,7 @@ def get_cal_bookings(request):
             "cal-api-version": "2024-06-11",
             "Content-Type": "application/json"
         }
-        print(f"DEBUG: Re-connecting to Cal.com v2 with key: {api_key[:8]}...")
+        print(f"DEBUG: Re-connecting to Cal.eu v2 with key: {api_key[:8]}...")
         response = requests.get(url, headers=headers)
         print(f"DEBUG: Cal.com v2 status: {response.status_code}")
         print(f"DEBUG: Cal.com v2 response headers: {dict(response.headers)}")
