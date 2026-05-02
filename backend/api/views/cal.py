@@ -109,13 +109,13 @@ def cancel_cal_booking(request, booking_id):
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
-    url = f"https://api.cal.com/v2/bookings/{booking_id}/cancel"
+    url = f"https://api.cal.eu/v2/bookings/{booking_id}/cancel"
     
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "cal-api-version": "2024-08-13"
+            "cal-api-version": "2024-06-11"
         }
         response = requests.post(url, headers=headers)
         return Response(status=response.status_code)
@@ -129,17 +129,17 @@ def get_cal_slots(request):
     start_time = request.query_params.get('startTime')
     end_time = request.query_params.get('endTime')
     
-    api_key = os.getenv('CAL_API_KEY')
+    api_key = os.getenv('CAL_API_KEY', '').strip()
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
-    url = f"https://api.cal.com/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
+    url = f"https://api.cal.eu/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
     
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "cal-api-version": "2024-08-13"
+            "cal-api-version": "2024-06-11"
         }
         response = requests.get(url, headers=headers)
         return Response(response.json(), status=response.status_code)
