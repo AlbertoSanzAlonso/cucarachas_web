@@ -64,26 +64,30 @@ def chat_with_agents(request):
         return Response({"error": "No message provided"}, status=400)
 
     try:
-        # Recuperar estado de la sesión si existe
         state_data = request.session.get('agent_state')
         orchestrator = CECSAOrchestrator()
         if state_data:
             orchestrator.state = AgentState(**state_data)
 
-        # Procesar mensaje usando async_to_sync para compatibilidad con Uvicorn
         from asgiref.sync import async_to_sync
-        reply = async_to_sync(orchestrator.process_message)(message)
+        result = async_to_sync(orchestrator.process_message)(message)
 
-        # Guardar nuevo estado
+        # El orchestrator ahora devuelve siempre un dict
+        if isinstance(result, str):
+            result = {"message": result}
+
         request.session['agent_state'] = orchestrator.state.model_dump()
-        
+
         return Response({
-            "reply": reply,
+            "reply": result.get("message", ""),
+            "slots": result.get("slots", []),
+            "booking_confirmed": result.get("booking_confirmed", False),
+            "booking_uid": result.get("booking_uid"),
             "state": orchestrator.state.model_dump()
         })
     except Exception as e:
         import traceback
-        print(traceback.format_exc()) # Mantenemos log interno
+        print(traceback.format_exc())
         return Response({
             "reply": "Ho sento, he tingut un error intern. Si us plau, truca al 933 309 169 per a una assistència immediata.",
         }, status=500)

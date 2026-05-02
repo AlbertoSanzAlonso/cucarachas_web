@@ -74,15 +74,29 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
   };
 
   const handleSlotSelect = (slot) => {
-    setMessages(prev => [...prev, { role: 'user', content: `Vull la cita per ${slot.time} el dia ${slot.date}` }]);
+    const confirmMsg = `Vull la cita el ${slot.date} a les ${slot.time}`;
+    setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
     setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: `Perfecte! He bloquejat la teva cita per **${slot.date} a les ${slot.time}**. Rebràs un correu de confirmació amb els detalls del tècnic assignat. Necessites res més?` 
-      }]);
-    }, 1500);
+
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    fetch(`${apiBase}/api/chat/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: `Reserva: ${slot.slotTime || slot.date} ${slot.time}` })
+    })
+      .then(r => r.json())
+      .then(data => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: data.reply || `Perfecte! He bloquejat la teva cita per **${slot.date} a les ${slot.time}**. Rebràs un correu de confirmació. Necessites res més?`,
+          slots: data.slots?.length ? data.slots : null
+        }]);
+      })
+      .catch(() => {
+        setIsTyping(false);
+        setMessages(prev => [...prev, { role: 'assistant', content: `Cita registrada per **${slot.date} a les ${slot.time}**. Et confirmarem per correu.` }]);
+      });
   };
 
   const handleSendMessage = (e) => {
@@ -91,55 +105,36 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
 
     const userMsg = { role: 'user', content: inputValue };
     setMessages(prev => [...prev, userMsg]);
-    const userText = inputValue.toLowerCase();
     setInputValue('');
     setIsTyping(true);
 
-    setTimeout(async () => {
-      let response = "";
-      let slots = null;
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    // Enviar contexto del diagnóstico en el primer mensaje de chat
+    const contextualMessage = messages.length <= 1
+      ? `[Diagnòstic: ${path || 'general'}, zona: ${answers.where || answers.where_empresa || 'no especificada'}] ${inputValue}`
+      : inputValue;
 
-      if (userText.includes('preu') || userText.includes('cost') || userText.includes('quant') || userText.includes('val')) {
+    fetch(`${apiBase}/api/chat/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: contextualMessage })
+    })
+      .then(r => r.json())
+      .then(data => {
         setIsTyping(false);
-        response = `Sóc l'especialista comercial. Per a un servei a **Barcelona**, el preu base inclou el desplaçament. Donat que ets un **${path === 'empresa' ? 'negoci' : 'particular'}**, la tarifa oficial se situa a partir dels ${path === 'empresa' ? '180€' : '120€'}. Vols un desglossament detallat del pressupost?`;
-      } else if (userText.includes('cita') || userText.includes('visita') || userText.includes('quan') || userText.includes('venir')) {
-        try {
-          // Intentamos obtener slots reales de Cal.com
-          const startTime = new Date().toISOString();
-          const endTime = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 días vista
-          
-          const calRes = await fetch(`https://api.cal.com/v2/slots?eventTypeId=277401&startTime=${startTime}&endTime=${endTime}`, {
-            headers: { 'Authorization': `Bearer cal_live_e17cc48d9dd1068857af7b67f396b787` }
-          });
-          const calData = await calRes.json();
-          
-          setIsTyping(false);
-          if (calData.status === 'success' && calData.data?.slots) {
-            const rawSlots = Object.values(calData.data.slots).flat();
-            slots = rawSlots.slice(0, 4).map((s, idx) => ({
-              id: idx,
-              date: new Date(s.time).toLocaleDateString('ca-ES', { weekday: 'short', day: 'numeric' }),
-              time: new Date(s.time).toLocaleTimeString('ca-ES', { hour: '2-digit', minute: '2-digit' })
-            }));
-            response = "He consultat l'agenda de **Cal.com** en temps real. Aquests són els propers buits disponibles per a la teva inspecció. Quin et va millor?";
-          } else {
-            response = "He tingut un problema consultant l'agenda en temps real, però podem agendar-ho manualment. Prefereixes que et truquem per confirmar un buit demà matí?";
-          }
-        } catch (err) {
-          setIsTyping(false);
-          response = "En aquest moment no puc connectar amb el calendari, però tinc disponibilitat demà. Vols que un tècnic et truqui per tancar l'hora?";
-        }
-      } else {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: data.reply || 'Ho sento, hi ha hagut un problema. Pots trucar-nos al 933 309 169.',
+          slots: data.slots?.length ? data.slots.map((s, i) => ({ id: i, ...s })) : null
+        }]);
+      })
+      .catch(() => {
         setIsTyping(false);
-        response = `Com a Bio-Assistent, el meu veredicte se centra en l'exclusió mecànica i el control biològic. Recomano revisar el segellat estructural en **${answers.where || answers.where_empresa}** per tallar el cicle de vida de la plaga. Vols més Bio-Tips de prevenció?`;
-      }
-
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: response,
-        slots: slots
-      }]);
-    }, 1500);
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: 'En aquest moment no puc connectar amb el servidor. Truca\'ns al **933 309 169** per a assistència immediata.' 
+        }]);
+      });
   };
 
   const getProfile = () => {

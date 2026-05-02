@@ -41,7 +41,7 @@ class ReceptionistOutput(BaseModel):
     message: str
     detected_intent: Optional[Intent]
     collected_data: AgentState
-    next_agent: Literal["diagnostician", "receptionist", "pricer", "human"]
+    next_agent: Literal["diagnostician", "receptionist", "pricer", "scheduler", "human"]
 
 # Respuesta del Agente Diagnóstico
 class DiagnosisOutput(BaseModel):
@@ -59,3 +59,10 @@ class PricingOutput(BaseModel):
     currency: str = "EUR"
     breakdown: List[str]
     guarantee_months: int
+
+# Respuesta del Agente Agendador
+class SchedulerOutput(BaseModel):
+    message: str
+    available_slots: List[dict] = []  # [{"date": "...", "time": "...", "slot_time": "ISO"}]
+    booking_confirmed: bool = False
+    booking_uid: Optional[str] = None
