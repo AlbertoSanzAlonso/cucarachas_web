@@ -17,53 +17,68 @@ class CECSAOrchestrator:
             self.state.intent = Intent.CITA
 
         # 1. Routing por intención de cita → Scheduler Agent
-        if self.state.intent == Intent.CITA:
-            context = (
-                f"Context del client: Plaga identificada: {self.state.pest_type or 'no especificada'}, "
-                f"Severitat: {self.state.severity}, Ciutat: {self.state.city or 'Barcelona'}. "
-                f"Missatge: {message}"
-            )
-            sched_response = await scheduler_agent.run(context)
-            output = sched_response.output
+        try:
+            if self.state.intent == Intent.CITA:
+                context = (
+                    f"Context del client: Plaga identificada: {self.state.pest_type or 'no especificada'}, "
+                    f"Severitat: {self.state.severity}, Ciutat: {self.state.city or 'Barcelona'}. "
+                    f"Missatge: {message}"
+                )
+                print(f"DEBUG: Calling Scheduler Agent for: {message}")
+                sched_response = await scheduler_agent.run(context)
+                output = sched_response.output
 
-            return {
-                "message": output.message,
-                "slots": output.available_slots,
-                "booking_confirmed": output.booking_confirmed,
-                "booking_uid": output.booking_uid
-            }
+                return {
+                    "message": output.message,
+                    "slots": output.available_slots,
+                    "booking_confirmed": output.booking_confirmed,
+                    "booking_uid": output.booking_uid
+                }
+        except Exception as e:
+            print(f"ERROR in Scheduler Agent: {str(e)}")
+            return {"message": "Ho sento, tinc problemes per connectar amb l'agenda. Vols que t'ajudi amb una altra cosa o prefereixes que et truquem?"}
 
-        # 2. Fase de Recepción (Siempre pasa primero si no tenemos datos básicos)
-        if not self.state.intent or not self.state.city:
-            response = await receptionist_agent.run(message)
-            self.state = response.output.collected_data
+        # 2. Fase de Recepción
+        try:
+            if not self.state.intent or not self.state.city:
+                print(f"DEBUG: Calling Receptionist Agent for: {message}")
+                response = await receptionist_agent.run(message)
+                self.state = response.output.collected_data
 
-            if response.output.next_agent == "scheduler":
-                self.state.intent = Intent.CITA
-                return await self.process_message(message)
+                if response.output.next_agent == "scheduler":
+                    self.state.intent = Intent.CITA
+                    return await self.process_message(message)
 
-            return {"message": response.output.message}
+                return {"message": response.output.message}
+        except Exception as e:
+            print(f"ERROR in Receptionist Agent: {str(e)}")
+            return {"message": "Sóc l'assistent de CECSA. He tingut un petit problema tècnic, però pots explicar-me què necessites?"}
 
         # 3. Fase de Diagnóstico
-        if self.state.intent in [Intent.PRESSUPOST, Intent.URGENCIA] and not self.state.pest_type:
-            diag_response = await diagnostician_agent.run(
-                f"Context: {self.state.model_dump_json()}\nClient: {message}"
-            )
-            if diag_response.output.identified_pest:
-                self.state.pest_type = diag_response.output.identified_pest
-                self.state.severity = diag_response.output.severity
-
-            if diag_response.output.needs_more_info:
-                return {"message": diag_response.output.explanation}
-
-            price_response = await pricer_agent.run(f"Context: {self.state.model_dump_json()}")
-            return {
-                "message": (
-                    f"{diag_response.output.explanation}\n\n"
-                    f"Pressupost estimat: {price_response.output.price_range_min}€ - "
-                    f"{price_response.output.price_range_max}€.\n"
-                    f"Desglossament: {', '.join(price_response.output.breakdown)}"
+        try:
+            if self.state.intent in [Intent.PRESSUPOST, Intent.URGENCIA] and not self.state.pest_type:
+                print(f"DEBUG: Calling Diagnostician Agent for: {message}")
+                diag_response = await diagnostician_agent.run(
+                    f"Context: {self.state.model_dump_json()}\nClient: {message}"
                 )
-            }
+                if diag_response.output.identified_pest:
+                    self.state.pest_type = diag_response.output.identified_pest
+                    self.state.severity = diag_response.output.severity
+
+                if diag_response.output.needs_more_info:
+                    return {"message": diag_response.output.explanation}
+
+                price_response = await pricer_agent.run(f"Context: {self.state.model_dump_json()}")
+                return {
+                    "message": (
+                        f"{diag_response.output.explanation}\n\n"
+                        f"Pressupost estimat: {price_response.output.price_range_min}€ - "
+                        f"{price_response.output.price_range_max}€.\n"
+                        f"Desglossament: {', '.join(price_response.output.breakdown)}"
+                    )
+                }
+        except Exception as e:
+            print(f"ERROR in Diagnosis/Pricer Phase: {str(e)}")
+            return {"message": "He analitzat la teva sol·licitud, però necessito que un tècnic humà revisi els detalls. Et trucarem el més aviat possible."}
 
         return {"message": "Gràcies. Un agent humà es posarà en contacte amb tu per finalitzar els detalls."}
