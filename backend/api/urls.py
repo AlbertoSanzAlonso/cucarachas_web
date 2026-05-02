@@ -4,7 +4,7 @@ from .views import (
     SpeciesViewSet, ClienteViewSet, TratamientoViewSet, 
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet, 
     CitaViewSet, ReporteServicioViewSet, chat_with_agents, cal_webhook, get_cal_slots,
-    auth_login, auth_logout, auth_me
+    auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking
 )
 
 router = DefaultRouter()
@@ -25,4 +25,6 @@ urlpatterns = [
     path('auth/login/', auth_login, name='auth-login'),
     path('auth/logout/', auth_logout, name='auth-logout'),
     path('auth/me/', auth_me, name='auth-me'),
+    path('cal/bookings/', get_cal_bookings, name='cal-bookings'),
+    path('cal/bookings/<int:booking_id>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
 ]

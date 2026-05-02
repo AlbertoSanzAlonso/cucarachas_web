@@ -207,6 +207,50 @@ from django.conf import settings
 import os
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_cal_bookings(request):
+    """
+    Proxy para obtener las reservas de Cal.com.
+    """
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
+    
+    url = "https://api.cal.com/v2/bookings"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.get(url, headers=headers)
+        return Response(response.json(), status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def cancel_cal_booking(request, booking_id):
+    """
+    Proxy para cancelar una reserva en Cal.com.
+    """
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
+    
+    url = f"https://api.cal.com/v2/bookings/{booking_id}/cancel"
+    
+    try:
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json"
+        }
+        response = requests.post(url, headers=headers)
+        return Response(status=response.status_code)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+
+@api_view(['GET'])
 def get_cal_slots(request):
     """
     Proxy para obtener slots de Cal.com evitando problemas de CORS en el frontend.

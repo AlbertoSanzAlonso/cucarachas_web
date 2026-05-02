@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar as CalendarIcon, Clock, User, Phone, Mail, Trash2, ExternalLink, RefreshCcw } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Mail, Trash2, ExternalLink, RefreshCcw } from 'lucide-react';
+import { useSelector } from 'react-redux';
+
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
 
 const CalendarManager = () => {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
-  const apiKey = 'cal_live_e17cc48d9dd1068857af7b67f396b787';
+  const token = useSelector((state) => state.auth.token);
+
+  const authHeaders = {
+    'Authorization': `Token ${token}`,
+    'Content-Type': 'application/json',
+  };
 
   const fetchBookings = async () => {
     setIsLoading(true);
     setIsError(false);
     try {
-      // Usamos el endpoint de v2 para listar bookings
-      const response = await fetch('https://api.cal.com/v2/bookings', {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
+      const response = await fetch(`${API_BASE}/api/cal/bookings/`, {
+        headers: authHeaders,
       });
       const data = await response.json();
-      
       if (data.status === 'success') {
         setBookings(data.data || []);
       } else {
@@ -40,18 +43,15 @@ const CalendarManager = () => {
 
   const handleCancel = async (bookingId) => {
     if (!window.confirm('Estàs segur que vols cancel·lar aquesta cita?')) return;
-    
     try {
-      const response = await fetch(`https://api.cal.com/v2/bookings/${bookingId}/cancel`, {
+      const response = await fetch(`${API_BASE}/api/cal/bookings/${bookingId}/cancel/`, {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
-        }
+        headers: authHeaders,
       });
       if (response.ok) {
-        alert('Cita cancel·lada correctament');
         fetchBookings();
+      } else {
+        alert('Error al cancel·lar la cita');
       }
     } catch (err) {
       alert('Error al cancel·lar la cita');
@@ -65,7 +65,7 @@ const CalendarManager = () => {
           <h2 className="text-2xl md:text-3xl font-black text-primary-gray uppercase tracking-tight">Gestió de Cites</h2>
           <p className="text-primary-gray/40 font-medium text-sm">Control centralitzat de l'agenda de Cal.com</p>
         </div>
-        <button 
+        <button
           onClick={fetchBookings}
           className="p-3 bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-all text-primary-blue"
         >
@@ -81,7 +81,7 @@ const CalendarManager = () => {
       ) : isError ? (
         <div className="p-12 bg-red-50 rounded-[3rem] border border-red-100 text-center">
           <p className="text-red-600 font-bold mb-2">Error de connexió amb l'API de Cal.com</p>
-          <p className="text-red-400 text-sm">Verifica la configuració de la API Key o els permisos del compte.</p>
+          <p className="text-red-400 text-sm">Verifica que la variable CAL_API_KEY estigui configurada al servidor.</p>
         </div>
       ) : bookings.length === 0 ? (
         <div className="p-20 bg-white rounded-[3rem] border border-gray-100 shadow-sm text-center">
@@ -92,7 +92,7 @@ const CalendarManager = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {bookings.map((booking) => (
-            <motion.div 
+            <motion.div
               key={booking.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -104,25 +104,24 @@ const CalendarManager = () => {
                     <CalendarIcon size={24} />
                   </div>
                   <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${
-                    booking.status === 'accepted' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'
+                    booking.status === 'accepted' ? 'bg-green-100 text-green-600' :
+                    booking.status === 'cancelled' ? 'bg-red-100 text-red-500' :
+                    'bg-blue-100 text-blue-600'
                   }`}>
                     {booking.status}
                   </span>
                 </div>
 
                 <h3 className="font-black text-lg text-primary-gray mb-4 leading-tight">
-                  {booking.title || 'Visita Tècnica'}
+                  {booking.title || 'Visita Tècnica CECSA'}
                 </h3>
 
                 <div className="space-y-3 mb-6">
                   <div className="flex items-center text-sm text-primary-gray/60 font-medium">
                     <Clock size={16} className="mr-3 text-primary-blue" />
-                    {new Date(booking.startTime).toLocaleString('ca-ES', { 
-                      weekday: 'short', 
-                      day: 'numeric', 
-                      month: 'short', 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
+                    {new Date(booking.startTime).toLocaleString('ca-ES', {
+                      weekday: 'short', day: 'numeric', month: 'short',
+                      hour: '2-digit', minute: '2-digit'
                     })}
                   </div>
                   <div className="flex items-center text-sm text-primary-gray/60 font-medium">
@@ -137,16 +136,18 @@ const CalendarManager = () => {
               </div>
 
               <div className="flex gap-2 pt-4 border-t border-gray-50 mt-4">
-                <button 
+                <button
                   onClick={() => handleCancel(booking.id)}
+                  title="Cancel·lar cita"
                   className="flex-1 flex items-center justify-center p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
                 >
                   <Trash2 size={18} />
                 </button>
-                <a 
+                <a
                   href={`https://cal.com/booking/${booking.uid}`}
                   target="_blank"
                   rel="noopener noreferrer"
+                  title="Veure a Cal.com"
                   className="flex-1 flex items-center justify-center p-3 rounded-xl bg-gray-50 text-primary-gray hover:bg-gray-100 transition-colors"
                 >
                   <ExternalLink size={18} />
