@@ -24,14 +24,20 @@ const CalendarManager = () => {
         headers: authHeaders,
       });
       const data = await response.json();
+      
+      console.log("DEBUG: Cal.com data received:", data);
+
       if (data.status === 'success') {
-        setBookings(data.data || []);
+        // En la v2, las citas vienen en data.data que es un array
+        const bookingsList = Array.isArray(data.data) ? data.data : [];
+        setBookings(bookingsList);
       } else {
-        throw new Error(data.message || 'Error fetching bookings');
+        throw new Error(data.message || data.error || 'Error fetching bookings');
       }
     } catch (err) {
-      console.error(err);
+      console.error("ERROR Fetching Bookings:", err);
       setIsError(true);
+      setBookings([]); // Aseguramos que sea un array vacío para evitar errores de .map
     } finally {
       setIsLoading(false);
     }
