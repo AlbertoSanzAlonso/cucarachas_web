@@ -72,23 +72,32 @@ def get_cal_bookings(request):
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
-    # Intentar con la v1 de la API que es compatible con claves cal_live_ personales
-    url = f"https://api.cal.com/v1/bookings?apiKey={api_key}"
+    # Volvemos a la v2 porque la v1 ha sido desactivada oficialmente (410 Gone)
+    url = "https://api.cal.com/v2/bookings"
     
     try:
-        print(f"DEBUG: Connecting to Cal.com v1 with key starting with: {api_key[:8]}...")
-        response = requests.get(url)
-        print(f"DEBUG: Cal.com v1 response status: {response.status_code}")
+        api_key = os.getenv('CAL_API_KEY', '').strip()
+        headers = {
+            "Authorization": f"Bearer {api_key}",
+            "cal-api-version": "2024-06-11",
+            "Content-Type": "application/json"
+        }
+        print(f"DEBUG: Re-connecting to Cal.com v2 with key: {api_key[:8]}...")
+        response = requests.get(url, headers=headers)
+        print(f"DEBUG: Cal.com v2 response status: {response.status_code}")
         
+        try:
+            res_data = response.json()
+        except:
+            res_data = {"error": "Invalid JSON from Cal.com", "text": response.text}
+
         if response.status_code != 200:
-            print(f"DEBUG: Cal.com v1 error body: {response.text}")
-            return Response(response.json() if response.text else {"error": "Cal.com v1 error"}, status=response.status_code)
+            print(f"DEBUG: Cal.com v2 error details: {res_data}")
+            return Response(res_data, status=response.status_code)
             
-        # La v1 devuelve una estructura distinta, la normalizamos para el frontend
-        data = response.json()
-        bookings = data.get('bookings', [])
-        return Response({"status": "success", "data": bookings}, status=200)
+        return Response(res_data, status=200)
     except Exception as e:
+        print(f"CRITICAL ERROR in get_cal_bookings: {str(e)}")
         return Response({"error": str(e)}, status=500)
 
 @api_view(['POST'])
