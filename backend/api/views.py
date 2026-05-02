@@ -215,7 +215,9 @@ def get_cal_slots(request):
     start_time = request.query_params.get('startTime')
     end_time = request.query_params.get('endTime')
     
-    api_key = os.getenv('CAL_API_KEY', 'cal_live_e17cc48d9dd1068857af7b67f396b787')
+    api_key = os.getenv('CAL_API_KEY')
+    if not api_key:
+        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
     
     url = f"https://api.cal.com/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
     

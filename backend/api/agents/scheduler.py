@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
 from .models import AgentState, SchedulerOutput
 
-CAL_API_KEY = os.getenv('CAL_API_KEY', 'cal_live_e17cc48d9dd1068857af7b67f396b787')
+CAL_API_KEY = os.getenv('CAL_API_KEY', '')
 CAL_EVENT_TYPE_ID = int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
 CAL_HEADERS = {"Authorization": f"Bearer {CAL_API_KEY}"}
 
