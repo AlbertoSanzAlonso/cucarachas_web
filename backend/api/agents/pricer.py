@@ -1,23 +1,14 @@
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, PricingOutput
+from .models import AgentState, PricingOutput, AgentDeps
 from api.models import Tratamiento
 from .config import AGENT_MODEL
+from .prompts import SYSTEM_PROMPTS
 
 # Agente 3: Presupuestador
 pricer_agent = Agent(
     AGENT_MODEL,
+    deps_type=AgentDeps,
     output_type=PricingOutput,
-    system_prompt=(
-        "Ets el Calculador de Pressupostos de CECSA. "
-        "Calcula un preu estimat o tancat basant-te en el catàleg oficial. "
-        "Regles generals: "
-        "- Barcelona ciutat: Desplaçament inclòs. "
-        "- Fora de Barcelona: +30€ desplaçament. "
-        "- Urgència (mateix dia): +50€ tarifa plana. "
-        "- Pisos < 100m2: Preu base del tractament. "
-        "- Negocis/Locals: Preu base + 50% (més complexitat). "
-        "Sigues transparent amb el desglossament."
-    ),
 )
 
 @pricer_agent.tool

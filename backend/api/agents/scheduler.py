@@ -2,8 +2,9 @@ import os
 import requests as http_requests
 from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, SchedulerOutput
+from .models import AgentState, SchedulerOutput, AgentDeps
 from .config import AGENT_MODEL, CAL_API_KEY, CAL_EVENT_TYPE_ID, CAL_BASE_URL
+from .prompts import SYSTEM_PROMPTS
 
 def get_cal_headers():
     return {
@@ -15,18 +16,8 @@ def get_cal_headers():
 # Agente 4: Agendador
 scheduler_agent = Agent(
     AGENT_MODEL,
+    deps_type=AgentDeps,
     output_type=SchedulerOutput,
-    system_prompt=(
-        "Ets el Gestor d'Agenda de CECSA Control de Plagues. "
-        "La teva missió és gestionar les cites tècniques. "
-        "PROCEDIMENT: "
-        "1. Usa 'get_available_slots' per consultar la disponibilitat real. "
-        "2. IMPORTANT: Quan rebis horaris lliures, a part de descriure'ls al 'message', "
-        "   HAS DE RELLENAR el camp 'available_slots' amb objectes: "
-        "   {'date': 'Día mes', 'time': 'HH:MM', 'slot_time': 'ISO_STRING'}. "
-        "3. Quan el client trii un horari, usa 'create_booking'. "
-        "4. Respon sempre en Català. Mai inventis horaris."
-    ),
 )
 
 @scheduler_agent.tool

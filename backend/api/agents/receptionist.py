@@ -1,7 +1,8 @@
 import os
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, ReceptionistOutput, Intent
-from .config import AGENT_MODEL, setup_ai_keys
+from .models import ReceptionistOutput, AgentState, AgentDeps
+from .config import setup_ai_keys, AGENT_MODEL
+from .prompts import SYSTEM_PROMPTS
 
 # Inicializar configuración global
 setup_ai_keys()
@@ -9,19 +10,17 @@ setup_ai_keys()
 # Agente 1: Recepcionista
 receptionist_agent = Agent(
     AGENT_MODEL,
+    deps_type=AgentDeps,
     output_type=ReceptionistOutput,
-    system_prompt=(
-        "Ets el Recepcionista de CECSA Control de Plagues. "
-        "La teva missió és saludar amablement i identificar què necessita el client. "
-        "Has de recollir: Ciutat, Tipus d'immoble (particular/negoci) i el Problema. "
-        "Sigues directe però empàtic. "
-        "Si el client té una urgència, marca l'intent com a 'urgencia'. "
-        "IMPORTANT: Has de detectar l'idioma del client i respondre SEMPRE en el mateix idioma (Català o Castellà). Si el client et parla en Castellà, respon en Castellà."
-    ),
 )
 
+@receptionist_agent.system_prompt
+def get_receptionist_prompt(ctx: RunContext[AgentDeps]) -> str:
+    lang = ctx.deps.language if ctx.deps else "ca"
+    return SYSTEM_PROMPTS["receptionist"].get(lang, SYSTEM_PROMPTS["receptionist"]["ca"])
+
 @receptionist_agent.tool
-def get_company_info(ctx: RunContext[None]) -> str:
+def get_company_info(ctx: RunContext[AgentDeps]) -> str:
     """Informació básica sobre CECSA per respondre dubtes inicials."""
     return (
         "CECSA és una empresa de control de plagues 'Ètica i Conscient' a Barcelona. "

@@ -1,32 +1,21 @@
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, DiagnosisOutput, PestType, Severity
+from .models import AgentState, DiagnosisOutput, PestType, Severity, AgentDeps
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
 from .config import AGENT_MODEL
+from .prompts import SYSTEM_PROMPTS
 
 # Agente 2: Diagnóstico Técnico
 diagnostician_agent = Agent(
     AGENT_MODEL,
+    deps_type=AgentDeps,
     output_type=DiagnosisOutput,
-    system_prompt=(
-        "Ets l'Estratega Bio-Conscient de CECSA, el primer contacte tècnic amb el client. "
-        "La teva missió no és només identificar la plaga, sinó 'restablir l'equilibri' eliminant la plaga de forma ètica i conscient. "
-        
-        "REGLA D'OR: Abans de diagnosticar, has de considerar l'entorn (hàbitat, humitat, punts d'entrada). "
-        "No facis servir un llenguatge alarmista. Utilitza un to professional, biòleg i ètic. "
-        
-        "PROCEDIMENT: "
-        "1. Analitza la descripció del client cercant senyals biològics de l'espècie. "
-        "2. Utilitza 'search_technical_knowledge' per trobar protocols de mínima invasió. "
-        "3. Ofereix consells de prevenció mecànica (Bio-Tips) abans de parlar de productes. "
-        "4. Si falten dades, fes màxim 3 preguntes clau sobre l'entorn. "
-        
-        "Quan generis el veredicte final (DiagnosisOutput), recorda que el client ha completat un procés de diagnòstic de 7 passos. "
-        "HAS D'INCLOURE sempre la següent OFERTA ESPECIAL al final de la teva explicació: "
-        "'🎁 OFERTA ESPECIAL: Per haver completat el diagnòstic, t'oferim una PRIMERA VISITA D'INSPECCIÓ TOTALMENT GRATUÏTA a Barcelona i rodalies.' "
-        "IMPORTANT: Respon SEMPRE en el mateix idioma que utilitzi el client (Català o Castellà). Si el prompt et demana un idioma específic o el client t'escriu en Castellà, respon en Castellà sense excepció. Enfoca't sempre en la prevenció estructural."
-    ),
 )
+
+@diagnostician_agent.system_prompt
+def get_diagnostician_prompt(ctx: RunContext[AgentDeps]) -> str:
+    lang = ctx.deps.language if ctx.deps else "ca"
+    return SYSTEM_PROMPTS["diagnostician"].get(lang, SYSTEM_PROMPTS["diagnostician"]["ca"])
 
 @diagnostician_agent.tool
 def search_technical_knowledge(ctx: RunContext[None], query: str) -> str:
