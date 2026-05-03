@@ -428,6 +428,8 @@
       "indication": "Has indicado la presencia de **{{pest}}** en la zona de **{{where}}** con una frecuencia de **{{qty}}**.",
       "summary": "Mi veredicto es claro: **necesitas una intervención urgente**. Una infestación activa en zonas críticas puede propagarse rápidamente si no se actúa en las primeras 24-48 horas. 🎁 **OFERTA ESPECIAL**: Por haber completado el diagnóstico, te ofrecemos una **PRIMERA VISITA DE INSPECCIÓN TOTALMENTE GRATUITA** en Barcelona y alrededores. Si tienes cualquier duda, puedes escribir tu pregunta abajo o elegir una opción:",
       "initial_msg": "De acuerdo, he tomado nota de todo. ¿Cómo puedo ayudarte ahora?",
+      "persistent_msg": "Estoy disponible cuando lo necesites",
+      "minimized_hint": "Consúltame lo que quieras",
       "qty_one": "uno o dos avistamientos",
       "qty_several": "varios avistamientos diarios",
       "qty_high": "alta actividad",
@@ -498,6 +500,8 @@
       "frequent": "Frecuente",
       "grave": "Grave",
       "closure": "Cierre inminente"
-    }
+    },
+    "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
+    "chat_direct": "Tengo preguntas / Consultar Agente"
   }
 }

@@ -9,6 +9,12 @@ export const useAgentChat = (i18n, answers, path) => {
   const scrollRef = useRef(null);
 
   useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([{ role: 'assistant', content: t('agent.welcome_msg'), isInitial: true }]);
+    }
+  }, [t, messages.length]);
+
+  useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }

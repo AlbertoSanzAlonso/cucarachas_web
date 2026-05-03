@@ -22,7 +22,7 @@ const AgentBubble = ({ onClick, isVisible }) => {
             transition={{ delay: 1 }}
             className="absolute bottom-full right-0 mb-4 px-4 py-2 bg-white text-primary-blue rounded-2xl shadow-xl border border-primary-blue/10 whitespace-nowrap hidden md:block"
           >
-            <p className="text-[10px] font-black uppercase tracking-widest flex items-center">
+            <p className="text-[12px] font-black uppercase tracking-widest flex items-center">
               <span className="w-2 h-2 bg-accent-green rounded-full mr-2 animate-pulse"></span>
               {t('agent.persistent_msg')}
             </p>

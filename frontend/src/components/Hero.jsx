@@ -133,7 +133,7 @@ const Hero = () => {
           <div className="relative hidden xl:block animate-slide-up">
              <div className="relative z-10 transform translate-x-10 translate-y-10">
                 <div 
-                  className="aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white/20 relative rotate-3 hover:rotate-0 transition-all duration-700"
+                  className="aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white/20 relative rotate-3 hover:rotate-0 transition-all duration-700 optimize-gpu cursor-pointer"
                   style={{ 
                     background: 'rgba(255,255,255,0.05)',
                     backdropFilter: 'blur(10px)'

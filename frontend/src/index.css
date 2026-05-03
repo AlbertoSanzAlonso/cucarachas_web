@@ -32,17 +32,6 @@ main section:first-of-type {
   transition: padding-top 1s cubic-bezier(0.16, 1, 0.3, 1), margin 1s ease;
 }
 
-nav {
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
-}
-
-main section:not(:first-of-type),
-main div.relative.mt-\[-100px\].z-40,
-footer,
-#floating-cta {
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
 body.agent-open {
   overflow: hidden !important;
 }
@@ -51,18 +40,21 @@ body.agent-open main section:not(:first-of-type),
 body.agent-open main div.relative.mt-\[-100px\].z-40,
 body.agent-open footer,
 body.agent-open #floating-cta {
+  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   opacity: 0 !important;
   pointer-events: none !important;
   transform: translateY(20px);
 }
 
 body.agent-open nav {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
   opacity: 0 !important;
   pointer-events: none !important;
   transform: translateY(-100%);
 }
 
 body.agent-open main section:first-of-type {
+  transition: padding-top 1s cubic-bezier(0.16, 1, 0.3, 1), margin 1s ease;
   padding-top: 2rem !important;
   margin: 0 !important;
 }

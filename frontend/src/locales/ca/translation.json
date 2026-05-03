@@ -418,6 +418,8 @@
     "finish_diagnostic": "Finalitzar Diagnòstic",
     "typing": "L'agent està escrivint...",
     "chat_placeholder": "Fes-me qualsevol pregunta sobre el veredicte...",
+    "persistent_msg": "Estic disponible quan ho necessitis",
+    "minimized_hint": "Consulta'm el que vulguis",
     "cta": {
       "schedule": "AGENDAR CITA",
       "budget": "DEMANAR PRESSUPOST",
@@ -511,6 +513,6 @@
       "error": "Ho sento, hi ha hagut un problema. Pots trucar-nos al 933 309 169.",
       "server_error": "En aquest moment no puc connectar amb el servidor. Truca'ns al **933 309 169** per a assistència immediata."
     },
-    "welcome_msg": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues."
+    "welcome_msg": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues. Si ho prefereixes, també podem parlar directament per **WhatsApp**."
   }
 }

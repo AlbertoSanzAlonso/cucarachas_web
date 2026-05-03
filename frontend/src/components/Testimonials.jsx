@@ -54,7 +54,7 @@ const Testimonials = () => {
                       {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="#facc15" className="text-yellow-400" />)}
                    </div>
                    
-                   <p className="text-sm font-medium text-secondary-gray/70 leading-relaxed italic line-clamp-4 group-hover:line-clamp-none transition-all duration-500">
+                   <p className="text-sm font-medium text-secondary-gray/70 leading-relaxed italic line-clamp-4">
                      "{rev.text}"
                    </p>
                 </div>

@@ -8,9 +8,13 @@ const FloatingCTA = () => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [messages, setMessages] = useState([
-    { role: 'assistant', content: 'Hola! Sóc l\'assistent virtual de CECSA. Com et puc ajudar avui amb el control de plagues?' }
-  ]);
+  const [messages, setMessages] = useState([]);
+
+  useEffect(() => {
+    if (messages.length === 0) {
+      setMessages([{ role: 'assistant', content: t('agent.welcome_msg') }]);
+    }
+  }, [t, messages.length]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
@@ -80,146 +84,123 @@ const FloatingCTA = () => {
   };
 
   return (
-    <div id="floating-cta" className="fixed bottom-4 md:bottom-8 left-0 right-0 z-[100] px-4 md:px-12 xl:px-0 flex justify-center pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
-       <div className="max-w-7xl mx-auto w-full flex items-end justify-between md:items-end">
+    <div id="floating-cta" className="fixed bottom-4 md:bottom-8 right-4 md:right-12 z-[100] flex justify-end pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
+       <div className="w-full max-w-sm flex flex-col items-end pointer-events-auto">
           
-          {/* LEFT SIDE: Chat & WhatsApp */}
-          <div className="flex flex-col items-start space-y-2 pointer-events-auto animate-fade-in animate-slide-up w-[45%] md:w-auto">
-             
-             {/* Integrated Chat Widget */}
-             <div className="relative w-full">
-                <AnimatePresence>
-                  {showHint && !isOpen && (
-                    <motion.div 
-                      initial={{ opacity: 0, y: 10, scale: 0.9 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.9 }}
-                      className="absolute bottom-full left-0 mb-4 bg-white p-4 rounded-2xl shadow-2xl border border-gray-100 min-w-[200px] pointer-events-auto"
-                    >
-                      <div className="flex items-center space-x-3">
-                        <div className="p-2 bg-primary-blue/5 rounded-xl">
-                          <Sparkles size={16} className="text-primary-blue animate-pulse" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-black text-primary-blue uppercase tracking-widest leading-tight">
-                            {t('agent.persistent_msg')}
-                          </p>
-                          <p className="text-[9px] text-gray-400 font-medium mt-0.5">
-                            {t('agent.minimized_hint')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="absolute top-full left-6 w-3 h-3 bg-white border-r border-b border-gray-100 transform rotate-45 -mt-1.5"></div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                <AnimatePresence>
-                  {isOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                      className="fixed md:absolute bottom-20 md:bottom-full left-4 right-4 md:left-0 md:right-auto md:mb-4 md:w-96 h-[75vh] md:h-[500px] bg-white rounded-3xl shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom z-[120]"
-                    >
-                      {/* Header */}
-                      <div className="p-4 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
-                         <div className="relative z-10 flex items-center space-x-2">
-                            <Bot size={18} className="text-accent-green" />
-                            <h3 className="font-black text-xs uppercase">Assistent CECSA</h3>
-                         </div>
-                         <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="relative z-10 p-1 hover:bg-white/10 rounded-lg">
-                           <X size={18} />
-                         </button>
-                      </div>
-
-                      {/* Messages */}
-                      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
-                        {messages.map((msg, i) => (
-                          <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[90%] p-3 rounded-2xl text-[11px] font-medium shadow-sm ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}>
-                              {msg.content}
-                            </div>
-                          </div>
-                        ))}
-                        {isLoading && <div className="text-[10px] text-gray-400 animate-pulse">Pensant...</div>}
-                        <div ref={messagesEndRef} />
-                      </div>
-
-                      {/* Input */}
-                      <form onSubmit={handleSend} className="p-4 border-t border-gray-100 bg-white">
-                        <div className="flex items-center bg-gray-50 rounded-full px-4 py-1 border border-gray-200 transition-colors">
-                          <input
-                            ref={inputRef}
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder={t('cta.chat_placeholder') || "Escriu un missatge..."}
-                            className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-2 px-1 text-[11px]"
-                            disabled={isLoading}
-                          />
-                          <button 
-                            type="submit"
-                            disabled={isLoading || !input.trim()}
-                            className="ml-2 p-2 text-primary-blue hover:text-blue-700 disabled:text-gray-300 transition-colors"
-                          >
-                            <Send size={14} />
-                          </button>
-                        </div>
-                      </form>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-                {/* Chat Trigger Button (Mini) */}
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => { setIsOpen(!isOpen); setShowHint(false); }}
-                  className="flex items-center bg-primary-blue text-white shadow-xl rounded-xl p-1.5 md:p-2 border border-blue-400/20 w-full md:w-auto"
-                >
-                   <div className="bg-white/20 p-1.5 md:p-2 rounded-lg">
-                      {isOpen ? <X size={16} /> : <Bot size={16} />}
+          {/* Integrated Chat Widget */}
+          <div className="relative w-full">
+             <AnimatePresence>
+               {showHint && !isOpen && (
+                 <motion.div 
+                   initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                   animate={{ opacity: 1, y: 0, scale: 1 }}
+                   exit={{ opacity: 0, y: 10, scale: 0.9 }}
+                   className="absolute bottom-full right-0 mb-6 bg-white p-5 rounded-2xl shadow-3xl border border-gray-100 min-w-[250px] pointer-events-auto"
+                 >
+                   <div className="flex items-center space-x-4">
+                     <div className="p-3 bg-primary-blue/5 rounded-xl">
+                       <Sparkles size={20} className="text-primary-blue animate-pulse" />
+                     </div>
+                     <div>
+                       <p className="text-xs font-black text-primary-blue uppercase tracking-widest leading-tight">
+                         {t('agent.persistent_msg')}
+                       </p>
+                       <p className="text-[10px] text-gray-400 font-medium mt-1">
+                         {t('agent.minimized_hint')}
+                       </p>
+                     </div>
                    </div>
-                   {!isOpen && <span className="text-[9px] md:text-sm font-black ml-2 uppercase tracking-tighter">Xat AI</span>}
-                   {isOpen && <span className="text-[9px] md:text-sm font-black ml-2 uppercase tracking-tighter">Tancar</span>}
-                </motion.button>
-             </div>
+                   <div className="absolute top-full right-8 w-4 h-4 bg-white border-r border-b border-gray-100 transform rotate-45 -mt-2"></div>
+                 </motion.div>
+               )}
+             </AnimatePresence>
 
-             {/* WhatsApp Card (Mini) */}
-             <a 
-               href="https://wa.me/34933309169" 
-               className="flex items-center bg-white/95 backdrop-blur-md shadow-xl rounded-xl p-1.5 md:p-2 border border-gray-100 w-full md:w-auto"
-             >
-                <div className="bg-accent-green p-1.5 md:p-2 rounded-lg text-white shadow-sm">
-                   <MessageSquare size={16} />
-                </div>
-                <div className="flex flex-col ml-2 overflow-hidden">
-                   <span className="text-[6px] md:text-[8px] uppercase font-bold text-secondary-gray/40">WhatsApp</span>
-                   <span className="text-secondary-gray text-[9px] md:text-xs font-black truncate">Atenció</span>
-                </div>
-             </a>
-          </div>
+             <AnimatePresence>
+               {isOpen && (
+                 <motion.div
+                   initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                   animate={{ opacity: 1, y: 0, scale: 1 }}
+                   exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                   className="fixed md:absolute bottom-28 md:bottom-full left-4 right-4 md:left-auto md:right-0 md:mb-8 md:w-[550px] h-[80vh] md:h-[750px] bg-white rounded-[3rem] shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right z-[120]"
+                 >
+                   {/* Header */}
+                   <div className="p-8 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
+                      <div className="relative z-10 flex items-center space-x-4">
+                         <div className="bg-accent-green p-3 rounded-2xl shadow-lg">
+                           <Bot size={28} className="text-primary-blue" />
+                         </div>
+                         <div>
+                            <h3 className="font-black text-base uppercase tracking-widest">Assistent CECSA</h3>
+                            <p className="text-[10px] opacity-60 font-bold uppercase tracking-tighter">IA Bio-Conscient</p>
+                         </div>
+                      </div>
+                      <div className="flex items-center space-x-3">
+                        <a 
+                          href="https://wa.me/34933309169" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="p-3 bg-white/10 hover:bg-accent-green hover:text-black rounded-2xl transition-all shadow-sm"
+                        >
+                          <MessageSquare size={24} />
+                        </a>
+                        <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
+                          <X size={24} />
+                        </button>
+                      </div>
+                   </div>
 
-          {/* RIGHT SIDE: Call & Status */}
-          <div className="flex flex-col items-end space-y-2 pointer-events-auto w-[45%] md:w-auto">
-             <div className="bg-primary-blue text-white text-[7px] md:text-[9px] font-black uppercase tracking-widest px-2 py-1 md:px-3 md:py-1.5 rounded-full shadow-lg">
-                {t('cta.badge', '24h Actiu')}
-             </div>
-             
-             <a 
-               href="tel:+34933309169" 
-               className="flex items-center justify-center space-x-2 w-full md:w-auto px-3 py-3 md:px-6 md:py-4 rounded-xl bg-accent-green text-primary-gray shadow-xl transition-all active:scale-95"
-               style={{ background: 'var(--color-accent-green)' }}
+                   {/* Messages */}
+                   <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 custom-scrollbar">
+                     {messages.map((msg, i) => (
+                       <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                           <div 
+                           className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
+                           dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-primary-blue">$1</span>') }}
+                         />
+                       </div>
+                     ))}
+                     {isLoading && <div className="text-xs text-gray-400 animate-pulse font-bold uppercase tracking-widest px-2">L'agent està pensant...</div>}
+                     <div ref={messagesEndRef} />
+                   </div>
+
+                   {/* Input */}
+                   <form onSubmit={handleSend} className="p-6 border-t border-gray-100 bg-white">
+                     <div className="flex items-center bg-gray-50 rounded-3xl px-6 py-2 border border-gray-200 focus-within:border-primary-blue/30 transition-all shadow-inner">
+                       <input
+                         ref={inputRef}
+                         type="text"
+                         value={input}
+                         onChange={(e) => setInput(e.target.value)}
+                         placeholder={t('cta.chat_placeholder') || "Escriu un missatge..."}
+                         className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-4 px-1 text-base md:text-lg"
+                         disabled={isLoading}
+                       />
+                       <button 
+                         type="submit"
+                         disabled={isLoading || !input.trim()}
+                         className="ml-4 p-4 bg-primary-blue text-white rounded-2xl hover:scale-110 active:scale-95 disabled:bg-gray-200 disabled:scale-100 transition-all shadow-lg"
+                       >
+                         <Send size={20} />
+                       </button>
+                     </div>
+                   </form>
+                 </motion.div>
+               )}
+             </AnimatePresence>
+
+             {/* Chat Trigger Button (PRO) */}
+             <motion.button
+               whileHover={{ scale: 1.05 }}
+               whileTap={{ scale: 0.95 }}
+               onClick={() => { setIsOpen(!isOpen); setShowHint(false); }}
+               className="flex items-center bg-accent-green text-primary-gray shadow-[0_15px_40px_rgba(52,211,153,0.3)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 border border-white/20 transition-all group"
              >
-                <div className="flex flex-col items-end md:items-center">
-                  <span className="text-[9px] md:text-sm font-black uppercase leading-none">Trucar</span>
-                  <span className="text-primary-gray/60 font-bold text-[8px] md:text-xs leading-none mt-0.5">933 309 169</span>
+                <div className="bg-primary-blue/10 p-2 md:p-3 rounded-xl group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                   {isOpen ? <X size={24} /> : <Bot size={24} />}
                 </div>
-                <div className="bg-white/20 p-1 rounded-full flex items-center justify-center">
-                   <Phone size={14} className="md:w-5 md:h-5" fill="currentColor" />
-                </div>
-             </a>
+                {!isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">Xat AI Agent</span>}
+                {isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">Tancar</span>}
+             </motion.button>
           </div>
 
        </div>
