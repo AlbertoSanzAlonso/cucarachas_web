@@ -207,12 +207,16 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                 <motion.div
                   initial={{ scale: 0.9, y: 20 }}
                   animate={{ scale: 1, y: 0 }}
-                  className="bg-white w-full max-w-4xl h-[85vh] md:h-auto rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative flex flex-col"
+                  className="bg-white w-full max-w-4xl h-[85vh] md:h-[700px] rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative flex flex-col"
                 >
                   <div className="p-4 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
-                    <div>
-                      <h3 className="text-lg md:text-2xl font-black text-primary-gray uppercase tracking-tight">Tria el teu horari</h3>
-                      <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary-gray/40">Inspecció gratuïta CECSA</p>
+                    <div className="text-left">
+                      <h3 className="text-lg md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+                        {i18n.language.startsWith('es') ? 'Elige tu horario' : 'Tria el teu horari'}
+                      </h3>
+                      <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary-gray/40">
+                        {i18n.language.startsWith('es') ? 'Inspección gratuita CECSA' : 'Inspecció gratuïta CECSA'}
+                      </p>
                     </div>
                     <button 
                       onClick={() => {
@@ -220,11 +224,11 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                       }}
                       className="bg-primary-gray/5 hover:bg-red-50 text-primary-gray/40 hover:text-red-500 px-4 py-2 md:p-4 rounded-xl md:rounded-2xl transition-all font-black text-[10px] md:text-xs uppercase tracking-widest"
                     >
-                      TANCAR
+                      {i18n.language.startsWith('es') ? 'CERRAR' : 'TANCAR'}
                     </button>
                   </div>
                   <div className="flex-1 bg-white overflow-hidden relative">
-                    <CalEmbed language={i18n.language} />
+                    <CalEmbed language={i18n.language.startsWith('es') ? 'es' : 'ca'} />
                   </div>
                 </motion.div>
               </motion.div>
