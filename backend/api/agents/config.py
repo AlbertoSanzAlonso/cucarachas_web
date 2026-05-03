@@ -1,11 +1,17 @@
 import os
 
-# --- Configuración de IA (Gemini) ---
-# Modelo predeterminado para todos los agentes
-AGENT_MODEL = 'google-gla:gemini-1.5-flash-latest'
+# --- Configuración de IA (Groq) ---
+# Usamos Llama 3.3 70b por su extrema velocidad y precisión
+AGENT_MODEL = 'groq:llama-3.3-70b-versatile'
 
-# Asegurar que la API Key esté presente en el entorno para pydantic-ai
+# Asegurar que la API Key esté presente en el entorno
 def setup_ai_keys():
+    # Soportamos tanto Groq (preferido) como Gemini
+    groq_key = os.getenv('GROQ_API_KEY')
+    if groq_key:
+        os.environ['GROQ_API_KEY'] = groq_key
+        return groq_key
+    
     api_key = os.getenv('GOOGLE_API_KEY') or os.getenv('GEMINI_API_KEY')
     if api_key:
         os.environ['GEMINI_API_KEY'] = api_key

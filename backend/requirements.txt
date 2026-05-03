@@ -12,3 +12,4 @@ google-generativeai
 python-dotenv
 uvicorn[standard]
 requests>=2.31.0
+groq
