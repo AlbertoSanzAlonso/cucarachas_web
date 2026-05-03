@@ -11,9 +11,17 @@ class CECSAOrchestrator:
         self.state = AgentState()
 
     async def process_message(self, message: str):
+        # 0. Detectar si es el prompt del diagnóstico interactivo de 7 pasos
+        diagnostic_keywords = ['diagnòstic interactiu', 'diagnóstico interactivo', 'veredicte personalitzat']
+        if any(kw in message.lower() for kw in diagnostic_keywords):
+            self.state.intent = Intent.PRESSUPOST
+            # Si es el diagnóstico, intentamos extraer la ciudad si existe
+            if 'barcelona' in message.lower():
+                self.state.city = 'Barcelona'
+
         # Detectar intención de cita directamente por keywords si no tenemos intent
         scheduling_keywords = ['cita', 'visita', 'agendar', 'reservar', 'quan podeu', 'cuando']
-        if any(kw in message.lower() for kw in scheduling_keywords):
+        if any(kw in message.lower() for kw in scheduling_keywords) and self.state.intent != Intent.PRESSUPOST:
             self.state.intent = Intent.CITA
 
         # 1. Routing por intención de cita → Scheduler Agent
