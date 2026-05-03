@@ -153,8 +153,8 @@ def create_booking(
         }
 
         resp = http_requests.post(
-            f"{CAL_BASE_URL}/bookings",
-            headers=headers,
+            f"{CAL_BASE_URL}/bookings?clientId={CAL_API_KEY}",
+            headers={"Content-Type": "application/json"},
             json=payload,
             timeout=10
         )
