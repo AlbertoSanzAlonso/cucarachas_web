@@ -5,6 +5,7 @@ from .receptionist import receptionist_agent
 from .diagnostician import diagnostician_agent
 from .pricer import pricer_agent
 from .scheduler import scheduler_agent
+from .prompts import ORCHESTRATOR_MESSAGES
 
 class CECSAOrchestrator:
     def __init__(self):
@@ -24,25 +25,28 @@ class CECSAOrchestrator:
         # 1. Detectar si es el prompt del diagnóstico interactivo de 7 pasos
         diagnostic_keywords = ['diagnòstic interactiu', 'diagnóstico interactivo', 'veredicte personalitzat']
         if any(kw in message.lower() for kw in diagnostic_keywords):
-            self.state.intent = Intent.PRESSUPOST
+            self.state.intent = Intent.QUOTE
             if 'barcelona' in message.lower():
                 self.state.city = 'Barcelona'
 
         # Detectar intención de cita directamente por keywords
         scheduling_keywords = ['cita', 'visita', 'agendar', 'reservar', 'quan podeu', 'cuando']
-        if any(kw in message.lower() for kw in scheduling_keywords) and self.state.intent != Intent.PRESSUPOST:
-            self.state.intent = Intent.CITA
+        if any(kw in message.lower() for kw in scheduling_keywords) and self.state.intent != Intent.QUOTE:
+            self.state.intent = Intent.APPOINTMENT
 
         # 2. Routing por intención de cita → Scheduler Agent
         try:
-            if self.state.intent == Intent.CITA:
+            if self.state.intent == Intent.APPOINTMENT:
                 context = (
                     f"Context del client: Plaga identificada: {self.state.pest_type or 'no especificada'}, "
                     f"Severitat: {self.state.severity}, Ciutat: {self.state.city or 'Barcelona'}. "
                     f"Missatge: {message}"
                 )
                 print(f"DEBUG: Calling Scheduler Agent for: {message}")
-                sched_response = await scheduler_agent.run(context, deps=deps)
+                sched_response = await asyncio.wait_for(
+                    scheduler_agent.run(context, deps=deps), 
+                    timeout=20.0
+                )
                 output = sched_response.output
 
                 return {
@@ -51,70 +55,79 @@ class CECSAOrchestrator:
                     "booking_confirmed": output.booking_confirmed,
                     "booking_uid": output.booking_uid
                 }
+        except asyncio.TimeoutError:
+            print("TIMEOUT in Scheduler Agent")
+            return {"message": ORCHESTRATOR_MESSAGES[self.state.language]["timeout_error"]}
         except Exception as e:
             print(f"ERROR in Scheduler Agent: {str(e)}")
-            msg = "Ho sento, tinc problemes amb l'agenda." if self.state.language == 'ca' else "Lo siento, tengo problemas con la agenda."
+            msg = ORCHESTRATOR_MESSAGES[self.state.language]["error_scheduler"]
             return {"message": f"{msg} (Error: {str(e)})"}
 
         # 3. Fase de Recepción
         try:
-            if (not self.state.intent or not self.state.city) and self.state.intent != Intent.PRESSUPOST:
+            if (not self.state.intent or not self.state.city) and self.state.intent != Intent.QUOTE:
                 print(f"DEBUG: Calling Receptionist Agent for: {message}")
-                response = await receptionist_agent.run(message, deps=deps)
+                response = await asyncio.wait_for(
+                    receptionist_agent.run(message, deps=deps),
+                    timeout=20.0
+                )
                 self.state = response.output.collected_data
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
-                    self.state.intent = Intent.CITA
+                    self.state.intent = Intent.APPOINTMENT
                     return await self.process_message(message)
 
                 return {"message": response.output.message}
+        except asyncio.TimeoutError:
+            print("TIMEOUT in Receptionist Agent")
+            return {"message": ORCHESTRATOR_MESSAGES[self.state.language]["timeout_error"]}
         except Exception as e:
             print(f"ERROR in Receptionist Agent: {str(e)}")
-            return {"message": f"CECSA Assistant Error: {str(e)}"}
+            msg = ORCHESTRATOR_MESSAGES[self.state.language]["general_error"].format(error=str(e))
+            return {"message": msg}
 
         # 4. Fase de Diagnóstico / Presupuesto
         try:
             # A. Presupuesto (solo si ya tenemos diagnóstico)
-            if self.state.pest_type and (self.state.intent == Intent.PRESSUPOST or "pressupost" in message.lower() or "presupuesto" in message.lower()):
+            if self.state.pest_type and (self.state.intent == Intent.QUOTE or "pressupost" in message.lower() or "presupuesto" in message.lower()):
                 print(f"DEBUG: Calling Pricer Agent for: {message}")
-                price_response = await pricer_agent.run(f"Context: {self.state.model_dump_json()}", deps=deps)
+                price_response = await asyncio.wait_for(
+                    pricer_agent.run(f"Context: {self.state.model_dump_json()}", deps=deps),
+                    timeout=20.0
+                )
                 output = price_response.output
                 
-                # Formateo manual para asegurar consistencia de idioma
-                if self.state.language == 'es':
-                    msg = (
-                        f"Basándonos en el diagnóstico técnico, aquí tienes la estimación del servicio:\n\n"
-                        f"💰 **Presupuesto estimado**: {output.price_range_min}€ - {output.price_range_max}€\n"
-                        f"📋 **Desglose**: {', '.join(output.breakdown)}\n"
-                        f"🛡️ **Garantía**: {output.guarantee_months} meses de cobertura total.\n\n"
-                        "¿Quieres agendar la inspección gratuita para confirmar estos detalles?"
-                    )
-                else:
-                    msg = (
-                        f"Basant-nos en el diagnòstic tècnic, aquí tens l'estimació del servei:\n\n"
-                        f"💰 **Pressupost estimat**: {output.price_range_min}€ - {output.price_range_max}€\n"
-                        f"📋 **Desglossament**: {', '.join(output.breakdown)}\n"
-                        f"🛡️ **Garantia**: {output.guarantee_months} mesos de cobertura total.\n\n"
-                        "Vols agendar la inspecció gratuïta per confirmar aquests detalls?"
-                    )
+                # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
+                msg = ORCHESTRATOR_MESSAGES[self.state.language]["pricing_template"].format(
+                    min=output.price_range_min,
+                    max=output.price_range_max,
+                    breakdown=', '.join(output.breakdown),
+                    months=output.guarantee_months
+                )
                 return {"message": msg}
 
             # B. Diagnóstico Inicial
-            if self.state.intent in [Intent.PRESSUPOST, Intent.URGENCIA] and not self.state.pest_type:
+            if self.state.intent in [Intent.QUOTE, Intent.URGENCY] and not self.state.pest_type:
                 print(f"DEBUG: Calling Diagnostician Agent for: {message}")
-                diag_response = await diagnostician_agent.run(
-                    f"Context: {self.state.model_dump_json()}\nClient: {message}",
-                    deps=deps
+                diag_response = await asyncio.wait_for(
+                    diagnostician_agent.run(
+                        f"Context: {self.state.model_dump_json()}\nClient: {message}",
+                        deps=deps
+                    ),
+                    timeout=25.0
                 )
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
 
                 return {"message": diag_response.output.explanation}
+        except asyncio.TimeoutError:
+            print("TIMEOUT in Diagnosis/Pricer Phase")
+            return {"message": ORCHESTRATOR_MESSAGES[self.state.language]["timeout_error"]}
         except Exception as e:
             print(f"ERROR in Diagnosis/Pricer Phase: {str(e)}")
-            msg = "Ho sento, necessito que un tècnic humà revisi això." if self.state.language == 'ca' else "Lo siento, necesito que un técnico humano revise esto."
+            msg = ORCHESTRATOR_MESSAGES[self.state.language]["error_diagnosis"]
             return {"message": f"{msg} (Error: {str(e)})"}
 
-        return {"message": "Gràcies / Gracias. Un agent humà es posarà en contacte amb tu."}
+        return {"message": ORCHESTRATOR_MESSAGES[self.state.language]["fallback"]}

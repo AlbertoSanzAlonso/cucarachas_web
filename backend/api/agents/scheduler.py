@@ -1,8 +1,9 @@
 import os
 import requests as http_requests
+import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, SchedulerOutput, AgentDeps
+from .models import SchedulerOutput, AgentDeps
 from .config import AGENT_MODEL, CAL_API_KEY, CAL_EVENT_TYPE_ID, CAL_BASE_URL
 from .prompts import SYSTEM_PROMPTS
 
@@ -20,8 +21,13 @@ scheduler_agent = Agent(
     output_type=SchedulerOutput,
 )
 
+@scheduler_agent.system_prompt
+def get_scheduler_prompt(ctx: RunContext[AgentDeps]) -> str:
+    lang = ctx.deps.language if ctx.deps else "ca"
+    return SYSTEM_PROMPTS["scheduler"].get(lang, SYSTEM_PROMPTS["scheduler"]["ca"])
+
 @scheduler_agent.tool
-def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
+def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
     """Consulta els horaris lliures a Cal.com pels propers dies."""
     try:
         start_time = datetime.now(timezone.utc).isoformat()
@@ -76,13 +82,34 @@ def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
     except Exception as e:
         return f"Error consultant Cal.com: {str(e)}"
 
+@scheduler_agent.tool
+def verify_address(ctx: RunContext[AgentDeps], address: str) -> str:
+    """Verifica si una adreça existeix a Barcelona/Catalunya usando Google Maps API."""
+    api_key = os.getenv("GOOGLE_MAPS_API_KEY") or os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        return f"Warning: GOOGLE_MAPS_API_KEY no configurada al servidor. Assumeix que l'adreça '{address}' és vàlida i continua."
+    
+    try:
+        url = f"https://maps.googleapis.com/maps/api/geocode/json?address={urllib.parse.quote(address)}&key={api_key}"
+        resp = http_requests.get(url, timeout=5)
+        data = resp.json()
+        
+        if data.get("status") == "OK" and len(data.get("results", [])) > 0:
+            formatted_address = data["results"][0]["formatted_address"]
+            return f"Adreça verificada correctament: {formatted_address}"
+        else:
+            return f"L'adreça '{address}' no sembla vàlida o no s'ha trobat a Google Maps (Status: {data.get('status')}). Demana al client que la revisi o especifiqui més."
+    except Exception as e:
+        return f"Error de connexió verificant adreça: {str(e)}"
 
 @scheduler_agent.tool
 def create_booking(
-    ctx: RunContext[None],
+    ctx: RunContext[AgentDeps],
     slot_time: str,
     attendee_name: str,
     attendee_email: str,
+    attendee_phone: str,
+    address: str,
     notes: str = ""
 ) -> str:
     """Crea una reserva a Cal.com per a l'horari seleccionat."""
@@ -95,8 +122,13 @@ def create_booking(
             "attendee": {
                 "name": attendee_name,
                 "email": attendee_email,
+                "phoneNumber": attendee_phone,
                 "timeZone": "Europe/Madrid",
                 "language": "ca"
+            },
+            "location": {
+                "value": "inPerson",
+                "optionValue": address
             },
             "metadata": {"notes": notes, "source": "CECSA Bio-Assistent"}
         }

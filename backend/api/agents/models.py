@@ -3,26 +3,26 @@ from typing import List, Optional, Literal
 from enum import Enum
 
 class PestType(str, Enum):
-    CUCARACHA_ALEMANA = "alemanya"
-    CUCARACHA_AMERICANA = "americana"
-    CUCARACHA_ORIENTAL = "orientalis"
-    RATA = "rata"
-    RATOLI = "ratoli"
-    TERMITA = "termita"
-    ALTRE = "altre"
+    GERMAN_COCKROACH = "german_cockroach"
+    AMERICAN_COCKROACH = "american_cockroach"
+    ORIENTAL_COCKROACH = "oriental_cockroach"
+    RAT = "rat"
+    MOUSE = "mouse"
+    TERMITE = "termite"
+    OTHER = "other"
 
 class Severity(str, Enum):
-    BAIXA = "baixa"
-    MITJA = "mitja"
-    ALTA = "alta"
-    CRITICA = "critica"
+    LOW = "low"
+    MEDIUM = "medium"
+    HIGH = "high"
+    CRITICAL = "critical"
 
 class Intent(str, Enum):
-    PRESSUPOST = "pressupost"
-    URGENCIA = "urgencia"
-    CITA = "cita"
-    DUDA = "duda"
-    SEGUIMENT = "seguiment"
+    QUOTE = "quote"
+    URGENCY = "urgency"
+    APPOINTMENT = "appointment"
+    DOUBT = "doubt"
+    FOLLOW_UP = "follow_up"
 
 Language = Literal["ca", "es"]
 
@@ -36,7 +36,7 @@ class AgentState(BaseModel):
     property_type: Optional[Literal["particular", "negoci", "comunitat"]] = None
     pest_type: Optional[PestType] = None
     intent: Optional[Intent] = None
-    severity: Severity = Severity.BAIXA
+    severity: Severity = Severity.LOW
     technical_notes: List[str] = []
     estimated_price: Optional[float] = None
     is_urgent: bool = False

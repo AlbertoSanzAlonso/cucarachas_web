@@ -3,7 +3,7 @@ from .models import AgentState, DiagnosisOutput, PestType, Severity, AgentDeps
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
 from .config import AGENT_MODEL
-from .prompts import SYSTEM_PROMPTS
+from .prompts import SYSTEM_PROMPTS, BIO_TIPS
 
 # Agente 2: Diagnóstico Técnico
 diagnostician_agent = Agent(
@@ -18,28 +18,27 @@ def get_diagnostician_prompt(ctx: RunContext[AgentDeps]) -> str:
     return SYSTEM_PROMPTS["diagnostician"].get(lang, SYSTEM_PROMPTS["diagnostician"]["ca"])
 
 @diagnostician_agent.tool
-def search_technical_knowledge(ctx: RunContext[None], query: str) -> str:
-    """Busca protocols tècnics i informació científica a la base de dades RAG de CECSA."""
+def search_technical_knowledge(ctx: RunContext[AgentDeps], query: str) -> str:
+    """Searches technical protocols and scientific information in the CECSA RAG database."""
     return retrieve_relevant_knowledge(query)
 
 @diagnostician_agent.tool
-def get_bio_prevention_tips(ctx: RunContext[None], pest_type: str) -> str:
-    """Retorna consells immediats d'exclusió mecànica i prevenció ètica basats en l'espècie."""
-    tips = {
-        "alemanya": "Revisa el segellat del motor de la nevera i neteja restes orgàniques darrere els electrodomèstics.",
-        "americana": "Bloqueja els desguassos durant la nit i revisa les juntes de les tapes de clavegueram.",
-        "orientalis": "Redueix la humitat en zones fosques i segella esquerdes en el paviment del soterrani."
-    }
-    return tips.get(pest_type, "Mantenir la zona neta i seca, i segellar possibles punts d'entrada estructurals.")
+def get_bio_prevention_tips(ctx: RunContext[AgentDeps], pest_type: str) -> str:
+    """Returns immediate mechanical exclusion and ethical prevention tips based on the species."""
+    lang = ctx.deps.language if ctx.deps else "ca"
+    tips = BIO_TIPS.get(lang, BIO_TIPS["ca"])
+    return tips.get(pest_type, tips["default"])
 
 @diagnostician_agent.tool
-def lookup_pest_database(ctx: RunContext[None], keyword: str) -> str:
-    """Consulta la base de dades tècnica d'espècies de CECSA."""
+def lookup_pest_database(ctx: RunContext[AgentDeps], keyword: str) -> str:
+    """Queries the CECSA technical database for species information."""
+    lang = ctx.deps.language if ctx.deps else "ca"
+    
     species = Species.objects.filter(name__icontains=keyword) | Species.objects.filter(description__icontains=keyword)
     if not species.exists():
-        return "Cap espècie trobada a la base de dades."
+        return "Cap espècie trobada a la base de dades." if lang == "ca" else "Ninguna especie encontrada en la base de datos."
     
     results = []
     for s in species[:2]:
-        results.append(f"{s.name}: {s.description}. Detalls: {s.details}")
+        results.append(f"{s.name}: {s.description}. Details: {s.details}")
     return "\n".join(results)
