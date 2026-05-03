@@ -19,7 +19,7 @@ def get_cal_headers():
 scheduler_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentDeps,
-    result_type=SchedulerOutput,
+    output_type=SchedulerOutput,
     retries=3
 )
 
