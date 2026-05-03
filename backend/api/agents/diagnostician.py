@@ -10,6 +10,7 @@ diagnostician_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentDeps,
     output_type=DiagnosisOutput,
+    retries=3
 )
 
 @diagnostician_agent.system_prompt

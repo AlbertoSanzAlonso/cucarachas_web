@@ -9,6 +9,7 @@ pricer_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentDeps,
     output_type=PricingOutput,
+    retries=3
 )
 
 @pricer_agent.tool

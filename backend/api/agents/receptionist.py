@@ -12,6 +12,7 @@ receptionist_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentDeps,
     output_type=ReceptionistOutput,
+    retries=3
 )
 
 @receptionist_agent.system_prompt
