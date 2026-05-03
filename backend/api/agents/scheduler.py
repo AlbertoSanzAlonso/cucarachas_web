@@ -4,16 +4,19 @@ from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
 from .models import AgentState, SchedulerOutput
 
-CAL_API_KEY = os.getenv('CAL_API_KEY', '').strip()
-try:
-    CAL_EVENT_TYPE_ID = int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
-except ValueError:
-    CAL_EVENT_TYPE_ID = 277401
-CAL_HEADERS = {
-    "Authorization": f"Bearer {CAL_API_KEY}",
-    "cal-api-version": "2024-06-11",
-    "Content-Type": "application/json"
-}
+def get_cal_headers():
+    api_key = os.getenv('CAL_API_KEY', '').strip()
+    return {
+        "Authorization": f"Bearer {api_key}",
+        "cal-api-version": "2024-06-11",
+        "Content-Type": "application/json"
+    }
+
+def get_event_type_id():
+    try:
+        return int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
+    except ValueError:
+        return 277401
 
 # Agente 4: Agendador
 # Rol: Consultar disponibilidad real en Cal.com y crear reservas.
@@ -40,16 +43,23 @@ def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
         start_time = datetime.now(timezone.utc).isoformat()
         end_time = (datetime.now(timezone.utc) + timedelta(days=days_ahead)).isoformat()
 
+        headers = get_cal_headers()
+        event_id = get_event_type_id()
+        
+        if not headers["Authorization"].strip() or "None" in headers["Authorization"]:
+            return "Error: CAL_API_KEY no configurada al servidor."
+
         resp = http_requests.get(
             f"https://api.cal.eu/v2/slots",
-            headers=CAL_HEADERS,
+            headers=headers,
             params={
-                "eventTypeId": CAL_EVENT_TYPE_ID,
+                "eventTypeId": event_id,
                 "startTime": start_time,
                 "endTime": end_time,
             },
             timeout=10
         )
+        print(f"DEBUG Cal.com slots status: {resp.status_code}")
         data = resp.json()
 
         if data.get("status") != "success":
@@ -94,8 +104,11 @@ def create_booking(
 ) -> str:
     """Crea una reserva a Cal.com per a l'horari seleccionat."""
     try:
+        headers = get_cal_headers()
+        event_id = get_event_type_id()
+        
         payload = {
-            "eventTypeId": CAL_EVENT_TYPE_ID,
+            "eventTypeId": event_id,
             "start": slot_time,
             "attendee": {
                 "name": attendee_name,
@@ -108,10 +121,11 @@ def create_booking(
 
         resp = http_requests.post(
             "https://api.cal.eu/v2/bookings",
-            headers=CAL_HEADERS,
+            headers=headers,
             json=payload,
             timeout=10
         )
+        print(f"DEBUG Cal.com booking status: {resp.status_code}")
         data = resp.json()
 
         if data.get("status") == "success":
