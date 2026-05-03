@@ -208,7 +208,7 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
           </h2>
         </div>
       </div>
-      <div className={`flex flex-col space-y-2 sm:space-y-0 sm:grid sm:gap-3 max-w-3xl mx-auto w-full ${step === 6 || step === 7 ? 'sm:grid-cols-1 max-w-xs' : 'sm:grid-cols-2'}`}>
+      <div className={`flex flex-col space-y-2 sm:space-y-0 sm:grid sm:gap-3 px-4 md:px-8 max-w-3xl mx-auto w-full ${step === 6 || step === 7 ? 'sm:grid-cols-1 max-w-xs' : 'sm:grid-cols-2'}`}>
         {renderCurrentStep()}
       </div>
     </>
