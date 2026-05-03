@@ -1,7 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 
 const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div 
       initial={{ opacity: 0, x: msg.role === 'assistant' ? -10 : 10 }}
@@ -10,28 +13,28 @@ const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }
     >
       <div className="flex flex-col space-y-4 max-w-[85%]">
         <div className={`p-5 rounded-[2rem] text-left ${msg.role === 'assistant' ? 'bg-white/5 text-white/90 border border-white/5 rounded-tl-none' : 'bg-accent-green text-black font-bold rounded-tr-none shadow-lg'}`}>
-          <div className="text-sm md:text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-accent-green-hv">$1</span>') }} />
+          <div className="text-sm md:text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-accent-green-hv">$1</span>') }} />
         </div>
         
-        {msg.isInitial && (
+        {(msg.isInitial || msg.isVerdict) && (
           <div className="flex flex-wrap gap-2 mt-2">
             <button 
-              onClick={() => handleSendMessage({ preventDefault: () => {} }, 'Vull agendar la meva cita gratuïta')}
+              onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
               className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
             >
-              📅 Agendar Cita
+              📅 {t('agent.cta.schedule')}
             </button>
             <button 
-              onClick={() => handleSendMessage({ preventDefault: () => {} }, 'Demanar pressupost')}
+              onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_budget'))}
               className="bg-white/10 hover:bg-white/20 text-white border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
             >
-              💰 Demanar Pressupost
+              💰 {t('agent.cta.budget')}
             </button>
             <button 
               onClick={() => window.location.href = 'tel:933309169'}
               className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
             >
-              📞 Trucar Ara
+              📞 {t('agent.cta.call')}
             </button>
           </div>
         )}

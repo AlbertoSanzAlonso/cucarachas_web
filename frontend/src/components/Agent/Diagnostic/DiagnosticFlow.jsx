@@ -1,64 +1,66 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Home, Building2, Users, AlertTriangle, MessageSquare, ChevronLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
 const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
+  const { t } = useTranslation();
   
   const renderParticularFlow = () => {
     switch (step) {
       case 2:
         return [
-          { id: 'cocina', label: 'Cuina' },
-          { id: 'bano', label: 'Bany' },
-          { id: 'dormitorio', label: 'Dormitori' },
-          { id: 'salon', label: 'Saló' },
-          { id: 'garaje', label: 'Garatge / Traster' },
-          { id: 'toda', label: 'Tota la casa' }
+          { id: 'cocina' },
+          { id: 'bano' },
+          { id: 'dormitorio' },
+          { id: 'salon' },
+          { id: 'garaje' },
+          { id: 'toda' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('where', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 3:
         return [
-          { id: 'one', label: 'Només una o dues' },
-          { id: 'several', label: 'Diverses al dia' },
-          { id: 'many', label: 'Moltes cada nit' },
-          { id: 'nests', label: 'He trobat nius / cries' }
+          { id: 'one' },
+          { id: 'several' },
+          { id: 'many' },
+          { id: 'nests' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('quantity', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 4:
         return [
-          { id: 'today', label: 'Avui mateix' },
-          { id: 'days', label: 'Fa uns dies' },
-          { id: 'weeks', label: 'Fa setmanes' },
-          { id: 'months', label: 'Fa mesos' }
+          { id: 'today' },
+          { id: 'days' },
+          { id: 'weeks' },
+          { id: 'months' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('since', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 5:
         return [
-          { id: 'yes', label: 'Sí, necessito ajuda avui' },
-          { id: 'week', label: 'Aquesta setmana' },
-          { id: 'budget', label: 'Només vull pressupost' },
-          { id: 'info', label: 'Vull informació primer' }
+          { id: 'yes_urgent' },
+          { id: 'this_week' },
+          { id: 'only_budget' },
+          { id: 'info_first' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('urgency', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 6:
         return [
-          { id: 'yes', label: 'Sí' },
-          { id: 'no', label: 'No' }
+          { id: 'yes' },
+          { id: 'no' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('sensitive', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       default: return null;
@@ -69,59 +71,59 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
     switch (step) {
       case 2:
         return [
-          { id: 'restaurante', label: 'Restaurant / Bar' },
-          { id: 'hotel', label: 'Hotel' },
-          { id: 'oficina', label: 'Oficina' },
-          { id: 'tienda', label: 'Botiga' },
-          { id: 'nave', label: 'Nau Industrial' },
-          { id: 'comunidad', label: 'Comunitat / Finca' }
+          { id: 'restaurante' },
+          { id: 'hotel' },
+          { id: 'oficina' },
+          { id: 'tienda' },
+          { id: 'nave' },
+          { id: 'comunidad' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('business_type', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 3:
         return [
-          { id: 'urgent', label: 'Sí, urgent' },
-          { id: 'soon', label: 'Pròximament' },
-          { id: 'no', label: 'No' }
+          { id: 'urgent' },
+          { id: 'soon' },
+          { id: 'no' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('sanitary_risk', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 4:
         return [
-          { id: 'cocina', label: 'Cuina' },
-          { id: 'almacen', label: 'Magatzem' },
-          { id: 'clientes', label: 'Zona clients' },
-          { id: 'baños', label: 'Banys' },
-          { id: 'exterior', label: 'Exterior' },
-          { id: 'varias', label: 'Diverses zones' }
+          { id: 'cocina' },
+          { id: 'almacen' },
+          { id: 'clientes' },
+          { id: 'banos' },
+          { id: 'exterior' },
+          { id: 'varias' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('where_empresa', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 5:
         return [
-          { id: 'puntual', label: 'Avistaments puntuals' },
-          { id: 'frequent', label: 'Freqüent' },
-          { id: 'grave', label: 'Greu' },
-          { id: 'closure', label: 'Tancament imminent' }
+          { id: 'punctual' },
+          { id: 'frequent' },
+          { id: 'grave' },
+          { id: 'closure' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('level', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       case 6:
         return [
-          { id: 'yes', label: 'Sí' },
-          { id: 'no', label: 'No' },
-          { id: 'unknown', label: 'No ho sé' }
+          { id: 'yes' },
+          { id: 'no' },
+          { id: 'unknown' }
         ].map(opt => (
           <button key={opt.id} onClick={() => handleAnswer('certificate', opt.id)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px]">
-            {opt.label}
+            {t(`agent.options.${opt.id}`)}
           </button>
         ));
       default: return null;
@@ -129,48 +131,64 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
   };
 
   const getQuestion = () => {
-    if (step === 1) return 'Qui necessita el servei?';
+    if (step === 1) return t('agent.questions.who');
     if (path === 'particular') {
-      if (step === 2) return 'On has vist paneroles?';
-      if (step === 3) return 'Quantes n\'has vist?';
-      if (step === 4) return 'Des de quan passa?';
-      if (step === 5) return 'És urgent?';
-      if (step === 6) return 'Hi ha nens o mascotes?';
+      if (step === 2) return t('agent.questions.where_p');
+      if (step === 3) return t('agent.questions.qty_p');
+      if (step === 4) return t('agent.questions.since_p');
+      if (step === 5) return t('agent.questions.urgency_p');
+      if (step === 6) return t('agent.questions.sensitive_p');
     }
     if (path === 'empresa') {
-      if (step === 2) return 'Quin tipus de negoci ets?';
-      if (step === 3) return 'Hi ha inspecció sanitària?';
-      if (step === 4) return 'On apareix el problema?';
-      if (step === 5) return 'Nivell del problema';
-      if (step === 6) return 'Necessites certificat?';
+      if (step === 2) return t('agent.questions.business_type');
+      if (step === 3) return t('agent.questions.sanitary_risk');
+      if (step === 4) return t('agent.questions.where_e');
+      if (step === 5) return t('agent.questions.level_e');
+      if (step === 6) return t('agent.questions.certificate');
     }
-    return 'Explica\'ns més';
+    if (step === 7) return t('agent.questions.extra_info');
+    return t('agent.questions.default');
   };
 
   const renderCurrentStep = () => {
     if (step === 1) {
       return [
-        { id: 'particular', label: 'Particular / Habitatge', icon: Home },
-        { id: 'empresa', label: 'Empresa / Negoci', icon: Building2 },
-        { id: 'comunidad', label: 'Comunitat de veïns', icon: Users },
-        { id: 'admin', label: 'Administració / Local públic', icon: Building2 },
-        { id: 'unknown', label: 'No ho sé', icon: AlertTriangle },
-        { id: 'chat_direct', label: 'Tinc preguntes / Consultar Agent', icon: MessageSquare, primary: true }
+        { id: 'particular', icon: Home },
+        { id: 'empresa', icon: Building2 },
+        { id: 'comunidad', icon: Users },
+        { id: 'admin', icon: Building2 },
+        { id: 'unknown', icon: AlertTriangle },
+        { id: 'chat_direct', icon: MessageSquare, primary: true }
       ].map(opt => (
         <button key={opt.id} onClick={() => handleAnswer('who', opt.id)} className={`flex items-center p-5 rounded-2xl border transition-all group text-left min-w-[260px] ${opt.primary ? 'bg-accent-green text-black border-accent-green' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'}`}>
           <opt.icon size={20} className={`mr-4 ${opt.primary ? 'text-black' : 'text-accent-green'}`} />
-          <span className="font-bold">{opt.label}</span>
+          <span className="font-bold">{t(`agent.options.${opt.id}`)}</span>
         </button>
       ));
     }
     
+    if (step === 7) {
+      return (
+        <div className="w-full max-w-4xl mx-auto flex flex-col space-y-6 px-4 items-center">
+          <textarea 
+            className="w-full bg-white/5 border border-white/10 rounded-[2rem] p-6 text-white text-lg placeholder:text-white/30 focus:outline-none focus:border-accent-green/50 min-h-[220px] mb-2 shadow-2xl"
+            placeholder={t('agent.questions.extra_info_placeholder')}
+            onChange={(e) => handleAnswer('extra_info', e.target.value, true)}
+          />
+          <Button variant="accent" onClick={() => handleAnswer('finish', 'finish')} className="w-full max-w-md py-5 text-base font-black uppercase tracking-widest shadow-xl">
+            {t('agent.give_diagnostic')}
+          </Button>
+        </div>
+      );
+    }
+
     if (path === 'particular') return renderParticularFlow();
     if (path === 'empresa') return renderEmpresaFlow();
-    
+
     return (
       <div className="w-full max-w-xs">
         <Button variant="accent" onClick={() => handleAnswer('finish', 'finish')} className="w-full">
-          Finalitzar Diagnòstic
+          {t('agent.finish_diagnostic')}
         </Button>
       </div>
     );
@@ -178,7 +196,7 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
 
   return (
     <>
-      <div className="mb-3">
+      <div className="mb-10 md:mb-14 w-full flex flex-col items-center">
         <div className="flex items-center justify-center space-x-4">
           {step > 1 && (
             <button onClick={handleBack} className="p-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-white/60 hover:text-white transition-all">
@@ -190,7 +208,7 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
           </h2>
         </div>
       </div>
-      <div className={`grid gap-3 max-w-3xl mx-auto w-full ${step === 6 ? 'grid-cols-1 max-w-xs' : 'grid-cols-1 sm:grid-cols-2'}`}>
+      <div className={`grid gap-3 max-w-3xl mx-auto w-full ${step === 6 || step === 7 ? 'grid-cols-1 max-w-xs' : 'grid-cols-1 sm:grid-cols-2'}`}>
         {renderCurrentStep()}
       </div>
     </>
