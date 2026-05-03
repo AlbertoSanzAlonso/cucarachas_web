@@ -21,6 +21,9 @@ diagnostician_agent = Agent(
         "3. Ofereix consells de prevenció mecànica (Bio-Tips) abans de parlar de productes. "
         "4. Si falten dades, fes màxim 3 preguntes clau sobre l'entorn. "
         
+        "Quan generis el veredicte final (DiagnosisOutput), recorda que el client ha completat un procés de diagnòstic de 7 passos. "
+        "HAS D'INCLOURE sempre la següent OFERTA ESPECIAL al final de la teva explicació: "
+        "'🎁 OFERTA ESPECIAL: Per haver completat el diagnòstic, t'oferim una PRIMERA VISITA D'INSPECCIÓ TOTALMENT GRATUÏTA a Barcelona i rodalies.' "
         "Respon sempre en Català i enfoca't en la prevenció estructural."
     ),
 )

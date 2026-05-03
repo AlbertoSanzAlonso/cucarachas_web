@@ -278,8 +278,6 @@
     ]
   },
   "cta": {
-    "wa_label": "Consulta rápida",
-    "wa_desc": "Atención por WhatsApp",
     "badge": "Técnico de Guardia disponible",
     "call_now": "LLAMAR AHORA"
   },
@@ -501,7 +499,7 @@
       "grave": "Grave",
       "closure": "Cierre inminente"
     },
-    "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
+    "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas.",
     "chat_direct": "Tengo preguntas / Consultar Agente"
   }
 }

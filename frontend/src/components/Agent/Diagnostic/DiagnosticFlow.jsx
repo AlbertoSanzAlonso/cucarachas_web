@@ -160,7 +160,7 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
         { id: 'unknown', icon: AlertTriangle },
         { id: 'chat_direct', icon: MessageSquare, primary: true }
       ].map(opt => (
-        <button key={opt.id} onClick={() => handleAnswer('who', opt.id)} className={`flex items-center p-5 rounded-2xl border transition-all group text-left min-w-[260px] ${opt.primary ? 'bg-accent-green text-black border-accent-green' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'}`}>
+        <button key={opt.id} onClick={() => handleAnswer('who', opt.id)} className={`flex items-center p-4 md:p-5 rounded-2xl border transition-all group text-left w-full sm:min-w-[260px] ${opt.primary ? 'bg-accent-green text-black border-accent-green shadow-lg' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'}`}>
           <opt.icon size={20} className={`mr-4 ${opt.primary ? 'text-black' : 'text-accent-green'}`} />
           <span className="font-bold">{t(`agent.options.${opt.id}`)}</span>
         </button>
@@ -196,7 +196,7 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
 
   return (
     <>
-      <div className="mb-10 md:mb-14 w-full flex flex-col items-center">
+      <div className="mb-4 md:mb-14 w-full flex flex-col items-center">
         <div className="flex items-center justify-center space-x-4">
           {step > 1 && (
             <button onClick={handleBack} className="p-2 bg-white/5 hover:bg-white/10 rounded-full border border-white/10 text-white/60 hover:text-white transition-all">
@@ -208,7 +208,7 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
           </h2>
         </div>
       </div>
-      <div className={`grid gap-3 max-w-3xl mx-auto w-full ${step === 6 || step === 7 ? 'grid-cols-1 max-w-xs' : 'grid-cols-1 sm:grid-cols-2'}`}>
+      <div className={`grid gap-2 md:gap-3 max-w-3xl mx-auto w-full ${step === 6 || step === 7 ? 'grid-cols-1 max-w-xs' : 'grid-cols-1 sm:grid-cols-2'}`}>
         {renderCurrentStep()}
       </div>
     </>

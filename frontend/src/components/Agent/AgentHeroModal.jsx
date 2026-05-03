@@ -121,13 +121,13 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
             ))}
           </div>
 
-          <div className="flex-1 flex flex-col items-center w-full p-3 md:p-6 relative z-10 text-center min-h-0">
+          <div className="flex-1 flex flex-col items-center w-full p-1 md:p-6 relative z-10 text-center min-h-0">
             {/* Logo */}
             <motion.div 
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 1.2, ease: "easeOut" }}
-              className={`${isFinished ? 'mb-0 scale-[0.3] md:scale-[0.4] mt-0 md:-mt-12' : 'mb-1 mt-4 md:mt-0'} transition-all relative group flex-shrink-0`}
+              className={`${isFinished ? 'mb-0 scale-[0.3] md:scale-[0.4] mt-0 md:-mt-12' : 'mb-1 mt-1 md:mt-0'} transition-all relative group flex-shrink-0`}
             >
               <img src="/assets/isotipo.png" alt="CECSA" className="w-32 h-32 md:w-64 md:h-64 object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
               <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-white/20 rounded-full blur-[100px] -z-10" />
@@ -136,7 +136,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
             {/* Content Container */}
             <div className={`max-w-4xl mx-auto w-full flex-1 flex flex-col items-center ${isFinished ? 'mt-2 md:-mt-16' : 'mt-2 md:-mt-12'} min-h-0`}>
               {!isFinished ? (
-                <div className="flex flex-col items-center space-y-8 md:space-y-12 w-full">
+                <div className="flex flex-col items-center space-y-4 md:space-y-12 w-full">
                   <DiagnosticFlow 
                     step={step}
                     path={path}

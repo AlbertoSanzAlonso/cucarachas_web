@@ -135,14 +135,6 @@ const FloatingCTA = () => {
                          </div>
                       </div>
                       <div className="flex items-center space-x-3">
-                        <a 
-                          href="https://wa.me/34933309169" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="p-3 bg-white/10 hover:bg-accent-green hover:text-black rounded-2xl transition-all shadow-sm"
-                        >
-                          <MessageSquare size={24} />
-                        </a>
                         <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
                           <X size={24} />
                         </button>

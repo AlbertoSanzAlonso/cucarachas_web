@@ -45,7 +45,7 @@ export const useAgentChat = (i18n, answers, path) => {
       setIsTyping(false);
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: data.message, isVerdict: true, slots: data.slots }
+        { role: 'assistant', content: data.reply, isVerdict: true, slots: data.slots }
       ]);
     } catch (error) {
       setIsTyping(false);
