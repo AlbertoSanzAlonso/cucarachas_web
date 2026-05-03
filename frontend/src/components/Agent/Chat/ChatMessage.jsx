@@ -40,11 +40,6 @@ const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }
           </div>
         )}
 
-        {msg.showCalendar && (
-          <div className="w-full mt-4 animate-fade-in">
-            <CalEmbed />
-          </div>
-        )}
 
         {msg.slots && (
           <div className="grid grid-cols-2 gap-2 mt-2">

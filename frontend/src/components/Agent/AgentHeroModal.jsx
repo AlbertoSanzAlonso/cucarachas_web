@@ -190,6 +190,43 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
               )}
             </div>
           </div>
+
+          {/* Calendar Modal Overlay */}
+          <AnimatePresence>
+            {messages.some(m => m.showCalendar) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-[150] flex items-center justify-center p-4 md:p-12 bg-primary-blue/20 backdrop-blur-xl rounded-[2rem] md:rounded-[5rem]"
+              >
+                <motion.div
+                  initial={{ scale: 0.9, y: 20 }}
+                  animate={{ scale: 1, y: 0 }}
+                  className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden relative"
+                >
+                  <div className="p-6 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div>
+                      <h3 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">Tria el teu horari</h3>
+                      <p className="text-primary-gray/40 text-xs font-bold uppercase tracking-widest">Inspecció gratuïta CECSA</p>
+                    </div>
+                    <button 
+                      onClick={() => {
+                        // Ocultamos el calendario de los mensajes para cerrar la modal
+                        setMessages(prev => prev.map(m => ({ ...m, showCalendar: false })));
+                      }}
+                      className="bg-primary-gray/5 hover:bg-red-50 text-primary-gray/40 hover:text-red-500 p-4 rounded-2xl transition-all font-black"
+                    >
+                      TANCAR
+                    </button>
+                  </div>
+                  <div className="p-2 md:p-4 bg-white h-[500px] md:h-[600px]">
+                    <CalEmbed />
+                  </div>
+                </motion.div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </motion.div>
     </AnimatePresence>
