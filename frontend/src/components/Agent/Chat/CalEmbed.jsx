@@ -2,10 +2,10 @@ import React from 'react';
 
 const CalEmbed = ({ eventLink = "cucarachasbarcelona/30min" }) => {
   // Añadimos hideEventTypeDetails=true para que sea más compacto
-  const calUrl = `https://cal.eu/${eventLink}?embed=true&theme=light&layout=month_view&hideEventTypeDetails=true`;
+  const calUrl = `https://cal.eu/${eventLink}?embed=true&theme=light&hideEventTypeDetails=true`;
 
   return (
-    <div className="w-full h-[450px] md:h-[500px] rounded-[1.5rem] overflow-hidden bg-white shadow-xl border border-white/20 relative animate-in fade-in zoom-in duration-500">
+    <div className="w-full h-full bg-white relative">
       <iframe
         src={calUrl}
         title="Reserva de cita CECSA"

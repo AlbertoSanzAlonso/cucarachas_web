@@ -207,24 +207,23 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                 <motion.div
                   initial={{ scale: 0.9, y: 20 }}
                   animate={{ scale: 1, y: 0 }}
-                  className="bg-white w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden relative"
+                  className="bg-white w-full max-w-4xl h-[85vh] md:h-auto rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden relative flex flex-col"
                 >
-                  <div className="p-6 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                  <div className="p-4 md:p-8 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 flex-shrink-0">
                     <div>
-                      <h3 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">Tria el teu horari</h3>
-                      <p className="text-primary-gray/40 text-xs font-bold uppercase tracking-widest">Inspecció gratuïta CECSA</p>
+                      <h3 className="text-lg md:text-2xl font-black text-primary-gray uppercase tracking-tight">Tria el teu horari</h3>
+                      <p className="text-[10px] md:text-xs font-bold uppercase tracking-widest text-primary-gray/40">Inspecció gratuïta CECSA</p>
                     </div>
                     <button 
                       onClick={() => {
-                        // Ocultamos el calendario de los mensajes para cerrar la modal
                         setMessages(prev => prev.map(m => ({ ...m, showCalendar: false })));
                       }}
-                      className="bg-primary-gray/5 hover:bg-red-50 text-primary-gray/40 hover:text-red-500 p-4 rounded-2xl transition-all font-black"
+                      className="bg-primary-gray/5 hover:bg-red-50 text-primary-gray/40 hover:text-red-500 px-4 py-2 md:p-4 rounded-xl md:rounded-2xl transition-all font-black text-[10px] md:text-xs uppercase tracking-widest"
                     >
                       TANCAR
                     </button>
                   </div>
-                  <div className="p-2 md:p-4 bg-white h-[500px] md:h-[600px]">
+                  <div className="flex-1 bg-white overflow-hidden relative">
                     <CalEmbed />
                   </div>
                 </motion.div>
