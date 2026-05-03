@@ -1,8 +1,8 @@
 import os
 
 # --- Configuración de IA (Groq) ---
-# Usamos Llama 3.3 70b por su extrema velocidad y precisión
-AGENT_MODEL = 'groq:llama-3.3-70b-versatile'
+# Usamos Gemini 1.5 Flash para evitar límites de Groq en producción
+AGENT_MODEL = 'google-gla:gemini-1.5-flash'
 
 # Asegurar que la API Key esté presente en el entorno
 def setup_ai_keys():
