@@ -16,9 +16,10 @@ def chat_with_agents(request):
     # Manejo manual de preflight (OPTIONS)
     if request.method == 'OPTIONS':
         response = Response()
-        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
         response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
         response["Access-Control-Allow-Headers"] = "*"
+        response["Access-Control-Allow-Credentials"] = "true"
         return response
 
     if request.method == 'GET':
@@ -58,7 +59,8 @@ def chat_with_agents(request):
         
         response = Response(res_data)
         # Refuerzo manual de CORS
-        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
+        response["Access-Control-Allow-Credentials"] = "true"
         return response
 
     except Exception as e:
@@ -67,5 +69,6 @@ def chat_with_agents(request):
             "reply": f"Error intern de connexió. Si us plau, intenta-ho de nou.",
             "debug": str(e)
         }, status=500)
-        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
+        response["Access-Control-Allow-Credentials"] = "true"
         return response
