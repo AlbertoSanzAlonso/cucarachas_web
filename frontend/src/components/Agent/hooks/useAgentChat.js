@@ -13,6 +13,17 @@ export const useAgentChat = (i18n, answers, path) => {
   const messagesRef = useRef(messages);
   const inputValueRef = useRef(inputValue);
 
+  const callAgentAPI = async (message) => {
+    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const response = await fetch(`${apiBase}/api/chat/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, language: i18n.language })
+    });
+    if (!response.ok) throw new Error('Network response was not ok');
+    return response.json();
+  };
+
   useEffect(() => {
     answersRef.current = answers;
     pathRef.current = path;
@@ -54,12 +65,7 @@ export const useAgentChat = (i18n, answers, path) => {
     Si us plau, genera un diagnòstic únic, ètic i professional per a aquest cas en aquest idioma: ${i18n.language}.`;
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL || 'http://localhost:8000'}/api/chat/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: diagnosticPrompt, language: i18n.language })
-      });
-      const data = await response.json();
+      const data = await callAgentAPI(diagnosticPrompt);
       setIsTyping(false);
       setMessages(prev => [
         ...prev,
@@ -79,13 +85,7 @@ export const useAgentChat = (i18n, answers, path) => {
     setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
     setIsTyping(true);
 
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    fetch(`${apiBase}/api/chat/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: `Reserva: ${slot.slot_time || slot.date} ${slot.time}`, language: i18n.language })
-    })
-      .then(r => r.json())
+    callAgentAPI(`Reserva: ${slot.slot_time || slot.date} ${slot.time}`)
       .then(data => {
         setIsTyping(false);
         setMessages(prev => [...prev, { 
@@ -110,19 +110,13 @@ export const useAgentChat = (i18n, answers, path) => {
     if (!directValue) setInputValue('');
     setIsTyping(true);
 
-    const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     const contextualMessage = messagesRef.current.length <= 1
       ? `[Diagnòstic: ${pathRef.current || 'general'}, zona: ${answersRef.current.where || answersRef.current.where_empresa || 'no especificada'}] ${value}`
       : value;
 
     // La intención de agendar se envía ahora al backend para activar el Agentic Scheduling.
 
-    fetch(`${apiBase}/api/chat/`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: contextualMessage, language: i18n.language })
-    })
-      .then(r => r.json())
+    callAgentAPI(contextualMessage)
       .then(data => {
         setIsTyping(false);
         setMessages(prev => [...prev, { 
