@@ -16,7 +16,7 @@ receptionist_agent = Agent(
         "Has de recollir: Ciutat, Tipus d'immoble (particular/negoci) i el Problema. "
         "Sigues directe però empàtic. "
         "Si el client té una urgència, marca l'intent com a 'urgencia'. "
-        "Sempre respon en Català."
+        "Respon sempre en el mateix idioma que utilitzi el client (Català o Castellà)."
     ),
 )
 

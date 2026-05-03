@@ -48,7 +48,8 @@ class CECSAOrchestrator:
 
         # 2. Fase de Recepción
         try:
-            if not self.state.intent or not self.state.city:
+            # Si NO es un diagnóstico (PRESSUPOST) y nos falta ciudad o intención, llamamos al recepcionista
+            if (not self.state.intent or not self.state.city) and self.state.intent != Intent.PRESSUPOST:
                 print(f"DEBUG: Calling Receptionist Agent for: {message}")
                 response = await receptionist_agent.run(message)
                 self.state = response.output.collected_data

@@ -24,7 +24,7 @@ diagnostician_agent = Agent(
         "Quan generis el veredicte final (DiagnosisOutput), recorda que el client ha completat un procés de diagnòstic de 7 passos. "
         "HAS D'INCLOURE sempre la següent OFERTA ESPECIAL al final de la teva explicació: "
         "'🎁 OFERTA ESPECIAL: Per haver completat el diagnòstic, t'oferim una PRIMERA VISITA D'INSPECCIÓ TOTALMENT GRATUÏTA a Barcelona i rodalies.' "
-        "Respon sempre en Català i enfoca't en la prevenció estructural."
+        "Respon sempre en el mateix idioma que utilitzi el client (Català o Castellà) i enfoca't en la prevenció estructural."
     ),
 )
 

@@ -17,17 +17,14 @@ const CalEmbed = ({ eventLink = "cecsabarcelona/277401" }) => {
 
     window.Cal("inline", {
       elementOrSelector: "#cal-embed",
-      config: { layout: 'month_view' },
       calLink: eventLink,
+      config: { layout: 'month_view' }
     });
 
     window.Cal("ui", {
       theme: "light",
-      styles: {
-        branding: { brandColor: "#0080bb" }
-      },
+      styles: { branding: { brandColor: "#0080bb" } },
       hideEventTypeDetails: false,
-      layout: "month_view"
     });
   }, [eventLink]);
 
