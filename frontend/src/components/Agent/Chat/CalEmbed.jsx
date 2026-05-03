@@ -13,15 +13,15 @@ const CalEmbed = ({ eventLink = "cecsabarcelona/277401" }) => {
       };
     })(window, "https://app.cal.eu/embed/embed.js", "init");
 
-    window.Cal("init", "inspeccio", { origin: "https://app.cal.eu" });
+    window.Cal("init", { origin: "https://app.cal.eu" });
 
-    window.Cal.ns.inspeccio("inline", {
+    window.Cal("inline", {
       elementOrSelector: "#cal-embed",
       config: { layout: 'month_view' },
       calLink: eventLink,
     });
 
-    window.Cal.ns.inspeccio("ui", {
+    window.Cal("ui", {
       theme: "light",
       styles: {
         branding: { brandColor: "#0080bb" }
