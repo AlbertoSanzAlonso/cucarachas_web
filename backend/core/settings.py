@@ -97,13 +97,17 @@ CACHES = {
 }
 
 if os.environ.get('REDIS_URL'):
-    CACHES["default"] = {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.environ.get('REDIS_URL'),
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+    try:
+        import django_redis
+        CACHES["default"] = {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ.get('REDIS_URL'),
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
         }
-    }
+    except ImportError:
+        print("WARNING: REDIS_URL found but 'django_redis' is not installed. Falling back to LocMemCache.")
 
 
 # Password validation
