@@ -75,12 +75,14 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 
 ### Frontend: Bio-Assistent Modal (`/frontend/src/components/Agent/AgentHeroModal.jsx`)
 
-- **Estructura Modular**: Dividido en sub-componentes para mayor mantenibilidad:
-    - `DiagnosticFlow.jsx`: Flujo interactivo de 6 passos.
-    - `ChatMessage.jsx`: Renderizado de burbujas, slots de Cal.com y CTAs.
-    - `ChatInput.jsx`: Formulario de entrada de mensajes.
+- **Estructura Modular**: Separación estricta de lógica y presentación:
+    - `useAgentChat.js`: Hook personalizado que gestiona el estado de los mensajes, escritura y llamadas a la API.
+    - `DiagnosticFlow.jsx`: Orquestador del flujo interactivo de 7 pasos (incluyendo recolección de info extra).
+    - `ChatMessage.jsx`: Renderizado de burbujas inteligentes con soporte para veredictos de IA y CTAs integrados.
+    - `ChatInput.jsx`: Componente de entrada desacoplado.
+- **Flujo de Diagnóstico**: Proceso de 7 pasos que culmina en un veredicto generado por IA en tiempo real, enviado al backend con contexto completo del usuario.
 - **Scroll Técnico**: Implementado mediante `ScrollArea.jsx` con soporte de `forwardRef` para auto-scroll automático en mensajes nuevos.
-- **Entrada directa al xat**: Opció "Tinc preguntes / Consultar Agent" al pas 1.
+- **Entrada directa al xat**: Opción "Tinc preguntes / Consultar Agent" en el paso 1.
 - **Slots interactius**: Renderitza disponibilidad real de Cal.com mediante el proxy del backend.
 - **Restricciones**: No apareix a `/admin` ni `/login`.
 - **Responsive Pro**: Optimización específica para móviles con logo escalado y sombras laterales sin recortes.
