@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 
 const FloatingCTA = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [messages, setMessages] = useState([]);
