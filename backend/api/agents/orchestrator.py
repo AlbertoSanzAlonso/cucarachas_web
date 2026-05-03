@@ -65,6 +65,22 @@ class CECSAOrchestrator:
 
         # 3. Fase de Diagnóstico
         try:
+            # A. Si el cliente ya tiene un diagnóstico y pide el presupuesto explícitamente
+            if self.state.pest_type and (self.state.intent == Intent.PRESSUPOST or "pressupost" in message.lower()):
+                print(f"DEBUG: Calling Pricer Agent for: {message}")
+                price_response = await pricer_agent.run(f"Context: {self.state.model_dump_json()}")
+                output = price_response.output
+                return {
+                    "message": (
+                        f"Basant-nos en el diagnòstic tècnic, aquí tens l'estimació del servei:\n\n"
+                        f"💰 **Pressupost estimat**: {output.price_range_min}€ - {output.price_range_max}€\n"
+                        f"📋 **Desglossament**: {', '.join(output.breakdown)}\n"
+                        f"🛡️ **Garantia**: {output.guarantee_months} mesos de cobertura total.\n\n"
+                        "Vols agendar la inspecció gratuïta per confirmar aquests detalls?"
+                    )
+                }
+
+            # B. Fase de diagnóstico inicial (si aún no sabemos la plaga)
             if self.state.intent in [Intent.PRESSUPOST, Intent.URGENCIA] and not self.state.pest_type:
                 print(f"DEBUG: Calling Diagnostician Agent for: {message}")
                 diag_response = await diagnostician_agent.run(
@@ -74,18 +90,7 @@ class CECSAOrchestrator:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
 
-                if diag_response.output.needs_more_info:
-                    return {"message": diag_response.output.explanation}
-
-                price_response = await pricer_agent.run(f"Context: {self.state.model_dump_json()}")
-                return {
-                    "message": (
-                        f"{diag_response.output.explanation}\n\n"
-                        f"Pressupost estimat: {price_response.output.price_range_min}€ - "
-                        f"{price_response.output.price_range_max}€.\n"
-                        f"Desglossament: {', '.join(price_response.output.breakdown)}"
-                    )
-                }
+                return {"message": diag_response.output.explanation}
         except Exception as e:
             print(f"ERROR in Diagnosis/Pricer Phase: {str(e)}")
             return {"message": "He analitzat la teva sol·licitud, però necessito que un tècnic humà revisi els detalls. Et trucarem el més aviat possible."}
