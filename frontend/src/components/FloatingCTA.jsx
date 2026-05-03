@@ -71,7 +71,8 @@ const FloatingCTA = () => {
 
     try {
       const response = await axios.post('https://api.cucarachasbarcelona.cat/api/chat/', {
-        message: userMessage
+        message: userMessage,
+        language: i18n.language
       });
 
       setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
