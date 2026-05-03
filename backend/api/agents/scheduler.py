@@ -18,7 +18,7 @@ CAL_HEADERS = {
 # Agente 4: Agendador
 # Rol: Consultar disponibilidad real en Cal.com y crear reservas.
 scheduler_agent = Agent(
-    'google-gla:gemini-1.5-flash',
+    'google-gla:gemini-1.5-flash-8b',
     output_type=SchedulerOutput,
     system_prompt=(
         "Ets el Gestor d'Agenda de CECSA Control de Plagues. "
