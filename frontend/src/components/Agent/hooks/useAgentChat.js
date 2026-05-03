@@ -97,6 +97,16 @@ export const useAgentChat = (i18n, answers, path) => {
       ? `[Diagnòstic: ${path || 'general'}, zona: ${answers.where || answers.where_empresa || 'no especificada'}] ${value}`
       : value;
 
+    if (value === t('agent.verdict.action_schedule')) {
+      setIsTyping(false);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: "Aquí tens el nostre calendari per triar el millor moment:",
+        showCalendar: true 
+      }]);
+      return;
+    }
+
     fetch(`${apiBase}/api/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

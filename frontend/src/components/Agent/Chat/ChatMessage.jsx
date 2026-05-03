@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import CalEmbed from './CalEmbed';
 
 const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }) => {
   const { t } = useTranslation();
@@ -36,6 +37,12 @@ const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }
             >
               📞 {t('agent.cta.call')}
             </button>
+          </div>
+        )}
+
+        {msg.showCalendar && (
+          <div className="w-full mt-4 animate-fade-in">
+            <CalEmbed />
           </div>
         )}
 

@@ -1,10 +1,15 @@
+import os
 from pydantic_ai import Agent, RunContext
 from .models import AgentState, ReceptionistOutput, Intent
+from .config import AGENT_MODEL, setup_ai_keys
+
+# Inicializar configuración global
+setup_ai_keys()
+print("🚀 DEBUG: SISTEMA DE AGENTS INICIAT AMB MODEL: google-gla:gemini-1.5-flash")
 
 # Agente 1: Recepcionista
-# Rol: Saludar, detectar intención y captar datos básicos.
 receptionist_agent = Agent(
-    'google-gla:gemini-1.5-flash-8b',
+    'google-gla:gemini-1.5-flash',
     output_type=ReceptionistOutput,
     system_prompt=(
         "Ets el Recepcionista de CECSA Control de Plagues. "

@@ -166,7 +166,7 @@ const FloatingCTA = () => {
                          type="text"
                          value={input}
                          onChange={(e) => setInput(e.target.value)}
-                         placeholder={t('cta.chat_placeholder') || "Escriu un missatge..."}
+                         placeholder={t('agent.chat_placeholder') || "Escriu un missatge..."}
                          className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-4 px-1 text-base md:text-lg"
                          disabled={isLoading}
                        />

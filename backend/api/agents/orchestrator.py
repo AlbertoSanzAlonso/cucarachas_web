@@ -36,7 +36,7 @@ class CECSAOrchestrator:
                 }
         except Exception as e:
             print(f"ERROR in Scheduler Agent: {str(e)}")
-            return {"message": "Ho sento, tinc problemes per connectar amb l'agenda. Vols que t'ajudi amb una altra cosa o prefereixes que et truquem?"}
+            return {"message": f"Ho sento, tinc problemes per connectar amb l'agenda. (Error: {str(e)})"}
 
         # 2. Fase de Recepción
         try:
@@ -52,7 +52,7 @@ class CECSAOrchestrator:
                 return {"message": response.output.message}
         except Exception as e:
             print(f"ERROR in Receptionist Agent: {str(e)}")
-            return {"message": "Sóc l'assistent de CECSA. He tingut un petit problema tècnic, però pots explicar-me què necessites?"}
+            return {"message": f"Sóc l'assistent de CECSA. He tingut un petit problema tècnic: {str(e)}"}
 
         # 3. Fase de Diagnóstico
         try:

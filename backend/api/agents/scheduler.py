@@ -3,25 +3,19 @@ import requests as http_requests
 from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
 from .models import AgentState, SchedulerOutput
+from .config import AGENT_MODEL, CAL_API_KEY, CAL_EVENT_TYPE_ID, CAL_BASE_URL
 
 def get_cal_headers():
-    api_key = os.getenv('CAL_API_KEY', '').strip()
     return {
-        "Authorization": f"Bearer {api_key}",
+        "Authorization": f"Bearer {CAL_API_KEY}",
         "cal-api-version": "2024-06-11",
         "Content-Type": "application/json"
     }
 
-def get_event_type_id():
-    try:
-        return int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
-    except ValueError:
-        return 277401
-
 # Agente 4: Agendador
-# Rol: Consultar disponibilidad real en Cal.com y crear reservas.
+print("🚀 DEBUG: SCHEDULER INICIAT")
 scheduler_agent = Agent(
-    'google-gla:gemini-1.5-flash-8b',
+    'google-gla:gemini-1.5-flash',
     output_type=SchedulerOutput,
     system_prompt=(
         "Ets el Gestor d'Agenda de CECSA Control de Plagues. "
@@ -44,16 +38,15 @@ def get_available_slots(ctx: RunContext[None], days_ahead: int = 7) -> str:
         end_time = (datetime.now(timezone.utc) + timedelta(days=days_ahead)).isoformat()
 
         headers = get_cal_headers()
-        event_id = get_event_type_id()
         
         if not headers["Authorization"].strip() or "None" in headers["Authorization"]:
             return "Error: CAL_API_KEY no configurada al servidor."
 
         resp = http_requests.get(
-            f"https://api.cal.eu/v2/slots",
+            f"{CAL_BASE_URL}/slots",
             headers=headers,
             params={
-                "eventTypeId": event_id,
+                "eventTypeId": CAL_EVENT_TYPE_ID,
                 "startTime": start_time,
                 "endTime": end_time,
             },
@@ -105,10 +98,9 @@ def create_booking(
     """Crea una reserva a Cal.com per a l'horari seleccionat."""
     try:
         headers = get_cal_headers()
-        event_id = get_event_type_id()
         
         payload = {
-            "eventTypeId": event_id,
+            "eventTypeId": int(CAL_EVENT_TYPE_ID),
             "start": slot_time,
             "attendee": {
                 "name": attendee_name,
@@ -120,7 +112,7 @@ def create_booking(
         }
 
         resp = http_requests.post(
-            "https://api.cal.eu/v2/bookings",
+            f"{CAL_BASE_URL}/bookings",
             headers=headers,
             json=payload,
             timeout=10

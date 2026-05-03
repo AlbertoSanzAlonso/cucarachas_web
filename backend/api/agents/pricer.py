@@ -1,11 +1,11 @@
 from pydantic_ai import Agent, RunContext
 from .models import AgentState, PricingOutput
 from api.models import Tratamiento
+from .config import AGENT_MODEL
 
 # Agente 3: Presupuestador
-# Rol: Calcular precio basado en reglas de negocio y catálogo oficial.
 pricer_agent = Agent(
-    'google-gla:gemini-1.5-flash-8b',
+    AGENT_MODEL,
     output_type=PricingOutput,
     system_prompt=(
         "Ets el Calculador de Pressupostos de CECSA. "
