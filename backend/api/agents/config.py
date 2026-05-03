@@ -2,7 +2,7 @@ import os
 
 # --- Configuración de IA (Gemini) ---
 # Modelo predeterminado para todos los agentes
-AGENT_MODEL = 'google-gla:gemini-1.5-flash'
+AGENT_MODEL = 'google-gla:gemini-1.5-flash-latest'
 
 # Asegurar que la API Key esté presente en el entorno para pydantic-ai
 def setup_ai_keys():

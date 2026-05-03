@@ -5,9 +5,8 @@ from knowledge.retriever import retrieve_relevant_knowledge
 from .config import AGENT_MODEL
 
 # Agente 2: Diagnóstico Técnico
-print("🚀 DEBUG: DIAGNOSTICADOR INICIAT")
 diagnostician_agent = Agent(
-    'google-gla:gemini-1.5-flash',
+    AGENT_MODEL,
     output_type=DiagnosisOutput,
     system_prompt=(
         "Ets l'Estratega Bio-Conscient de CECSA, el primer contacte tècnic amb el client. "

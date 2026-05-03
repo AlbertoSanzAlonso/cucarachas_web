@@ -5,11 +5,10 @@ from .config import AGENT_MODEL, setup_ai_keys
 
 # Inicializar configuración global
 setup_ai_keys()
-print("🚀 DEBUG: SISTEMA DE AGENTS INICIAT AMB MODEL: google-gla:gemini-1.5-flash")
 
 # Agente 1: Recepcionista
 receptionist_agent = Agent(
-    'google-gla:gemini-1.5-flash',
+    AGENT_MODEL,
     output_type=ReceptionistOutput,
     system_prompt=(
         "Ets el Recepcionista de CECSA Control de Plagues. "

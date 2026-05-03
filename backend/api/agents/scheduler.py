@@ -13,9 +13,8 @@ def get_cal_headers():
     }
 
 # Agente 4: Agendador
-print("🚀 DEBUG: SCHEDULER INICIAT")
 scheduler_agent = Agent(
-    'google-gla:gemini-1.5-flash',
+    AGENT_MODEL,
     output_type=SchedulerOutput,
     system_prompt=(
         "Ets el Gestor d'Agenda de CECSA Control de Plagues. "
