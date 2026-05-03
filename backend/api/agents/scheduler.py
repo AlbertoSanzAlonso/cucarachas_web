@@ -19,7 +19,8 @@ def get_cal_headers():
 scheduler_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentDeps,
-    output_type=SchedulerOutput,
+    result_type=SchedulerOutput,
+    retries=3
 )
 
 @scheduler_agent.system_prompt
@@ -73,21 +74,24 @@ def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
         count = 0
         for day in sorted(slots_by_day.keys()):
             for slot in slots_by_day[day]:
-                if count >= 8: break
+                if count >= 12: break
                 time_str = slot.get("time")
                 if not time_str: continue
                 
                 dt = datetime.fromisoformat(time_str.replace("Z", "+00:00"))
-                result.append(f"- {dt.strftime('%A %d %B')} a les {dt.strftime('%H:%M')}h (ID: {time_str})")
+                # Devolvemos objetos estructurados que el LLM puede mapear directamente a SchedulerOutput
+                result.append({
+                    "date": dt.strftime('%d/%m/%Y'),
+                    "time": dt.strftime('%H:%M'),
+                    "slot_time": time_str
+                })
                 count += 1
-            if count >= 8: break
+            if count >= 12: break
 
-        final_result = "Horaris disponibles (digues la data que prefereixis):\n" + "\n".join(result)
+        # Guardamos en caché por 5 minutos
+        cache.set(cache_key, result, 300)
         
-        # Guardamos en caché por 5 minutos (300 segundos) para no saturar la API
-        cache.set(cache_key, final_result, 300)
-        
-        return final_result
+        return result
 
     except Exception as e:
         return f"Error consultant Cal.com: {str(e)}"
