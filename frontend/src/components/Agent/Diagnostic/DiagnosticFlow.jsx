@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Home, Building2, Users, AlertTriangle, MessageSquare, ChevronLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
 
-const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
+const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
   const { t } = useTranslation();
   
   const renderParticularFlow = () => {
@@ -213,6 +213,6 @@ const DiagnosticFlow = ({ step, path, handleAnswer, handleBack }) => {
       </div>
     </>
   );
-};
+});
 
 export default DiagnosticFlow;

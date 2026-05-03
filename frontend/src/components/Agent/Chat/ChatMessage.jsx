@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import CalEmbed from './CalEmbed';
 
-const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }) => {
+const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, setInputValue }) => {
   const { t } = useTranslation();
 
   return (
@@ -58,6 +58,6 @@ const ChatMessage = ({ msg, handleSendMessage, handleSlotSelect, setInputValue }
       </div>
     </motion.div>
   );
-};
+});
 
 export default ChatMessage;

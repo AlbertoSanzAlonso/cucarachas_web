@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback, startTransition, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bug, ArrowRight } from 'lucide-react';
@@ -32,7 +32,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     handleSendMessage
   } = useAgentChat(i18n, answers, path);
 
-  const handleAnswer = (key, value, isSilent = false) => {
+  const handleAnswer = useCallback((key, value, isSilent = false) => {
     const newAnswers = { ...answers, [key]: value };
     setAnswers(newAnswers);
 
@@ -46,7 +46,9 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
 
     if (key === 'who') {
       setPath(value === 'particular' ? 'particular' : 'empresa');
-      setStep(2);
+      startTransition(() => {
+        setStep(2);
+      });
       return;
     }
 
@@ -57,20 +59,26 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     }
 
     if (step < 7) {
-      setStep(step + 1);
+      startTransition(() => {
+        setStep(step + 1);
+      });
     }
-  };
+  }, [answers, step, t, setMessages, getAIDiagnostic]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     if (step > 1) {
-      setStep(step - 1);
+      startTransition(() => {
+        setStep(step - 1);
+      });
     }
-  };
+  }, [step]);
 
-  const toggleLanguage = () => {
-    const nextLang = i18n.language === 'ca' ? 'es' : 'ca';
-    i18n.changeLanguage(nextLang);
-  };
+  const toggleLanguage = useCallback(() => {
+    startTransition(() => {
+      const nextLang = i18n.language === 'ca' ? 'es' : 'ca';
+      i18n.changeLanguage(nextLang);
+    });
+  }, [i18n]);
 
   return (
     <motion.div 
@@ -78,6 +86,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }} 
       className="fixed inset-0 z-[200] flex items-center justify-center p-2 md:p-4 bg-black/40 backdrop-blur-md"
+      style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
         initial={{ scale: 0.9, y: 20 }} 
@@ -96,31 +105,32 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
           </button>
         </div>
 
-        {/* Background Icons - Optimizado para rendimiento */}
-        <div className="absolute inset-0 pointer-events-none opacity-20 md:opacity-40 rounded-[2rem] md:rounded-[5rem] overflow-hidden">
-          {[...Array(window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute text-white"
-              animate={{
-                y: [0, -20, 0],
-                opacity: [0.1, 0.3, 0.1]
-              }}
-              transition={{ 
-                duration: 10 + i, 
-                repeat: Infinity, 
-                ease: "linear"
-              }}
-              style={{
-                top: `${(i * 25) % 100}%`,
-                left: `${(i * 30) % 100}%`,
-                willChange: 'transform, opacity'
-              }}
-            >
-              <Bug size={60 + (i * 20)} />
-            </motion.div>
-          ))}
-        </div>
+        {useMemo(() => (
+          <div className="absolute inset-0 pointer-events-none opacity-20 md:opacity-40 rounded-[2rem] md:rounded-[5rem] overflow-hidden">
+            {[...Array(window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
+              <motion.div
+                key={i}
+                className="absolute text-white"
+                animate={{
+                  y: [0, -20, 0],
+                  opacity: [0.1, 0.3, 0.1]
+                }}
+                transition={{ 
+                  duration: 10 + i, 
+                  repeat: Infinity, 
+                  ease: "linear"
+                }}
+                style={{
+                  top: `${(i * 25) % 100}%`,
+                  left: `${(i * 30) % 100}%`,
+                  willChange: 'transform, opacity'
+                }}
+              >
+                <Bug size={60 + (i * 20)} />
+              </motion.div>
+            ))}
+          </div>
+        ), [])}
 
         <div className="flex-1 flex flex-col items-center w-full p-1 md:p-6 relative z-10 text-center min-h-0">
           {/* Logo */}
@@ -131,7 +141,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
             className={`${isFinished ? 'mb-0 scale-[0.3] md:scale-[0.4] mt-0 md:-mt-12' : 'mb-1 mt-1 md:mt-0'} transition-all relative group flex-shrink-0`}
           >
             <img src="/assets/isotipo.png" alt="CECSA" className="w-32 h-32 md:w-64 md:h-64 object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
-            <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-white/20 rounded-full blur-[100px] -z-10" />
+            <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-white/20 rounded-full blur-[100px] -z-10" style={{ willChange: 'transform, opacity' }} />
           </motion.div>
 
           {/* Content Container */}

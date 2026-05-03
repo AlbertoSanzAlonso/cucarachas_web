@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export const useAgentChat = (i18n, answers, path) => {
@@ -7,6 +7,24 @@ export const useAgentChat = (i18n, answers, path) => {
   const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollRef = useRef(null);
+
+  const answersRef = useRef(answers);
+  const pathRef = useRef(path);
+  const messagesRef = useRef(messages);
+  const inputValueRef = useRef(inputValue);
+
+  useEffect(() => {
+    answersRef.current = answers;
+    pathRef.current = path;
+  }, [answers, path]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  useEffect(() => {
+    inputValueRef.current = inputValue;
+  }, [inputValue]);
 
   useEffect(() => {
     if (messages.length === 0) {
@@ -20,7 +38,7 @@ export const useAgentChat = (i18n, answers, path) => {
     }
   }, [messages, isTyping]);
 
-  const getAIDiagnostic = async (finalAnswers) => {
+  const getAIDiagnostic = useCallback(async (finalAnswers) => {
     setIsTyping(true);
     setMessages([{ role: 'assistant', content: t('agent.verdict.intro') }]);
 
@@ -54,9 +72,9 @@ export const useAgentChat = (i18n, answers, path) => {
         { role: 'assistant', content: t('agent.chat.error'), isVerdict: true }
       ]);
     }
-  };
+  }, [i18n.language, t]);
 
-  const handleSlotSelect = (slot) => {
+  const handleSlotSelect = useCallback((slot) => {
     const confirmMsg = t('agent.chat.confirm_slot', { date: slot.date, time: slot.time });
     setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
     setIsTyping(true);
@@ -80,11 +98,11 @@ export const useAgentChat = (i18n, answers, path) => {
         setIsTyping(false);
         setMessages(prev => [...prev, { role: 'assistant', content: t('agent.chat.confirmed', { date: slot.date, time: slot.time }) }]);
       });
-  };
+  }, [i18n.language, t]);
 
-  const handleSendMessage = (e, directValue = null) => {
+  const handleSendMessage = useCallback((e, directValue = null) => {
     if (e && e.preventDefault) e.preventDefault();
-    const value = directValue || inputValue;
+    const value = directValue || inputValueRef.current;
     if (!value.trim()) return;
 
     const userMsg = { role: 'user', content: value };
@@ -93,8 +111,8 @@ export const useAgentChat = (i18n, answers, path) => {
     setIsTyping(true);
 
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
-    const contextualMessage = messages.length <= 1
-      ? `[Diagnòstic: ${path || 'general'}, zona: ${answers.where || answers.where_empresa || 'no especificada'}] ${value}`
+    const contextualMessage = messagesRef.current.length <= 1
+      ? `[Diagnòstic: ${pathRef.current || 'general'}, zona: ${answersRef.current.where || answersRef.current.where_empresa || 'no especificada'}] ${value}`
       : value;
 
     if (value === t('agent.verdict.action_schedule')) {
@@ -128,7 +146,7 @@ export const useAgentChat = (i18n, answers, path) => {
           content: t('agent.chat.server_error') 
         }]);
       });
-  };
+  }, [i18n.language, t]);
 
   return {
     messages,
