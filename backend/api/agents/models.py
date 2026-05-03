@@ -24,8 +24,10 @@ class Intent(str, Enum):
     DUDA = "duda"
     SEGUIMENT = "seguiment"
 
+Language = Literal["ca", "es"]
+
 class AgentDeps(BaseModel):
-    language: str = "ca"
+    language: Language = "ca"
 
 # Estado compartido que viaja entre agentes
 class AgentState(BaseModel):
@@ -38,7 +40,7 @@ class AgentState(BaseModel):
     technical_notes: List[str] = []
     estimated_price: Optional[float] = None
     is_urgent: bool = False
-    language: str = "ca" # Por defecto catalán
+    language: Language = "ca" # Soporte para catalán y español
 
 # Respuesta del Agente Recepcionista
 class ReceptionistOutput(BaseModel):

@@ -19,6 +19,8 @@ def chat_with_agents(request):
         return Response({"status": "API is online", "message": "CECSA Agentic API is ready for POST requests."})
 
     message = request.data.get('message')
+    language = request.data.get('language')
+    
     if not message:
         return Response({"error": "No message provided"}, status=400)
 
@@ -28,9 +30,13 @@ def chat_with_agents(request):
         if state_data:
             try:
                 orchestrator.state = AgentState(**state_data)
+                if language:
+                    orchestrator.state.language = language
             except Exception:
                 print("DEBUG: Invalid session state, resetting to default.")
-                orchestrator.state = AgentState()
+                orchestrator.state = AgentState(language=language or "ca")
+        elif language:
+            orchestrator.state.language = language
 
         # Usar async_to_sync para llamar al orquestador asíncrono desde la vista síncrona de Django
         result = async_to_sync(orchestrator.process_message)(message)
