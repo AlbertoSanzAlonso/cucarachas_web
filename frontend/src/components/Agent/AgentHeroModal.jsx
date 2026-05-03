@@ -11,7 +11,7 @@ import ChatMessage from './Chat/ChatMessage';
 import ChatInput from './Chat/ChatInput';
 
 const AgentHeroModal = ({ isOpen, onClose }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [step, setStep] = useState(1);
   const [path, setPath] = useState(null); 
   const [answers, setAnswers] = useState({});
@@ -157,6 +157,11 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       });
   };
 
+  const toggleLanguage = () => {
+    const nextLang = i18n.language === 'ca' ? 'es' : 'ca';
+    i18n.changeLanguage(nextLang);
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -174,6 +179,16 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
           className="relative w-full md:w-[94%] max-w-[1700px] h-[98%] md:h-full md:max-h-[94vh] rounded-[2rem] md:rounded-[5rem] shadow-[0_0_100px_rgba(0,128,187,0.3)] flex flex-col items-center overflow-visible" 
           style={{ background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)' }}
         >
+          {/* Language Switcher */}
+          <div className="absolute top-6 right-6 md:top-12 md:right-12 z-[100]">
+            <button 
+              onClick={toggleLanguage}
+              className="bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full text-white text-[10px] md:text-xs font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+            >
+              {i18n.language === 'ca' ? 'ES' : 'CA'}
+            </button>
+          </div>
+
           {/* Background Icons */}
           <div className="absolute inset-0 pointer-events-none opacity-40 rounded-[2rem] md:rounded-[5rem] overflow-hidden">
             {[...Array(8)].map((_, i) => (
