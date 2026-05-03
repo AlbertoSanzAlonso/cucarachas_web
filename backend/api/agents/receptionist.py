@@ -4,7 +4,7 @@ from .models import AgentState, ReceptionistOutput, Intent
 # Agente 1: Recepcionista
 # Rol: Saludar, detectar intención y captar datos básicos.
 receptionist_agent = Agent(
-    'google-gla:gemini-flash-latest',
+    'google-gla:gemini-1.5-flash',
     output_type=ReceptionistOutput,
     system_prompt=(
         "Ets el Recepcionista de CECSA Control de Plagues. "

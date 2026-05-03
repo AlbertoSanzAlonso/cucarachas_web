@@ -91,7 +91,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 
 - **Rol**: Chat persistente accesible desde la home tras cerrar o ignorar el modal inicial.
 - **Diseño Premium**: Botón agrandado en color `--accent-green` para máxima visibilidad. Ventana de chat expandida (`550x750px`) en escritorio con tipografía optimizada.
-- **Integración WhatsApp**: Acceso directo desde la cabecera y mención destacada en el saludo inicial.
+- **Foco en Conversión**: Centralización de toda la ayuda en el agente de IA y el agendamiento de citas, eliminando canales externos (WhatsApp/Teléfono) de la interfaz de chat inicial.
 - **Estado**: Gestiona su propio historial de mensajes de forma independiente al modal de diagnóstico.
 
 

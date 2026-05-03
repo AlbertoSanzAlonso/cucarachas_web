@@ -1,9 +1,14 @@
+import os
 import traceback
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState
+
+# Asegurar que pydantic-ai encuentre la API KEY
+if not os.getenv('GEMINI_API_KEY') and os.getenv('GOOGLE_API_KEY'):
+    os.environ['GEMINI_API_KEY'] = os.getenv('GOOGLE_API_KEY')
 
 @api_view(['GET', 'POST'])
 def chat_with_agents(request):
@@ -21,7 +26,11 @@ def chat_with_agents(request):
         state_data = request.session.get('agent_state')
         orchestrator = CECSAOrchestrator()
         if state_data:
-            orchestrator.state = AgentState(**state_data)
+            try:
+                orchestrator.state = AgentState(**state_data)
+            except Exception:
+                print("DEBUG: Invalid session state, resetting to default.")
+                orchestrator.state = AgentState()
 
         # Usar async_to_sync para llamar al orquestador asíncrono desde la vista síncrona de Django
         result = async_to_sync(orchestrator.process_message)(message)
@@ -39,7 +48,9 @@ def chat_with_agents(request):
             "state": orchestrator.state.model_dump()
         })
     except Exception as e:
-        print(traceback.format_exc())
+        error_trace = traceback.format_exc()
+        print(error_trace)
         return Response({
-            "reply": "Ho sento, he tingut un error intern. Si us plau, truca al 933 309 169 per a una assistència immediata.",
+            "reply": f"Error intern: {str(e)}. Si us plau, truca al 933 309 169.",
+            "debug": str(e) if not os.getenv('PRODUCTION') else None
         }, status=500)

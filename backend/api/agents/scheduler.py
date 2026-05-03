@@ -5,7 +5,10 @@ from pydantic_ai import Agent, RunContext
 from .models import AgentState, SchedulerOutput
 
 CAL_API_KEY = os.getenv('CAL_API_KEY', '').strip()
-CAL_EVENT_TYPE_ID = int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
+try:
+    CAL_EVENT_TYPE_ID = int(os.getenv('CAL_EVENT_TYPE_ID', '277401'))
+except ValueError:
+    CAL_EVENT_TYPE_ID = 277401
 CAL_HEADERS = {
     "Authorization": f"Bearer {CAL_API_KEY}",
     "cal-api-version": "2024-06-11",
@@ -15,7 +18,7 @@ CAL_HEADERS = {
 # Agente 4: Agendador
 # Rol: Consultar disponibilidad real en Cal.com y crear reservas.
 scheduler_agent = Agent(
-    'google-gla:gemini-flash-latest',
+    'google-gla:gemini-1.5-flash',
     output_type=SchedulerOutput,
     system_prompt=(
         "Ets el Gestor d'Agenda de CECSA Control de Plagues. "
