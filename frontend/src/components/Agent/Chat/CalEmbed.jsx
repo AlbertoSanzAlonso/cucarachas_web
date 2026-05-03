@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CalEmbed = ({ eventLink = "cecsabarcelona/277401" }) => {
+const CalEmbed = ({ eventLink = "cucarachasbarcelona/30min" }) => {
   // Construimos la URL para la instancia europea con los parámetros de embed
   const calUrl = `https://cal.eu/${eventLink}?embed=true&theme=light&layout=month_view`;
 
