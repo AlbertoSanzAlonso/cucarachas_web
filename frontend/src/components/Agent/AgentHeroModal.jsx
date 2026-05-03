@@ -99,25 +99,28 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
             </button>
           </div>
 
-          {/* Background Icons */}
-          <div className="absolute inset-0 pointer-events-none opacity-40 rounded-[2rem] md:rounded-[5rem] overflow-hidden">
-            {[...Array(8)].map((_, i) => (
+          {/* Background Icons - Optimizado para rendimiento */}
+          <div className="absolute inset-0 pointer-events-none opacity-20 md:opacity-40 rounded-[2rem] md:rounded-[5rem] overflow-hidden">
+            {[...Array(window.innerWidth < 768 ? 4 : 8)].map((_, i) => (
               <motion.div
                 key={i}
                 className="absolute text-white"
                 animate={{
-                  y: [0, -40, 0],
-                  x: [0, (i % 2 === 0 ? 20 : -20), 0],
-                  rotate: [0, 20, 0],
-                  opacity: [0.2, 0.5, 0.2]
+                  y: [0, -20, 0],
+                  opacity: [0.1, 0.3, 0.1]
                 }}
-                transition={{ duration: 8 + i, repeat: Infinity, ease: "easeInOut" }}
+                transition={{ 
+                  duration: 10 + i, 
+                  repeat: Infinity, 
+                  ease: "linear" // Más eficiente que easeInOut
+                }}
                 style={{
-                  top: `${(i * 15) % 100}%`,
-                  left: `${(i * 25) % 100}%`,
+                  top: `${(i * 25) % 100}%`,
+                  left: `${(i * 30) % 100}%`,
+                  willChange: 'transform, opacity' // Forzar aceleración GPU
                 }}
               >
-                <Bug size={80 + (i * 20)} />
+                <Bug size={60 + (i * 20)} />
               </motion.div>
             ))}
           </div>
@@ -154,7 +157,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                 </div>
               ) : (
                 <div className="w-full max-w-3xl flex-1 flex flex-col px-1 md:px-8 pb-2 md:pb-4 min-h-0">
-                  <div className="flex-1 flex flex-col rounded-[2rem] md:rounded-[3rem] border border-white/10 bg-black/20 backdrop-blur-3xl shadow-2xl overflow-hidden relative min-h-0">
+                  <div className="flex-1 flex flex-col rounded-[2rem] md:rounded-[3rem] border border-white/10 bg-black/30 backdrop-blur-xl shadow-2xl overflow-hidden relative min-h-0">
                     <ScrollArea ref={scrollRef} className="flex-1 p-4 md:p-8 space-y-6">
                       {messages.map((msg, i) => (
                         <ChatMessage 
