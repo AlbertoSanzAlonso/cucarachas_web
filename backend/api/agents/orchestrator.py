@@ -11,10 +11,11 @@ class CECSAOrchestrator:
         self.state = AgentState()
 
     async def process_message(self, message: str):
-        # 0. Detección de Idioma
-        if 'idioma: es' in message.lower():
+        # 0. Detección de Idioma (Hint del frontend o detección por keywords)
+        msg_lower = message.lower()
+        if 'idioma: es' in msg_lower or any(word in msg_lower for word in ['tengo', 'hay', 'donde', 'quiero', 'cita', 'presupuesto']):
             self.state.language = 'es'
-        elif 'idioma: ca' in message.lower():
+        elif 'idioma: ca' in msg_lower or any(word in msg_lower for word in ['tinc', 'hi ha', 'on', 'vull', 'pressupost', 'quan']):
             self.state.language = 'ca'
         
         # Crear dependencias para los agentes

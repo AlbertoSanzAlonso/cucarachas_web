@@ -1,8 +1,8 @@
 import React from 'react';
 
-const CalEmbed = ({ eventLink = "cucarachasbarcelona/30min" }) => {
-  // Añadimos hideEventTypeDetails=true para que sea más compacto
-  const calUrl = `https://cal.eu/${eventLink}?embed=true&theme=light&hideEventTypeDetails=true`;
+const CalEmbed = ({ eventLink = "cucarachasbarcelona/30min", language = "ca" }) => {
+  // Añadimos hideEventTypeDetails=true y el idioma seleccionado
+  const calUrl = `https://cal.eu/${eventLink}?embed=true&theme=light&hideEventTypeDetails=true&language=${language}`;
 
   return (
     <div className="w-full h-full bg-white relative">

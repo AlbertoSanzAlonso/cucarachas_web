@@ -224,7 +224,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                     </button>
                   </div>
                   <div className="flex-1 bg-white overflow-hidden relative">
-                    <CalEmbed />
+                    <CalEmbed language={i18n.language} />
                   </div>
                 </motion.div>
               </motion.div>
