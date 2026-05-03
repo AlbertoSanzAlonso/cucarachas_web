@@ -20,13 +20,13 @@ const Testimonials = lazy(() => import('@/components/Testimonials'));
 const ContactForm = lazy(() => import('@/components/ContactForm'));
 
 // Optimized Section Components with Granular Suspense
-const LazySection = ({ Component, fallback = <SectionSkeleton /> }) => (
+const LazySection = ({ Component, fallback = <SectionSkeleton />, ...props }) => (
   <Suspense fallback={fallback}>
-    <Component />
+    <Component {...props} />
   </Suspense>
 );
 
-function Home() {
+function Home({ openAgent }) {
   const { t } = useTranslation();
   const location = useLocation();
 
@@ -89,7 +89,7 @@ function Home() {
       <Navbar />
       
       <main>
-        <LazySection Component={Hero} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
+        <LazySection Component={Hero} openAgent={openAgent} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
         <LazySection Component={CockroachFocus} />
         <LazySection Component={Testimonials} />
         <LazySection Component={PestGrid} />

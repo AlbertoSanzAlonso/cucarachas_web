@@ -58,26 +58,31 @@ function App() {
       <AppContent
         isAgentOpen={isAgentOpen}
         handleCloseAgent={handleCloseAgent}
+        handleOpenAgent={() => setIsAgentOpen(true)}
       />
     </Router>
   );
 }
 
-function AppContent({ isAgentOpen, handleCloseAgent }) {
+import { motion, AnimatePresence } from 'framer-motion';
+
+function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
 
   return (
     <>
-      {!isAdminRoute && (
-        <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
-      )}
+      <AnimatePresence>
+        {isAgentOpen && !isAdminRoute && (
+          <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
+        )}
+      </AnimatePresence>
       <Routes>
         <Route 
           path="/" 
           element={
             <Suspense fallback={<RootLoader />}>
-              <Home />
+              <Home openAgent={handleOpenAgent} />
             </Suspense>
           } 
         />

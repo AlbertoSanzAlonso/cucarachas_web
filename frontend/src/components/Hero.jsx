@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 
-const Hero = () => {
+const Hero = ({ openAgent }) => {
   const { t } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -96,6 +96,7 @@ const Hero = () => {
                 variant="accent"
                 size="lg"
                 className="w-full sm:w-auto group"
+                onClick={openAgent}
               >
                 <span className="flex items-center justify-center">
                    {t('common.cta_free')}
