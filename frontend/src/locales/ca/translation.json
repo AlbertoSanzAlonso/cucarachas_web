@@ -511,6 +511,7 @@
       "error": "Ho sento, hi ha hagut un problema. Pots trucar-nos al 933 309 169.",
       "server_error": "En aquest moment no puc connectar amb el servidor. Truca'ns al **933 309 169** per a assistència immediata."
     },
-    "welcome_msg": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues."
+    "welcome_msg": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues.",
+    "welcome_msg_home": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues. Si ho prefereixes, també podem parlar directament per **WhatsApp**."
   }
 }

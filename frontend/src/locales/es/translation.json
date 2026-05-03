@@ -500,6 +500,7 @@
       "closure": "Cierre inminente"
     },
     "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas.",
+    "welcome_msg_home": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
     "chat_direct": "Tengo preguntas / Consultar Agente"
   }
 }

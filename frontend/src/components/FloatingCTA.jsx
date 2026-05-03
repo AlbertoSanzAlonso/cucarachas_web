@@ -12,7 +12,7 @@ const FloatingCTA = () => {
 
   useEffect(() => {
     if (messages.length === 0) {
-      setMessages([{ role: 'assistant', content: t('agent.welcome_msg') }]);
+      setMessages([{ role: 'assistant', content: t('agent.welcome_msg_home') }]);
     }
   }, [t, messages.length]);
   const [input, setInput] = useState('');
@@ -135,6 +135,9 @@ const FloatingCTA = () => {
                          </div>
                       </div>
                       <div className="flex items-center space-x-3">
+                        <a href="https://wa.me/34665147414" target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white" title="WhatsApp">
+                          <MessageSquare size={24} />
+                        </a>
                         <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
                           <X size={24} />
                         </button>
