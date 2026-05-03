@@ -87,6 +87,13 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Restricciones**: No apareix a `/admin` ni `/login`.
 - **Responsive Pro**: Optimización específica para móviles con logo escalado y sombras laterales sin recortes.
 
+### Frontend: Home Chat Widget (`/frontend/src/components/FloatingCTA.jsx`)
+
+- **Rol**: Chat persistente accesible desde la home tras cerrar o ignorar el modal inicial.
+- **Diseño Premium**: Botón agrandado en color `--accent-green` para máxima visibilidad. Ventana de chat expandida (`550x750px`) en escritorio con tipografía optimizada.
+- **Integración WhatsApp**: Acceso directo desde la cabecera y mención destacada en el saludo inicial.
+- **Estado**: Gestiona su propio historial de mensajes de forma independiente al modal de diagnóstico.
+
 
 ### Cal.com Integration
 
