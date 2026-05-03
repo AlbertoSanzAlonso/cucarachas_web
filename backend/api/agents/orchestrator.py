@@ -45,7 +45,7 @@ class CECSAOrchestrator:
                 print(f"DEBUG: Calling Scheduler Agent for: {message}")
                 sched_response = await asyncio.wait_for(
                     scheduler_agent.run(context, deps=deps), 
-                    timeout=20.0
+                    timeout=45.0
                 )
                 output = sched_response.output
 
@@ -69,7 +69,7 @@ class CECSAOrchestrator:
                 print(f"DEBUG: Calling Receptionist Agent for: {message}")
                 response = await asyncio.wait_for(
                     receptionist_agent.run(message, deps=deps),
-                    timeout=20.0
+                    timeout=40.0
                 )
                 self.state = response.output.collected_data
                 self.state.language = deps.language # Mantener idioma
@@ -115,7 +115,7 @@ class CECSAOrchestrator:
                         f"Context: {self.state.model_dump_json()}\nClient: {message}",
                         deps=deps
                     ),
-                    timeout=25.0
+                    timeout=50.0
                 )
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
