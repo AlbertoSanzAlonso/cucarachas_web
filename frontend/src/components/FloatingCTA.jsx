@@ -75,10 +75,38 @@ const FloatingCTA = () => {
         language: i18n.language
       });
 
-      setMessages(prev => [...prev, { role: 'assistant', content: response.data.reply }]);
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: response.data.reply,
+        slots: response.data.slots 
+      }]);
     } catch (error) {
       console.error('Error in chat:', error);
       setMessages(prev => [...prev, { role: 'assistant', content: 'Error de connexió. Truca al 933 309 169.' }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSlotSelect = async (slot) => {
+    const confirmMsg = t('agent.chat.confirm_slot', { date: slot.date, time: slot.time });
+    setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
+    setIsLoading(true);
+
+    try {
+      const response = await axios.post('https://api.cucarachasbarcelona.cat/api/chat/', {
+        message: `Reserva: ${slot.slot_time || slot.date} ${slot.time}`,
+        language: i18n.language
+      });
+
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: response.data.reply,
+        slots: response.data.slots 
+      }]);
+    } catch (error) {
+      console.error('Error confirming slot:', error);
+      setMessages(prev => [...prev, { role: 'assistant', content: t('agent.chat.error') }]);
     } finally {
       setIsLoading(false);
     }
@@ -148,11 +176,25 @@ const FloatingCTA = () => {
                    {/* Messages */}
                    <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 custom-scrollbar">
                      {messages.map((msg, i) => (
-                       <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                       <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                            <div 
                            className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
                            dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-primary-blue">$1</span>') }}
                          />
+                         {msg.slots && (
+                           <div className="grid grid-cols-2 gap-3 mt-4 w-full max-w-[320px]">
+                             {msg.slots.map((slot, idx) => (
+                               <button 
+                                 key={idx} 
+                                 onClick={() => handleSlotSelect(slot)}
+                                 className="bg-white hover:bg-accent-green hover:text-primary-blue border border-gray-100 rounded-2xl p-4 text-sm font-black text-secondary-gray transition-all text-center shadow-sm hover:shadow-lg hover:-translate-y-1"
+                               >
+                                 <div className="opacity-40 text-[10px] uppercase mb-1">{slot.date}</div>
+                                 <div>{slot.time}</div>
+                               </button>
+                             ))}
+                           </div>
+                         )}
                        </div>
                      ))}
                      {isLoading && <div className="text-xs text-gray-400 animate-pulse font-bold uppercase tracking-widest px-2">L'agent està pensant...</div>}
