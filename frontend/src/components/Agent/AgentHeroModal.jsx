@@ -11,6 +11,7 @@ import ChatMessage from './Chat/ChatMessage';
 import ChatInput from './Chat/ChatInput';
 
 import { useAgentChat } from './hooks/useAgentChat';
+import CalEmbed from './Chat/CalEmbed';
 
 const AgentHeroModal = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
