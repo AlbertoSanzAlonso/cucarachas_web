@@ -3,6 +3,7 @@ import requests as http_requests
 import urllib.parse
 from datetime import datetime, timedelta, timezone
 from pydantic_ai import Agent, RunContext
+from django.core.cache import cache
 from .models import SchedulerOutput, AgentDeps
 from .config import AGENT_MODEL, CAL_API_KEY, CAL_EVENT_TYPE_ID, CAL_BASE_URL
 from .prompts import SYSTEM_PROMPTS
@@ -29,22 +30,26 @@ def get_scheduler_prompt(ctx: RunContext[AgentDeps]) -> str:
 @scheduler_agent.tool
 def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
     """Consulta els horaris lliures a Cal.com pels propers dies."""
+    cache_key = f"cal_slots_{days_ahead}"
+    cached_slots = cache.get(cache_key)
+    if cached_slots:
+        print("DEBUG: Serving Cal.com slots from Redis cache")
+        return cached_slots
+
     try:
         start_time = datetime.now(timezone.utc).isoformat()
         end_time = (datetime.now(timezone.utc) + timedelta(days=days_ahead)).isoformat()
 
-        headers = get_cal_headers()
-        
-        if not headers["Authorization"].strip() or "None" in headers["Authorization"]:
+        if not CAL_API_KEY:
             return "Error: CAL_API_KEY no configurada al servidor."
 
         resp = http_requests.get(
-            f"{CAL_BASE_URL}/slots",
-            headers=headers,
+            f"{CAL_BASE_URL}/slots/available",
             params={
                 "eventTypeId": CAL_EVENT_TYPE_ID,
                 "startTime": start_time,
                 "endTime": end_time,
+                "clientId": CAL_API_KEY
             },
             timeout=10
         )
@@ -77,7 +82,12 @@ def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
                 count += 1
             if count >= 8: break
 
-        return "Horaris disponibles (digues la data que prefereixis):\n" + "\n".join(result)
+        final_result = "Horaris disponibles (digues la data que prefereixis):\n" + "\n".join(result)
+        
+        # Guardamos en caché por 5 minutos (300 segundos) para no saturar la API
+        cache.set(cache_key, final_result, 300)
+        
+        return final_result
 
     except Exception as e:
         return f"Error consultant Cal.com: {str(e)}"
@@ -85,6 +95,12 @@ def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
 @scheduler_agent.tool
 def verify_address(ctx: RunContext[AgentDeps], address: str) -> str:
     """Verifica si una adreça existeix a Barcelona/Catalunya usando Google Maps API."""
+    cache_key = f"geocode_{address.lower().replace(' ', '_')}"
+    cached_address = cache.get(cache_key)
+    if cached_address:
+        print("DEBUG: Serving Geocode from Redis cache")
+        return cached_address
+
     api_key = os.getenv("GOOGLE_MAPS_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return f"Warning: GOOGLE_MAPS_API_KEY no configurada al servidor. Assumeix que l'adreça '{address}' és vàlida i continua."
@@ -96,7 +112,10 @@ def verify_address(ctx: RunContext[AgentDeps], address: str) -> str:
         
         if data.get("status") == "OK" and len(data.get("results", [])) > 0:
             formatted_address = data["results"][0]["formatted_address"]
-            return f"Adreça verificada correctament: {formatted_address}"
+            result_str = f"Adreça verificada correctament: {formatted_address}"
+            # Cacheamos la dirección correcta durante 24 horas (86400 segundos)
+            cache.set(cache_key, result_str, 86400)
+            return result_str
         else:
             return f"L'adreça '{address}' no sembla vàlida o no s'ha trobat a Google Maps (Status: {data.get('status')}). Demana al client que la revisi o especifiqui més."
     except Exception as e:
