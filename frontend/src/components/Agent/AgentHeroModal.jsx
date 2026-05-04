@@ -93,10 +93,11 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
         className="relative w-full md:w-[94%] max-w-[1700px] h-[98%] md:h-full md:max-h-[94vh] rounded-[2rem] md:rounded-[5rem] shadow-[0_0_100px_rgba(0,128,187,0.3)] flex flex-col items-center overflow-visible" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
-          zIndex: 201
+          zIndex: 201,
+          willChange: 'transform, opacity'
         }}
         transition={{ 
-          duration: 0.5,
+          duration: 0.4,
           ease: [0.16, 1, 0.3, 1]
         }}
       >
