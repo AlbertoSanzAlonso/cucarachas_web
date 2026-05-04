@@ -25,10 +25,15 @@ const Hero = ({ openAgent }) => {
   return (
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
-      <div 
+      <motion.div 
+        layoutId="hero-box"
         className="relative min-h-[550px] md:min-h-[650px] xl:min-h-[80vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[3rem] md:rounded-[5rem] shadow-2xl overflow-hidden group"
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)'
+        }}
+        transition={{ 
+          duration: 0.5,
+          ease: [0.16, 1, 0.3, 1]
         }}
       >
         <motion.div 
@@ -77,7 +82,7 @@ const Hero = ({ openAgent }) => {
         <div className="relative z-10 w-full max-w-7xl mx-auto px-6 py-12 xl:py-20 grid xl:grid-cols-2 gap-16 items-center">
           
           {/* Text Side */}
-          <div className="space-y-8 animate-fade-in xl:text-left text-center">
+          <div className="space-y-8 xl:text-left text-center">
             <Badge pulse>
               {t('hero.badge')}
             </Badge>
@@ -131,7 +136,7 @@ const Hero = ({ openAgent }) => {
           </div>
 
           {/* Visual/Image Side - Slider Implementation */}
-          <div className="relative hidden xl:block animate-slide-up">
+          <div className="relative hidden xl:block">
              <div className="relative z-10 transform translate-x-10 translate-y-10">
                 <div 
                   className="aspect-square rounded-[3rem] md:rounded-[4rem] overflow-hidden shadow-2xl border-4 border-white/20 relative rotate-3 hover:rotate-0 transition-all duration-700 optimize-gpu cursor-pointer"
@@ -159,7 +164,7 @@ const Hero = ({ openAgent }) => {
                    </div>
                    
                    {/* Technical Insight Card - Maintaining over the images */}
-                   <div className="absolute bottom-12 left-12 right-12 p-8 glass rounded-3xl animate-fade-in z-20">
+                   <div className="absolute bottom-12 left-12 right-12 p-8 glass rounded-3xl z-20">
                       <div className="flex items-center space-x-4">
                         <div className="hidden md:flex p-3 bg-primary-blue rounded-2xl text-white">
                           <Zap size={28} />
@@ -197,7 +202,7 @@ const Hero = ({ openAgent }) => {
              <div className="absolute -top-20 -left-20 w-80 h-80 bg-primary-blue-hv/30 rounded-full blur-[100px] animate-pulse"></div>
           </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 };

@@ -84,16 +84,21 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     <motion.div 
       initial={{ opacity: 0 }} 
       animate={{ opacity: 1 }} 
-      exit={{ opacity: 0 }} 
-      className="fixed inset-0 z-[200] flex items-center justify-center p-2 md:p-4 bg-black/40 backdrop-blur-md"
+      exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }} 
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-bg-light"
       style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
-        initial={{ scale: 0.9, y: 20 }} 
-        animate={{ scale: 1, y: 0 }} 
-        exit={{ scale: 0.9, y: 20 }} 
+        layoutId="hero-box"
         className="relative w-full md:w-[94%] max-w-[1700px] h-[98%] md:h-full md:max-h-[94vh] rounded-[2rem] md:rounded-[5rem] shadow-[0_0_100px_rgba(0,128,187,0.3)] flex flex-col items-center overflow-visible" 
-        style={{ background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)' }}
+        style={{ 
+          background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
+          zIndex: 201
+        }}
+        transition={{ 
+          duration: 0.5,
+          ease: [0.16, 1, 0.3, 1]
+        }}
       >
         {/* Language Switcher */}
         <div className="absolute top-6 right-6 md:top-12 md:right-12 z-[100]">
@@ -156,10 +161,13 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                 />
 
                 <div className="mt-2 md:mt-4 flex justify-center w-full flex-shrink-0">
-                  <button onClick={onClose} className="group flex items-center space-x-3 bg-white hover:bg-white/90 px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl transition-all border border-white shadow-[0_4px_20px_rgba(0,0,0,0.1)]">
+                  <motion.button 
+                    onClick={onClose} 
+                    className="group flex items-center space-x-3 bg-white hover:bg-white/90 px-6 py-3 md:px-8 md:py-4 rounded-xl md:rounded-2xl transition-all border border-white shadow-[0_4px_20px_rgba(0,0,0,0.1)]"
+                  >
                     <span className="text-primary-blue text-[9px] md:text-xs font-black tracking-[0.2em] uppercase">{t('agent.skip')}</span>
                     <ArrowRight size={14} className="text-primary-blue transition-all transform group-hover:translate-x-1" />
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             ) : (

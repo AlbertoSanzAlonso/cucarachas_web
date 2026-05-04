@@ -12,9 +12,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-fo
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '178.104.249.230', 'api.cucarachasbarcelona.cat', 'cucarachasbarcelona.cat']
-env_hosts = os.environ.get('ALLOWED_HOSTS')
-if env_hosts:
-    ALLOWED_HOSTS.extend(env_hosts.split())
+APPEND_SLASH = False # Evita redirecciones que rompen CORS
 
 # Application definition
 

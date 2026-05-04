@@ -66,111 +66,123 @@ function App() {
 
 import { motion, AnimatePresence } from 'framer-motion';
 
+import SmoothScroll from '@/components/SmoothScroll';
+
 function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
 
   return (
-    <>
-      <AnimatePresence>
-        {isAgentOpen && !isAdminRoute && (
-          <AgentHeroModal isOpen={isAgentOpen} onClose={handleCloseAgent} />
+    <SmoothScroll>
+      <AnimatePresence mode="popLayout">
+        {isAgentOpen && !isAdminRoute ? (
+          <AgentHeroModal key="agent-modal" isOpen={isAgentOpen} onClose={handleCloseAgent} />
+        ) : (
+          <motion.div
+            key="main-content"
+            initial={false}
+            animate={{ 
+              opacity: (isAgentOpen && !isAdminRoute) ? 0 : 1
+            }}
+            transition={{ duration: 0.4, ease: "easeInOut" }}
+          >
+            <Routes>
+               <Route 
+                path="/" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <Home openAgent={handleOpenAgent} />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/sobre-cecsa" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <About />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/avis-legal" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <LegalNotice />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/privacitat" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <PrivacyPolicy />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/serveis/:id" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <ServiceDetail />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/login" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <PublicRoute>
+                      <Login />
+                    </PublicRoute>
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/admin" 
+                element={
+                  <Suspense fallback={<DashboardSkeleton />}>
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  </Suspense>
+                } 
+              />
+               <Route 
+                path="/blog"           element={
+                  <Suspense fallback={<RootLoader />}>
+                    <Blog />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/blog/faq" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <FAQ />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/preguntes-frequents" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <FAQ />
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/faq" 
+                element={
+                  <Suspense fallback={<RootLoader />}>
+                    <FAQ />
+                  </Suspense>
+                } 
+              />
+            </Routes>
+          </motion.div>
         )}
       </AnimatePresence>
-      <Routes>
-        <Route 
-          path="/" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <Home openAgent={handleOpenAgent} />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/sobre-cecsa" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <About />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/avis-legal" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <LegalNotice />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/privacitat" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <PrivacyPolicy />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/serveis/:id" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <ServiceDetail />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/login" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <PublicRoute>
-                <Login />
-              </PublicRoute>
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/admin" 
-          element={
-            <Suspense fallback={<DashboardSkeleton />}>
-              <ProtectedRoute>
-                <AdminDashboard />
-              </ProtectedRoute>
-            </Suspense>
-          } 
-        />
-         <Route 
-          path="/blog"           element={
-            <Suspense fallback={<RootLoader />}>
-              <Blog />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/blog/faq" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <FAQ />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/preguntes-frequents" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <FAQ />
-            </Suspense>
-          } 
-        />
-        <Route 
-          path="/faq" 
-          element={
-            <Suspense fallback={<RootLoader />}>
-              <FAQ />
-            </Suspense>
-          } 
-        />
-      </Routes>
-    </>
+    </SmoothScroll>
   );
 }
 

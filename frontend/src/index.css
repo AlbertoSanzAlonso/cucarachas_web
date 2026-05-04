@@ -14,9 +14,31 @@
   }
 
   html {
-    scroll-behavior: smooth;
+    scroll-behavior: auto !important;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
   }
+
+  /* Lenis Support */
+  html.lenis, html.lenis body {
+    height: auto;
+  }
+
+  .lenis.lenis-smooth {
+    scroll-behavior: auto !important;
+  }
+
+  .lenis.lenis-smooth [data-lenis-prevent] {
+    overscroll-behavior: contain;
+  }
+
+  .lenis.lenis-stopped {
+    overflow: hidden;
+  }
+
+  .lenis.lenis-scrolling iframe {
+    pointer-events: none;
+  }
+
 
   body {
     @apply bg-[#f8fafc] text-[#3c3c3b] antialiased overflow-x-hidden;
@@ -36,47 +58,8 @@ body.agent-open {
   overflow: hidden !important;
 }
 
-body.agent-open main section:not(:first-of-type),
-body.agent-open main div.relative.mt-\[-100px\].z-40,
-body.agent-open footer,
-body.agent-open #floating-cta {
-  transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transform: translateY(20px);
-}
+/* Redundant agent-open rules removed to optimize performance and prevent layout shifts */
 
-body.agent-open nav {
-  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transform: translateY(-100%);
-}
-
-body.agent-open main section:first-of-type {
-  transition: padding-top 1s cubic-bezier(0.16, 1, 0.3, 1), margin 1s ease;
-  padding-top: 2rem !important;
-  margin: 0 !important;
-}
-
-body.agent-open main section:first-of-type > div {
-  height: calc(100vh - 4rem) !important;
-}
-
-@media (min-width: 768px) {
-  body.agent-open main section:first-of-type {
-    padding-top: 2rem !important;
-  }
-}
-
-body.agent-open main section:not(:first-of-type),
-body.agent-open main div.relative.mt-\[-100px\].z-40,
-body.agent-open footer,
-body.agent-open #floating-cta {
-  opacity: 0 !important;
-  pointer-events: none !important;
-  transform: translateY(20px);
-}
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {

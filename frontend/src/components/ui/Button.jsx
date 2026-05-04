@@ -1,5 +1,7 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
+
 
 const Button = React.forwardRef(({ 
   className, 
@@ -23,7 +25,7 @@ const Button = React.forwardRef(({
     icon: 'p-3 rounded-full',
   };
 
-  const Component = 'button';
+  const Component = motion.button;
 
   return (
     <Component
