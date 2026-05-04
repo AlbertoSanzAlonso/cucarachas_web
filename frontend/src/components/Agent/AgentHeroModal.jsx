@@ -89,7 +89,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
-        layoutId="hero-box"
+        layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
         className="relative w-full md:w-[94%] max-w-[1700px] h-[98%] md:h-full md:max-h-[94vh] rounded-[2rem] md:rounded-[5rem] shadow-[0_0_100px_rgba(0,128,187,0.3)] flex flex-col items-center overflow-visible" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',

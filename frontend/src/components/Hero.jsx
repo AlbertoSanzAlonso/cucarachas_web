@@ -26,7 +26,7 @@ const Hero = ({ openAgent }) => {
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
       <motion.div 
-        layoutId="hero-box"
+        layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
         className="relative min-h-[550px] md:min-h-[650px] xl:min-h-[80vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[2rem] md:rounded-[5rem] shadow-xl md:shadow-2xl overflow-hidden group"
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
