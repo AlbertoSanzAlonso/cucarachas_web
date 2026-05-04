@@ -90,11 +90,12 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     >
       <motion.div 
         layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
-        className="relative w-full md:w-[94%] max-w-[1700px] h-[98%] md:h-full md:max-h-[94vh] rounded-[2rem] md:rounded-[5rem] shadow-[0_0_100px_rgba(0,128,187,0.3)] flex flex-col items-center overflow-visible" 
+        className="relative w-[92%] md:w-[94%] max-w-[1700px] h-[92vh] md:h-full md:max-h-[94vh] rounded-[2.5rem] md:rounded-[5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col items-center overflow-visible" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
           zIndex: 201,
-          willChange: 'transform, opacity'
+          willChange: 'transform, opacity',
+          borderRadius: window.innerWidth < 768 ? '2.5rem' : undefined
         }}
         transition={{ 
           duration: 0.4,
