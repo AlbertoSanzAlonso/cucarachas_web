@@ -34,15 +34,7 @@ const CockroachFocus = () => {
             ))}
           </ul>
 
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-6 pt-6">
-             <button className="w-full sm:w-auto px-8 py-4 rounded-xl bg-primary-blue text-white font-bold tracking-wide hover:shadow-xl transition-all hover:bg-primary-blue-hv active:scale-95 flex items-center justify-center">
-               {t('focus.prices_btn')}
-               <ChevronRight size={18} className="ml-2" />
-             </button>
-             <button className="text-primary-blue font-bold tracking-tight hover:underline">
-               {t('focus.cases_btn')}
-             </button>
-          </div>
+
         </div>
 
         {/* Image Section - Now 'Transparent' Style */}
