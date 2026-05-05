@@ -1,0 +1,185 @@
+{
+  "hero": {
+    "title": "Eliminar cucarachas en Barcelona rápida y definitivamente.",
+    "desc": "En CECSA somos especialistas en el control de cucarachas, con servicio urgente 24h, tratamientos seguros y garantía certificada para recuperar la tranquilidad en tu vivienda o negocio.",
+    "badge": "Servicio urgente 24h en Barcelona",
+    "services_count": "Servicios Realizados",
+    "active_system": "Sistema Activo",
+    "slider_1": "Inspección Técnica",
+    "slider_2": "Control de Plagas",
+    "slider_3": "Hogar Protegido"
+  },
+  "focus": {
+    "title": "Cómo eliminar cucarachas de forma definitiva",
+    "desc": "Eliminar cucarachas no consiste solo en aplicar productos. Es necesario un tratamiento profesional adaptado a cada situación para eliminar la plaga desde el origen y evitar que vuelva a aparecer.",
+    "subtitle": "Desinsectación Técnica Especializada",
+    "benefits": [
+      "Diagnóstico rápido en menos de 24h",
+      "Uso de geles de última generación (sin olores)",
+      "Garantía por escrito de eliminación total",
+      "Seguimiento preventivo tras el tratamiento"
+    ],
+    "prices_btn": "Conocer Precios",
+    "cases_btn": "Ver casos de éxito en Barcelona",
+    "efficacy_label": "Eficacia Máxima",
+    "success_rate": "+99.8% Éxito"
+  },
+  "method": {
+    "title": "Nuestro método de eficacia total",
+    "desc": "Metodología científica aplicada para resultados inmediatos.",
+    "step1_title": "Inspección inicial",
+    "step1_desc": "Evaluamos el nivel de infestación y localizamos el origen real de la plaga.",
+    "step1_details": [
+      "Diagnóstico completo del grado de infestación.",
+      "Detección de los focos principales y vías de acceso.",
+      "Evaluación de riesgos estructurales y ambientales."
+    ],
+    "step2_title": "Tratamiento profesional",
+    "step2_desc": "Aplicamos soluciones específicas de alta eficacia y seguras para personas y mascotas.",
+    "step2_details": [
+      "Aplicación de geles inodoros de última generación.",
+      "Actuación localizada sin necesidad de desalojar.",
+      "Productos biológicos seguros para el entorno."
+    ],
+    "step3_title": "Seguimiento y Prevención",
+    "step3_desc": "Supervisamos la evolución para garantizar la eliminación total y te ayudamos a evitar futuras infestaciones.",
+    "step3_details": [
+      "Monitoreo activo para garantizar la erradicación.",
+      "Asesoramiento sobre medidas higiénico-estructurales preventivas.",
+      "Emisión de certificado de garantía ROESB."
+    ]
+  },
+  "origen": {
+    "title": "CECSA ORIGEN • Servicio Premium",
+    "subtitle": "Recuperación integral de viviendas okupadas",
+    "desc": "Transformamos espacios deteriorados en viviendas dignas, seguras y preparadas para volver a la vida. Nos encargamos de todo: desalojo, limpieza profunda, pintura y desinsectación profesional.",
+    "quote": "Convertimos un problema en una oportunidad, recuperando el valor de tu inmueble con un servicio eficiente y discreto."
+  },
+  "about_page": {
+    "hero_title": "CECSA: Restaurar el Equilibrio es nuestro Compromiso.",
+    "hero_subtitle": "Una empresa familiar dedicada al bienestar y la salud sanitaria de Barcelona.",
+    "family_title": "El origen: La familia Sureda Celaya Salcedo",
+    "family_desc": "Somos una empresa familiar formada por 9 profesionales apasionados que damos el cien por cien en cada intervención. No somos una corporación fría que aparece y desaparece; somos personas comprometidas con tu bienestar real.",
+    "vision_title": "Una empresa Consciente",
+    "vision_desc": "No creemos en 'matar por matar'. Nuestra misión es restablecer el equilibrio que se ha roto cuando aparece una plaga en una vivienda, negocio o comunidad. Lo hacemos con amor por nuestro entorno, minimizando la crueldad y buscando siempre la solución técnica más consciente y efectiva.",
+    "wellness_title": "Más que un tratamiento: Salud Mental",
+    "wellness_desc": "Entendemos que una plaga no es solo un riesgo biológico; también es un problema de salud mental que genera angustia e inseguridad. Nuestro eslogan —'Por el bienestar de nuestros clientes'— refleja nuestro compromiso de estar a tu lado siempre, con productos de vanguardia y protocolos que se adaptan a la evolución de la plaga.",
+    "honesty_title": "Ética y Honestidad en el Precio",
+    "honesty_desc": "No creemos en el engaño ni en el precio desorbitado. Mientras algunas empresas cobran cantidades desproporcionadas por tratamientos puntuales, nosotros ofrecemos mantenimiento continuado y eficacia real. Para nosotros, tu tranquilidad no tiene precio, pero sí un presupuesto justo.",
+    "scope_title": "Ámbito de actuación",
+    "scope_desc": "Servicio en Barcelona y toda Catalunya para restaurar el equilibrio.",
+    "scope_detail": "Operamos con protocolos de vigilancia activa, asegurando que una vez restablecido el equilibrio, este se mantenga en el tiempo.",
+    "stats": {
+      "workers": "Especialistas",
+      "success": "Más del 90%",
+      "success_label": "De Eficacia Técnica",
+      "family": "Sureda Celaya Salcedo",
+      "experience": "+15",
+      "experience_label": "Años de Experiencia"
+    }
+  },
+  "fleet": {
+    "title": "Protegemos tu entorno en cualquier rincón de Catalunya",
+    "desc": "Nuestra flota técnica está distribuida estratégicamente para ofrecer una cobertura inmediata en Barcelona, Girona, Tarragona y Lleida. Cada unidad móvil es un laboratorio técnico avanzado.",
+    "response_time": "Tiempo de Respuesta",
+    "response_value": "Menos de 2h",
+    "provinces": "Provincias",
+    "capacity": "Capacidad",
+    "capacity_value": "Intervenciones simultáneas en múltiples sectores para máxima eficiencia.",
+    "units_btn": "Ver Unidades Disponibles"
+  },
+  "contact": {
+    "title": "Tu protección contra plagas, garantizada.",
+    "subtitle": "Rellena el formulario y un técnico especialista te contactará en menos de 2h para un diagnóstico gratuito.",
+    "phone_label": "Teléfono",
+    "schedule_label": "Horario",
+    "schedule_value": "Lun - Ven, 9:00 - 20:00h",
+    "sede_label": "Sede",
+    "email_label": "Email",
+    "name_placeholder": "Nombre y Apellidos",
+    "email_placeholder": "Email de contacto",
+    "phone_placeholder": "Teléfono móvil",
+    "message_placeholder": "Explícanos brevemente tu problema...",
+    "privacy_consent": "Acepto la política de protección de datos técnica de CECSA",
+    "submit_btn": "ENVIAR SOLICITUD",
+    "success_btn": "SOLICITUD ENVIADA",
+    "commitment_label": "Compromiso CECSA",
+    "commitment_value": "Privacidad absoluta y respuesta técnica garantizada."
+  },
+  "testimonials": {
+    "title": "Particulares satisfechos con nuestro servicio"
+  },
+  "blog": {
+    "hero_badge": "Actualidad y Conocimiento",
+    "hero_title_main": "Blog",
+    "hero_title_accent": "Consciente",
+    "hero_desc": "Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.",
+    "search_placeholder": "Buscar artículo...",
+    "read_more": "Seguir leyendo",
+    "no_results": "No hemos encontrado artículos",
+    "no_results_desc": "Prueba con otros términos o categorías",
+    "categories": {
+      "all": "Todos",
+      "prevencion": "Prevención",
+      "tecnico": "Técnico",
+      "curiosidades": "Curiosidades",
+      "salud": "Salud Ambiental"
+    }
+  },
+  "faq": {
+    "hero_badge": "Centro de Ayuda Técnica",
+    "hero_title_main": "FAQ",
+    "hero_title_accent": "Consciente",
+    "hero_desc": "Resuelve tus dudas sobre nuestros protocolos de actuación ética y eficaz en Catalunya.",
+    "search_placeholder": "Busca tu pregunta...",
+    "cta_title": "¿Todavía tienes dudas?",
+    "cta_desc": "Nuestro equipo técnico te atenderá de forma personalizada.",
+    "cta_btn": "Habla ahora",
+    "no_results": "No hemos encontrado respuestas",
+    "categories": {
+      "all": "Todas",
+      "seguretat": "Seguridad y Salud",
+      "tecnic": "Métodos Técnicos",
+      "preus": "Presupuestos",
+      "garantia": "Garantías"
+    },
+    "items": [
+      {
+        "id": 1,
+        "category": "seguretat",
+        "question": "¿Representan un peligro para la salud los productos que utilizáis?",
+        "answer": "No. En CECSA utilizamos exclusivamente geles de última generación y métodos biográficos que no requieren plazo de seguridad. Son totalmente compatibles con la presencia de personas, niños y mascotas desde el primer minuto."
+      },
+      {
+        "id": 2,
+        "category": "tecnic",
+        "question": "¿Debo vaciar los armarios de la cocina antes del tratamiento?",
+        "answer": "No es necesario. Nuestra tecnología de geles nos permite actuar de forma quirúrgica sin desalojar utensilios ni alimentos, siempre que estén protegidos o en zonas no críticas."
+      },
+      {
+        "id": 3,
+        "category": "garantia",
+        "question": "¿Qué garantía ofrece el servicio de desinsectación?",
+        "answer": "Todos nuestros tratamientos de control de cucarachas incluyen una garantía certificada de un año. Si la plaga reaparece durante este periodo, realizamos los refuerzos necesarios sin coste adicional."
+      },
+      {
+        "id": 4,
+        "category": "preus",
+        "question": "¿Cuál es el precio medio de un servicio en Barcelona?",
+        "answer": "El coste depende de la magnitud de la infestación y los metros cuadrados. Para una vivienda estándar, los precios comienzan desde los 85€. Ofrecemos presupuesto cerrado sin compromiso tras un diagnóstico telefónico."
+      },
+      {
+        "id": 5,
+        "category": "seguretat",
+        "question": "¿Cuánto tiempo tardan en morir las cucarachas tras el gel?",
+        "answer": "El efecto cascada comienza inmediatamente. Notarás una reducción del 80% en las primeras 48-72 horas. La eliminación total del nido se completa en unos 10-15 días según el ciclo biológico."
+      },
+      {
+        "id": 6,
+        "category": "tecnic",
+        "question": "¿Es mejor el gel o la fumigación tradicional?",
+        "answer": "La fumigación suele ser invasiva y poco selectiva. El gel es infinitamente superior para cucarachas, ya que aprovecha el comportamiento social del insecto (coprofagia y necrofagia) para eliminar el nido desde dentro sin químicos en el aire."
+      }
+    ]
+  }
+}

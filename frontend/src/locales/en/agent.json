@@ -1,0 +1,31 @@
+{
+  "agent": {
+    "welcome": "Hello! I am your bio-conscious assistant.",
+    "intro": "Before we start, I need to understand your situation to offer the most ethical and effective solution.",
+    "skip": "Skip to website",
+    "step1_q": "What pest is bothering you today?",
+    "step2_q": "Where have you seen activity?",
+    "step3_q": "How often do you see them?",
+    "pests": {
+      "cucarachas": "Cockroaches",
+      "hormigas": "Ants",
+      "ratas": "Rats/Mice",
+      "otros": "Others / Not sure"
+    },
+    "locations": {
+      "cocina": "Kitchen",
+      "negocio": "Business / Office",
+      "comunidad": "Community",
+      "otros": "Other areas"
+    },
+    "frequency": {
+      "diario": "Daily",
+      "noche": "Only at night",
+      "ocasional": "Occasionally",
+      "primera": "It is the first time"
+    },
+    "finish_cta": "Generate Diagnosis",
+    "persistent_msg": "I am here if you need me",
+    "minimized_hint": "Click to talk to the assistant"
+  }
+}

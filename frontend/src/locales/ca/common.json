@@ -1,0 +1,47 @@
+{
+  "common": {
+    "tagline": "Ètic i Conscient",
+    "cta_free": "Demanar Diagnòstic Gratuït",
+    "cta_call": "Trucar Ara",
+    "emergency_24h": "Urgències 24h",
+    "certified": "Certificació ROESB",
+    "pest_control": "Control de Plagues",
+    "know_more": "Saber-ne més"
+  },
+  "nav": {
+    "blog": "Blog",
+    "articles": "Articles",
+    "faq": "Preguntes Freqüents",
+    "residential": "Particulars",
+    "commercial": "Empreses",
+    "sectors": "Serveis",
+    "process": "El Nostre Mètode",
+    "about": "Sobre CECSA",
+    "us": "Nosaltres",
+    "contact": "Urgències 24h",
+    "home": "Inici"
+  },
+  "meta": {
+    "desc": "Eliminar paneroles (cucarachas) a Barcelona amb servei urgent 24h. Tractament professional, segur i amb garantia. Pressupost gratuït."
+  },
+  "legal": {
+    "notice_title": "Avís Legal",
+    "privacy_title": "Política de Privacitat",
+    "company_name": "Desinfecciones Cecsa S.L.",
+    "cif": "B64287055",
+    "address": "C/ Rajolers 16, Local 1, 08028 Barcelona",
+    "email": "info@cucarachasbarcelona.cat",
+    "notice_desc": "D'acord amb la Llei 34/2002 de Serveis de la Societat de la Informació...",
+    "privacy_desc": "La vostra privacitat és la nostra prioritat. Protegim les vostres dades d'acord amb el RGPD..."
+  },
+  "cta": {
+    "badge": "Tècnic de Guàrdia disponible",
+    "call_now": "TRUCAR ARA"
+  },
+  "stats_bar": {
+    "years": "Anys d'Experiència",
+    "services": "Serveis Realitzats",
+    "guarantee": "Garantia d'Èxit",
+    "response": "Temps de Resposta"
+  }
+}

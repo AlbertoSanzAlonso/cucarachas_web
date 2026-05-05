@@ -1,0 +1,182 @@
+{
+  "species": {
+    "title": "Tipos de cucaracha más comunes y soluciones",
+    "label_pest": "Plaga",
+    "label_solution": "Solución Técnica",
+    "label_solution_short": "Solución",
+    "germanica": "Cucaracha alemana",
+    "germanica_desc": "La más común en cocinas y viviendas de Barcelona.",
+    "germanica_details": [
+      "Detectadas habitualmente en motores de electrodomésticos.",
+      "Garantía de eliminación mediante gel de cebo técnico.",
+      "No requiere desalojar la vivienda."
+    ],
+    "americana": "Cucaracha americana",
+    "americana_desc": "Grande, rojiza y experta en redes de alcantarillado.",
+    "americana_details": [
+      "Especialistas en comunidades de vecinos y locales.",
+      "Tratamiento de barrera perimetral de alta persistencia.",
+      "Control focalizado en puntos de entrada de saneamiento."
+    ],
+    "orientalis": "Cucaracha oriental",
+    "orientalis_desc": "Negra y robusta, prefiere zonas frescas y húmedas.",
+    "orientalis_details": [
+      "Común en canalizaciones de agua y bajantes antiguas.",
+      "Tratamiento mediante pulverización dirigida y cebado.",
+      "Prevención de accesos desde el subsuelo."
+    ],
+    "banded": "Cucaracha banda café",
+    "banded_desc": "Pequeña, prefiere muebles y techos elevados. No suele encontrarse en cocinas.",
+    "banded_details": [
+      "Detectadas a menudo en marcos de cuadros y motores de reloj.",
+      "Prefieren lugares cálidos y secos, a diferencia de la alemana.",
+      "Control experto para evitar la dispersión por el mobiliario."
+    ],
+    "monitor": "Monitoreo Técnico",
+    "monitor_desc": "Seguimiento preventivo mediante estaciones de monitorización.",
+    "monitor_details": [
+      "Instalación de trampas con feromonas de atracción específica.",
+      "Revisión periódica para detectar actividad antes de que se convierta en plaga.",
+      "Informes digitales detallados con el nivel de riesgo capturado."
+    ],
+    "zap": "Eliminación Directa",
+    "zap_desc": "Localización precisa y eliminación inmediata de nidos y focos.",
+    "zap_details": [
+      "Identificación de los lugares de nidificación mediante cámaras técnicas.",
+      "Aplicación localizada de productos de alta eficacia y bajo impacto.",
+      "Eliminación física de los residuos y restos biológicos."
+    ],
+    "barrier": "Barreras Activas",
+    "barrier_desc": "Tratamientos residuales para evitar la entrada de nuevos insectos.",
+    "barrier_details": [
+      "Aplicación en puntos críticos: bajantes, grietas y zonas de paso.",
+      "Uso de polímeros de alta persistencia que aguantan la limpieza diaria.",
+      "Protección perimetral de larga duración (hasta 6 meses)."
+    ],
+    "thermal": "Control Integrado",
+    "thermal_desc": "Eliminación ecológica mediante calor controlado.",
+    "thermal_details": [
+      "Tratamiento 100% libre de químicos, ideal para industrias alimentarias.",
+      "Eficacia contra todas las fases del ciclo de vida (huevos incluidos).",
+      "Poca preparación necesaria y sin plazos de seguridad."
+    ]
+  },
+  "others": {
+    "title": "Otros servicios de control de plagas",
+    "desc": "En CECSA también somos especialistas en el control de plagas urbanas con protocolos seguros y efectivos.",
+    "rodents": "Control de ratas y ratones",
+    "termites": "Eliminación de termitas",
+    "bedbugs": "Control de chinches",
+    "ants": "Eliminación de hormigas",
+    "pigeons": "Palomas y Aves Urbanas",
+    "catalog_label": "Catálogo de Especies",
+    "view_protocol": "Ver Protocolo",
+    "safety_label": "Protocolos de seguridad total",
+    "view_all_btn": "VER TODOS LOS SERVICIOS",
+    "protocols": {
+      "rodents_title": "Control Técnico de Roedores",
+      "rodents_desc": "Eliminamos ratas y ratones rápidamente con sistemas de seguridad total para tu familia o negocio.",
+      "rodents_details": [
+        "Inspección exhaustiva de puntos de entrada y nidos.",
+        "Instalación de portacebos de seguridad cerrados.",
+        "Sellado estructural de vías de acceso detectadas.",
+        "Seguimiento hasta la desaparición total de la actividad."
+      ],
+      "termites_title": "Sistemas Avanzados contra Termitas",
+      "termites_desc": "Protegemos la estructura de tu inmueble con tecnología de detección y eliminación de colonias.",
+      "termites_details": [
+        "Detección mediante sensores acústicos y radares térmicos.",
+        "Sistema de cebos de alta tecnología (Eliminación de raíz).",
+        "Tratamientos de barrera química perimetral.",
+        "Garantía de protección estructural a largo plazo."
+      ],
+      "bedbugs_title": "Eliminación Radical de Chinches",
+      "bedbugs_desc": "Protocolo de choque para recuperar tu descanso en viviendas y hoteles.",
+      "bedbugs_details": [
+        "Inspección profunda de colchones, cabeceros y mobiliario.",
+        "Tratamiento térmico o químico dirigido de alto impacto.",
+        "Eliminación de larvas y huevos de forma segura.",
+        "Certificado libre de plaga post-intervención."
+      ],
+      "ants_title": "Control de Hormigas profesional",
+      "ants_desc": "Eliminamos la colonia desde el origen, evitando que vuelvan a aparecer en cocinas y jardines.",
+      "ants_details": [
+        "Identificación de la especie para aplicar el tratamiento correcto.",
+        "Aplicación de geles de alta atracción indetectables.",
+        "Barrera perimetral de larga persistencia.",
+        "Control focalizado en puntos críticos de entrada."
+      ],
+      "pigeons_title": "Control de Aves y Palomas",
+      "pigeons_desc": "Sistemas de protección en fachadas, patios y azoteas para evitar riesgos sanitarios.",
+      "pigeons_details": [
+        "Instalación de redes de protección casi invisibles.",
+        "Sistemas de pinchos y barreras físicas discretas.",
+        "Repelentes tecnológicos no nocivos.",
+        "Limpieza y desinfección de zonas afectadas por excrementos."
+      ]
+    }
+  },
+  "sectors_grid": {
+    "title": "Servicios para empresas",
+    "desc": "Soluciones permanentes y discretas para cada sector empresarial en Catalunya.",
+    "horeca": "Bares y Restaurantes",
+    "hotels": "Hoteles y Resorts",
+    "comms": "Comunidades de Vecinos",
+    "industry": "Industria Alimentaria",
+    "cta": "Ver Planes",
+    "horeca_desc": "Control preventivo estricto para la máxima seguridad alimentaria. Garantizamos un entorno libre de cucarachas para que tu negocio nunca se detenga.",
+    "horeca_points": [
+      "Monitoreo digital 24/7",
+      "Geles de alta atracción sin olores",
+      "Certificado ROESB obligatorio incluido",
+      "Respuesta urgente en menos de 2h"
+    ],
+    "hotels_desc": "Discreción absoluta y protección de la reputación. Protocolos especializados para el sector hotelero y alojamientos turísticos.",
+    "hotels_points": [
+      "Intervenciones nocturnas y discretas",
+      "Tratamientos preventivos cero-residuos",
+      "Garantía de satisfacción total",
+      "Informe técnico para auditorías"
+    ],
+    "comms_desc": "Mantenimiento preventivo estructural de zonas comunes y redes de alcantarillado para evitar invasiones masivas.",
+    "comms_points": [
+      "Control integral de bajantes y arquetas",
+      "Tratamientos anuales de alta eficacia",
+      "Atención directa a los administradores",
+      "Seguimiento post-tratamiento"
+    ],
+    "industry_desc": "Soluciones técnicas avanzadas según estándares IFS, BRC y APPCC para la industria alimentaria y farmacéutica.",
+    "industry_points": [
+      "Auditorías de vulnerabilidad de planta",
+      "Gestión documental digitalizada",
+      "Protocolos de bioseguridad estricta",
+      "Análisis de tendencias de plagas"
+    ]
+  },
+  "species_detail": {
+    "view_treatment": "Ver Tratamiento",
+    "view_pest": "Ver Ficha Técnica",
+    "modal_certified": "Certificado Entomológico",
+    "modal_protocol": "Protocolo de Actuación",
+    "modal_tech_available": "Técnicos de guardia",
+    "modal_status_available": "Disponibles ahora",
+    "reveal_image": "Ver imagen",
+    "zoom_in": "Ampliar",
+    "zoom_out": "Reducir"
+  },
+  "service_detail_page": {
+    "back": "Volver",
+    "authorized_label": "Sector Autorizado",
+    "technical_protocol": "Protocolo Técnico Especializado",
+    "why_choose": "¿Por qué elegir CECSA para {{sector}}?",
+    "benefit1_label": "Respuesta <2h",
+    "benefit1_desc": "Siempre estamos cuando nos necesitas.",
+    "benefit2_label": "Garantía Total",
+    "benefit2_desc": "Si vuelven, nosotros también. Sin coste.",
+    "benefit3_label": "Ethic & Green",
+    "benefit3_desc": "Sin residuos tóxicos ni olores.",
+    "active_protection": "Protección Activa",
+    "free_diagnosis": "Diagnóstico Gratuito",
+    "not_found": "Sector no encontrado"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "common": {
+    "tagline": "Ético y Consciente",
+    "cta_free": "Pedir Diagnóstico Gratis",
+    "cta_call": "Llamar Ahora",
+    "emergency_24h": "Urgencias 24h",
+    "certified": "Certifición ROESB",
+    "pest_control": "Control de Plagas",
+    "know_more": "Saber más"
+  },
+  "nav": {
+    "blog": "Blog",
+    "articles": "Artículos",
+    "faq": "Preguntas Frecuentes",
+    "residential": "Particulares",
+    "commercial": "Empresas",
+    "sectors": "Servicios",
+    "process": "Nuestro Método",
+    "about": "Sobre CECSA",
+    "us": "Nosotros",
+    "contact": "Urgencias 24h",
+    "home": "Inicio"
+  },
+  "meta": {
+    "desc": "Eliminar cucarachas en Barcelona con servicio urgente 24h. Tratamiento profesional, seguro y con garantía. Presupuesto gratuito."
+  },
+  "legal": {
+    "notice_title": "Aviso Legal",
+    "privacy_title": "Política de Privacidad",
+    "company_name": "Desinfecciones Cecsa S.L.",
+    "cif": "B64287055",
+    "address": "C/ Rajolers 16, Local 1, 08028 Barcelona",
+    "email": "info@cucarachasbarcelona.cat",
+    "notice_desc": "De acuerdo con la Ley 34/2002 de Servicios de la Sociedad de la Información...",
+    "privacy_desc": "Su privacidad es nuestra prioridad. Protegemos sus datos de acuerdo con el RGPD..."
+  },
+  "cta": {
+    "badge": "Técnico de Guardia disponible",
+    "call_now": "LLAMAR AHORA"
+  },
+  "stats_bar": {
+    "years": "Años de Experiencia",
+    "services": "Servicios Realizados",
+    "guarantee": "Garantía de Éxito",
+    "response": "Tiempo de Respuesta"
+  }
+}

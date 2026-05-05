@@ -1,0 +1,182 @@
+{
+  "species": {
+    "title": "Tipus de panerola més comuns i solucions",
+    "label_pest": "Plaga",
+    "label_solution": "Solució Tècnica",
+    "label_solution_short": "Solució",
+    "germanica": "Panerola alemanya",
+    "germanica_desc": "La més comuna en cuines i habitatges de Barcelona.",
+    "germanica_details": [
+      "Detectades habitualment en motors d'electrodomèstics.",
+      "Garantia d'eliminació mitjançant gel de cebo tècnic.",
+      "No requereix desallotjar l'habitatge."
+    ],
+    "americana": "Panerola americana",
+    "americana_desc": "Gran, rogenca i experta en xarxes de clavegueram.",
+    "americana_details": [
+      "Especialistes en comunitats de veïns i locals.",
+      "Tractament de barrera perimetral d'alta persistència.",
+      "Control focalitzat en punts d'entrada de sanejament."
+    ],
+    "orientalis": "Panerola oriental",
+    "orientalis_desc": "Negra i robusta, prefereix zones fresques i humides.",
+    "orientalis_details": [
+      "Comuna en canalitzacions d'aigua i baixants antigues.",
+      "Tractament mitjançant pulverització dirigida i encebat.",
+      "Prevenció d'accessos des del subsòl."
+    ],
+    "banded": "Panerola banda cafè",
+    "banded_desc": "Petita, prefereix mobles i sostres elevats. No sol trobar-se a les cuines.",
+    "banded_details": [
+      "Detectades sovint en marcs de quadres i motors de rellotge.",
+      "Prefereixen llocs càlids i secs, a diferència de l'alemanya.",
+      "Control expert per evitar la dispersió pel mobiliari."
+    ],
+    "monitor": "Monitoreig Tècnic",
+    "monitor_desc": "Seguiment preventiu mitjançant estacions de monitorització.",
+    "monitor_details": [
+      "Instal·lació de trampes amb feromones d'atracció específica.",
+      "Revisió periòdica per detectar activitat abans que es converteixi en plaga.",
+      "Informes digitals detallats amb el nivell de risc capturat."
+    ],
+    "zap": "Eliminació Directa",
+    "zap_desc": "Localització precisa i eliminació immediata de nius i focus.",
+    "zap_details": [
+      "Identificació dels llocs de nidificació mitjançant càmeres tècniques.",
+      "Aplicació localitzada de productes d'alta eficàcia i baix impacte.",
+      "Eliminació física dels residus i restes biològiques."
+    ],
+    "barrier": "Barreres Actives",
+    "barrier_desc": "Tractaments residuals per evitar l'entrada de nous insectes.",
+    "barrier_details": [
+      "Aplicació en punts crítics: baixants, esquerdes i zones de pas.",
+      "Ús de polímers d'alta persistència que aguanten la neteja diària.",
+      "Protecció perimetral de llarga durada (fins a 6 mesos)."
+    ],
+    "thermal": "Control Integrat",
+    "thermal_desc": "Eliminació ecològica mitjançant calor controlada.",
+    "thermal_details": [
+      "Tractament 100% lliure de químics, ideal per a indústries alimentàries.",
+      "Eficàcia contra totes las fases del cicle de vida (ous inclosos).",
+      "Poca preparació necessària i sense terminis de seguretat."
+    ]
+  },
+  "others": {
+    "title": "Altres serveis de control de plagues",
+    "desc": "A CECSA també som especialistes en el control de plagues urbanes amb protocols segurs i efectius.",
+    "rodents": "Control de rates i ratolins",
+    "termites": "Eliminació de tèrmits",
+    "bedbugs": "Control de xinxes",
+    "ants": "Eliminació de formigues",
+    "pigeons": "Coloms i Aus Urbanes",
+    "catalog_label": "Catàleg d'Espècies",
+    "view_protocol": "Veure Protocol",
+    "safety_label": "Protocols de seguretat total",
+    "view_all_btn": "VEURE TOTS ELS SERVEIS",
+    "protocols": {
+      "rodents_title": "Control Tècnic de Rosegadors",
+      "rodents_desc": "Eliminem rates i ratolins ràpidament amb sistemes de seguretat total per a la teva família o negoci.",
+      "rodents_details": [
+        "Inspecció exhaustiva de punts d'entrada i nius.",
+        "Instal·lació de portaceps de seguretat tancats.",
+        "Segellat estructural de vies d'accés detectades.",
+        "Seguiment fins a la desaparició total de l'activitat."
+      ],
+      "termites_title": "Sistemes Avançats contra Tèrmits",
+      "termites_desc": "Protegim l'estructura del teu immoble amb tecnologia de detecció i eliminació de colònies.",
+      "termites_details": [
+        "Detecció mitjançant sensors acústics i radars tèrmics.",
+        "Sistema de mels d'alta tecnologia (Eliminació des de l'arrel).",
+        "Tractaments de barrera química perimetral.",
+        "Garantia de protecció estructural a llarg termini."
+      ],
+      "bedbugs_title": "Eliminació Radical de Xinxes",
+      "bedbugs_desc": "Protocol de xoc per recuperar el teu descans en habitatges i hotels.",
+      "bedbugs_details": [
+        "Inspecció profunda de matalassos, capçals i mobiliari.",
+        "Tractament tèrmic o químic dirigit d'alt impacte.",
+        "Eliminació de larves i ous de forma segura.",
+        "Certificat lliure de plaga post-intervenció."
+      ],
+      "ants_title": "Control de Formigues professional",
+      "ants_desc": "Eliminem la colònia des de l'origen, evitant que tornin a aparèixer en cuines i jardins.",
+      "ants_details": [
+        "Identificació de l'espècie per aplicar el tractament correcte.",
+        "Aplicació de gels d'alta atracció indetectables.",
+        "Barrera perimetral de llarga persistència.",
+        "Control focalitzat en punts crítics d'entrada."
+      ],
+      "pigeons_title": "Control d'Aus i Coloms",
+      "pigeons_desc": "Sistemes de protecció en façanes, patis i terrats per evitar riscos sanitaris.",
+      "pigeons_details": [
+        "Instal·lació de xarxes de protecció quasi invisibles.",
+        "Sistemes de punxes i barreres físiques discretes.",
+        "Repel·lents tecnològics no nocius.",
+        "Neteja i desinfecció de zones afectades per excrements."
+      ]
+    }
+  },
+  "sectors_grid": {
+    "title": "Serveis per a empreses",
+    "desc": "Solucions permanents i discretes per a cada sector empresarial a Catalunya.",
+    "horeca": "Bars i Restaurants",
+    "hotels": "Hotels i Resorts",
+    "comms": "Comunitats de Veïns",
+    "industry": "Indústria Alimentària",
+    "cta": "Veure Plans",
+    "horeca_desc": "Control preventiu estricte per a la màxima seguretat alimentària. Garantim un entorn lliure de paneroles perquè el teu negoci mai s'aturi.",
+    "horeca_points": [
+      "Monitoratge digital 24/7",
+      "Gels d'alta atracció sense olors",
+      "Certificat ROESB obligatori inclòs",
+      "Resposta urgent en menys de 2h"
+    ],
+    "hotels_desc": "Discreció absoluta i protecció de la reputació. Protocols especialitzats per al sector hoteler i allotjaments turístics.",
+    "hotels_points": [
+      "Intervencions nocturnes i discretes",
+      "Tractaments preventius zero-residis",
+      "Garantia de satisfacció total",
+      "Informe tècnic per a auditories"
+    ],
+    "comms_desc": "Manteniment preventiu estructural de zones comunes i xarxes de clavegueram per evitar invasions massives.",
+    "comms_points": [
+      "Control integral de bajants i arquetes",
+      "Tractaments anuals d'alta eficàcia",
+      "Atenció directa als administradors",
+      "Seguiment post-tractament"
+    ],
+    "industry_desc": "Solucions tècniques avançades segons estàndards IFS, BRC i APPCC per a la indústria alimentària i farmacèutica.",
+    "industry_points": [
+      "Auditories de vulnerabilitat de planta",
+      "Gestió documental digitalitzada",
+      "Protocols de biocuresa estricta",
+      "Anàlisi de tendències de plagues"
+    ]
+  },
+  "species_detail": {
+    "view_treatment": "Veure Tractament",
+    "view_pest": "Veure Fitxa Tècnica",
+    "modal_certified": "Certificat Entomològic",
+    "modal_protocol": "Protocol d'Actuació",
+    "modal_tech_available": "Tècnics de guàrdia",
+    "modal_status_available": "Disponibles ara",
+    "reveal_image": "Veure imatge",
+    "zoom_in": "Ampliar",
+    "zoom_out": "Reduir"
+  },
+  "service_detail_page": {
+    "back": "Tornar",
+    "authorized_label": "Sector Autoritzat",
+    "technical_protocol": "Protocol Tècnic Especialitzat",
+    "why_choose": "Per què triar CECSA per a {{sector}}?",
+    "benefit1_label": "Resposta <2h",
+    "benefit1_desc": "Sempre hi som quan ens necessites.",
+    "benefit2_label": "Garantia Total",
+    "benefit2_desc": "Si tornen, nosaltres també. Sense cost.",
+    "benefit3_label": "Ethic & Green",
+    "benefit3_desc": "Sense residus tòxics ni olors.",
+    "active_protection": "Protecció Activa",
+    "free_diagnosis": "Diagnòstic Gratuït",
+    "not_found": "Sector no trobat"
+  }
+}

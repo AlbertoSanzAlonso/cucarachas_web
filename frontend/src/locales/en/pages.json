@@ -1,19 +1,4 @@
 {
-  "common": {
-    "tagline": "Ethical and Conscious"
-  },
-  "nav": {
-    "blog": "Blog",
-    "articles": "Articles",
-    "faq": "FAQ",
-    "residential": "Residential",
-    "commercial": "Commercial",
-    "sectors": "Services",
-    "process": "Our Method",
-    "about": "About CECSA",
-    "contact": "24h Emergency",
-    "home": "Home"
-  },
   "blog": {
     "hero_badge": "Current News & Knowledge",
     "hero_title_main": "Conscious",
@@ -111,39 +96,5 @@
         "answer": "Fumigation tends to be invasive and non-selective. Gel is infinitely superior for cockroaches, as it leverages the social behavior of the insect (coprophagy and necrophagy) to eliminate the nest from within without airborne chemicals."
       }
     ]
-  },
-  "species_detail": {
-    "reveal_image": "Reveal image",
-    "zoom_in": "Zoom In",
-    "zoom_out": "Zoom Out"
-  },
-  "agent": {
-    "welcome": "Hello! I am your bio-conscious assistant.",
-    "intro": "Before we start, I need to understand your situation to offer the most ethical and effective solution.",
-    "skip": "Skip to website",
-    "step1_q": "What pest is bothering you today?",
-    "step2_q": "Where have you seen activity?",
-    "step3_q": "How often do you see them?",
-    "pests": {
-      "cucarachas": "Cockroaches",
-      "hormigas": "Ants",
-      "ratas": "Rats/Mice",
-      "otros": "Others / Not sure"
-    },
-    "locations": {
-      "cocina": "Kitchen",
-      "negocio": "Business / Office",
-      "comunidad": "Community",
-      "otros": "Other areas"
-    },
-    "frequency": {
-      "diario": "Daily",
-      "noche": "Only at night",
-      "ocasional": "Occasionally",
-      "primera": "It is the first time"
-    },
-    "finish_cta": "Generate Diagnosis",
-    "persistent_msg": "I am here if you need me",
-    "minimized_hint": "Click to talk to the assistant"
   }
 }

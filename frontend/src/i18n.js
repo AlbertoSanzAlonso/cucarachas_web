@@ -2,19 +2,33 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 
-import translationCA from './locales/ca/translation.json';
-import translationES from './locales/es/translation.json';
-import translationEN from './locales/en/translation.json';
+// CA
+import commonCA from './locales/ca/common.json';
+import pagesCA from './locales/ca/pages.json';
+import servicesCA from './locales/ca/services.json';
+import agentCA from './locales/ca/agent.json';
+
+// ES
+import commonES from './locales/es/common.json';
+import pagesES from './locales/es/pages.json';
+import servicesES from './locales/es/services.json';
+import agentES from './locales/es/agent.json';
+
+// EN
+import commonEN from './locales/en/common.json';
+import pagesEN from './locales/en/pages.json';
+import servicesEN from './locales/en/services.json';
+import agentEN from './locales/en/agent.json';
 
 const resources = {
   ca: {
-    translation: translationCA
+    translation: { ...commonCA, ...pagesCA, ...servicesCA, ...agentCA }
   },
   es: {
-    translation: translationES
+    translation: { ...commonES, ...pagesES, ...servicesES, ...agentES }
   },
   en: {
-    translation: translationEN
+    translation: { ...commonEN, ...pagesEN, ...servicesEN, ...agentEN }
   }
 };
 
