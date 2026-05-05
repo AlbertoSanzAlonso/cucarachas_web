@@ -1,12 +1,17 @@
 import os
 
-# --- Configuración de IA (Groq) ---
-# Usamos Llama 3.1 8B en Groq por sus altos límites en la capa gratuita
-AGENT_MODEL = 'groq:llama-3.1-8b-instant'
+# Usamos OpenAI GPT-4o-mini
+AGENT_MODEL = 'openai:gpt-4o-mini'
 
 # Asegurar que la API Key esté presente en el entorno
 def setup_ai_keys():
-    # Soportamos tanto Groq (preferido) como Gemini
+    # Soportamos OpenAI
+    openai_key = os.getenv('OPENAI_API_KEY')
+    if openai_key:
+        os.environ['OPENAI_API_KEY'] = openai_key
+        return openai_key
+    
+    # Soportamos tanto Groq como Gemini como fallbacks
     groq_key = os.getenv('GROQ_API_KEY')
     if groq_key:
         os.environ['GROQ_API_KEY'] = groq_key
