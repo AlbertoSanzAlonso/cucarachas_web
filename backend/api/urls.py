@@ -6,6 +6,7 @@ from .views import (
     CitaViewSet, ReporteServicioViewSet, chat_with_agents, cal_webhook, get_cal_slots,
     auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking
 )
+from knowledge.views import TechnicalKnowledgeViewSet
 
 router = DefaultRouter()
 router.register(r'species', SpeciesViewSet)
@@ -16,6 +17,7 @@ router.register(r'ubicaciones', UbicacionViewSet)
 router.register(r'presupuestos', PresupuestoViewSet)
 router.register(r'citas', CitaViewSet)
 router.register(r'reportes', ReporteServicioViewSet)
+router.register(r'knowledge', TechnicalKnowledgeViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

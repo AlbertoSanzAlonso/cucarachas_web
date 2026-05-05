@@ -45,7 +45,8 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     }
 
     if (key === 'who') {
-      setPath(value === 'particular' ? 'particular' : 'empresa');
+      const nextPath = ['particular', 'empresa', 'comunidad', 'admin'].includes(value) ? value : 'empresa';
+      setPath(nextPath);
       startTransition(() => {
         setStep(2);
       });
@@ -58,12 +59,51 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       return;
     }
 
-    if (step < 7) {
-      startTransition(() => {
-        setStep(step + 1);
-      });
+    let nextStep = step + 1;
+
+    if (path === 'comunidad') {
+      const currentRole = newAnswers.role_comunidad;
+      const hasAdmin = newAnswers.has_admin;
+      const contactWho = newAnswers.contact_who;
+
+      if (step === 4) {
+        if (currentRole === 'administrador') {
+          nextStep = 9; // Skip directly to what_if_not
+        } else {
+          nextStep = 5; // has_admin
+        }
+      } else if (step === 5) {
+        if (currentRole === 'vecino') {
+          if (value === 'yes') nextStep = 6; // which_admin
+          else nextStep = 7; // help_community
+        } else if (currentRole === 'presidente' || currentRole === 'junta') {
+          if (value === 'yes') nextStep = 8; // contact_who
+          else nextStep = 9; // what_if_not
+        }
+      } else if (step === 6) {
+        if (currentRole === 'vecino') nextStep = 7; // help_community
+        else nextStep = 9; // what_if_not
+      } else if (step === 7) {
+        nextStep = 9; // what_if_not
+      } else if (step === 8) {
+        if (value === 'con_admin' || value === 'ambos') nextStep = 6; // which_admin
+        else nextStep = 9; // what_if_not
+      }
     }
-  }, [answers, step, t, setMessages, getAIDiagnostic]);
+
+    let maxSteps = 7;
+    if (path === 'admin') maxSteps = 10;
+    if (path === 'comunidad') maxSteps = 10;
+
+    if (nextStep <= maxSteps) {
+      startTransition(() => {
+        setStep(nextStep);
+      });
+    } else {
+      setIsFinished(true);
+      getAIDiagnostic(newAnswers);
+    }
+  }, [answers, step, path, t, setMessages, getAIDiagnostic]);
 
   const handleBack = useCallback(() => {
     if (step > 1) {
@@ -90,7 +130,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     >
       <motion.div 
         layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
-        className="relative w-[92%] md:w-[94%] max-w-[1700px] h-[92vh] md:h-full md:max-h-[94vh] rounded-[2.5rem] md:rounded-[5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col items-center overflow-visible" 
+        className="relative w-[96%] md:w-[94%] max-w-[1700px] min-h-[80vh] md:min-h-[80vh] max-h-[96vh] rounded-[2.5rem] md:rounded-[5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col items-center overflow-hidden" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
           zIndex: 201,
@@ -102,6 +142,50 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
           ease: [0.16, 1, 0.3, 1]
         }}
       >
+        <style>{`
+          @media (max-height:900px) {
+            .agent-hero-modal-logo {
+              width: 100px !important;
+              height: 100px !important;
+              margin-top: 0 !important;
+            }
+            .agent-hero-modal-logo img {
+              width: 100px !important;
+              height: 100px !important;
+            }
+            .agent-hero-modal-content {
+              padding-top: 0.5rem !important;
+              padding-bottom: 0.5rem !important;
+            }
+            .agent-hero-content-container {
+              margin-top: 0 !important;
+            }
+            .diagnostic-title-container {
+              margin-bottom: 0.5rem !important;
+            }
+            .diagnostic-title-container h2 {
+              font-size: 1.5rem !important;
+            }
+            .diagnostic-btn {
+              padding: 0.75rem !important;
+              min-height: 50px !important;
+            }
+          }
+          @media (max-height:700px) {
+            .agent-hero-modal-logo {
+              width: 80px !important;
+              height: 80px !important;
+            }
+            .agent-hero-modal-logo img {
+              width: 80px !important;
+              height: 80px !important;
+            }
+            .diagnostic-btn {
+              padding: 0.5rem !important;
+            }
+          }
+        `}</style>
+
         {/* Language Switcher */}
         <div className="absolute top-6 right-6 md:top-12 md:right-12 z-[100]">
           <button 
@@ -139,25 +223,26 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
           </div>
         ), [])}
 
-        <div className="flex-1 flex flex-col items-center w-full p-1 md:p-6 relative z-10 text-center min-h-0">
+        <div className="agent-hero-modal-content flex-1 flex flex-col items-center w-full p-1 md:p-6 relative z-10 text-center min-h-0">
           {/* Logo */}
           <motion.div 
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ duration: 1.2, ease: "easeOut" }}
-            className={`${isFinished ? 'mb-0 scale-[0.3] md:scale-[0.4] mt-0 md:-mt-12' : 'mb-1 mt-1 md:mt-0'} transition-all relative group flex-shrink-0`}
+            className={`agent-hero-modal-logo ${isFinished ? 'mb-0 scale-[0.3] md:scale-[0.4] mt-0 md:-mt-12' : 'mb-1 mt-1 md:mt-0'} transition-all relative group flex-shrink-0`}
           >
             <img src="/assets/isotipo.png" alt="CECSA" className="w-32 h-32 md:w-64 md:h-64 object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
             <motion.div animate={{ scale: [1, 1.3, 1], opacity: [0.3, 0.6, 0.3] }} transition={{ duration: 4, repeat: Infinity }} className="absolute inset-0 bg-white/20 rounded-full blur-[100px] -z-10" style={{ willChange: 'transform, opacity' }} />
           </motion.div>
 
           {/* Content Container */}
-          <div className={`max-w-4xl mx-auto w-full flex-1 flex flex-col items-center ${isFinished ? 'mt-2 md:-mt-16' : 'mt-2 md:-mt-12'} min-h-0`}>
+          <div className={`agent-hero-content-container max-w-4xl mx-auto w-full flex-1 flex flex-col items-center ${isFinished ? 'mt-2 md:-mt-16' : 'mt-2 md:mt-2'} min-h-0 overflow-y-auto pb-4 scrollbar-hide`}>
             {!isFinished ? (
               <div className="flex flex-col items-center space-y-4 md:space-y-12 w-full">
                 <DiagnosticFlow 
                   step={step}
                   path={path}
+                  answers={answers}
                   handleAnswer={handleAnswer}
                   handleBack={handleBack}
                 />

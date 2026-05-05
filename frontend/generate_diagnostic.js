@@ -1,4 +1,6 @@
-import React, { memo } from 'react';
+const fs = require('fs');
+
+const fileContent = `import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Home, Building2, Users, AlertTriangle, MessageSquare, ChevronLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
@@ -8,7 +10,7 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
   
   const renderOptions = (key, opts) => opts.map(opt => (
     <button key={opt} onClick={() => handleAnswer(key, opt)} className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white font-bold text-sm text-center min-w-[200px] diagnostic-btn">
-      {t(`agent.options.${opt}`)}
+      {t(\`agent.options.\${opt}\`)}
     </button>
   ));
 
@@ -132,9 +134,9 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
         { id: 'unknown', icon: AlertTriangle },
         { id: 'chat_direct', icon: MessageSquare, primary: true }
       ].map(opt => (
-        <button key={opt.id} onClick={() => handleAnswer('who', opt.id)} className={`flex items-center p-4 md:p-5 rounded-2xl border transition-all group text-left w-full sm:min-w-[260px] ${opt.primary ? 'bg-accent-green text-black border-accent-green shadow-lg' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'} diagnostic-btn`}>
-          <opt.icon size={20} className={`mr-4 ${opt.primary ? 'text-black' : 'text-accent-green'}`} />
-          <span className="font-bold">{t(`agent.options.${opt.id}`)}</span>
+        <button key={opt.id} onClick={() => handleAnswer('who', opt.id)} className={\`flex items-center p-4 md:p-5 rounded-2xl border transition-all group text-left w-full sm:min-w-[260px] \${opt.primary ? 'bg-accent-green text-black border-accent-green shadow-lg' : 'bg-white/5 hover:bg-white/10 text-white border-white/10'} diagnostic-btn\`}>
+          <opt.icon size={20} className={\`mr-4 \${opt.primary ? 'text-black' : 'text-accent-green'}\`} />
+          <span className="font-bold">{t(\`agent.options.\${opt.id}\`)}</span>
         </button>
       ));
     }
@@ -186,7 +188,7 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
           </h2>
         </div>
       </div>
-      <div className={`flex flex-col space-y-2 sm:space-y-0 sm:grid sm:gap-3 px-4 md:px-8 max-w-3xl mx-auto w-full ${step === 1 ? 'sm:grid-cols-2' : 'sm:grid-cols-2'}`}>
+      <div className={\`flex flex-col space-y-2 sm:space-y-0 sm:grid sm:gap-3 px-4 md:px-8 max-w-3xl mx-auto w-full \${step === 1 ? 'sm:grid-cols-2' : 'sm:grid-cols-2'}\`}>
         {renderCurrentStep()}
       </div>
     </>
@@ -194,3 +196,7 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
 });
 
 export default DiagnosticFlow;
+`;
+
+fs.writeFileSync('./src/components/Agent/Diagnostic/DiagnosticFlow.jsx', fileContent);
+console.log('DiagnosticFlow.jsx rewritten successfully');

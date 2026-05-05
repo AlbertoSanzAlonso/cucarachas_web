@@ -69,6 +69,6 @@ class PricingOutput(BaseModel):
 # Respuesta del Agente Agendador
 class SchedulerOutput(BaseModel):
     message: str = Field(description="Mensaje amable para el usuario")
-    available_slots: List[dict] = Field(default_factory=list, description="Lista de slots [{date, time, slot_time}] si el usuario aún no ha elegido uno")
-    booking_confirmed: bool = Field(default=False, description="Solo poner True si la reserva se ha creado REALMENTE con éxito")
+    available_slots: Optional[List[dict]] = Field(default=None, description="Lista de slots [{date, time, slot_time}] si el usuario aún no ha elegido uno")
+    booking_confirmed: Optional[bool] = Field(default=False, description="Solo poner True si la reserva se ha creado REALMENTE con éxito")
     booking_uid: Optional[str] = Field(default=None, description="El UID retornado por la herramienta create_booking")

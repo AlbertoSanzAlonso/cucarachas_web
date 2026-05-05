@@ -1,3 +1,7 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from .models import TechnicalKnowledge
+from knowledge.serializers import TechnicalKnowledgeSerializer
 
-# Create your views here.
+class TechnicalKnowledgeViewSet(viewsets.ModelViewSet):
+    queryset = TechnicalKnowledge.objects.all()
+    serializer_class = TechnicalKnowledgeSerializer
