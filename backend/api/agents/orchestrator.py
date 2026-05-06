@@ -74,7 +74,10 @@ class CECSAOrchestrator:
                     scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                     timeout=45.0
                 )
-                self.state.history = messages_adapter.dump_python(sched_response.all_messages())
+                try:
+                    self.state.history = messages_adapter.dump_python(sched_response.all_messages())
+                except Exception as e:
+                    print(f"WARNING: Error saving scheduler history: {e}")
                 output = sched_response.output
 
                 return {
@@ -104,7 +107,10 @@ class CECSAOrchestrator:
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
-                self.state.history = messages_adapter.dump_python(response.all_messages())
+                try:
+                    self.state.history = messages_adapter.dump_python(response.all_messages())
+                except Exception as e:
+                    print(f"WARNING: Error saving receptionist history: {e}")
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -133,10 +139,12 @@ class CECSAOrchestrator:
                     ),
                     timeout=20.0
                 )
-                self.state.history = messages_adapter.dump_python(price_response.all_messages())
-                output = price_response.output
+                try:
+                    self.state.history = messages_adapter.dump_python(price_response.all_messages())
+                except Exception as e:
+                    print(f"WARNING: Error saving price history: {e}")
                 
-                # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
+                output = price_response.output
                 msg = ORCHESTRATOR_MESSAGES[self.state.language]["pricing_template"].format(
                     min=output.price_range_min,
                     max=output.price_range_max,
@@ -156,7 +164,11 @@ class CECSAOrchestrator:
                     ),
                     timeout=50.0
                 )
-                self.state.history = messages_adapter.dump_python(diag_response.all_messages())
+                try:
+                    self.state.history = messages_adapter.dump_python(diag_response.all_messages())
+                except Exception as e:
+                    print(f"WARNING: Error saving diag history: {e}")
+
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
@@ -166,7 +178,8 @@ class CECSAOrchestrator:
             print("TIMEOUT in Diagnosis/Pricer Phase")
             return {"message": ORCHESTRATOR_MESSAGES[self.state.language]["timeout_error"]}
         except Exception as e:
-            print(f"ERROR in Diagnosis/Pricer Phase: {str(e)}")
+            import traceback
+            print(f"CRITICAL ERROR in Diagnosis/Pricer: {traceback.format_exc()}")
             msg = ORCHESTRATOR_MESSAGES[self.state.language]["error_diagnosis"]
             return {"message": f"{msg} (Error: {str(e)})"}
 
