@@ -14,21 +14,17 @@ class CECSAOrchestrator:
         self.state = AgentState()
 
     def _get_history(self) -> List[ModelMessage]:
-        """Convierte el historial de dicts a objetos ModelMessage."""
+        """Convierte el historial de dicts (desde la sesión) a objetos ModelMessage de Pydantic-AI."""
+        from pydantic_ai.messages import ModelMessage
         messages = []
         for m in self.state.history:
             try:
-                # Pydantic-AI messages can be complex, we use model_validate
-                from pydantic_ai.messages import (
-                    ModelRequest, ModelResponse, SystemPromptPart, 
-                    UserPromptPart, TextPart, ToolCallPart, ToolReturnPart
-                )
-                # This is a simplified reconstruction for the session
-                # In a real scenario, pydantic-ai might have a more direct way
-                messages.append(m) 
-            except Exception:
+                # Cada mensaje en history es un dict que Pydantic-AI puede validar
+                messages.append(ModelMessage.model_validate(m))
+            except Exception as e:
+                print(f"DEBUG: Error recuperando mensaje del historial: {e}")
                 continue
-        return self.state.history
+        return messages
 
     async def process_message(self, message: str):
         # 0. Detección de Idioma (Hint del frontend o detección por keywords)
@@ -63,10 +59,10 @@ class CECSAOrchestrator:
                 )
                 print(f"DEBUG: Calling Scheduler Agent for: {message}")
                 sched_response = await asyncio.wait_for(
-                    scheduler_agent.run(context, deps=deps, message_history=self.state.history), 
+                    scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                     timeout=45.0
                 )
-                self.state.history = sched_response.all_messages()
+                self.state.history = [m.model_dump() for m in sched_response.all_messages()]
                 output = sched_response.output
 
                 return {
@@ -91,12 +87,12 @@ class CECSAOrchestrator:
                     receptionist_agent.run(
                         f"Context actual: {self.state.model_dump_json()}\nMissatge usuari: {message}", 
                         deps=deps,
-                        message_history=self.state.history
+                        message_history=self._get_history()
                     ),
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
-                self.state.history = response.all_messages()
+                self.state.history = [m.model_dump() for m in response.all_messages()]
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -121,11 +117,11 @@ class CECSAOrchestrator:
                     pricer_agent.run(
                         f"Context: {self.state.model_dump_json()}", 
                         deps=deps,
-                        message_history=self.state.history
+                        message_history=self._get_history()
                     ),
                     timeout=20.0
                 )
-                self.state.history = price_response.all_messages()
+                self.state.history = [m.model_dump() for m in price_response.all_messages()]
                 output = price_response.output
                 
                 # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
@@ -144,11 +140,11 @@ class CECSAOrchestrator:
                     diagnostician_agent.run(
                         f"Context: {self.state.model_dump_json()}\nClient: {message}",
                         deps=deps,
-                        message_history=self.state.history
+                        message_history=self._get_history()
                     ),
                     timeout=50.0
                 )
-                self.state.history = diag_response.all_messages()
+                self.state.history = [m.model_dump() for m in diag_response.all_messages()]
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
