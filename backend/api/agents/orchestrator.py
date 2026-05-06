@@ -2,6 +2,7 @@ import asyncio
 import json
 import dataclasses
 from typing import Optional, List
+from pydantic import TypeAdapter
 from pydantic_ai.messages import ModelMessage
 from .models import AgentState, Intent, AgentDeps
 from .receptionist import receptionist_agent
@@ -10,32 +11,32 @@ from .pricer import pricer_agent
 from .scheduler import scheduler_agent
 from .prompts import ORCHESTRATOR_MESSAGES
 
+# Adaptador para serializar/deserializar la lista de mensajes de Pydantic-AI
+messages_adapter = TypeAdapter(List[ModelMessage])
+
 def serialize_message(m):
-    """Serializador universal para mensajes de Pydantic-AI (ModelRequest/Response)."""
+    """Serializador universal para mensajes de Pydantic-AI."""
     if hasattr(m, 'model_dump'):
         return m.model_dump()
-    if hasattr(m, 'dict'):
-        return m.dict()
     if dataclasses.is_dataclass(m):
         return dataclasses.asdict(m)
-    return m # Dejar que pydantic intente lo mejor
+    if hasattr(m, 'dict'):
+        return m.dict()
+    return m
 
 class CECSAOrchestrator:
     def __init__(self):
         self.state = AgentState()
 
     def _get_history(self) -> List[ModelMessage]:
-        """Convierte el historial de dicts (desde la sesión) a objetos ModelMessage de Pydantic-AI."""
-        from pydantic_ai.messages import ModelMessage
-        messages = []
-        for m in self.state.history:
-            try:
-                # Cada mensaje en history es un dict que Pydantic-AI puede validar
-                messages.append(ModelMessage.model_validate(m))
-            except Exception as e:
-                print(f"DEBUG: Error recuperando mensaje del historial: {e}")
-                continue
-        return messages
+        """Convierte el historial de dicts a objetos ModelMessage usando TypeAdapter."""
+        if not self.state.history:
+            return []
+        try:
+            return messages_adapter.validate_python(self.state.history)
+        except Exception as e:
+            print(f"DEBUG: Error validando historial con TypeAdapter: {e}")
+            return []
 
     async def process_message(self, message: str):
         # 0. Detección de Idioma (Hint del frontend o detección por keywords)
@@ -73,7 +74,7 @@ class CECSAOrchestrator:
                     scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                     timeout=45.0
                 )
-                self.state.history = [serialize_message(m) for m in sched_response.all_messages()]
+                self.state.history = messages_adapter.dump_python(sched_response.all_messages())
                 output = sched_response.output
 
                 return {
@@ -103,7 +104,7 @@ class CECSAOrchestrator:
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
-                self.state.history = [serialize_message(m) for m in response.all_messages()]
+                self.state.history = messages_adapter.dump_python(response.all_messages())
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -132,7 +133,7 @@ class CECSAOrchestrator:
                     ),
                     timeout=20.0
                 )
-                self.state.history = [serialize_message(m) for m in price_response.all_messages()]
+                self.state.history = messages_adapter.dump_python(price_response.all_messages())
                 output = price_response.output
                 
                 # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
@@ -155,7 +156,7 @@ class CECSAOrchestrator:
                     ),
                     timeout=50.0
                 )
-                self.state.history = [serialize_message(m) for m in diag_response.all_messages()]
+                self.state.history = messages_adapter.dump_python(diag_response.all_messages())
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
