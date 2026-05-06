@@ -62,7 +62,10 @@ class CECSAOrchestrator:
                     scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                     timeout=45.0
                 )
-                self.state.history = [m.model_dump() for m in sched_response.all_messages()]
+                self.state.history = [
+                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
+                    for m in sched_response.all_messages()
+                ]
                 output = sched_response.output
 
                 return {
@@ -92,7 +95,10 @@ class CECSAOrchestrator:
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
-                self.state.history = [m.model_dump() for m in response.all_messages()]
+                self.state.history = [
+                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
+                    for m in response.all_messages()
+                ]
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -121,7 +127,10 @@ class CECSAOrchestrator:
                     ),
                     timeout=20.0
                 )
-                self.state.history = [m.model_dump() for m in price_response.all_messages()]
+                self.state.history = [
+                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
+                    for m in price_response.all_messages()
+                ]
                 output = price_response.output
                 
                 # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
@@ -144,7 +153,10 @@ class CECSAOrchestrator:
                     ),
                     timeout=50.0
                 )
-                self.state.history = [m.model_dump() for m in diag_response.all_messages()]
+                self.state.history = [
+                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
+                    for m in diag_response.all_messages()
+                ]
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
