@@ -6,9 +6,7 @@ class PestType(str, Enum):
     GERMAN_COCKROACH = "german_cockroach"
     AMERICAN_COCKROACH = "american_cockroach"
     ORIENTAL_COCKROACH = "oriental_cockroach"
-    RAT = "rat"
-    MOUSE = "mouse"
-    TERMITE = "termite"
+    BROWN_BANDED_COCKROACH = "brown_banded_cockroach"
     OTHER = "other"
 
 class Severity(str, Enum):

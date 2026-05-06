@@ -68,7 +68,7 @@ class CECSAOrchestrator:
             if (not self.state.intent or not self.state.city) and self.state.intent != Intent.QUOTE:
                 print(f"DEBUG: Calling Receptionist Agent for: {message}")
                 response = await asyncio.wait_for(
-                    receptionist_agent.run(message, deps=deps),
+                    receptionist_agent.run(f"Context actual: {self.state.model_dump_json()}\nMissatge usuari: {message}", deps=deps),
                     timeout=40.0
                 )
                 self.state = response.output.collected_data

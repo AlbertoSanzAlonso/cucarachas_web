@@ -45,7 +45,8 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `CAL_API_KEY` = key de Cal.com (nunca hardcodear en código)
 - `CAL_EVENT_TYPE_ID` = `277401`
 - `DJANGO_SECRET_KEY` = clave secreta Django
-- `GOOGLE_API_KEY` = clave de Gemini para los agentes
+- `OPENAI_API_KEY` = clave de OpenAI (principal para los agentes)
+- `GOOGLE_API_KEY` = clave de Google (usada para Geocoding y fallback de agentes)
 
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:

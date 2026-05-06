@@ -3,7 +3,7 @@ from api.models import Species, Tratamiento
 from typing import List, Optional
 from pydantic import BaseModel
 import os
-
+from .config import AGENT_MODEL
 # Definimos los modelos de respuesta estructurada
 class TreatmentInfo(BaseModel):
     name: str
@@ -16,9 +16,9 @@ class CRMResponse(BaseModel):
     next_steps: str
 
 # Inicializamos el agente de PydanticAI
-# Usamos Gemini 2.5 Flash
+# Usamos el modelo configurado
 crm_agent = Agent(
-    'google-gla:gemini-2.5-flash',
+    AGENT_MODEL,
     output_type=CRMResponse,
     system_prompt=(
         "Ets l'assistent virtual expert de CECSA Control de Plagues a Catalunya. "

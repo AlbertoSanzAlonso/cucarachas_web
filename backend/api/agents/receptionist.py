@@ -1,6 +1,6 @@
 import os
 from pydantic_ai import Agent, RunContext
-from .models import ReceptionistOutput, AgentState, AgentDeps
+from .models import ReceptionistOutput, AgentDeps
 from .config import setup_ai_keys, AGENT_MODEL
 from .prompts import SYSTEM_PROMPTS
 
