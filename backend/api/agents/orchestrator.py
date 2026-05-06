@@ -1,5 +1,6 @@
 import asyncio
 import json
+import dataclasses
 from typing import Optional, List
 from pydantic_ai.messages import ModelMessage
 from .models import AgentState, Intent, AgentDeps
@@ -8,6 +9,16 @@ from .diagnostician import diagnostician_agent
 from .pricer import pricer_agent
 from .scheduler import scheduler_agent
 from .prompts import ORCHESTRATOR_MESSAGES
+
+def serialize_message(m):
+    """Serializador universal para mensajes de Pydantic-AI (ModelRequest/Response)."""
+    if hasattr(m, 'model_dump'):
+        return m.model_dump()
+    if hasattr(m, 'dict'):
+        return m.dict()
+    if dataclasses.is_dataclass(m):
+        return dataclasses.asdict(m)
+    return m # Dejar que pydantic intente lo mejor
 
 class CECSAOrchestrator:
     def __init__(self):
@@ -62,10 +73,7 @@ class CECSAOrchestrator:
                     scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                     timeout=45.0
                 )
-                self.state.history = [
-                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
-                    for m in sched_response.all_messages()
-                ]
+                self.state.history = [serialize_message(m) for m in sched_response.all_messages()]
                 output = sched_response.output
 
                 return {
@@ -95,10 +103,7 @@ class CECSAOrchestrator:
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
-                self.state.history = [
-                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
-                    for m in response.all_messages()
-                ]
+                self.state.history = [serialize_message(m) for m in response.all_messages()]
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -127,10 +132,7 @@ class CECSAOrchestrator:
                     ),
                     timeout=20.0
                 )
-                self.state.history = [
-                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
-                    for m in price_response.all_messages()
-                ]
+                self.state.history = [serialize_message(m) for m in price_response.all_messages()]
                 output = price_response.output
                 
                 # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
@@ -153,10 +155,7 @@ class CECSAOrchestrator:
                     ),
                     timeout=50.0
                 )
-                self.state.history = [
-                    (m.model_dump() if hasattr(m, 'model_dump') else m.dict()) 
-                    for m in diag_response.all_messages()
-                ]
+                self.state.history = [serialize_message(m) for m in diag_response.all_messages()]
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity
