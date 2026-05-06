@@ -99,14 +99,7 @@ const FleetSection = () => {
              </div>
           </div>
 
-          <div className="pt-6 flex justify-center lg:justify-start">
-            <Button 
-              variant="primary"
-              size="lg"
-            >
-               {t('fleet.units_btn')}
-            </Button>
-          </div>
+
         </div>
 
       </div>

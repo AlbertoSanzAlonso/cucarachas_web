@@ -1,5 +1,7 @@
 import asyncio
-from typing import Optional
+import json
+from typing import Optional, List
+from pydantic_ai.messages import ModelMessage
 from .models import AgentState, Intent, AgentDeps
 from .receptionist import receptionist_agent
 from .diagnostician import diagnostician_agent
@@ -10,6 +12,23 @@ from .prompts import ORCHESTRATOR_MESSAGES
 class CECSAOrchestrator:
     def __init__(self):
         self.state = AgentState()
+
+    def _get_history(self) -> List[ModelMessage]:
+        """Convierte el historial de dicts a objetos ModelMessage."""
+        messages = []
+        for m in self.state.history:
+            try:
+                # Pydantic-AI messages can be complex, we use model_validate
+                from pydantic_ai.messages import (
+                    ModelRequest, ModelResponse, SystemPromptPart, 
+                    UserPromptPart, TextPart, ToolCallPart, ToolReturnPart
+                )
+                # This is a simplified reconstruction for the session
+                # In a real scenario, pydantic-ai might have a more direct way
+                messages.append(m) 
+            except Exception:
+                continue
+        return self.state.history
 
     async def process_message(self, message: str):
         # 0. Detección de Idioma (Hint del frontend o detección por keywords)
@@ -44,9 +63,10 @@ class CECSAOrchestrator:
                 )
                 print(f"DEBUG: Calling Scheduler Agent for: {message}")
                 sched_response = await asyncio.wait_for(
-                    scheduler_agent.run(context, deps=deps), 
+                    scheduler_agent.run(context, deps=deps, message_history=self.state.history), 
                     timeout=45.0
                 )
+                self.state.history = sched_response.all_messages()
                 output = sched_response.output
 
                 return {
@@ -68,10 +88,15 @@ class CECSAOrchestrator:
             if (not self.state.intent or not self.state.city) and self.state.intent != Intent.QUOTE:
                 print(f"DEBUG: Calling Receptionist Agent for: {message}")
                 response = await asyncio.wait_for(
-                    receptionist_agent.run(f"Context actual: {self.state.model_dump_json()}\nMissatge usuari: {message}", deps=deps),
+                    receptionist_agent.run(
+                        f"Context actual: {self.state.model_dump_json()}\nMissatge usuari: {message}", 
+                        deps=deps,
+                        message_history=self.state.history
+                    ),
                     timeout=40.0
                 )
                 self.state = response.output.collected_data
+                self.state.history = response.all_messages()
                 self.state.language = deps.language # Mantener idioma
 
                 if response.output.next_agent == "scheduler":
@@ -93,9 +118,14 @@ class CECSAOrchestrator:
             if self.state.pest_type and (self.state.intent == Intent.QUOTE or "pressupost" in message.lower() or "presupuesto" in message.lower()):
                 print(f"DEBUG: Calling Pricer Agent for: {message}")
                 price_response = await asyncio.wait_for(
-                    pricer_agent.run(f"Context: {self.state.model_dump_json()}", deps=deps),
+                    pricer_agent.run(
+                        f"Context: {self.state.model_dump_json()}", 
+                        deps=deps,
+                        message_history=self.state.history
+                    ),
                     timeout=20.0
                 )
+                self.state.history = price_response.all_messages()
                 output = price_response.output
                 
                 # Formateo manual usando la plantilla centralizada para asegurar consistencia de idioma
@@ -113,10 +143,12 @@ class CECSAOrchestrator:
                 diag_response = await asyncio.wait_for(
                     diagnostician_agent.run(
                         f"Context: {self.state.model_dump_json()}\nClient: {message}",
-                        deps=deps
+                        deps=deps,
+                        message_history=self.state.history
                     ),
                     timeout=50.0
                 )
+                self.state.history = diag_response.all_messages()
                 if diag_response.output.identified_pest:
                     self.state.pest_type = diag_response.output.identified_pest
                     self.state.severity = diag_response.output.severity

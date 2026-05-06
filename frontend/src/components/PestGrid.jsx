@@ -43,15 +43,7 @@ const PestGrid = () => {
     <section className="pt-12 md:pt-16 pb-24 bg-bg-light relative overflow-hidden" id="species">
       <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
 
-        <div className="max-w-3xl mx-auto space-y-4">
-          <h2 className="text-4xl md:text-5xl font-black text-primary-gray tracking-tighter uppercase">
-            {t('species.title')}
-          </h2>
-          <div className="w-24 h-1.5 bg-accent-green mx-auto rounded-full"></div>
-          <p className="text-secondary-gray/80 text-lg font-light pt-4 italic">
-            Identificación precisa y protocolos de eliminación radical por especie.
-          </p>
-        </div>
+
 
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 [@media(max-height:600px)_and_(orientation:landscape)]:grid-cols-4">
           {species.map((pest, i) => (

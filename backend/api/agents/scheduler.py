@@ -44,21 +44,22 @@ def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str:
         if not CAL_API_KEY:
             return "Error: CAL_API_KEY no configurada al servidor."
 
+        print(f"DEBUG: Fetching Cal.com slots for {days_ahead} days ahead...")
         resp = http_requests.get(
             f"{CAL_BASE_URL}/slots/available",
             params={
                 "eventTypeId": CAL_EVENT_TYPE_ID,
                 "startTime": start_time,
-                "endTime": end_time,
-                "clientId": CAL_API_KEY
+                "endTime": end_time
             },
-            timeout=10
+            headers=get_cal_headers(),
+            timeout=5
         )
-        print(f"DEBUG Cal.com slots status: {resp.status_code}")
+        print(f"DEBUG: Cal.com slots status: {resp.status_code}")
         data = resp.json()
 
-        if data.get("status") != "success":
-            return f'Error de l\'API: {data.get("error", {}).get("message", "No s\'ha pogut obtenir la disponibilitat")}'
+        if resp.status_code != 200 or data.get("status") != "success":
+            return 'Actualment la agenda no està disponible. Si us plau, prova-ho d\'aquí a uns minuts.'
 
         # En la v2 los slots vienen en data.data.slots (que es un dict por días)
         slots_data = data.get("data", {})
@@ -156,13 +157,14 @@ def create_booking(
             "metadata": {"notes": notes, "source": "CECSA Bio-Assistent"}
         }
 
+        print(f"DEBUG: Creating Cal.com booking for {attendee_email}...")
         resp = http_requests.post(
-            f"{CAL_BASE_URL}/bookings?clientId={CAL_API_KEY}",
-            headers={"Content-Type": "application/json"},
+            f"{CAL_BASE_URL}/bookings",
+            headers=get_cal_headers(),
             json=payload,
-            timeout=10
+            timeout=8
         )
-        print(f"DEBUG Cal.com booking status: {resp.status_code}")
+        print(f"DEBUG: Cal.com booking status: {resp.status_code}")
         data = resp.json()
 
         if data.get("status") == "success":

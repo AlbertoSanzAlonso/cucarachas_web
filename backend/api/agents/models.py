@@ -39,6 +39,7 @@ class AgentState(BaseModel):
     estimated_price: Optional[float] = None
     is_urgent: bool = False
     language: Language = "ca" # Soporte para catalán y español
+    history: List[dict] = [] # Historial de mensajes para memoria conversacional
 
 # Respuesta del Agente Recepcionista
 class ReceptionistOutput(BaseModel):
