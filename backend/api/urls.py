@@ -4,7 +4,8 @@ from .views import (
     SpeciesViewSet, ClienteViewSet, TratamientoViewSet, 
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet, 
     CitaViewSet, ReporteServicioViewSet, chat_with_agents, cal_webhook, get_cal_slots,
-    auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking
+    auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking,
+    debug_system
 )
 from knowledge.views import TechnicalKnowledgeViewSet
 
@@ -29,4 +30,5 @@ urlpatterns = [
     path('auth/me/', auth_me, name='auth-me'),
     path('cal/bookings/', get_cal_bookings, name='cal-bookings'),
     path('cal/bookings/<int:booking_id>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
+    path('debug/', debug_system, name='debug-system'),
 ]

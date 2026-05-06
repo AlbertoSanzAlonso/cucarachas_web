@@ -67,7 +67,8 @@ def chat_with_agents(request):
         print(f"CRITICAL ERROR: {traceback.format_exc()}")
         response = Response({
             "reply": f"Error intern de connexió. Si us plau, intenta-ho de nou.",
-            "debug": str(e)
+            "debug": str(e),
+            "traceback": traceback.format_exc()
         }, status=500)
         response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
         response["Access-Control-Allow-Credentials"] = "true"
