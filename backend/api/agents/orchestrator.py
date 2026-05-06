@@ -9,6 +9,7 @@ from .receptionist import receptionist_agent
 from .diagnostician import diagnostician_agent
 from .pricer import pricer_agent
 from .scheduler import scheduler_agent
+from .crm_agent import crm_agent
 from .prompts import ORCHESTRATOR_MESSAGES
 
 # Adaptador para serializar/deserializar la lista de mensajes de Pydantic-AI
@@ -73,7 +74,7 @@ class CECSAOrchestrator:
                     print(f"DEBUG: Calling Scheduler Agent for: {message}")
                     sched_response = await asyncio.wait_for(
                         scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
-                        timeout=45.0
+                        timeout=20.0
                     )
                     try:
                         self.state.history = messages_adapter.dump_python(sched_response.all_messages())
@@ -95,13 +96,14 @@ class CECSAOrchestrator:
             if (not self.state.intent or not self.state.city) and self.state.intent != Intent.QUOTE:
                 try:
                     print(f"DEBUG: Calling Receptionist Agent for: {message}")
+                    context_recep = f"Idioma: {self.state.language}. Ciudad actual: {self.state.city or 'Desconocida'}. Intención: {self.state.intent or 'Desconocida'}."
                     response = await asyncio.wait_for(
                         receptionist_agent.run(
-                            f"Context actual: {self.state.model_dump_json()}\nMissatge usuari: {message}", 
+                            f"Context: {context_recep}\nUsuario: {message}", 
                             deps=deps,
                             message_history=self._get_history()
                         ),
-                        timeout=40.0
+                        timeout=20.0
                     )
                     self.state = response.output.collected_data
                     try:
@@ -123,9 +125,10 @@ class CECSAOrchestrator:
             if self.state.pest_type and (self.state.intent == Intent.QUOTE or "pressupost" in message.lower() or "presupuesto" in message.lower()):
                 try:
                     print(f"DEBUG: Calling Pricer Agent for: {message}")
+                    context_price = f"Plaga: {self.state.pest_type}. Gravedad: {self.state.severity}. Ciudad: {self.state.city}."
                     price_response = await asyncio.wait_for(
                         pricer_agent.run(
-                            f"Context: {self.state.model_dump_json()}", 
+                            f"Context: {context_price}", 
                             deps=deps,
                             message_history=self._get_history()
                         ),
@@ -151,13 +154,14 @@ class CECSAOrchestrator:
             if self.state.intent in [Intent.QUOTE, Intent.URGENCY] and not self.state.pest_type:
                 try:
                     print(f"DEBUG: Calling Diagnostician Agent for: {message}")
+                    context_diag = f"Ciudad: {self.state.city}. Datos previo: {message}"
                     diag_response = await asyncio.wait_for(
                         diagnostician_agent.run(
-                            f"Context: {self.state.model_dump_json()}\nClient: {message}",
+                            f"Resum dades: {context_diag}",
                             deps=deps,
                             message_history=self._get_history()
                         ),
-                        timeout=50.0
+                        timeout=25.0
                     )
                     try:
                         self.state.history = messages_adapter.dump_python(diag_response.all_messages())
@@ -167,6 +171,23 @@ class CECSAOrchestrator:
                     if diag_response.output.identified_pest:
                         self.state.pest_type = diag_response.output.identified_pest
                         self.state.severity = diag_response.output.severity
+
+                        # --- PASO DE SÍNTESIS INTELIGENTE (CRM AGENT) ---
+                        try:
+                            print(f"DEBUG: Calling CRM Agent for Synthesis...")
+                            crm_res = await asyncio.wait_for(
+                                crm_agent.run(
+                                    f"Dades identificades: {self.state.pest_type}, Severitat: {self.state.severity}. Usuari diu: {message}",
+                                    deps=deps
+                                ),
+                                timeout=20.0
+                            )
+                            self.state.summary = crm_res.output.summary
+                            # Devolvemos la síntesis profesional en lugar de la explicación cruda
+                            return {"message": crm_res.output.summary}
+                        except Exception as e:
+                            print(f"WARNING: Error in CRM Synthesis: {e}")
+                            return {"message": diag_response.output.explanation}
 
                     return {"message": diag_response.output.explanation}
                 except Exception as e:

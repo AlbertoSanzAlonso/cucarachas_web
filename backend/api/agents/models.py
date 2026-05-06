@@ -38,6 +38,7 @@ class AgentState(BaseModel):
     technical_notes: List[str] = []
     estimated_price: Optional[float] = None
     is_urgent: bool = False
+    summary: Optional[str] = None # Nueva síntesis inteligente del caso
     language: Language = "ca" # Soporte para catalán y español
     history: List[dict] = [] # Historial de mensajes para memoria conversacional
 

@@ -3,64 +3,48 @@ from api.models import Species, Tratamiento
 from typing import List, Optional
 from pydantic import BaseModel
 import os
+import dataclasses
 from .config import AGENT_MODEL
-# Definimos los modelos de respuesta estructurada
-class TreatmentInfo(BaseModel):
-    name: str
-    price: float
-    description: str
+from .models import AgentDeps
 
-class CRMResponse(BaseModel):
-    explanation: str
-    recommended_treatments: List[TreatmentInfo]
-    next_steps: str
+# Modelo para la síntesis final del caso
+class CaseSynthesis(BaseModel):
+    summary: str # Resumen ejecutivo del caso
+    pest_confirmed: str # Especie identificada
+    severity_rating: str # Alta, Media, Baja
+    suggested_treatments: List[str] # Lista de nombres de tratamientos oficiales
+    technical_notes: str # Notas para el técnico humano
 
-# Inicializamos el agente de PydanticAI
-# Usamos el modelo configurado
+# Inicializamos el Agente de Síntesis (CRM)
 crm_agent = Agent(
     AGENT_MODEL,
-    output_type=CRMResponse,
+    deps_type=AgentDeps,
+    output_type=CaseSynthesis,
     system_prompt=(
-        "Ets l'assistent virtual expert de CECSA Control de Plagues a Catalunya. "
-        "El teu nom és 'CECSA Agent Conscient'. "
-        "La teva filosofia és 'Ètic i Conscient': prioritzem l'eficàcia sense danyar l'entorn innecessàriament. "
-        "Sempre respons en Català (idioma primari). "
-        "El teu objectiu és ajudar els clients a identificar el seu problema de plagues "
-        "i recomanar-los el tractament més adequat de la nostra llista oficial. "
-        "Sigues professional, autoritari però amable."
+        "Ets l'Agent Sintetitzador de CECSA. El teu rol és agafar tota la informació "
+        "d'una conversa de diagnòstic i generar un veredicte professional final. "
+        "Has de ser precís, ètic i conscient. "
+        "Utilitza les eines disponibles per recomanar tractaments reals de la nostra base de dades. "
+        "Sempre respon en l'idioma que et demani el client (Català per defecte)."
     ),
 )
 
 @crm_agent.tool
-def get_available_treatments(ctx: RunContext[None]) -> List[dict]:
-    """
-    Consulta la base de dades de CECSA per obtenir els tractaments actuals, 
-    els seus preus i descripcions.
-    """
+def get_official_treatments(ctx: RunContext[AgentDeps]) -> str:
+    """Consulta el catàleg oficial de tractaments de CECSA."""
     treatments = Tratamiento.objects.all()
-    return [
-        {
-            "nombre": t.nombre,
-            "precio": float(t.precio_base),
-            "descripcion": t.descripcion,
-            "icon": t.icon
-        } for t in treatments
-    ]
+    if not treatments:
+        return "No hi ha tractaments definits actualment."
+    
+    lines = []
+    for t in treatments:
+        lines.append(f"- {t.nombre}: {t.precio_base}€ ({t.descripcion})")
+    return "\n".join(lines)
 
 @crm_agent.tool
-def identify_pest(ctx: RunContext[None], description: str) -> dict:
-    """
-    Busca informació tècnica sobre una espècie basada en una descripció o nom.
-    """
-    # Busqueda simple por texto en nombre o descripción
-    species = Species.objects.filter(description__icontains=description) | Species.objects.filter(name__icontains=description)
-    
-    if not species.exists():
-        return {"error": "No hem trobat una espècie que coincideixi exactament amb la descripció. Cal inspecció tècnica."}
-    
-    s = species.first()
-    return {
-        "name": s.name,
-        "description": s.description,
-        "technical_details": s.details
-    }
+def get_species_info(ctx: RunContext[AgentDeps], name: str) -> str:
+    """Obté detalls tècnics d'una espècie de la base de dades."""
+    species = Species.objects.filter(name__icontains=name).first()
+    if species:
+        return f"Espècie: {species.name}. Detalls: {species.details}"
+    return "No s'ha trobat informació tècnica específica."
