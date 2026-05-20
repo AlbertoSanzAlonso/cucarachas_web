@@ -1,19 +1,15 @@
 import asyncio
-import json
 import dataclasses
 from typing import Optional, List
-from pydantic import TypeAdapter
 from pydantic_ai.messages import ModelMessage
 from .models import AgentState, Intent, AgentDeps
+from .serialization import messages_adapter, dump_message_history
 from .receptionist import receptionist_agent
 from .diagnostician import diagnostician_agent
 from .pricer import pricer_agent
 from .scheduler import scheduler_agent
 from .crm_agent import crm_agent
 from .prompts import ORCHESTRATOR_MESSAGES
-
-# Adaptador para serializar/deserializar la lista de mensajes de Pydantic-AI
-messages_adapter = TypeAdapter(List[ModelMessage])
 
 def serialize_message(m):
     """Serializador universal para mensajes de Pydantic-AI."""
@@ -76,10 +72,7 @@ class CECSAOrchestrator:
                         scheduler_agent.run(context, deps=deps, message_history=self._get_history()), 
                         timeout=20.0
                     )
-                    try:
-                        self.state.history = messages_adapter.dump_python(sched_response.all_messages())
-                    except Exception as e:
-                        print(f"WARNING: Error saving scheduler history: {e}")
+                    self.state.history = dump_message_history(sched_response.all_messages())
                     output = sched_response.output
 
                     return {
@@ -106,10 +99,7 @@ class CECSAOrchestrator:
                         timeout=20.0
                     )
                     self.state = response.output.collected_data
-                    try:
-                        self.state.history = messages_adapter.dump_python(response.all_messages())
-                    except Exception as e:
-                        print(f"WARNING: Error saving receptionist history: {e}")
+                    self.state.history = dump_message_history(response.all_messages())
                     self.state.language = deps.language # Mantener idioma
 
                     if response.output.next_agent == "scheduler":
@@ -134,10 +124,7 @@ class CECSAOrchestrator:
                         ),
                         timeout=20.0
                     )
-                    try:
-                        self.state.history = messages_adapter.dump_python(price_response.all_messages())
-                    except Exception as e:
-                        print(f"WARNING: Error saving price history: {e}")
+                    self.state.history = dump_message_history(price_response.all_messages())
                     
                     output = price_response.output
                     msg = ORCHESTRATOR_MESSAGES[self.state.language]["pricing_template"].format(
@@ -163,10 +150,7 @@ class CECSAOrchestrator:
                         ),
                         timeout=25.0
                     )
-                    try:
-                        self.state.history = messages_adapter.dump_python(diag_response.all_messages())
-                    except Exception as e:
-                        print(f"WARNING: Error saving diag history: {e}")
+                    self.state.history = dump_message_history(diag_response.all_messages())
 
                     if diag_response.output.identified_pest:
                         self.state.pest_type = diag_response.output.identified_pest

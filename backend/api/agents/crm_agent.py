@@ -4,7 +4,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 import os
 import dataclasses
-from .config import AGENT_MODEL
+from .config import AGENT_MODEL, setup_ai_keys
+
+setup_ai_keys()
 from .models import AgentDeps
 
 # Modelo para la síntesis final del caso
@@ -32,19 +34,27 @@ crm_agent = Agent(
 @crm_agent.tool
 def get_official_treatments(ctx: RunContext[AgentDeps]) -> str:
     """Consulta el catàleg oficial de tractaments de CECSA."""
-    treatments = Tratamiento.objects.all()
-    if not treatments:
-        return "No hi ha tractaments definits actualment."
-    
-    lines = []
-    for t in treatments:
-        lines.append(f"- {t.nombre}: {t.precio_base}€ ({t.descripcion})")
-    return "\n".join(lines)
+    try:
+        treatments = Tratamiento.objects.all()
+        if not treatments:
+            return "No hi ha tractaments definits actualment."
+
+        lines = []
+        for t in treatments:
+            lines.append(f"- {t.nombre}: {t.precio_base}€ ({t.descripcion})")
+        return "\n".join(lines)
+    except Exception as e:
+        print(f"WARNING: get_official_treatments failed: {e}")
+        return "Catàleg de tractaments no disponible temporalment."
 
 @crm_agent.tool
 def get_species_info(ctx: RunContext[AgentDeps], name: str) -> str:
     """Obté detalls tècnics d'una espècie de la base de dades."""
-    species = Species.objects.filter(name__icontains=name).first()
-    if species:
-        return f"Espècie: {species.name}. Detalls: {species.details}"
-    return "No s'ha trobat informació tècnica específica."
+    try:
+        species = Species.objects.filter(name__icontains=name).first()
+        if species:
+            return f"Espècie: {species.name}. Detalls: {species.details}"
+        return "No s'ha trobat informació tècnica específica."
+    except Exception as e:
+        print(f"WARNING: get_species_info failed: {e}")
+        return "No s'ha pogut consultar la base de dades d'espècies."

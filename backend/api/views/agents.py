@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState
+from ..agents.serialization import normalize_language, state_for_session
 
 @api_view(['GET', 'POST', 'OPTIONS'])
 @permission_classes([AllowAny])
@@ -26,7 +27,13 @@ def chat_with_agents(request):
         return Response({"status": "API is online"})
 
     message = request.data.get('message')
-    language = request.data.get('language')
+    if not message or not str(message).strip():
+        return Response(
+            {"reply": "Missatge buit.", "slots": []},
+            status=400,
+        )
+
+    language = normalize_language(request.data.get('language'))
     
     try:
         state_data = request.session.get('agent_state')
@@ -34,12 +41,11 @@ def chat_with_agents(request):
         
         if state_data:
             try:
-                # Usar model_validate con context para ser más permisivo si el estado cambió
                 orchestrator.state = AgentState.model_validate(state_data)
-                if language: orchestrator.state.language = language
+                orchestrator.state.language = language
             except Exception:
-                orchestrator.state = AgentState(language=language or "ca")
-        elif language:
+                orchestrator.state = AgentState(language=language)
+        else:
             orchestrator.state.language = language
 
         # Ejecución
@@ -48,7 +54,11 @@ def chat_with_agents(request):
         if isinstance(result, str):
             result = {"message": result}
 
-        request.session['agent_state'] = orchestrator.state.model_dump()
+        try:
+            request.session['agent_state'] = state_for_session(orchestrator.state)
+            request.session.modified = True
+        except Exception as session_err:
+            print(f"WARNING: No se pudo guardar agent_state en sesión: {session_err}")
 
         res_data = {
             "reply": result.get("message", ""),
@@ -65,11 +75,11 @@ def chat_with_agents(request):
 
     except Exception as e:
         print(f"CRITICAL ERROR: {traceback.format_exc()}")
+        # 200 para que el modal muestre el mensaje en lugar de un fallo de red genérico
         response = Response({
-            "reply": f"Error intern de connexió. Si us plau, intenta-ho de nou.",
-            "debug": str(e),
-            "traceback": traceback.format_exc()
-        }, status=500)
+            "reply": "Error intern de connexió. Si us plau, intenta-ho de nou.",
+            "slots": [],
+        }, status=200)
         response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
         response["Access-Control-Allow-Credentials"] = "true"
         return response
