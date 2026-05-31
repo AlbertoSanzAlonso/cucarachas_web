@@ -13,6 +13,7 @@ import DashboardOverview from '@/components/Admin/DashboardOverview';
 import WebmailAccess from '@/components/Admin/WebmailAccess';
 import ProfileModal from '@/components/Admin/ProfileModal';
 import CalendarManager from '@/components/Admin/CalendarManager';
+import LeadsManager from '@/components/Admin/LeadsManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -65,15 +66,19 @@ const AdminDashboard = () => {
       <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
         <TopBar 
           user={user}
+          leads={leads}
           setSidebarOpen={setSidebarOpen}
           profileDropdownOpen={profileDropdownOpen}
           setProfileDropdownOpen={setProfileDropdownOpen}
           setIsProfileModalOpen={setIsProfileModalOpen}
+          setActiveTab={setActiveTab}
           handleLogout={handleLogout}
         />
 
         {activeTab === 'overview' ? (
           <DashboardOverview leads={leads} isLoading={isLoading} isError={isError} setActiveTab={setActiveTab} />
+        ) : activeTab === 'leads' ? (
+          <LeadsManager leads={leads} isLoading={isLoading} isError={isError} />
         ) : activeTab === 'mail' ? (
           <WebmailAccess />
         ) : activeTab === 'calendar' ? (

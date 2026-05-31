@@ -96,4 +96,4 @@ Entrada desde chat: `booking.address` en `POST /api/chat/` → `confirm_booking_
 
 - Slots: `ChatMessage.jsx`
 - Reserva: `BookingContactForm` → nombre → dirección → teléfono
-- Admin: `CalendarManager.jsx`
+- Admin: `CalendarManager.jsx` — título visible `Primera revisió amb {cliente}` desde `attendees[0].name`

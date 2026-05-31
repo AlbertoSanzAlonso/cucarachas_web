@@ -10,7 +10,7 @@ Cada subcarpeta contiene un `SKILL.md` con instrucciones para agentes de IA (ver
 | `branding_manager/` | Marca y tokens CSS |
 | `service_auditor/` | Especies / servicios |
 | `copywriter_local/` | i18n y tono |
-| `ui_ux_pro_max/` | UX, conversión, formulario reserva y admin |
+| `ui_ux_pro_max/` | UX, conversión, reserva, admin leads CRM + agenda |
 | `tailwind_design_system/` | Tailwind v4 |
 
 Índice ampliado en `AGENTS.md` en la raíz del repositorio.

@@ -11,7 +11,7 @@ description: >-
 
 1. Modal diagnóstico → veredicto → CTA agendar / presupuesto / llamada
 2. FloatingCTA persistente en home
-3. Admin Dashboard → Agenda (Cal.com en tiempo real)
+3. Admin Dashboard → Leads CRM + Agenda (Cal.com en tiempo real)
 
 ## Veredicto modal
 
@@ -39,9 +39,20 @@ Flujo **3 pasos** en `BookingContactForm.jsx`:
 - Confirmación: mensaje «visita presencial» + dirección
 - Errores: tono amable + 933 309 169
 
-## Admin Agenda (`CalendarManager.jsx`)
+## Admin Dashboard
+
+### Leads CRM (`LeadsManager.jsx` + `DashboardOverview.jsx`)
+
+- **API**: `GET /api/clientes/` — campos Django: `nombre`, `email`, `telefono`, `created_at`
+- **Normalizar siempre** con `@/utils/leadDisplay` (`normalizeLead`, `formatLeadDate`) — no asumir `name` / `status` del frontend antiguo
+- Overview: 4 leads recientes + stat «Leads Pendents» clicable → pestaña `leads`
+- `TopBar`: campana con dropdown de leads recientes → navega a `leads`
+- Plaga por defecto «Cucarachas»; estado por defecto «Nou» (modelo `Cliente` aún sin `status`/`plaga`)
+
+### Admin Agenda (`CalendarManager.jsx`)
 
 - Lista cards con fecha, cliente, estado, dirección si existe
+- Título card: `Primera revisió amb {attendee.name}` (fallback «Visita tècnica»)
 - Refresh manual
 - Cancelar por `booking.uid`
 - Enlace externo `app.cal.eu/bookings/{uid}`

@@ -144,8 +144,14 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
+- **Orquestador**: `AdminDashboard.jsx` — pestanyes `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
-- **Agenda**: `CalendarManager.jsx` — llistat Cal.com (`fetch_cal_bookings`, event `278962`); cancel·lar per `uid`; enllaç `app.cal.eu`.
+- **Model API `Cliente`**: campos reales `nombre`, `email`, `telefono`, `documento_fiscal`, `created_at`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar.
+- **Normalització UI**: `frontend/src/utils/leadDisplay.js` — `normalizeLead()`, `formatLeadDate()`. Usar en `DashboardOverview`, `LeadsManager` i `TopBar`.
+- **Overview**: `DashboardOverview.jsx` — stats clicables (Leads → `leads`, Cites → `calendar`); taula «Leads Recents» (4 últims); «Veure tots» i chevron naveguen a Leads.
+- **Leads**: `LeadsManager.jsx` — llistat complet de contactes (nom, email, telèfon, plaga per defecte «Cucarachas», estat «Nou»).
+- **Notificacions**: `TopBar.jsx` — campana amb dropdown de leads recents; enllaç a pestanya Leads.
+- **Agenda**: `CalendarManager.jsx` — llistat Cal.com (`fetch_cal_bookings`, event `278962`); títol card `Primera revisió amb {client}`; cancel·lar per `uid`; enllaç `app.cal.eu`.
 - El token s'injecta automàticament des de Redux (`auth.token`) a cada petició del dashboard.
 
 ## 🔐 Autenticació (Django DRF Token)

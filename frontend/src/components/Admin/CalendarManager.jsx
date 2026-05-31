@@ -5,6 +5,14 @@ import { useSelector } from 'react-redux';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
 
+const getBookingDisplayTitle = (booking) => {
+  const clientName = booking.attendees?.[0]?.name?.trim();
+  if (clientName) {
+    return `Primera revisió amb ${clientName}`;
+  }
+  return booking.title || 'Visita tècnica';
+};
+
 const CalendarManager = () => {
   const [bookings, setBookings] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -148,7 +156,7 @@ const CalendarManager = () => {
                     </span>
                   </div>
                   <h3 className="font-black text-lg text-primary-gray mb-4 leading-tight">
-                    {booking.title || 'Visita Tècnica'}
+                    {getBookingDisplayTitle(booking)}
                   </h3>
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center text-sm text-primary-gray/60 font-medium">
