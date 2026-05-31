@@ -4,7 +4,7 @@ from .crm import (
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet, 
     CitaViewSet, ReporteServicioViewSet
 )
-from .cal import cal_webhook, get_cal_slots, get_cal_bookings, cancel_cal_booking
+from .cal import cal_webhook, get_cal_slots, get_cal_bookings, cancel_cal_booking, update_cal_booking_view
 from .agents import chat_with_agents
 from .debug import debug_system
 from .geo import geo_search, geo_reverse

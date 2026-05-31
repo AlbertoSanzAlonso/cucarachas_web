@@ -58,8 +58,22 @@
   letter-spacing: 0.08em;
   color: var(--color-primary-gray);
   opacity: 0.55;
-  border-bottom: 1px solid #f1f5f9;
-  background: #fafbfc;
+  border-bottom: 1px solid #eef2f7;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  transition: all 0.2s ease;
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-header {
+  padding: 0.85rem 0.35rem;
+  font-size: 0.62rem;
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-header.rbc-today {
+  background: linear-gradient(135deg, var(--color-primary-blue) 0%, #00a3c4 55%, var(--color-accent-green) 100%);
+  color: #fff;
+  opacity: 1;
+  border-bottom-color: transparent;
+  box-shadow: 0 4px 14px rgba(0, 128, 187, 0.22);
 }
 
 .admin-calendar-wrapper .rbc-time-view {
@@ -67,10 +81,11 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #f1f5f9;
+  border: 1px solid #e8eef4;
   border-radius: 1.5rem;
-  background: #fff;
+  background: linear-gradient(180deg, #fafcff 0%, #ffffff 100%);
   overflow: hidden;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .admin-calendar-wrapper .rbc-month-view {
@@ -121,6 +136,19 @@
   background-color: rgba(0, 128, 187, 0.04);
 }
 
+.admin-calendar-wrapper .rbc-time-view .rbc-day-bg.rbc-today {
+  background: linear-gradient(
+    180deg,
+    rgba(0, 128, 187, 0.07) 0%,
+    rgba(52, 211, 153, 0.05) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-day-bg:not(.rbc-today):nth-child(even) {
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.9) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
 .admin-calendar-wrapper .rbc-off-range-bg {
   background: #fafbfc;
 }
@@ -147,29 +175,115 @@
   color: #fff;
 }
 
-.admin-calendar-wrapper .rbc-event {
-  background: var(--color-primary-blue);
+.admin-calendar-wrapper .rbc-event,
+.admin-calendar-wrapper .admin-cal-event {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-blue) 0%,
+    #0099b8 45%,
+    var(--color-accent-green) 100%
+  );
   border: none;
-  border-radius: 0.625rem;
-  padding: 0.2rem 0.45rem;
+  border-left: 3px solid rgba(255, 255, 255, 0.55);
+  border-radius: 0.75rem;
+  padding: 0.25rem 0.5rem;
   font-size: 0.72rem;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 128, 187, 0.2);
+  box-shadow:
+    0 4px 14px rgba(0, 128, 187, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  overflow: hidden;
 }
 
-.admin-calendar-wrapper .rbc-event:hover {
-  background: var(--color-primary-blue-hv);
+.admin-calendar-wrapper .rbc-time-view .rbc-event,
+.admin-calendar-wrapper .rbc-time-view .admin-cal-event {
+  min-height: 2.25rem;
+  padding: 0.35rem 0.55rem;
+  border-radius: 0.875rem;
 }
 
-.admin-calendar-wrapper .rbc-event.rbc-selected {
-  background: var(--color-primary-blue-hv);
+.admin-calendar-wrapper .rbc-event:hover,
+.admin-calendar-wrapper .admin-cal-event:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 6px 18px rgba(0, 128, 187, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-.admin-calendar-wrapper .rbc-event-content {
+.admin-calendar-wrapper .rbc-event.rbc-selected,
+.admin-calendar-wrapper .admin-cal-event--selected {
+  background: linear-gradient(
+    135deg,
+    #006fa3 0%,
+    #0088a8 50%,
+    #10b981 100%
+  );
+  box-shadow:
+    0 0 0 2px rgba(255, 255, 255, 0.85),
+    0 6px 20px rgba(0, 111, 163, 0.4);
+}
+
+.admin-calendar-wrapper .admin-cal-event__inner {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+  line-height: 1.2;
+}
+
+.admin-calendar-wrapper .admin-cal-event__title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  font-weight: 800;
+  font-size: 0.68rem;
+  letter-spacing: 0.01em;
+}
+
+.admin-calendar-wrapper .admin-cal-event__meta {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.6rem;
+  font-weight: 600;
+  opacity: 0.88;
+}
+
+.admin-calendar-wrapper .rbc-time-view .admin-cal-event__title {
+  font-size: 0.72rem;
+}
+
+.admin-calendar-wrapper .rbc-time-view .admin-cal-event__meta {
+  font-size: 0.62rem;
+}
+
+.admin-calendar-wrapper .rbc-month-view .rbc-event {
+  border-radius: 0.5rem;
+  padding: 0.15rem 0.4rem;
+}
+
+.admin-calendar-wrapper .rbc-month-view .admin-cal-event__meta {
+  display: none;
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-current-time-indicator {
+  background: linear-gradient(90deg, var(--color-accent-green), var(--color-primary-blue));
+  height: 2px;
+  box-shadow: 0 0 8px rgba(52, 211, 153, 0.5);
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-allday-cell {
+  display: none;
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-time-gutter {
+  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-day-slot .rbc-events-container {
+  margin-right: 6px;
 }
 
 .admin-calendar-wrapper .rbc-show-more {

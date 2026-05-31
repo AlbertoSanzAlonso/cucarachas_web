@@ -53,6 +53,11 @@
       "continue": "Continue",
       "submit": "Confirm appointment"
     },
+    "slots": {
+      "choose_day": "Choose a day",
+      "choose_time": "Choose a time",
+      "back_to_days": "Back to days"
+    },
     "chat": {
       "confirm_slot": "I want the appointment on {{date}} at {{time}}",
       "confirmed": "Perfect! I've booked your appointment for **{{date}} at {{time}}**. You'll receive a confirmation email. Need anything else?",

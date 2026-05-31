@@ -8,6 +8,7 @@ import { ca } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '@/components/Admin/adminCalendar.css';
 import BookingDetailModal, { getBookingDisplayTitle } from '@/components/Admin/BookingDetailModal';
+import BookingEditModal from '@/components/Admin/BookingEditModal';
 import ConfirmModal from '@/components/Admin/ConfirmModal';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
@@ -57,6 +58,7 @@ const CalendarManager = () => {
   const [isError, setIsError] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
   const [cancelError, setCancelError] = useState(null);
   const [currentView, setCurrentView] = useState('week');
@@ -168,11 +170,32 @@ const CalendarManager = () => {
     return 'day';
   }, []);
 
-  const eventPropGetter = useCallback(() => ({
-    style: {
-      backgroundColor: 'var(--color-primary-blue)',
-      borderColor: 'var(--color-primary-blue-hv)',
-    },
+  const handleRequestEdit = () => {
+    setShowEditModal(true);
+  };
+
+  const handleCloseEdit = () => {
+    setShowEditModal(false);
+  };
+
+  const handleEditSaved = () => {
+    setSelectedBooking(null);
+    fetchBookings();
+  };
+
+  const eventPropGetter = useCallback((_event, _start, _end, isSelected) => ({
+    className: isSelected ? 'admin-cal-event admin-cal-event--selected' : 'admin-cal-event',
+  }), []);
+
+  const calendarComponents = useMemo(() => ({
+    event: ({ event, title }) => (
+      <div className="admin-cal-event__inner">
+        <span className="admin-cal-event__title">{title}</span>
+        {event.resource?.attendees?.[0]?.name && (
+          <span className="admin-cal-event__meta">{event.resource.attendees[0].name}</span>
+        )}
+      </div>
+    ),
   }), []);
 
   return (
@@ -262,6 +285,7 @@ const CalendarManager = () => {
                 onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
                 eventPropGetter={eventPropGetter}
+                components={calendarComponents}
                 style={{ height: '100%', minHeight: 0 }}
               />
             </div>
@@ -274,8 +298,17 @@ const CalendarManager = () => {
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}
           onRequestCancel={handleRequestCancel}
+          onRequestEdit={handleRequestEdit}
         />
       )}
+
+      <BookingEditModal
+        isOpen={showEditModal}
+        onClose={handleCloseEdit}
+        booking={selectedBooking}
+        token={token}
+        onSaved={handleEditSaved}
+      />
 
       <ConfirmModal
         isOpen={showCancelConfirm}

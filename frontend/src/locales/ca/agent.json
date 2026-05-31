@@ -209,6 +209,11 @@
       "continue": "Continuar",
       "submit": "Confirmar cita"
     },
+    "slots": {
+      "choose_day": "Tria un dia",
+      "choose_time": "Tria una hora",
+      "back_to_days": "Tornar als dies"
+    },
     "chat": {
       "confirm_slot": "Vull la cita el {{date}} a les {{time}}",
       "confirmed": "Perfecte! He bloquejat la teva cita per **{{date}} a les {{time}}**. Rebràs un correu de confirmació. Necessites res més?",

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar as CalendarIcon, Clock, User, Trash2, ExternalLink, X } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, User, Trash2, ExternalLink, X, Pencil } from 'lucide-react';
 
 export const getBookingDisplayTitle = (booking) => {
   const clientName = booking.attendees?.[0]?.name?.trim();
@@ -10,7 +10,7 @@ export const getBookingDisplayTitle = (booking) => {
   return booking.title || 'Visita tècnica';
 };
 
-const BookingDetailModal = ({ booking, onClose, onRequestCancel }) => {
+const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }) => {
   if (!booking) return null;
 
   const location =
@@ -94,6 +94,15 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel }) => {
             <div className="flex gap-2 pt-4 border-t border-gray-50">
               <button
                 type="button"
+                onClick={onRequestEdit}
+                disabled={!booking.uid}
+                className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-primary-blue/5 text-primary-blue hover:bg-primary-blue/10 transition-colors disabled:opacity-40 font-bold text-sm"
+              >
+                <Pencil size={18} />
+                Editar
+              </button>
+              <button
+                type="button"
                 onClick={onRequestCancel}
                 disabled={!booking.uid}
                 className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors disabled:opacity-40 font-bold text-sm"
@@ -105,10 +114,10 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel }) => {
                 href={booking.uid ? `https://app.cal.eu/bookings/${booking.uid}` : '#'}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-primary-blue/5 text-primary-blue hover:bg-primary-blue/10 transition-colors font-bold text-sm"
+                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-primary-gray/60 hover:bg-gray-100 transition-colors font-bold text-sm px-4"
+                title="Obrir a Cal.com"
               >
                 <ExternalLink size={18} />
-                Cal.com
               </a>
             </div>
           </div>

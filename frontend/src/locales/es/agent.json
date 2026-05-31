@@ -215,6 +215,11 @@
       "continue": "Continuar",
       "submit": "Confirmar cita"
     },
+    "slots": {
+      "choose_day": "Elige un día",
+      "choose_time": "Elige una hora",
+      "back_to_days": "Volver a los días"
+    },
     "chat": {
       "confirm_slot": "Quiero la cita el {{date}} a las {{time}}",
       "confirmed": "¡Perfecto! He bloqueado tu cita para el **{{date}} a las {{time}}**. Recibirás un correo de confirmación. ¿Necesitas algo más?",

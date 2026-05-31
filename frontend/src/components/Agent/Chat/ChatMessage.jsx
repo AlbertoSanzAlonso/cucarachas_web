@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import BookingContactForm from './BookingContactForm';
+import SlotPicker from './SlotPicker';
 
 const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBookingNameNext, handleBookingAddressNext, handleBookingEmailNext, handleBookingSubmit, isTyping }) => {
   const { t } = useTranslation();
@@ -42,18 +43,7 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBook
 
 
         {msg.slots && (
-          <div className="grid grid-cols-2 gap-2 mt-2">
-            {msg.slots.map(slot => (
-              <button 
-                key={slot.id ?? `${slot.date}-${slot.time}`}
-                onClick={() => handleSlotSelect(slot)}
-                className="bg-white/10 hover:bg-accent-green hover:text-black border border-white/10 rounded-xl p-3 text-xs font-bold text-white transition-all text-center backdrop-blur-sm"
-              >
-                <div className="opacity-60 text-[10px] uppercase mb-1">{slot.date}</div>
-                <div>{slot.time}</div>
-              </button>
-            ))}
-          </div>
+          <SlotPicker slots={msg.slots} onSlotSelect={handleSlotSelect} variant="dark" />
         )}
 
         {msg.showBookingForm && msg.selectedSlot && (

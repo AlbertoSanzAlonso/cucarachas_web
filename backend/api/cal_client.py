@@ -313,3 +313,112 @@ def fetch_cal_bookings(*, take: int = 100) -> tuple[bool, list[dict[str, Any]] |
 
     except requests.RequestException as e:
         return False, f"Error de connexió amb Cal.com: {e}"
+
+
+def reschedule_cal_booking(
+    booking_uid: str,
+    *,
+    start: str,
+    reason: str = "Reprogramada des del panell CECSA",
+) -> tuple[bool, dict[str, Any] | str]:
+    """POST /v2/bookings/{uid}/reschedule."""
+    if not CAL_API_KEY:
+        return False, "Error: CAL_API_KEY no configurada al servidor."
+
+    try:
+        resp = requests.post(
+            f"{CAL_BASE_URL}/bookings/{booking_uid}/reschedule",
+            headers=get_cal_booking_headers(),
+            json={
+                "start": start,
+                "reschedulingReason": reason[:500],
+            },
+            timeout=12,
+        )
+        try:
+            data = resp.json()
+        except ValueError:
+            return False, f"Resposta Cal.com no vàlida ({resp.status_code})"
+
+        if resp.status_code not in (200, 201):
+            err = data.get("error", data) if isinstance(data, dict) else data
+            if isinstance(err, dict):
+                err = err.get("message", str(err))
+            return False, f"Cal.com ha retornat {resp.status_code}: {err}"
+
+        return True, data if isinstance(data, dict) else {"status": "success"}
+
+    except requests.RequestException as e:
+        return False, f"Error de connexió amb Cal.com: {e}"
+
+
+def update_cal_booking_location(
+    booking_uid: str,
+    *,
+    address: str,
+) -> tuple[bool, dict[str, Any] | str]:
+    """PATCH /v2/bookings/{uid}/location (visita presencial)."""
+    if not CAL_API_KEY:
+        return False, "Error: CAL_API_KEY no configurada al servidor."
+
+    addr = (address or "Barcelona").strip()
+    payload = {"location": {"type": "attendeeAddress", "address": addr}}
+
+    try:
+        resp = requests.patch(
+            f"{CAL_BASE_URL}/bookings/{booking_uid}/location",
+            headers=get_cal_booking_headers(),
+            json=payload,
+            timeout=12,
+        )
+        try:
+            data = resp.json()
+        except ValueError:
+            return False, f"Resposta Cal.com no vàlida ({resp.status_code})"
+
+        if resp.status_code != 200:
+            err = data.get("error", data) if isinstance(data, dict) else data
+            if isinstance(err, dict):
+                err = err.get("message", str(err))
+            return False, f"Cal.com ha retornat {resp.status_code}: {err}"
+
+        return True, data if isinstance(data, dict) else {"status": "success"}
+
+    except requests.RequestException as e:
+        return False, f"Error de connexió amb Cal.com: {e}"
+
+
+def update_cal_booking(
+    booking_uid: str,
+    *,
+    start: str | None = None,
+    address: str | None = None,
+) -> tuple[bool, dict[str, Any] | str]:
+    """
+    Actualitza hora i/o adreça d'una reserva Cal.com.
+    Retorna (ok, resultat agregat) o (False, missatge d'error).
+    """
+    results: dict[str, Any] = {}
+    errors: list[str] = []
+
+    if start:
+        ok, result = reschedule_cal_booking(booking_uid, start=start)
+        if ok:
+            results["reschedule"] = result
+        else:
+            errors.append(str(result))
+
+    if address is not None:
+        ok, result = update_cal_booking_location(booking_uid, address=address)
+        if ok:
+            results["location"] = result
+        else:
+            errors.append(str(result))
+
+    if not start and address is None:
+        return False, "Cap camp per actualitzar."
+
+    if errors:
+        return False, " · ".join(errors)
+
+    return True, results

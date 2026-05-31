@@ -4,7 +4,12 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..models import Cliente
-from api.cal_client import CAL_BASE_URL, CAL_BOOKING_API_VERSION, fetch_cal_bookings
+from api.cal_client import (
+    CAL_BASE_URL,
+    CAL_BOOKING_API_VERSION,
+    fetch_cal_bookings,
+    update_cal_booking,
+)
 
 @api_view(['GET', 'POST'])
 def cal_webhook(request):
@@ -97,6 +102,25 @@ def cancel_cal_booking(request, booking_uid):
         return Response(body, status=response.status_code)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_cal_booking_view(request, booking_uid):
+    """Proxy: reprograma hora i/o adreça d'una reserva Cal.com."""
+    start = (request.data.get('start') or '').strip() or None
+    address = request.data.get('address')
+    if address is not None:
+        address = str(address).strip()
+
+    ok, result = update_cal_booking(
+        booking_uid,
+        start=start,
+        address=address,
+    )
+    if ok:
+        return Response({"status": "success", "data": result}, status=200)
+    return Response({"status": "error", "message": result}, status=502)
+
 
 @api_view(['GET'])
 def get_cal_slots(request):
