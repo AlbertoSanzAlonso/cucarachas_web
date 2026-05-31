@@ -101,9 +101,79 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}
 
 
+def _is_slot_booking_step(message: str) -> bool:
+    """El usuario ya eligió un horario (p. ej. desde el widget de slots)."""
+    return message.strip().lower().startswith("reserva:")
+
+
+def _is_initial_scheduling_request(message: str) -> bool:
+    """Primera petición de cita (CTA o texto explícito), no datos de contacto posteriores."""
+    lower = message.lower()
+    if _is_slot_booking_step(message):
+        return False
+    phrases = (
+        "agendar",
+        "reservar",
+        "cita gratuïta",
+        "cita gratuita",
+        "visita gratuïta",
+        "visita gratuita",
+        "inspecció gratuïta",
+        "inspección gratuita",
+    )
+    return any(p in lower for p in phrases)
+
+
+async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
+    """Lista horarios vía Cal.com sin LLM (evita timeout y ahorra tokens)."""
+    from api.cal_client import CAL_API_KEY, fetch_available_slots
+
+    if not CAL_API_KEY:
+        msg = (
+            "L'agenda no està configurada al servidor (falta CAL_API_KEY a Coolify)."
+            if lang == "ca"
+            else "La agenda no está configurada en el servidor (falta CAL_API_KEY en Coolify)."
+        )
+        return {"result": {"message": msg, "slots": []}}
+
+    ok, result = fetch_available_slots(days_ahead=7)
+    if ok:
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {
+                "message": ORCHESTRATOR_MESSAGES[lang]["scheduler_slots_intro"],
+                "slots": result,
+                "booking_confirmed": False,
+                "booking_uid": None,
+            },
+        }
+    err_msg = result if isinstance(result, str) else ORCHESTRATOR_MESSAGES[lang]["error_scheduler"]
+    return {"result": {"message": err_msg, "slots": []}}
+
+
 async def scheduler_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
-    lang = agent.language
+    lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
+    if lang not in ("ca", "es"):
+        lang = "ca"
+    agent.language = lang
+
+    if _is_slot_booking_step(state["message"]):
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {
+                "message": ORCHESTRATOR_MESSAGES[lang]["scheduler_collect_data"],
+                "slots": [],
+                "booking_confirmed": False,
+                "booking_uid": None,
+            },
+        }
+
+    if _is_initial_scheduling_request(state["message"]):
+        fast = await _scheduler_slots_fast_path(state, agent, lang)
+        if fast:
+            return fast
+
     try:
         context = (
             f"Context del client: Plaga identificada: {agent.pest_type or 'no especificada'}, "
@@ -116,11 +186,12 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             {**state, "agent_state": agent.model_dump(mode="json")},
             timeout_key="scheduler",
         )
+        slots = output.available_slots or []
         return {
             "agent_state": agent.model_dump(mode="json"),
             "result": {
                 "message": output.message,
-                "slots": output.available_slots,
+                "slots": slots,
                 "booking_confirmed": output.booking_confirmed,
                 "booking_uid": output.booking_uid,
             },

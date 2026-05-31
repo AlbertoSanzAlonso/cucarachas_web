@@ -35,3 +35,17 @@ def test_doubt_with_city_does_not_fallback():
 def test_should_diagnose_detects_pest_keywords():
     agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
     assert should_diagnose(agent, "tengo cucarachas en el baño") is True
+
+
+def test_scheduling_cta_keeps_session_language_ca():
+    agent = AgentState(language="ca")
+    state = {
+        "message": "Vull agendar la meva cita gratuïta",
+        "language": "ca",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    updated = AgentState.model_validate(state["agent_state"])
+    assert updated.language == "ca"
+    assert updated.intent == Intent.APPOINTMENT
+    assert choose_agent_route(state) == "scheduler"

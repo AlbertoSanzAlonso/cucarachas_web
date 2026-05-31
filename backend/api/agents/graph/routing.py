@@ -29,8 +29,8 @@ PEST_KEYWORDS = (
     "rata",
     "termit",
 )
-CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan")
-ES_HINTS = ("tengo", "hay", "donde", "quiero", "cita", "presupuesto")
+CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan", "gratuïta", "meva")
+ES_HINTS = ("tengo", "hay", "donde", "quiero", "presupuesto", "gratuita", "mi cita")
 
 
 def mentions_pest(msg_lower: str) -> bool:
@@ -51,10 +51,17 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
-    if "idioma: es" in msg_lower or any(w in msg_lower for w in ES_HINTS):
+    session_lang = state.get("language")
+    if session_lang in ("ca", "es"):
+        agent.language = session_lang
+    elif "idioma: es" in msg_lower:
         agent.language = "es"
-    elif "idioma: ca" in msg_lower or any(w in msg_lower for w in CA_HINTS):
+    elif "idioma: ca" in msg_lower:
         agent.language = "ca"
+    elif any(w in msg_lower for w in CA_HINTS):
+        agent.language = "ca"
+    elif any(w in msg_lower for w in ES_HINTS):
+        agent.language = "es"
 
     if any(kw in msg_lower for kw in DIAGNOSTIC_KEYWORDS):
         agent.intent = Intent.QUOTE

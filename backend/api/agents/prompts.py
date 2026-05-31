@@ -121,6 +121,14 @@ ORCHESTRATOR_MESSAGES = {
             "🛡️ **Garantia**: {months} mesos de cobertura total.\n\n"
             "Vols agendar la inspecció gratuïta per confirmar aquests detalls?"
         ),
+        "scheduler_slots_intro": (
+            "Perfecte! Aquests són els horaris disponibles per a la teva "
+            "inspecció gratuïta a Barcelona. Tria el que et vagi millor:"
+        ),
+        "scheduler_collect_data": (
+            "Genial, horari seleccionat. Per confirmar la cita necessito: "
+            "nom complet, correu electrònic, telèfon i adreça exacta de la propietat."
+        ),
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
         "fallback": "Gràcies. Un agent humà es posarà en contacte amb tu.",
@@ -134,6 +142,14 @@ ORCHESTRATOR_MESSAGES = {
             "📋 **Desglose**: {breakdown}\n"
             "🛡️ **Garantía**: {months} meses de cobertura total.\n\n"
             "¿Quieres agendar la inspección gratuita para confirmar estos detalles?"
+        ),
+        "scheduler_slots_intro": (
+            "¡Perfecto! Estos son los horarios disponibles para tu "
+            "inspección gratuita en Barcelona. Elige el que mejor te venga:"
+        ),
+        "scheduler_collect_data": (
+            "Genial, horario seleccionado. Para confirmar la cita necesito: "
+            "nombre completo, correo electrónico, teléfono y dirección exacta de la propiedad."
         ),
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",
