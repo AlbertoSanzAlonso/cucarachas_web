@@ -39,10 +39,14 @@
     "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? Pick an option or type your question.",
     "booking": {
       "ask_name": "Great! To book your **free inspection**, what's your name?",
-      "ask_phone": "Thanks, **{{name}}**. What's your contact phone number?",
+      "ask_address": "Thanks, **{{name}}**. Where should the on-site visit take place?",
+      "ask_phone": "Perfect. What's your contact phone number?",
       "ask_phone_plain": "Thanks. What's your contact phone number?",
       "form_hint": "Appointment: {{date}} · {{time}}",
       "name_placeholder": "Full name",
+      "address_placeholder": "Street, number, floor, city…",
+      "address_hint": "Search on the map, drop a pin, or type the address manually.",
+      "use_gps": "My location",
       "phone_placeholder": "Contact phone",
       "continue": "Continue",
       "submit": "Confirm appointment"

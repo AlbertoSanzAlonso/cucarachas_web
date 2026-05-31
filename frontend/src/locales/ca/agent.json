@@ -195,10 +195,14 @@
     },
     "booking": {
       "ask_name": "Perfecte! Per reservar la teva **inspecció gratuïta**, com et dius?",
-      "ask_phone": "Gràcies, **{{name}}**. Quin és el teu telèfon de contacte?",
+      "ask_address": "Gràcies, **{{name}}**. On ha de ser la visita presencial?",
+      "ask_phone": "Perfecte. Quin és el teu telèfon de contacte?",
       "ask_phone_plain": "Gràcies. Quin és el teu telèfon de contacte?",
       "form_hint": "Cita: {{date}} · {{time}}",
       "name_placeholder": "Nom complet",
+      "address_placeholder": "Carrer, número, pis, ciutat…",
+      "address_hint": "Cerca al mapa, marca el punt o escriu l'adreça a mà.",
+      "use_gps": "La meva ubicació",
       "phone_placeholder": "Telèfon de contacte",
       "continue": "Continuar",
       "submit": "Confirmar cita"
@@ -209,6 +213,9 @@
       "error": "Ho sento, hi ha hagut un problema. Pots trucar-nos al 933 309 169.",
       "server_error": "En aquest moment no puc connectar amb el servidor. Truca'ns al **933 309 169** per a assistència immediata."
     },
+    "geolocation_not_supported": "El teu navegador no admet geolocalització.",
+    "geolocation_denied": "Permís d'ubicació denegat.",
+    "geolocation_error": "No s'ha pogut obtenir l'adreça.",
     "welcome_msg": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Pots preguntar-me sobre els nostres serveis, preus o qualsevol dubte que tinguis sobre el control de plagues.",
     "welcome_msg_home": "Hola! Sóc el recepcionista de CECSA. Com puc ajudar-te avui? Tria una opció o escriu-me el teu dubte."
   }

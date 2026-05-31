@@ -30,6 +30,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     getAIDiagnostic,
     handleSlotSelect,
     handleBookingNameNext,
+    handleBookingAddressNext,
     handleBookingSubmit,
     handleSendMessage
   } = useAgentChat(i18n, answers, path);
@@ -271,6 +272,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                         handleSendMessage={handleSendMessage}
                         handleSlotSelect={handleSlotSelect}
                         handleBookingNameNext={handleBookingNameNext}
+                        handleBookingAddressNext={handleBookingAddressNext}
                         handleBookingSubmit={handleBookingSubmit}
                         isTyping={isTyping}
                       />

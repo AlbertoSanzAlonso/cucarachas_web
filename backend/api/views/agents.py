@@ -64,6 +64,7 @@ def chat_with_agents(request):
                 name=str(booking['name']),
                 phone=str(booking['phone']),
                 language=language,
+                address=str(booking.get('address') or '').strip() or None,
             )
         else:
             if not message:

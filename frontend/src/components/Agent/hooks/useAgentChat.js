@@ -153,16 +153,32 @@ export const useAgentChat = (i18n, answers, path) => {
       { role: 'user', content: name },
       {
         role: 'assistant',
-        content: t('agent.booking.ask_phone', { name }),
+        content: t('agent.booking.ask_address', { name }),
         showBookingForm: true,
-        bookingStep: 'phone',
+        bookingStep: 'address',
         bookingName: name,
         selectedSlot: slot,
       },
     ]);
   }, [t]);
 
-  const handleBookingSubmit = useCallback(({ name, phone, slot }) => {
+  const handleBookingAddressNext = useCallback(({ name, address, slot }) => {
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: address },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_phone', { name }),
+        showBookingForm: true,
+        bookingStep: 'phone',
+        bookingName: name,
+        bookingAddress: address,
+        selectedSlot: slot,
+      },
+    ]);
+  }, [t]);
+
+  const handleBookingSubmit = useCallback(({ name, phone, address, slot }) => {
     const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
     setMessages(prev => [
       ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
@@ -171,7 +187,7 @@ export const useAgentChat = (i18n, answers, path) => {
     setIsTyping(true);
 
     callAgentAPI('', {
-      booking: { slot_time: slotTime, name, phone },
+      booking: { slot_time: slotTime, name, phone, address: address || '' },
       forceDiagnostic: true,
     })
       .then((data) => {
@@ -235,6 +251,7 @@ export const useAgentChat = (i18n, answers, path) => {
     getAIDiagnostic,
     handleSlotSelect,
     handleBookingNameNext,
+    handleBookingAddressNext,
     handleBookingSubmit,
     handleSendMessage
   };

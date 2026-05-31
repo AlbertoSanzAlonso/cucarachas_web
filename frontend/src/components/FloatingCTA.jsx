@@ -132,16 +132,32 @@ const FloatingCTA = () => {
       { role: 'user', content: name },
       {
         role: 'assistant',
-        content: t('agent.booking.ask_phone', { name }),
+        content: t('agent.booking.ask_address', { name }),
         showBookingForm: true,
-        bookingStep: 'phone',
+        bookingStep: 'address',
         bookingName: name,
         selectedSlot: slot,
       },
     ]);
   };
 
-  const handleBookingSubmit = async ({ name, phone, slot }) => {
+  const handleBookingAddressNext = ({ name, address, slot }) => {
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: address },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_phone', { name }),
+        showBookingForm: true,
+        bookingStep: 'phone',
+        bookingName: name,
+        bookingAddress: address,
+        selectedSlot: slot,
+      },
+    ]);
+  };
+
+  const handleBookingSubmit = async ({ name, phone, address, slot }) => {
     const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
     setMessages(prev => [
       ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
@@ -156,7 +172,7 @@ const FloatingCTA = () => {
           message: '',
           language: i18n.language,
           source: 'home',
-          booking: { slot_time: slotTime, name, phone },
+          booking: { slot_time: slotTime, name, phone, address: address || '' },
         },
         chatConfig
       );
@@ -297,7 +313,9 @@ const FloatingCTA = () => {
                              slot={msg.selectedSlot}
                              step={msg.bookingStep || 'name'}
                              bookingName={msg.bookingName}
+                             bookingAddress={msg.bookingAddress}
                              onNameNext={(name) => handleBookingNameNext(name, msg.selectedSlot)}
+                             onAddressNext={handleBookingAddressNext}
                              onSubmit={handleBookingSubmit}
                              disabled={isLoading}
                            />

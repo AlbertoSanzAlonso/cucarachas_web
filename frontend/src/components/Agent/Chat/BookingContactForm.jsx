@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import AddressPicker from '@/components/Agent/Chat/AddressPicker';
 
 const BookingContactForm = ({
   slot,
   step = 'name',
   bookingName = '',
+  bookingAddress = '',
   onNameNext,
+  onAddressNext,
   onSubmit,
   disabled,
   variant = 'dark',
@@ -13,6 +16,8 @@ const BookingContactForm = ({
   const { t } = useTranslation();
   const [name, setName] = useState(bookingName || '');
   const [phone, setPhone] = useState('');
+  const [address, setAddress] = useState(bookingAddress || '');
+  const [coords, setCoords] = useState(null);
   const isLight = variant === 'light';
 
   const inputClass = `w-full border rounded-xl py-3 px-4 text-sm focus:outline-none focus:border-accent-green/50 ${
@@ -28,17 +33,50 @@ const BookingContactForm = ({
     onNameNext(trimmed);
   };
 
+  const handleAddressStep = (e) => {
+    e.preventDefault();
+    const trimmed = address.trim();
+    if (trimmed.length < 5 || disabled) return;
+    onAddressNext({
+      name: (bookingName || name).trim(),
+      address: trimmed,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
+      slot,
+    });
+  };
+
   const handlePhoneStep = (e) => {
     e.preventDefault();
     const trimmedPhone = phone.trim();
     const finalName = (bookingName || name).trim();
-    if (!finalName || !trimmedPhone || disabled) return;
-    onSubmit({ name: finalName, phone: trimmedPhone, slot });
+    const finalAddress = (bookingAddress || address).trim();
+    if (!finalName || !trimmedPhone || finalAddress.length < 5 || disabled) return;
+    onSubmit({
+      name: finalName,
+      phone: trimmedPhone,
+      address: finalAddress,
+      lat: coords?.lat ?? null,
+      lng: coords?.lng ?? null,
+      slot,
+    });
   };
+
+  const continueBtnClass = `w-full disabled:opacity-50 font-black text-xs uppercase tracking-wider py-3 rounded-xl transition-all ${
+    isLight
+      ? 'bg-primary-blue text-white hover:opacity-90'
+      : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
+  }`;
 
   return (
     <form
-      onSubmit={step === 'name' ? handleNameStep : handlePhoneStep}
+      onSubmit={
+        step === 'name'
+          ? handleNameStep
+          : step === 'address'
+            ? handleAddressStep
+            : handlePhoneStep
+      }
       className={`mt-3 p-4 rounded-2xl border space-y-3 text-left w-full max-w-[320px] ${
         isLight ? 'border-gray-100 bg-gray-50' : 'border-white/10 bg-white/5'
       }`}
@@ -47,7 +85,7 @@ const BookingContactForm = ({
         {t('agent.booking.form_hint', { date: slot.date, time: slot.time })}
       </p>
 
-      {step === 'name' ? (
+      {step === 'name' && (
         <>
           <input
             type="text"
@@ -60,19 +98,34 @@ const BookingContactForm = ({
             disabled={disabled}
             className={inputClass}
           />
+          <button type="submit" disabled={disabled || !name.trim()} className={continueBtnClass}>
+            {t('agent.booking.continue')}
+          </button>
+        </>
+      )}
+
+      {step === 'address' && (
+        <>
+          <AddressPicker
+            value={address}
+            onChange={({ address: addr, lat, lng }) => {
+              setAddress(addr);
+              setCoords(lat != null && lng != null ? { lat, lng } : null);
+            }}
+            disabled={disabled}
+            variant={variant}
+          />
           <button
             type="submit"
-            disabled={disabled || !name.trim()}
-            className={`w-full disabled:opacity-50 font-black text-xs uppercase tracking-wider py-3 rounded-xl transition-all ${
-              isLight
-                ? 'bg-primary-blue text-white hover:opacity-90'
-                : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
-            }`}
+            disabled={disabled || address.trim().length < 5}
+            className={continueBtnClass}
           >
             {t('agent.booking.continue')}
           </button>
         </>
-      ) : (
+      )}
+
+      {step === 'phone' && (
         <>
           <input
             type="tel"
