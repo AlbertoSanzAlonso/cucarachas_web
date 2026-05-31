@@ -128,8 +128,24 @@ export const useAgentChat = (i18n, answers, path) => {
       { role: 'user', content: confirmMsg },
       {
         role: 'assistant',
-        content: t('agent.booking.ask_contact'),
+        content: t('agent.booking.ask_name'),
         showBookingForm: true,
+        bookingStep: 'name',
+        selectedSlot: slot,
+      },
+    ]);
+  }, [t]);
+
+  const handleBookingNameNext = useCallback((name, slot) => {
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: name },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_phone', { name }),
+        showBookingForm: true,
+        bookingStep: 'phone',
+        bookingName: name,
         selectedSlot: slot,
       },
     ]);
@@ -137,7 +153,10 @@ export const useAgentChat = (i18n, answers, path) => {
 
   const handleBookingSubmit = useCallback(({ name, phone, slot }) => {
     const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
-    setMessages(prev => prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)));
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: phone },
+    ]);
     setIsTyping(true);
 
     callAgentAPI('', {
@@ -204,6 +223,7 @@ export const useAgentChat = (i18n, answers, path) => {
     scrollRef,
     getAIDiagnostic,
     handleSlotSelect,
+    handleBookingNameNext,
     handleBookingSubmit,
     handleSendMessage
   };

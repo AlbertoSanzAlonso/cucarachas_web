@@ -172,10 +172,13 @@
       "zonas_comunes": "Zones comunes"
     },
     "booking": {
-      "ask_contact": "Perfecte! Per confirmar la teva **inspecció gratuïta**, indica el teu nom i telèfon:",
+      "ask_name": "Perfecte! Per reservar la teva **inspecció gratuïta**, com et dius?",
+      "ask_phone": "Gràcies, **{{name}}**. Quin és el teu telèfon de contacte?",
+      "ask_phone_plain": "Gràcies. Quin és el teu telèfon de contacte?",
       "form_hint": "Cita: {{date}} · {{time}}",
       "name_placeholder": "Nom complet",
       "phone_placeholder": "Telèfon de contacte",
+      "continue": "Continuar",
       "submit": "Confirmar cita"
     },
     "chat": {

@@ -134,8 +134,8 @@ ORCHESTRATOR_MESSAGES = {
             "inspecció gratuïta a Barcelona. Tria el que et vagi millor:"
         ),
         "scheduler_collect_data": (
-            "Perfecte, horari seleccionat. Omple el teu **nom** i **telèfon** "
-            "al formulari de sota per confirmar la cita gratuïta."
+            "Perfecte, horari seleccionat. Indica primer el teu **nom** "
+            "i després el **telèfon** al formulari per confirmar la cita."
         ),
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
@@ -161,8 +161,8 @@ ORCHESTRATOR_MESSAGES = {
             "inspección gratuita en Barcelona. Elige el que mejor te venga:"
         ),
         "scheduler_collect_data": (
-            "Perfecto, horario seleccionado. Rellena tu **nombre** y **teléfono** "
-            "en el formulario de abajo para confirmar la cita gratuita."
+            "Perfecto, horario seleccionado. Indica primero tu **nombre** "
+            "y después tu **teléfono** en el formulario para confirmar la cita."
         ),
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",

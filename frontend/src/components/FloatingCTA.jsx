@@ -108,8 +108,24 @@ const FloatingCTA = () => {
       { role: 'user', content: confirmMsg },
       {
         role: 'assistant',
-        content: t('agent.booking.ask_contact'),
+        content: t('agent.booking.ask_name'),
         showBookingForm: true,
+        bookingStep: 'name',
+        selectedSlot: slot,
+      },
+    ]);
+  };
+
+  const handleBookingNameNext = (name, slot) => {
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: name },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_phone', { name }),
+        showBookingForm: true,
+        bookingStep: 'phone',
+        bookingName: name,
         selectedSlot: slot,
       },
     ]);
@@ -117,7 +133,10 @@ const FloatingCTA = () => {
 
   const handleBookingSubmit = async ({ name, phone, slot }) => {
     const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
-    setMessages(prev => prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)));
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: phone },
+    ]);
     setIsLoading(true);
 
     try {
@@ -238,6 +257,9 @@ const FloatingCTA = () => {
                            <BookingContactForm
                              variant="light"
                              slot={msg.selectedSlot}
+                             step={msg.bookingStep || 'name'}
+                             bookingName={msg.bookingName}
+                             onNameNext={(name) => handleBookingNameNext(name, msg.selectedSlot)}
                              onSubmit={handleBookingSubmit}
                              disabled={isLoading}
                            />

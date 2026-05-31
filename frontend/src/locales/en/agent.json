@@ -38,10 +38,13 @@
     },
     "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? You can ask me about our services, prices, or any questions about pest control. If you prefer, we can also talk directly via **WhatsApp**.",
     "booking": {
-      "ask_contact": "Great! To confirm your **free inspection**, please enter your name and phone:",
+      "ask_name": "Great! To book your **free inspection**, what's your name?",
+      "ask_phone": "Thanks, **{{name}}**. What's your contact phone number?",
+      "ask_phone_plain": "Thanks. What's your contact phone number?",
       "form_hint": "Appointment: {{date}} · {{time}}",
       "name_placeholder": "Full name",
       "phone_placeholder": "Contact phone",
+      "continue": "Continue",
       "submit": "Confirm appointment"
     },
     "chat": {

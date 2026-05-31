@@ -170,10 +170,13 @@
     "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas.",
     "welcome_msg_home": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
     "booking": {
-      "ask_contact": "¡Perfecto! Para confirmar tu **inspección gratuita**, indica tu nombre y teléfono:",
+      "ask_name": "¡Perfecto! Para reservar tu **inspección gratuita**, ¿cómo te llamas?",
+      "ask_phone": "Gracias, **{{name}}**. ¿Cuál es tu teléfono de contacto?",
+      "ask_phone_plain": "Gracias. ¿Cuál es tu teléfono de contacto?",
       "form_hint": "Cita: {{date}} · {{time}}",
       "name_placeholder": "Nombre completo",
       "phone_placeholder": "Teléfono de contacto",
+      "continue": "Continuar",
       "submit": "Confirmar cita"
     },
     "chat": {
