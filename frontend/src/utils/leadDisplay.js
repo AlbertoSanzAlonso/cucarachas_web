@@ -30,6 +30,7 @@ export function normalizeLead(lead) {
     name: lead.nombre || lead.name || 'Sense nom',
     email: lead.email || '',
     phone: lead.telefono || lead.phone || '',
+    documentoFiscal: lead.documento_fiscal || '',
     pest: lead.pest_type || lead.type || 'Cucarachas',
     status: rawStatus,
     statusLabel: STATUS_LABELS[rawStatus] || lead.status || 'Nou',

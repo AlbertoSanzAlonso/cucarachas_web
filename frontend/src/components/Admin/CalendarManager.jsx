@@ -130,6 +130,17 @@ const CalendarManager = () => {
     setSelectedBooking(event.resource);
   }, []);
 
+  const handleDrillDown = useCallback((date) => {
+    setCurrentDate(date);
+    setCurrentView('day');
+  }, []);
+
+  const handleSelectSlot = useCallback((slotInfo) => {
+    if (currentView !== 'month') return;
+    setCurrentDate(slotInfo.start);
+    setCurrentView('day');
+  }, [currentView]);
+
   const eventPropGetter = useCallback(() => ({
     style: {
       backgroundColor: 'var(--color-primary-blue)',
@@ -197,7 +208,7 @@ const CalendarManager = () => {
               </div>
             )}
 
-            <div className="admin-calendar-wrapper">
+            <div className="admin-calendar-wrapper" data-lenis-prevent>
               <Calendar
                 localizer={localizer}
                 events={events}
@@ -215,11 +226,15 @@ const CalendarManager = () => {
                 timeslots={2}
                 min={new Date(1970, 0, 1, 7, 0, 0)}
                 max={new Date(1970, 0, 1, 21, 0, 0)}
-                selectable={false}
+                selectable={currentView === 'month'}
+                drilldownView="day"
+                doShowMoreDrillDown
                 popup
+                onDrillDown={handleDrillDown}
+                onSelectSlot={handleSelectSlot}
                 onSelectEvent={handleSelectEvent}
                 eventPropGetter={eventPropGetter}
-                style={{ height: '100%' }}
+                style={{ height: '100%', minHeight: 0 }}
               />
             </div>
           </motion.div>

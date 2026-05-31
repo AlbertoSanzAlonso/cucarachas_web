@@ -1,6 +1,15 @@
+.admin-calendar-wrapper {
+  height: calc(100vh - 15rem);
+  min-height: 520px;
+  max-height: 900px;
+}
+
 .admin-calendar-wrapper .rbc-calendar {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  min-height: 620px;
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .admin-calendar-wrapper .rbc-toolbar {
@@ -53,17 +62,39 @@
   background: #fafbfc;
 }
 
-.admin-calendar-wrapper .rbc-time-view,
-.admin-calendar-wrapper .rbc-month-view {
+.admin-calendar-wrapper .rbc-time-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   border: 1px solid #f1f5f9;
   border-radius: 1.5rem;
-  overflow: hidden;
   background: #fff;
+  overflow: hidden;
+}
+
+.admin-calendar-wrapper .rbc-month-view {
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid #f1f5f9;
+  border-radius: 1.5rem;
+  overflow: auto;
+  background: #fff;
+  overscroll-behavior: contain;
 }
 
 .admin-calendar-wrapper .rbc-time-header-content,
 .admin-calendar-wrapper .rbc-time-content {
   border-color: #f1f5f9;
+}
+
+.admin-calendar-wrapper .rbc-time-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
 }
 
 .admin-calendar-wrapper .rbc-time-slot {
@@ -155,6 +186,25 @@
   border-left-color: #f1f5f9;
 }
 
+.admin-calendar-wrapper .rbc-month-view .rbc-day-bg {
+  cursor: pointer;
+}
+
+.admin-calendar-wrapper .rbc-month-view .rbc-date-cell {
+  cursor: pointer;
+}
+
+.admin-calendar-wrapper .rbc-button-link {
+  cursor: pointer;
+  font-weight: 800;
+  color: var(--color-primary-gray);
+  text-decoration: none;
+}
+
+.admin-calendar-wrapper .rbc-button-link:hover {
+  color: var(--color-primary-blue);
+}
+
 @media (max-width: 768px) {
   .admin-calendar-wrapper .rbc-toolbar {
     flex-direction: column;
@@ -167,7 +217,8 @@
     margin-bottom: 0.25rem;
   }
 
-  .admin-calendar-wrapper .rbc-calendar {
-    min-height: 480px;
+  .admin-calendar-wrapper {
+    height: calc(100vh - 12rem);
+    min-height: 420px;
   }
 }

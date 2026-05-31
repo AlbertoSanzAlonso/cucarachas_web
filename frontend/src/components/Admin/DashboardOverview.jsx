@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Activity, MessageSquare, TrendingUp, ChevronRight, Calendar } from 'lucide-react';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 
-const DashboardOverview = ({ leads, isLoading, isError, setActiveTab }) => {
+const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLead, onViewAllLeads }) => {
   const normalizedLeads = (leads || []).map(normalizeLead).filter(Boolean);
 
   const stats = [
@@ -53,7 +53,7 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab }) => {
           <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
             <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Leads Recents</h2>
             <button
-              onClick={() => setActiveTab('leads')}
+              onClick={onViewAllLeads}
               className="text-primary-blue font-bold text-xs md:text-sm hover:underline"
             >
               Veure tots
@@ -77,7 +77,11 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab }) => {
                 ) : normalizedLeads.length === 0 ? (
                   <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha leads pendents.</td></tr>
                 ) : normalizedLeads.slice(0, 4).map((lead) => (
-                  <tr key={lead.id} className="hover:bg-gray-50/30 transition-colors">
+                  <tr
+                    key={lead.id}
+                    onClick={() => onSelectLead(lead.id)}
+                    className="hover:bg-gray-50/30 transition-colors cursor-pointer"
+                  >
                     <td className="px-4 md:px-8 py-5">
                       <p className="font-bold text-sm md:text-base text-primary-gray leading-none mb-1">{lead.name}</p>
                       <p className="text-[10px] text-primary-gray/40">{lead.email || formatLeadDate(lead.createdAt) || 'Recent'}</p>
@@ -92,7 +96,10 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab }) => {
                     </td>
                     <td className="px-4 md:px-8 py-5 text-right">
                       <button
-                        onClick={() => setActiveTab('leads')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onSelectLead(lead.id);
+                        }}
                         className="p-2 hover:bg-primary-blue/5 rounded-xl text-primary-blue transition-colors"
                         aria-label="Veure lead"
                       >

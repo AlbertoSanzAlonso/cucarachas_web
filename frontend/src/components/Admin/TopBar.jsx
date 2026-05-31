@@ -11,15 +11,17 @@ const TopBar = ({
   setProfileDropdownOpen, 
   setIsProfileModalOpen, 
   setActiveTab,
+  onSelectLead,
+  onViewAllLeads,
   handleLogout 
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const recentLeads = (leads || []).map(normalizeLead).filter(Boolean).slice(0, 5);
   const pendingCount = recentLeads.length;
 
-  const openLeads = () => {
+  const openLead = (leadId) => {
     setNotificationsOpen(false);
-    setActiveTab('leads');
+    onSelectLead(leadId);
   };
 
   return (
@@ -77,7 +79,7 @@ const TopBar = ({
                       {recentLeads.map((lead) => (
                         <button
                           key={lead.id}
-                          onClick={openLeads}
+                          onClick={() => openLead(lead.id)}
                           className="w-full flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary-blue/5 transition-all text-left"
                         >
                           <div className="p-2 bg-primary-blue/10 rounded-xl text-primary-blue shrink-0">
@@ -95,7 +97,10 @@ const TopBar = ({
 
                   {pendingCount > 0 && (
                     <button
-                      onClick={openLeads}
+                      onClick={() => {
+                        setNotificationsOpen(false);
+                        onViewAllLeads();
+                      }}
                       className="w-full mt-2 px-4 py-3 text-primary-blue font-bold text-sm hover:bg-primary-blue/5 rounded-xl transition-all"
                     >
                       Veure tots els leads

@@ -17,6 +17,7 @@ import LeadsManager from '@/components/Admin/LeadsManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
+  const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
@@ -46,6 +47,21 @@ const AdminDashboard = () => {
     alert("Gestió de perfil directament via Django Admin o implementació pendent.");
   };
 
+  const handleSelectLead = (leadId) => {
+    setSelectedLeadId(leadId);
+    setActiveTab('leads');
+  };
+
+  const handleViewAllLeads = () => {
+    setSelectedLeadId(null);
+    setActiveTab('leads');
+  };
+
+  const handleSetActiveTab = (tab) => {
+    setSelectedLeadId(null);
+    setActiveTab(tab);
+  };
+
   return (
     <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
       <Helmet>
@@ -58,7 +74,7 @@ const AdminDashboard = () => {
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         activeTab={activeTab}
-        setActiveTab={setActiveTab}
+        setActiveTab={handleSetActiveTab}
         handleLogout={handleLogout}
       />
 
@@ -71,14 +87,30 @@ const AdminDashboard = () => {
           profileDropdownOpen={profileDropdownOpen}
           setProfileDropdownOpen={setProfileDropdownOpen}
           setIsProfileModalOpen={setIsProfileModalOpen}
-          setActiveTab={setActiveTab}
+          setActiveTab={handleSetActiveTab}
+          onSelectLead={handleSelectLead}
+          onViewAllLeads={handleViewAllLeads}
           handleLogout={handleLogout}
         />
 
         {activeTab === 'overview' ? (
-          <DashboardOverview leads={leads} isLoading={isLoading} isError={isError} setActiveTab={setActiveTab} />
+          <DashboardOverview
+            leads={leads}
+            isLoading={isLoading}
+            isError={isError}
+            setActiveTab={handleSetActiveTab}
+            onSelectLead={handleSelectLead}
+            onViewAllLeads={handleViewAllLeads}
+          />
         ) : activeTab === 'leads' ? (
-          <LeadsManager leads={leads} isLoading={isLoading} isError={isError} />
+          <LeadsManager
+            leads={leads}
+            isLoading={isLoading}
+            isError={isError}
+            selectedLeadId={selectedLeadId}
+            onSelectLead={handleSelectLead}
+            onClearSelection={() => setSelectedLeadId(null)}
+          />
         ) : activeTab === 'mail' ? (
           <WebmailAccess />
         ) : activeTab === 'calendar' ? (
