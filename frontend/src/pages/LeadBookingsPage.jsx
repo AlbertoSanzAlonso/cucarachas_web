@@ -45,7 +45,7 @@ const LeadBookingsPage = () => {
   const isLoading = leadsLoading || bookingsLoading;
 
   return (
-    <div className="flex min-h-screen bg-[#f8fafc]">
+    <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
       <Helmet>
         <title>
           {lead ? `Cites de ${lead.name} | CECSA` : 'Cites del lead | CECSA'}
@@ -61,7 +61,7 @@ const LeadBookingsPage = () => {
         handleLogout={handleLogout}
       />
 
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12" data-lenis-prevent>
         <TopBar
           user={user}
           leads={leads}
