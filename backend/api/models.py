@@ -65,6 +65,8 @@ class Ubicacion(models.Model):
 
 class Presupuesto(models.Model):
     """Sales quotes before appointment."""
+    id: int
+
     class Estado(models.TextChoices):
         BORRADOR = 'borrador', 'Borrador'
         ENVIADO = 'enviado', 'Enviado'
@@ -95,6 +97,8 @@ class PresupuestoDetalle(models.Model):
 
 class Cita(models.Model):
     """Execution of work (Appointment)."""
+    id: int
+
     class Estado(models.TextChoices):
         PROGRAMADA = 'programada', 'Programada'
         EN_PROGRESO = 'en_progreso', 'En Progreso'
