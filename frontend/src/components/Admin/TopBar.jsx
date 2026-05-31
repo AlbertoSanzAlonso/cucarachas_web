@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LayoutDashboard, Bell, User as UserIcon, LogOut, MessageSquare } from 'lucide-react';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
+import {
+  getAdminUserKey,
+  getReadLeadIds,
+  markLeadAsRead,
+  markLeadsAsRead,
+} from '@/utils/adminNotifications';
 
 const TopBar = ({ 
   user, 
@@ -16,12 +22,38 @@ const TopBar = ({
   handleLogout 
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
-  const recentLeads = (leads || []).map(normalizeLead).filter(Boolean).slice(0, 5);
-  const pendingCount = recentLeads.length;
+  const userKey = getAdminUserKey(user);
+  const [readLeadIds, setReadLeadIds] = useState(() => getReadLeadIds(userKey));
+
+  useEffect(() => {
+    setReadLeadIds(getReadLeadIds(userKey));
+  }, [userKey]);
+
+  const unreadLeads = useMemo(() => {
+    const normalized = (leads || []).map(normalizeLead).filter(Boolean);
+    return normalized
+      .filter((lead) => !readLeadIds.has(String(lead.id)))
+      .slice(0, 5);
+  }, [leads, readLeadIds]);
+
+  const pendingCount = unreadLeads.length;
 
   const openLead = (leadId) => {
+    setReadLeadIds(markLeadAsRead(userKey, leadId, readLeadIds));
     setNotificationsOpen(false);
     onSelectLead(leadId);
+  };
+
+  const handleViewAllLeads = () => {
+    setReadLeadIds(
+      markLeadsAsRead(
+        userKey,
+        unreadLeads.map((lead) => lead.id),
+        readLeadIds,
+      ),
+    );
+    setNotificationsOpen(false);
+    onViewAllLeads();
   };
 
   return (
@@ -72,11 +104,11 @@ const TopBar = ({
 
                   {pendingCount === 0 ? (
                     <p className="text-sm text-primary-gray/40 font-medium px-3 py-6 text-center">
-                      No hi ha leads nous.
+                      No hi ha notificacions noves.
                     </p>
                   ) : (
                     <div className="max-h-64 overflow-y-auto space-y-1">
-                      {recentLeads.map((lead) => (
+                      {unreadLeads.map((lead) => (
                         <button
                           key={lead.id}
                           onClick={() => openLead(lead.id)}
@@ -97,10 +129,7 @@ const TopBar = ({
 
                   {pendingCount > 0 && (
                     <button
-                      onClick={() => {
-                        setNotificationsOpen(false);
-                        onViewAllLeads();
-                      }}
+                      onClick={handleViewAllLeads}
                       className="w-full mt-2 px-4 py-3 text-primary-blue font-bold text-sm hover:bg-primary-blue/5 rounded-xl transition-all"
                     >
                       Veure tots els leads
