@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { buildStaticVerdict, hasExtraInfo } from '@/components/Agent/Diagnostic/buildStaticVerdict';
 
 export const useAgentChat = (i18n, answers, path) => {
   const { t } = useTranslation();
@@ -94,6 +95,20 @@ export const useAgentChat = (i18n, answers, path) => {
     setIsTyping(true);
     setMessages([{ role: 'assistant', content: t('agent.verdict.intro') }]);
 
+    const showVerdict = (content) => {
+      setIsTyping(false);
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content, isVerdict: true }
+      ]);
+    };
+
+    if (!hasExtraInfo(finalAnswers.extra_info)) {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      showVerdict(buildStaticVerdict(pathRef.current, finalAnswers, t));
+      return;
+    }
+
     const diagnosticPrompt = `He completat el diagnòstic interactiu. Aquí tens les meves dades per a un veredicte personalitzat:
     - Tipus de client: ${finalAnswers.who || 'No especificat'}
     - Localització: ${finalAnswers.where || finalAnswers.where_empresa || 'No especificat'}
@@ -101,17 +116,13 @@ export const useAgentChat = (i18n, answers, path) => {
     - Temps des de l'inici: ${finalAnswers.since || 'No especificat'}
     - Urgència: ${finalAnswers.urgency || finalAnswers.sanitary_risk || 'No especificat'}
     - Nens/Mascotes o Certificat: ${finalAnswers.sensitive || finalAnswers.certificate || 'No especificat'}
-    - Informació extra: ${finalAnswers.extra_info || 'Cap'}
+    - Informació extra: ${finalAnswers.extra_info}
     
     Si us plau, genera un diagnòstic únic, ètic i professional per a aquest cas en aquest idioma: ${i18n.language}.`;
 
     try {
       const data = await callAgentAPI(diagnosticPrompt, { forceDiagnostic: true });
-      setIsTyping(false);
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content: data.reply, isVerdict: true, slots: data.slots }
-      ]);
+      showVerdict(data.reply);
     } catch (error) {
       setIsTyping(false);
       setMessages(prev => [

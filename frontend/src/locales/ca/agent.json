@@ -43,7 +43,29 @@
       "offer_title": "OFERTA ESPECIAL",
       "offer_desc": "Per haver completat el diagnòstic, t'oferim una **PRIMERA VISITA D'INSPECCIÓ TOTALMENT GRATUÏTA** a Barcelona i rodalies.",
       "contact_help": "Si tens qualsevol dubte, pots escriure la teva pregunta a sota o triar una opció:",
-      "result": "D'acord, he analitzat el teu cas detalladament. Has indicat la presència de paneroles a la zona de **{{where}}** amb una freqüència de **{{qty}}**."
+      "result": "D'acord, he analitzat el teu cas detalladament. Has indicat la presència de paneroles a la zona de **{{where}}** amb una freqüència de **{{qty}}**.",
+      "static": {
+        "particular": {
+          "urgent": "Has indicat paneroles a **{{where}}** amb **{{qty}}**, des de **{{since}}**, i la teva urgència és **{{urgency}}**. Amb nens o mascotes a casa (**{{sensitive}}**), cal actuar amb productes de baixa toxicitat i exclusió mecànica. El meu veredicte: **necessites una intervenció prioritària**. Una infestació activa en zones crítiques com la cuina pot propagar-se ràpidament en 24-48 hores.",
+          "moderate": "Has indicat paneroles a **{{where}}** amb **{{qty}}**, des de **{{since}}**, amb urgència **{{urgency}}**. Hi ha nens o mascotes: **{{sensitive}}**. El meu veredicte: **conviene una inspecció tècnica aviat**. Encara que no sigui una emergència immediata, el problema sol empitjorar si s'ajorna més d'una setmana.",
+          "info": "Has indicat paneroles a **{{where}}** amb **{{qty}}**, des de **{{since}}**. La teva prioritat actual és **{{urgency}}** i tens nens/mascotes: **{{sensitive}}**. El meu veredicte: **el teu cas es pot abordar amb calma**, però recomanem una inspecció gratuïta per confirmar l'espècie i el punt d'origen abans que el problema creixi."
+        },
+        "empresa": {
+          "urgent": "Gestiones un **{{business}}** amb incidències a **{{where}}**, nivell **{{level}}** i risc sanitari **{{risk}}**. Necessites certificat: **{{certificate}}**. El meu veredicte: **risc alt per a la teva activitat**. En negocis amb inspecció sanitària o risc de tancament, cal actuar en 24-48 hores amb un protocol documentat i traçable.",
+          "moderate": "El teu negoci (**{{business}}**) presenta activitat a **{{where}}** amb nivell **{{level}}** i risc sanitari **{{risk}}**. Certificat requerit: **{{certificate}}**. El meu veredicte: **conviene planificar una intervenció aquesta setmana** per evitar que l'incident afecti clients, inspeccions o la teva reputació.",
+          "info": "Has descrit un **{{business}}** amb avistaments a **{{where}}**, nivell **{{level}}** i risc sanitari **{{risk}}**. Certificat: **{{certificate}}**. El meu veredicte: **situació controlable amb actuació preventiva**. Una inspecció gratuïta ens permetrà definir un pla d'acció adaptat al teu negoci sense interrompre l'activitat."
+        },
+        "admin": {
+          "urgent": "Gestionas **{{gestion}}** amb incidències a **{{where}}**, des de **{{since}}**, amb volum **{{volume}}** i prioritat **{{priority}}**. Prefereixes avançar amb: **{{advance}}**. El meu veredicte: **cas prioritari de gestió**. Una incidència recurrent o estesa en edificis públics o finques pot escalar ràpidament a queixes veïnals, inspeccions o dany reputacional.",
+          "moderate": "Gestionas **{{gestion}}** amb focus a **{{where}}**, des de **{{since}}**, amb **{{volume}}** incidències i prioritat **{{priority}}**. Forma d'avancar: **{{advance}}**. El meu veredicte: **conviene una visita tècnica planificada** per localitzar el focus, documentar l'actuació i evitar recurrències que compliquin la gestió.",
+          "info": "Gestionas **{{gestion}}** amb incidència a **{{where}}**, des de **{{since}}**, volum **{{volume}}** i prioritat **{{priority}}**. Vols avançar amb: **{{advance}}**. El meu veredicte: **situació encara manageable**. Una inspecció gratuïta i informe tècnic et donaran base per decidir el següent pas amb la junta o l'administració."
+        },
+        "comunidad": {
+          "urgent": "El problema està a **{{where}}**, des de **{{since}}**. Ets **{{role}}** i preveus que, si no s'actua, **{{concern}}**. Vols ajuda de la comunitat: **{{help}}**. El meu veredicte: **risc d'extensió a tot l'edifici**. Quan afecta diverses vivendes o zones comunes, cal coordinació ràpida per evitar un focus actiu que es propagui per canonades i patis.",
+          "moderate": "Has detectat el problema a **{{where}}**, des de **{{since}}**. La teva relació: **{{role}}**. Si no s'actua, creus que **{{concern}}**. Ajuda comunitària: **{{help}}**. El meu veredicte: **conviene actuar abans que creixi**. Una inspecció gratuïta ens permet confirmar l'abast i preparar un pla que puguis presentar a la junta o l'administrador.",
+          "info": "El problema està localitzat a **{{where}}**, des de **{{since}}**. Ets **{{role}}** i, si no s'actua, **{{concern}}**. Preferència d'ajuda: **{{help}}**. El meu veredicte: **encara és el moment ideal per intervenir amb calma**. Una visita tècnica gratuïta et donarà arguments concrets per mobilitzar la comunitat si cal."
+        }
+      }
     },
     "give_diagnostic": "Dona'm el diagnòstic",
     "questions": {

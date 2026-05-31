@@ -39,7 +39,34 @@
       "qty_punctual": "avistamientos puntuales",
       "qty_frequent": "frecuente",
       "qty_grave": "grave",
-      "qty_closure": "cierre inminente"
+      "qty_closure": "cierre inminente",
+      "action_schedule": "Quiero agendar mi cita gratuita",
+      "action_budget": "Pedir presupuesto",
+      "offer_title": "OFERTA ESPECIAL",
+      "offer_desc": "Por haber completado el diagnóstico, te ofrecemos una **PRIMERA VISITA DE INSPECCIÓN TOTALMENTE GRATUITA** en Barcelona y alrededores.",
+      "contact_help": "Si tienes cualquier duda, puedes escribir tu pregunta abajo o elegir una opción:",
+      "static": {
+        "particular": {
+          "urgent": "Has indicado cucarachas en **{{where}}** con **{{qty}}**, desde **{{since}}**, y tu urgencia es **{{urgency}}**. Con niños o mascotas en casa (**{{sensitive}}**), hay que actuar con productos de baja toxicidad y exclusión mecánica. Mi veredicto: **necesitas una intervención prioritaria**. Una infestación activa en zonas críticas como la cocina puede propagarse rápidamente en 24-48 horas.",
+          "moderate": "Has indicado cucarachas en **{{where}}** con **{{qty}}**, desde **{{since}}**, con urgencia **{{urgency}}**. Hay niños o mascotas: **{{sensitive}}**. Mi veredicto: **conviene una inspección técnica pronto**. Aunque no sea una emergencia inmediata, el problema suele empeorar si se pospone más de una semana.",
+          "info": "Has indicado cucarachas en **{{where}}** con **{{qty}}**, desde **{{since}}**. Tu prioridad actual es **{{urgency}}** y tienes niños/mascotas: **{{sensitive}}**. Mi veredicto: **tu caso se puede abordar con calma**, pero recomendamos una inspección gratuita para confirmar la especie y el punto de origen antes de que el problema crezca."
+        },
+        "empresa": {
+          "urgent": "Gestionas un **{{business}}** con incidencias en **{{where}}**, nivel **{{level}}** y riesgo sanitario **{{risk}}**. Necesitas certificado: **{{certificate}}**. Mi veredicto: **riesgo alto para tu actividad**. En negocios con inspección sanitaria o riesgo de cierre, hay que actuar en 24-48 horas con un protocolo documentado y trazable.",
+          "moderate": "Tu negocio (**{{business}}**) presenta actividad en **{{where}}** con nivel **{{level}}** y riesgo sanitario **{{risk}}**. Certificado requerido: **{{certificate}}**. Mi veredicto: **conviene planificar una intervención esta semana** para evitar que el incidente afecte a clientes, inspecciones o tu reputación.",
+          "info": "Has descrito un **{{business}}** con avistamientos en **{{where}}**, nivel **{{level}}** y riesgo sanitario **{{risk}}**. Certificado: **{{certificate}}**. Mi veredicto: **situación controlable con actuación preventiva**. Una inspección gratuita nos permitirá definir un plan de acción adaptado a tu negocio sin interrumpir la actividad."
+        },
+        "admin": {
+          "urgent": "Gestionas **{{gestion}}** con incidencias en **{{where}}**, desde **{{since}}**, con volumen **{{volume}}** y prioridad **{{priority}}**. Prefieres avanzar con: **{{advance}}**. Mi veredicto: **caso prioritario de gestión**. Una incidencia recurrente o extendida en edificios públicos o fincas puede escalar rápidamente a quejas vecinales, inspecciones o daño reputacional.",
+          "moderate": "Gestionas **{{gestion}}** con foco en **{{where}}**, desde **{{since}}**, con **{{volume}}** incidencias y prioridad **{{priority}}**. Forma de avanzar: **{{advance}}**. Mi veredicto: **conviene una visita técnica planificada** para localizar el foco, documentar la actuación y evitar recurrencias que compliquen la gestión.",
+          "info": "Gestionas **{{gestion}}** con incidencia en **{{where}}**, desde **{{since}}**, volumen **{{volume}}** y prioridad **{{priority}}**. Quieres avanzar con: **{{advance}}**. Mi veredicto: **situación aún manejable**. Una inspección gratuita e informe técnico te darán base para decidir el siguiente paso con la junta o la administración."
+        },
+        "comunidad": {
+          "urgent": "El problema está en **{{where}}**, desde **{{since}}**. Eres **{{role}}** y prevés que, si no se actúa, **{{concern}}**. Quieres ayuda de la comunidad: **{{help}}**. Mi veredicto: **riesgo de extensión a todo el edificio**. Cuando afecta a varias viviendas o zonas comunes, hace falta coordinación rápida para evitar un foco activo que se propague por canalizaciones y patios.",
+          "moderate": "Has detectado el problema en **{{where}}**, desde **{{since}}**. Tu relación: **{{role}}**. Si no se actúa, crees que **{{concern}}**. Ayuda comunitaria: **{{help}}**. Mi veredicto: **conviene actuar antes de que crezca**. Una inspección gratuita nos permite confirmar el alcance y preparar un plan que puedas presentar a la junta o al administrador.",
+          "info": "El problema está localizado en **{{where}}**, desde **{{since}}**. Eres **{{role}}** y, si no se actúa, **{{concern}}**. Preferencia de ayuda: **{{help}}**. Mi veredicto: **aún es el momento ideal para intervenir con calma**. Una visita técnica gratuita te dará argumentos concretos para movilizar a la comunidad si hace falta."
+        }
+      }
     },
     "give_diagnostic": "Dame el diagnóstico",
     "questions": {
