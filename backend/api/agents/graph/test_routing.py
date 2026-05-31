@@ -37,6 +37,11 @@ def test_should_diagnose_detects_pest_keywords():
     assert should_diagnose(agent, "tengo cucarachas en el baño") is True
 
 
+def test_scheduling_after_quote_intent_routes_to_scheduler():
+    agent = AgentState(language="ca", city="Barcelona", intent=Intent.QUOTE)
+    assert _route(agent, "Vull agendar la meva cita gratuïta") == "scheduler"
+
+
 def test_scheduling_cta_keeps_session_language_ca():
     agent = AgentState(language="ca")
     state = {

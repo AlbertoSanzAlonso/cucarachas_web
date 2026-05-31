@@ -106,11 +106,13 @@ def _is_slot_booking_step(message: str) -> bool:
     return message.strip().lower().startswith("reserva:")
 
 
-def _is_initial_scheduling_request(message: str) -> bool:
+def _is_initial_scheduling_request(message: str, agent: AgentState) -> bool:
     """Primera petición de cita (CTA o texto explícito), no datos de contacto posteriores."""
     lower = message.lower()
     if _is_slot_booking_step(message):
         return False
+    if agent.intent == Intent.APPOINTMENT:
+        return True
     phrases = (
         "agendar",
         "reservar",
@@ -169,7 +171,7 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             },
         }
 
-    if _is_initial_scheduling_request(state["message"]):
+    if _is_initial_scheduling_request(state["message"], agent):
         fast = await _scheduler_slots_fast_path(state, agent, lang)
         if fast:
             return fast

@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState
+from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state
 from ..agents.serialization import normalize_language, state_for_session
 
 @api_view(['GET', 'POST', 'OPTIONS'])
@@ -47,6 +48,11 @@ def chat_with_agents(request):
                 orchestrator.state = AgentState(language=language)
         else:
             orchestrator.state.language = language
+
+        diagnostic = request.data.get("diagnostic")
+        if isinstance(diagnostic, dict) and diagnostic:
+            orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
+        orchestrator.state = apply_diagnostic_from_message(orchestrator.state, str(message))
 
         # Ejecución
         result = async_to_sync(orchestrator.process_message)(message)

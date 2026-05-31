@@ -68,7 +68,7 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
         if "barcelona" in msg_lower:
             agent.city = "Barcelona"
 
-    if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS) and agent.intent != Intent.QUOTE:
+    if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS):
         agent.intent = Intent.APPOINTMENT
 
     if mentions_pest(msg_lower) and not agent.intent:
@@ -86,7 +86,9 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
-    if agent.intent == Intent.APPOINTMENT:
+    if agent.intent == Intent.APPOINTMENT or any(
+        kw in msg_lower for kw in SCHEDULING_KEYWORDS
+    ):
         return "scheduler"
 
     if (not agent.intent or not agent.city) and agent.intent != Intent.QUOTE:

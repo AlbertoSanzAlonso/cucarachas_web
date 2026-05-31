@@ -13,13 +13,52 @@ export const useAgentChat = (i18n, answers, path) => {
   const messagesRef = useRef(messages);
   const inputValueRef = useRef(inputValue);
 
-  const callAgentAPI = async (message) => {
+  const buildDiagnosticPayload = useCallback(() => {
+    const a = answersRef.current;
+    if (!a || !Object.keys(a).length) return undefined;
+    return {
+      path: pathRef.current || 'general',
+      who: a.who,
+      where: a.where || a.where_empresa,
+      quantity: a.quantity || a.level,
+      since: a.since,
+      urgency: a.urgency || a.sanitary_risk,
+      sensitive: a.sensitive || a.certificate,
+      extra_info: a.extra_info,
+    };
+  }, []);
+
+  const buildDiagnosticPrefix = useCallback(() => {
+    const payload = buildDiagnosticPayload();
+    if (!payload?.where && !payload?.who) return '';
+    const zone = payload.where || 'Barcelona';
+    return `[Diagnòstic: ${payload.path || 'general'}, zona: ${zone}] `;
+  }, [buildDiagnosticPayload]);
+
+  const isSchedulingMessage = (text) => {
+    const lower = (text || '').toLowerCase();
+    return (
+      lower.includes('agendar') ||
+      lower.includes('reservar') ||
+      lower.includes('cita gratuïta') ||
+      lower.includes('cita gratuita') ||
+      lower.includes('visita gratuïta') ||
+      lower.includes('visita gratuita')
+    );
+  };
+
+  const callAgentAPI = async (message, { forceDiagnostic = false } = {}) => {
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+    const diagnostic = buildDiagnosticPayload();
     const response = await fetch(`${apiBase}/api/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
-      body: JSON.stringify({ message, language: i18n.language })
+      body: JSON.stringify({
+        message,
+        language: i18n.language,
+        ...(forceDiagnostic || isSchedulingMessage(message) || diagnostic ? { diagnostic } : {}),
+      })
     });
     if (!response.ok) throw new Error('Network response was not ok');
     return response.json();
@@ -66,7 +105,7 @@ export const useAgentChat = (i18n, answers, path) => {
     Si us plau, genera un diagnòstic únic, ètic i professional per a aquest cas en aquest idioma: ${i18n.language}.`;
 
     try {
-      const data = await callAgentAPI(diagnosticPrompt);
+      const data = await callAgentAPI(diagnosticPrompt, { forceDiagnostic: true });
       setIsTyping(false);
       setMessages(prev => [
         ...prev,
@@ -111,13 +150,10 @@ export const useAgentChat = (i18n, answers, path) => {
     if (!directValue) setInputValue('');
     setIsTyping(true);
 
-    const contextualMessage = messagesRef.current.length <= 1
-      ? `[Diagnòstic: ${pathRef.current || 'general'}, zona: ${answersRef.current.where || answersRef.current.where_empresa || 'no especificada'}] ${value}`
-      : value;
+    const prefix = isSchedulingMessage(value) ? buildDiagnosticPrefix() : '';
+    const contextualMessage = `${prefix}${value}`;
 
-    // La intención de agendar se envía ahora al backend para activar el Agentic Scheduling.
-
-    callAgentAPI(contextualMessage)
+    callAgentAPI(contextualMessage, { forceDiagnostic: Boolean(prefix) })
       .then(data => {
         setIsTyping(false);
         setMessages(prev => [...prev, { 
