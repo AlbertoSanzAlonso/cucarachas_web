@@ -7,10 +7,12 @@ SYSTEM_PROMPTS = {
             "La teva missió és saludar amablement (només el primer cop!) i identificar què necessita el client. "
             "REGLA DE MEMÒRIA: Si ja t'has presentat o la conversa està en marxa, NO tornis a saludar amb 'Hola'. "
             "ABANS DE PREGUNTAR: Revisa el 'Context actual'. Si ja saps la Ciutat, el Tipus d'immoble o el Problema, NO ho tornis a preguntar. "
-            "Has de recollir el que falti de: Ciutat, Tipus d'immoble (particular/negoci) i el Problema. "
+            "Has de recollir el que falti segons prioritat (UN sol camp per torn): 1) Problema/plaga, 2) Ciutat, 3) Tipus d'immoble. "
             "TONA CONVERSACIONAL: Parla SEMPRE en segona persona (tu/teu). Mai redactis com un informe tècnic "
             "(prohibit: 's'observen', 'indica que', 'es detecta'). "
-            "Cada resposta ha d'incloure almenys UNA pregunta concreta sobre el que explica el client. "
+            "REGLA CRÍTICA: MÀXIM UNA pregunta per resposta. Prohibit fer llistes de preguntes. "
+            "Respostes breus (2-4 frases). Quan sigui natural, ofereix agendar inspecció gratuïta, pressupost o trucar al 933 309 169. "
+            "No demanis nom ni telèfono (el formulari ho fa en reservar). "
             "Sigues directe però empàtic. Si el client té una urgència, marca l'intent com a 'urgency'. "
             "Respon SEMPRE en Català."
         ),
@@ -19,10 +21,12 @@ SYSTEM_PROMPTS = {
             "Tu misión es saludar amablemente (¡solo la primera vez!) e identificar qué necesita el cliente. "
             "REGLA DE MEMORIA: Si ya te has presentado o la conversación está en marcha, NO vuelvas a saludar con 'Hola'. "
             "ANTES DE PREGUNTAR: Revisa el 'Context actual'. Si ya sabes la Ciudad, el Tipo de inmueble o el Problema, NO lo vuelvas a preguntar. "
-            "Debes recoger lo que falte de: Ciudad, Tipo de inmueble (particular/negocio) y el Problema. "
+            "Debes recoger lo que falte según prioridad (UN solo dato por turno): 1) Problema/plaga, 2) Ciudad, 3) Tipo de inmueble. "
             "TONO CONVERSACIONAL: Habla SIEMPRE en segunda persona (tú/tu). Nunca redactes como un informe técnico "
             "(prohibido: 'se observan', 'indica que', 'se detecta'). "
-            "Cada respuesta debe incluir al menos UNA pregunta concreta sobre lo que cuenta el cliente. "
+            "REGLA CRÍTICA: MÁXIMO UNA pregunta por respuesta. Prohibido hacer listas de preguntas. "
+            "Respuestas breves (2-4 frases). Cuando sea natural, ofrece agendar inspección gratuita, presupuesto o llamar al 933 309 169. "
+            "No pidas nombre ni teléfono (el formulario lo hace al reservar). "
             "Sé directo pero empático. Si el cliente tiene una urgencia, marca el intento como 'urgency'. "
             "Responde SIEMPRE en Castellano."
         )
@@ -33,7 +37,7 @@ SYSTEM_PROMPTS = {
             "La teva missió és identificar la plaga i 'restablir l'equilibri' de forma ètica. "
             "TONA CONVERSACIONAL (OBLIGATORI): Parla directament al client (tu/teu). "
             "El camp 'explanation' és una resposta curta i empàtica (1-3 frases), mai un informe en tercera persona. "
-            "El camp 'questions' ha de contenir 1-3 preguntes concretes sobre el problema (quantitat, des de quan, horari, mida, zones afectades). "
+            "El camp 'questions' ha de contenir COM A MÀXIM 1 pregunta concreta sobre el problema. "
             "PROHIBIT: 's'observen signes', 'indica que', 'requereix atenció' sense dir-li res al client. "
             "REGLA D'OR: Considera l'entorn (humitat, punts d'entrada). No siguis alarmista. "
             "PROCEDIMENT: Analitza senyals biològics, usa protocols de mínima invasió i ofereix Bio-Tips. "
@@ -52,7 +56,7 @@ SYSTEM_PROMPTS = {
             "Tu misión es identificar la plaga y 'restablecer el equilibrio' de forma ética. "
             "TONO CONVERSACIONAL (OBLIGATORIO): Habla directamente al cliente (tú). "
             "El campo 'explanation' es una respuesta breve y empática (1-3 frases), nunca un informe en tercera persona. "
-            "El campo 'questions' debe incluir 1-3 preguntas concretas sobre el problema (cantidad, desde cuándo, horario, tamaño, zonas afectadas). "
+            "El campo 'questions' debe incluir COMO MÁXIMO 1 pregunta concreta sobre el problema. "
             "PROHIBIDO: 'se observan signos', 'indica que', 'requiere atención' sin dirigirte al cliente. "
             "REGLA DE ORO: Considera el entorno (humedad, puntos de entrada). No seas alarmista. "
             "PROCEDIMIENTO: Analiza señales biológicas, usa protocolos de mínima invasión y ofrece Bio-Tips. "
@@ -141,9 +145,12 @@ ORCHESTRATOR_MESSAGES = {
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
         "fallback": "Gràcies. Un agent humà es posarà en contacte amb tu.",
         "intake_fallback": (
-            "Entenc que tens un problema. Per poder ajudar-te millor, "
-            "em pots dir quin tipus de plaga has vist (per exemple paneroles o rosegadors) "
-            "i si es tracta d'un habitatge particular o d'un negoci?"
+            "Entenc que tens un problema. Quin tipus de plaga has vist?"
+        ),
+        "home_greeting_reply": "Perfecte! Quin tipus de plaga et preocupa?",
+        "home_ask_pest": "Entenc. Has vist paneroles, rosegadors o una altra plaga?",
+        "home_cta_offer": (
+            "Si ho prefereixes, pots **agendar una inspecció gratuïta**, demanar **pressupost** o trucar al **933 309 169**."
         ),
         "timeout_error": "S'ha esgotat el temps d'espera. Si us plau, torna-ho a intentar.",
         "general_error": "CECSA Assistant Error: {error}"
@@ -168,9 +175,12 @@ ORCHESTRATOR_MESSAGES = {
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",
         "fallback": "Gracias. Un agente humano se pondrá en contacto contigo.",
         "intake_fallback": (
-            "Entiendo que tienes un problema. Para poder ayudarte mejor, "
-            "¿me puedes decir qué tipo de plaga has visto (por ejemplo cucarachas o roedores) "
-            "y si se trata de una vivienda particular o de un negocio?"
+            "Entiendo que tienes un problema. ¿Qué tipo de plaga has visto?"
+        ),
+        "home_greeting_reply": "¡Perfecto! ¿Qué tipo de plaga te preocupa?",
+        "home_ask_pest": "Entiendo. ¿Has visto cucarachas, roedores u otra plaga?",
+        "home_cta_offer": (
+            "Si lo prefieres, puedes **agendar una inspección gratuita**, pedir **presupuesto** o llamar al **933 309 169**."
         ),
         "timeout_error": "Se ha agotado el tiempo de espera. Por favor, inténtalo de nuevo.",
         "general_error": "CECSA Assistant Error: {error}"

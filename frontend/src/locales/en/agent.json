@@ -36,7 +36,7 @@
       "placeholder": "Write a message...",
       "connection_error": "Connection error. Call 933 309 169."
     },
-    "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? You can ask me about our services, prices, or any questions about pest control. If you prefer, we can also talk directly via **WhatsApp**.",
+    "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? Pick an option or type your question.",
     "booking": {
       "ask_name": "Great! To book your **free inspection**, what's your name?",
       "ask_phone": "Thanks, **{{name}}**. What's your contact phone number?",

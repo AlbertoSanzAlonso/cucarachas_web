@@ -12,6 +12,8 @@ from ..diagnostician import diagnostician_agent
 from ..pricer import pricer_agent
 from ..scheduler import scheduler_agent
 from ..crm_agent import crm_agent
+from ..text_utils import limit_one_question
+from .routing import is_simple_greeting, mentions_pest
 from .state import CECSAGraphState
 
 
@@ -65,14 +67,46 @@ async def preprocess_node(state: CECSAGraphState) -> dict:
     return apply_preprocess(state)
 
 
+def _is_home_chat(state: CECSAGraphState) -> bool:
+    return state.get("source") == "home"
+
+
+def _home_vague_problem(msg_lower: str) -> bool:
+    vague = ("problema", "probleme", "ajuda", "ayuda", "help", "plaga", "incidència", "incidencia")
+    return any(kw in msg_lower for kw in vague) and not mentions_pest(msg_lower)
+
+
+def _home_fast_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
+    """Respuestas deterministas para el chat home: una pregunta, sin LLM."""
+    if not _is_home_chat(state):
+        return None
+
+    msg_lower = state["message"].lower()
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+
+    if is_simple_greeting(msg_lower):
+        return {"result": {"message": msgs["home_greeting_reply"]}}
+
+    if _home_vague_problem(msg_lower):
+        return {"result": {"message": msgs["home_ask_pest"]}}
+
+    return None
+
+
 async def receptionist_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
     lang = agent.language
     try:
+        fast = _home_fast_reply(state, agent, lang)
+        if fast:
+            return fast
+
         context = (
             f"Idioma: {lang}. Ciudad actual: {agent.city or 'Desconocida'}. "
             f"Intención: {agent.intent or 'Desconocida'}."
         )
+        if _is_home_chat(state):
+            context += " Modo: chat home (widget). Máximo UNA pregunta. Respuesta breve."
         updated, output = await _run_agent(
             receptionist_agent,
             f"Context: {context}\nUsuario: {state['message']}",
@@ -89,9 +123,10 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
         elif output.next_agent in ("diagnostician", "pricer"):
             next_route = output.next_agent
 
+        reply = limit_one_question(output.message)
         payload: dict[str, Any] = {
             "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": output.message},
+            "result": {"message": reply},
         }
         if next_route:
             payload["route"] = next_route
@@ -236,26 +271,39 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}
 
 
-def _format_diagnosis_message(output: DiagnosisOutput) -> str:
-    """Combina empatía breve con preguntas al cliente (el modelo las separa en el output)."""
+def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, lang: str = "ca") -> str:
+    """Combina empatía breve con una pregunta al cliente."""
     parts: list[str] = []
     if output.explanation and output.explanation.strip():
         parts.append(output.explanation.strip())
     questions = [q.strip() for q in output.questions if q and q.strip()]
+    if home and questions:
+        questions = questions[:1]
+    elif questions:
+        questions = questions[:1]
     if questions:
-        parts.append("\n".join(questions))
-    return "\n\n".join(parts)
+        parts.append(questions[0])
+    message = "\n\n".join(parts)
+    if home:
+        msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+        offer = msgs.get("home_cta_offer", "")
+        if offer and offer not in message:
+            message = f"{message}\n\n{offer}" if message else offer
+    return message
 
 
 async def diagnostician_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
     lang = agent.language
+    home = _is_home_chat(state)
     try:
         context = (
             f"Missatge del client: {state['message']}\n"
             f"Ciutat: {agent.city or 'desconeguda'}. "
-            "Respon en segona persona i fes preguntes concretes sobre el seu cas."
+            "Respon en segona persona i fes UNA sola pregunta concreta sobre el seu cas."
         )
+        if home:
+            context += " Modo chat home: máximo 1 pregunta, sin listas."
         agent, output = await _run_agent(
             diagnostician_agent,
             context,
@@ -263,7 +311,8 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
             timeout_key="diagnostician",
             use_full_history=False,
         )
-        message = _format_diagnosis_message(output) or ORCHESTRATOR_MESSAGES[lang]["fallback"]
+        message = _format_diagnosis_message(output, home=home, lang=lang) or ORCHESTRATOR_MESSAGES[lang]["fallback"]
+        message = limit_one_question(message)
         updates: dict[str, Any] = {
             "agent_state": agent.model_dump(mode="json"),
             "result": {"message": message},
@@ -310,6 +359,8 @@ async def fallback_node(state: CECSAGraphState) -> dict:
     lang = agent.language if agent.language in ("ca", "es") else "ca"
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
     msg_lower = state.get("message", "").lower()
+    if _is_home_chat(state) and not mentions_pest(msg_lower):
+        return {"result": {"message": msgs.get("home_ask_pest", msgs["intake_fallback"])}}
     if not mentions_pest(msg_lower):
         return {"result": {"message": msgs.get("intake_fallback", msgs["fallback"])}}
     return {"result": {"message": msgs["fallback"]}}

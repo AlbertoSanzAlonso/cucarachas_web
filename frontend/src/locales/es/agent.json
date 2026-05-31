@@ -195,7 +195,7 @@
       "zonas_comunes": "Zonas comunes"
     },
     "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas.",
-    "welcome_msg_home": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
+    "welcome_msg_home": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Elige una opción o escríbeme tu duda."
     "booking": {
       "ask_name": "¡Perfecto! Para reservar tu **inspección gratuita**, ¿cómo te llamas?",
       "ask_phone": "Gracias, **{{name}}**. ¿Cuál es tu teléfono de contacto?",

@@ -10,13 +10,15 @@ class CECSAOrchestrator:
         self.state = AgentState()
         self._graph = get_cecsa_graph()
 
-    async def process_message(self, message: str) -> dict:
+    async def process_message(self, message: str, *, source: str | None = None) -> dict:
         try:
             initial: CECSAGraphState = {
                 "message": message,
                 "language": self.state.language,
                 "agent_state": self.state.model_dump(mode="json"),
             }
+            if source:
+                initial["source"] = source
             final = await self._graph.ainvoke(initial)
             self.state = AgentState.model_validate(final.get("agent_state") or self.state.model_dump())
             result = final.get("result") or {"message": ""}

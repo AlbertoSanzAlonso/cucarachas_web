@@ -53,8 +53,7 @@ class ReceptionistOutput(BaseModel):
 class DiagnosisOutput(BaseModel):
     questions: List[str] = Field(
         description=(
-            "1-3 preguntas directas al cliente (tú) para profundizar: cantidad, desde cuándo, "
-            "horario de avistamientos, tamaño, otras zonas afectadas."
+            "Como máximo 1 pregunta directa al cliente (tú) para profundizar en el problema."
         )
     )
     identified_pest: Optional[PestType]

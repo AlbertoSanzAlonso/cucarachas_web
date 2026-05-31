@@ -73,18 +73,15 @@ const FloatingCTA = () => {
   }, [isOpen]);
 
 
-  const handleSend = async (e) => {
-    e.preventDefault();
-    if (!input.trim() || isLoading) return;
+  const sendMessage = async (userMessage) => {
+    if (!userMessage.trim() || isLoading) return;
 
-    const userMessage = input.trim();
-    setInput('');
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    setMessages(prev => [...prev, { role: 'user', content: userMessage.trim() }]);
     setIsLoading(true);
 
     try {
       const response = await axios.post(`${apiBase}/api/chat/`, {
-        message: userMessage,
+        message: userMessage.trim(),
         language: i18n.language,
         source: 'home',
       }, chatConfig);
@@ -100,6 +97,18 @@ const FloatingCTA = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSend = async (e) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    const userMessage = input.trim();
+    setInput('');
+    await sendMessage(userMessage);
+  };
+
+  const handleQuickAction = (text) => {
+    sendMessage(text);
   };
 
   const handleSlotSelect = (slot) => {
@@ -241,6 +250,33 @@ const FloatingCTA = () => {
                            className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
                            dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-primary-blue">$1</span>') }}
                          />
+                         {msg.isInitial && (
+                           <div className="flex flex-wrap gap-2 mt-4 max-w-[92%]">
+                             <button
+                               type="button"
+                               onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
+                               disabled={isLoading}
+                               className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
+                             >
+                               📅 {t('agent.cta.schedule')}
+                             </button>
+                             <button
+                               type="button"
+                               onClick={() => handleQuickAction(t('agent.verdict.action_budget'))}
+                               disabled={isLoading}
+                               className="bg-white hover:bg-gray-50 text-secondary-gray border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all disabled:opacity-50"
+                             >
+                               💰 {t('agent.cta.budget')}
+                             </button>
+                             <button
+                               type="button"
+                               onClick={() => window.location.href = 'tel:933309169'}
+                               className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
+                             >
+                               📞 {t('agent.cta.call')}
+                             </button>
+                           </div>
+                         )}
                          {msg.slots && (
                            <div className="grid grid-cols-2 gap-3 mt-4 w-full max-w-[320px]">
                              {msg.slots.map((slot, idx) => (

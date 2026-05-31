@@ -7,5 +7,6 @@ class CECSAGraphState(TypedDict):
     message: str
     language: str
     agent_state: dict
+    source: NotRequired[str]
     route: NotRequired[str]
     result: NotRequired[dict[str, Any]]

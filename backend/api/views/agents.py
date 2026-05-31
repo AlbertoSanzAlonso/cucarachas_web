@@ -71,7 +71,10 @@ def chat_with_agents(request):
                     {"reply": "Missatge buit.", "slots": []},
                     status=400,
                 )
-            result = async_to_sync(orchestrator.process_message)(message)
+            result = async_to_sync(orchestrator.process_message)(
+                message,
+                source=request.data.get("source"),
+            )
 
         if isinstance(result, str):
             result = {"message": result}
