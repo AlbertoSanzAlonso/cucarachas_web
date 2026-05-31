@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { LayoutDashboard } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useGetLeadsQuery } from '@/store/apis/leadsApi';
 import { logout } from '@/store/slices/authSlice';
@@ -23,8 +23,16 @@ const AdminDashboard = () => {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { user, token } = useSelector((state) => state.auth);
+
+  React.useEffect(() => {
+    const state = location.state;
+    if (!state) return;
+    if (state.activeTab) setActiveTab(state.activeTab);
+    if (state.selectedLeadId != null) setSelectedLeadId(state.selectedLeadId);
+  }, [location.state]);
 
   const [profileData, setProfileData] = useState({
     name: user?.name || '',

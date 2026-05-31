@@ -9,6 +9,7 @@ import './index.css';
 const Home = lazy(() => import('@/pages/Home'));
 const Login = lazy(() => import('@/pages/Login'));
 const AdminDashboard = lazy(() => import('@/pages/AdminDashboard'));
+const LeadBookingsPage = lazy(() => import('@/pages/LeadBookingsPage'));
 const About = lazy(() => import('@/pages/About'));
 const LegalNotice = lazy(() => import('@/pages/LegalNotice'));
 const PrivacyPolicy = lazy(() => import('@/pages/PrivacyPolicy'));
@@ -139,6 +140,16 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
                     <PublicRoute>
                       <Login />
                     </PublicRoute>
+                  </Suspense>
+                } 
+              />
+              <Route 
+                path="/admin/leads/:leadId/cites" 
+                element={
+                  <Suspense fallback={<DashboardSkeleton />}>
+                    <ProtectedRoute>
+                      <LeadBookingsPage />
+                    </ProtectedRoute>
                   </Suspense>
                 } 
               />

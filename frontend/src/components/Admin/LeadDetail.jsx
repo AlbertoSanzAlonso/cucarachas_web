@@ -1,50 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
   Calendar,
-  Clock,
-  ExternalLink,
   Mail,
   Phone,
-  MapPin,
   FileText,
   User,
-  ChevronDown,
-  ChevronUp,
+  ArrowUpRight,
   Pencil,
   Trash2,
 } from 'lucide-react';
 import LeadEditModal from '@/components/Admin/LeadEditModal';
 import ConfirmModal from '@/components/Admin/ConfirmModal';
+import LeadBookingCard from '@/components/Admin/LeadBookingCard';
 import { useDeleteLeadMutation } from '@/store/apis/leadsApi';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
-import {
-  filterBookingsForLead,
-  getBookingAddress,
-  getBookingStatusClass,
-} from '@/utils/leadBookings';
+import { filterBookingsForLead } from '@/utils/leadBookings';
 import { useCalBookings } from '@/hooks/useCalBookings';
-import { getBookingDisplayTitle } from '@/components/Admin/BookingDetailModal';
 
 const PREVIEW_BOOKINGS_LIMIT = 3;
-
-const formatBookingDate = (iso) => {
-  if (!iso) return '—';
-  return new Date(iso).toLocaleString('ca-ES', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 
 const LeadDetail = ({ leadRaw, onBack }) => {
   const lead = normalizeLead(leadRaw);
   const { bookings, isLoading, isError, refetch } = useCalBookings();
-  const [showAllBookings, setShowAllBookings] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
@@ -70,10 +49,6 @@ const LeadDetail = ({ leadRaw, onBack }) => {
     }
   };
 
-  useEffect(() => {
-    setShowAllBookings(false);
-  }, [lead?.id]);
-
   if (!lead) {
     return (
       <div className="text-center py-20 text-primary-gray/40">
@@ -86,60 +61,11 @@ const LeadDetail = ({ leadRaw, onBack }) => {
   }
 
   const leadBookings = filterBookingsForLead(bookings, lead);
+  const previewBookings = leadBookings.slice(0, PREVIEW_BOOKINGS_LIMIT);
   const hasMoreBookings = leadBookings.length > PREVIEW_BOOKINGS_LIMIT;
-  const visibleBookings = showAllBookings
-    ? leadBookings
-    : leadBookings.slice(0, PREVIEW_BOOKINGS_LIMIT);
-
-  const renderBookingCard = (booking, i) => {
-    const address = getBookingAddress(booking);
-    return (
-      <motion.div
-        key={booking.uid || booking.id || i}
-        initial={{ opacity: 0, y: 8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: i * 0.04 }}
-        className="p-5 md:p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 hover:bg-gray-50/60 transition-colors"
-      >
-        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
-          <div>
-            <p className="font-black text-primary-gray text-base md:text-lg">
-              {getBookingDisplayTitle(booking)}
-            </p>
-            <p className="flex items-center gap-2 text-sm text-primary-gray/60 font-medium mt-2">
-              <Clock size={16} className="text-primary-blue shrink-0" />
-              {formatBookingDate(booking.startTime)}
-            </p>
-          </div>
-          <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${getBookingStatusClass(booking.status)}`}>
-            {booking.status}
-          </span>
-        </div>
-
-        {address && (
-          <p className="flex items-start gap-2 text-sm text-primary-gray/60 font-medium mb-4">
-            <MapPin size={16} className="text-primary-blue shrink-0 mt-0.5" />
-            {address}
-          </p>
-        )}
-
-        {booking.uid && (
-          <a
-            href={`https://app.cal.eu/bookings/${booking.uid}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-xs font-bold text-primary-blue hover:underline"
-          >
-            <ExternalLink size={14} />
-            Obrir a Cal.com
-          </a>
-        )}
-      </motion.div>
-    );
-  };
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in pb-8">
       <button
         onClick={onBack}
         className="flex items-center gap-2 text-primary-blue font-bold text-sm mb-8 hover:underline"
@@ -148,9 +74,9 @@ const LeadDetail = ({ leadRaw, onBack }) => {
         Tornar als leads
       </button>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Lead info */}
-        <section className="lg:col-span-1 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+        <section className="lg:col-span-1 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
           <div className="p-6 md:p-8 border-b border-gray-50">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="p-3 bg-primary-blue/5 rounded-2xl text-primary-blue">
@@ -229,8 +155,8 @@ const LeadDetail = ({ leadRaw, onBack }) => {
           </div>
         </section>
 
-        {/* Appointment history */}
-        <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+        {/* Appointment history preview */}
+        <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
           <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
             <div>
               <h3 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">
@@ -272,33 +198,20 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               </div>
             ) : (
               <>
-                <div
-                  className={`space-y-4 overflow-y-auto overscroll-contain pr-1 ${
-                    showAllBookings ? 'max-h-[min(560px,65vh)]' : ''
-                  }`}
-                  data-lenis-prevent
-                >
-                  {visibleBookings.map((booking, i) => renderBookingCard(booking, i))}
+                <div className="space-y-4">
+                  {previewBookings.map((booking, i) => (
+                    <LeadBookingCard key={booking.uid || booking.id || i} booking={booking} index={i} />
+                  ))}
                 </div>
 
                 {hasMoreBookings && (
-                  <button
-                    type="button"
-                    onClick={() => setShowAllBookings((prev) => !prev)}
+                  <Link
+                    to={`/admin/leads/${leadRaw.id}/cites`}
                     className="mt-5 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-primary-blue/15 bg-primary-blue/5 text-primary-blue font-bold text-sm hover:bg-primary-blue/10 transition-colors"
                   >
-                    {showAllBookings ? (
-                      <>
-                        <ChevronUp size={18} />
-                        Mostrar només les últimes {PREVIEW_BOOKINGS_LIMIT}
-                      </>
-                    ) : (
-                      <>
-                        <ChevronDown size={18} />
-                        Veure llista completa ({leadBookings.length} cites)
-                      </>
-                    )}
-                  </button>
+                    Veure totes les cites ({leadBookings.length})
+                    <ArrowUpRight size={18} />
+                  </Link>
                 )}
               </>
             )}
