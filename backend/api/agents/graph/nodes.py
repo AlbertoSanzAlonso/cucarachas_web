@@ -4,7 +4,7 @@ from typing import Any
 from pydantic_ai.messages import ModelMessage
 
 from ..config import AGENT_TIMEOUTS, HISTORY_MAX_TURNS
-from ..models import AgentDeps, AgentState, Intent
+from ..models import AgentDeps, AgentState, DiagnosisOutput, Intent
 from ..prompts import ORCHESTRATOR_MESSAGES
 from ..serialization import dump_message_history, messages_adapter
 from ..receptionist import receptionist_agent
@@ -242,21 +242,37 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}
 
 
+def _format_diagnosis_message(output: DiagnosisOutput) -> str:
+    """Combina empatía breve con preguntas al cliente (el modelo las separa en el output)."""
+    parts: list[str] = []
+    if output.explanation and output.explanation.strip():
+        parts.append(output.explanation.strip())
+    questions = [q.strip() for q in output.questions if q and q.strip()]
+    if questions:
+        parts.append("\n".join(questions))
+    return "\n\n".join(parts)
+
+
 async def diagnostician_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
     lang = agent.language
     try:
-        context = f"Ciudad: {agent.city}. Datos previo: {state['message']}"
+        context = (
+            f"Missatge del client: {state['message']}\n"
+            f"Ciutat: {agent.city or 'desconeguda'}. "
+            "Respon en segona persona i fes preguntes concretes sobre el seu cas."
+        )
         agent, output = await _run_agent(
             diagnostician_agent,
-            f"Resum dades: {context}",
+            context,
             state,
             timeout_key="diagnostician",
             use_full_history=False,
         )
+        message = _format_diagnosis_message(output) or ORCHESTRATOR_MESSAGES[lang]["fallback"]
         updates: dict[str, Any] = {
             "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": output.explanation},
+            "result": {"message": message},
         }
         if output.identified_pest:
             agent.pest_type = output.identified_pest

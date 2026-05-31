@@ -51,11 +51,21 @@ class ReceptionistOutput(BaseModel):
 
 # Respuesta del Agente Diagnóstico
 class DiagnosisOutput(BaseModel):
-    questions: List[str] # Preguntas para profundizar
+    questions: List[str] = Field(
+        description=(
+            "1-3 preguntas directas al cliente (tú) para profundizar: cantidad, desde cuándo, "
+            "horario de avistamientos, tamaño, otras zonas afectadas."
+        )
+    )
     identified_pest: Optional[PestType]
     severity: Severity
     needs_more_info: bool
-    explanation: str
+    explanation: str = Field(
+        description=(
+            "Respuesta empática en segunda persona (1-3 frases). "
+            "Sin tono de informe ni tercera persona ('se observan', 'indica que')."
+        )
+    )
 
 # Respuesta del Agente Presupuestador
 class PricingOutput(BaseModel):
