@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import BookingContactForm from './BookingContactForm';
 
-const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBookingNameNext, handleBookingAddressNext, handleBookingSubmit, isTyping }) => {
+const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBookingNameNext, handleBookingAddressNext, handleBookingEmailNext, handleBookingSubmit, isTyping }) => {
   const { t } = useTranslation();
 
   return (
@@ -62,8 +62,10 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBook
             step={msg.bookingStep || 'name'}
             bookingName={msg.bookingName}
             bookingAddress={msg.bookingAddress}
+            bookingEmail={msg.bookingEmail}
             onNameNext={(name) => handleBookingNameNext?.(name, msg.selectedSlot)}
             onAddressNext={(data) => handleBookingAddressNext?.(data)}
+            onEmailNext={(data) => handleBookingEmailNext?.(data)}
             onSubmit={handleBookingSubmit}
             disabled={isTyping}
           />

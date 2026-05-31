@@ -202,10 +202,12 @@
     "booking": {
       "ask_name": "¡Perfecto! Para reservar tu **inspección gratuita**, ¿cómo te llamas?",
       "ask_address": "Gracias, **{{name}}**. ¿Dónde debe ser la visita presencial?",
-      "ask_phone": "Perfecto. ¿Cuál es tu teléfono de contacto?",
+      "ask_email": "Perfecto. ¿Cuál es tu **correo electrónico** para enviarte la confirmación?",
+      "ask_phone": "Gracias. ¿Cuál es tu teléfono de contacto?",
       "ask_phone_plain": "Gracias. ¿Cuál es tu teléfono de contacto?",
       "form_hint": "Cita: {{date}} · {{time}}",
       "name_placeholder": "Nombre completo",
+      "email_placeholder": "Correo electrónico",
       "address_placeholder": "Calle, número, piso, ciudad…",
       "address_hint": "Busca en el mapa, marca el punto o escribe la dirección a mano.",
       "use_gps": "Mi ubicación",

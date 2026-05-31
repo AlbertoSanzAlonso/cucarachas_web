@@ -147,9 +147,9 @@ const FloatingCTA = () => {
       { role: 'user', content: address },
       {
         role: 'assistant',
-        content: t('agent.booking.ask_phone', { name }),
+        content: t('agent.booking.ask_email', { name }),
         showBookingForm: true,
-        bookingStep: 'phone',
+        bookingStep: 'email',
         bookingName: name,
         bookingAddress: address,
         selectedSlot: slot,
@@ -157,7 +157,24 @@ const FloatingCTA = () => {
     ]);
   };
 
-  const handleBookingSubmit = async ({ name, phone, address, slot }) => {
+  const handleBookingEmailNext = ({ name, email, address, slot }) => {
+    setMessages(prev => [
+      ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
+      { role: 'user', content: email },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_phone', { name }),
+        showBookingForm: true,
+        bookingStep: 'phone',
+        bookingName: name,
+        bookingAddress: address,
+        bookingEmail: email,
+        selectedSlot: slot,
+      },
+    ]);
+  };
+
+  const handleBookingSubmit = async ({ name, email, phone, address, slot }) => {
     const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
     setMessages(prev => [
       ...prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)),
@@ -172,7 +189,7 @@ const FloatingCTA = () => {
           message: '',
           language: i18n.language,
           source: 'home',
-          booking: { slot_time: slotTime, name, phone, address: address || '' },
+          booking: { slot_time: slotTime, name, email, phone, address: address || '' },
         },
         chatConfig
       );
@@ -314,8 +331,10 @@ const FloatingCTA = () => {
                              step={msg.bookingStep || 'name'}
                              bookingName={msg.bookingName}
                              bookingAddress={msg.bookingAddress}
+                             bookingEmail={msg.bookingEmail}
                              onNameNext={(name) => handleBookingNameNext(name, msg.selectedSlot)}
                              onAddressNext={handleBookingAddressNext}
+                             onEmailNext={handleBookingEmailNext}
                              onSubmit={handleBookingSubmit}
                              disabled={isLoading}
                            />

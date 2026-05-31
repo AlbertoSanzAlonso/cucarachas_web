@@ -2,19 +2,24 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import AddressPicker from '@/components/Agent/Chat/AddressPicker';
 
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+
 const BookingContactForm = ({
   slot,
   step = 'name',
   bookingName = '',
   bookingAddress = '',
+  bookingEmail = '',
   onNameNext,
   onAddressNext,
+  onEmailNext,
   onSubmit,
   disabled,
   variant = 'dark',
 }) => {
   const { t } = useTranslation();
   const [name, setName] = useState(bookingName || '');
+  const [email, setEmail] = useState(bookingEmail || '');
   const [phone, setPhone] = useState('');
   const [address, setAddress] = useState(bookingAddress || '');
   const [coords, setCoords] = useState(null);
@@ -46,14 +51,28 @@ const BookingContactForm = ({
     });
   };
 
+  const handleEmailStep = (e) => {
+    e.preventDefault();
+    const trimmedEmail = email.trim();
+    if (!isValidEmail(trimmedEmail) || disabled) return;
+    onEmailNext({
+      name: (bookingName || name).trim(),
+      email: trimmedEmail,
+      address: (bookingAddress || address).trim(),
+      slot,
+    });
+  };
+
   const handlePhoneStep = (e) => {
     e.preventDefault();
     const trimmedPhone = phone.trim();
     const finalName = (bookingName || name).trim();
+    const finalEmail = (bookingEmail || email).trim();
     const finalAddress = (bookingAddress || address).trim();
-    if (!finalName || !trimmedPhone || finalAddress.length < 5 || disabled) return;
+    if (!finalName || !isValidEmail(finalEmail) || !trimmedPhone || finalAddress.length < 5 || disabled) return;
     onSubmit({
       name: finalName,
+      email: finalEmail,
       phone: trimmedPhone,
       address: finalAddress,
       lat: coords?.lat ?? null,
@@ -68,15 +87,18 @@ const BookingContactForm = ({
       : 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
   }`;
 
+  const submitHandler =
+    step === 'name'
+      ? handleNameStep
+      : step === 'address'
+        ? handleAddressStep
+        : step === 'email'
+          ? handleEmailStep
+          : handlePhoneStep;
+
   return (
     <form
-      onSubmit={
-        step === 'name'
-          ? handleNameStep
-          : step === 'address'
-            ? handleAddressStep
-            : handlePhoneStep
-      }
+      onSubmit={submitHandler}
       className={`mt-3 p-4 rounded-2xl border space-y-3 text-left w-full max-w-[320px] ${
         isLight ? 'border-gray-100 bg-gray-50' : 'border-white/10 bg-white/5'
       }`}
@@ -118,6 +140,29 @@ const BookingContactForm = ({
           <button
             type="submit"
             disabled={disabled || address.trim().length < 5}
+            className={continueBtnClass}
+          >
+            {t('agent.booking.continue')}
+          </button>
+        </>
+      )}
+
+      {step === 'email' && (
+        <>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder={t('agent.booking.email_placeholder')}
+            required
+            autoComplete="email"
+            autoFocus
+            disabled={disabled}
+            className={inputClass}
+          />
+          <button
+            type="submit"
+            disabled={disabled || !isValidEmail(email)}
             className={continueBtnClass}
           >
             {t('agent.booking.continue')}

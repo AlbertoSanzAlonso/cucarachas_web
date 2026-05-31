@@ -196,10 +196,12 @@
     "booking": {
       "ask_name": "Perfecte! Per reservar la teva **inspecció gratuïta**, com et dius?",
       "ask_address": "Gràcies, **{{name}}**. On ha de ser la visita presencial?",
-      "ask_phone": "Perfecte. Quin és el teu telèfon de contacte?",
+      "ask_email": "Perfecte. Quin és el teu **correu electrònic** per enviar-te la confirmació?",
+      "ask_phone": "Gràcies. Quin és el teu telèfon de contacte?",
       "ask_phone_plain": "Gràcies. Quin és el teu telèfon de contacte?",
       "form_hint": "Cita: {{date}} · {{time}}",
       "name_placeholder": "Nom complet",
+      "email_placeholder": "Correu electrònic",
       "address_placeholder": "Carrer, número, pis, ciutat…",
       "address_hint": "Cerca al mapa, marca el punt o escriu l'adreça a mà.",
       "use_gps": "La meva ubicació",

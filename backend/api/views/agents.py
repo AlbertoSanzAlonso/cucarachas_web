@@ -57,12 +57,13 @@ def chat_with_agents(request):
             orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
         orchestrator.state = apply_diagnostic_from_message(orchestrator.state, message)
 
-        if isinstance(booking, dict) and booking.get('slot_time') and booking.get('name') and booking.get('phone'):
+        if isinstance(booking, dict) and booking.get('slot_time') and booking.get('name') and booking.get('phone') and booking.get('email'):
             result = confirm_booking_from_chat(
                 orchestrator.state,
                 slot_time=str(booking['slot_time']),
                 name=str(booking['name']),
                 phone=str(booking['phone']),
+                email=str(booking['email']),
                 language=language,
                 address=str(booking.get('address') or '').strip() or None,
             )

@@ -40,10 +40,12 @@
     "booking": {
       "ask_name": "Great! To book your **free inspection**, what's your name?",
       "ask_address": "Thanks, **{{name}}**. Where should the on-site visit take place?",
-      "ask_phone": "Perfect. What's your contact phone number?",
+      "ask_email": "Great. What's your **email address** for the confirmation?",
+      "ask_phone": "Thanks. What's your contact phone number?",
       "ask_phone_plain": "Thanks. What's your contact phone number?",
       "form_hint": "Appointment: {{date}} · {{time}}",
       "name_placeholder": "Full name",
+      "email_placeholder": "Email address",
       "address_placeholder": "Street, number, floor, city…",
       "address_hint": "Search on the map, drop a pin, or type the address manually.",
       "use_gps": "My location",

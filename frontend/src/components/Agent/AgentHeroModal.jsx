@@ -31,6 +31,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     handleSlotSelect,
     handleBookingNameNext,
     handleBookingAddressNext,
+    handleBookingEmailNext,
     handleBookingSubmit,
     handleSendMessage
   } = useAgentChat(i18n, answers, path);
@@ -273,6 +274,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                         handleSlotSelect={handleSlotSelect}
                         handleBookingNameNext={handleBookingNameNext}
                         handleBookingAddressNext={handleBookingAddressNext}
+                        handleBookingEmailNext={handleBookingEmailNext}
                         handleBookingSubmit={handleBookingSubmit}
                         isTyping={isTyping}
                       />
