@@ -11,15 +11,20 @@ CAL_SLOTS_API_VERSION = os.getenv("CAL_SLOTS_API_VERSION", os.getenv("CAL_API_VE
 # Crear reservas: endpoint registrado solo en esta versión (2024-09-04 → 404 Cannot POST /v2/bookings)
 CAL_BOOKING_API_VERSION = os.getenv("CAL_BOOKING_API_VERSION", "2024-08-13")
 CAL_BASE_URL = os.getenv("CAL_BASE_URL", "https://api.cal.eu/v2").rstrip("/")
-CAL_EVENT_TYPE_ID = os.getenv("CAL_EVENT_TYPE_ID", "277401")
+CAL_EVENT_TYPE_ID = os.getenv("CAL_EVENT_TYPE_ID", "278962")
 CAL_API_KEY = os.getenv("CAL_API_KEY", "").strip()
 CAL_SLOTS_TIMEZONE = os.getenv("CAL_SLOTS_TIMEZONE", "Europe/Madrid")
 MAX_SLOTS = int(os.getenv("CAL_MAX_SLOTS", "12"))
-# Integración Cal.com para POST /bookings (event type 277401 solo admite type=integration)
+# Ubicación por defecto: visita presencial en domicilio del cliente (no videollamada)
+CAL_BOOKING_LOCATION_TYPE = os.getenv("CAL_BOOKING_LOCATION_TYPE", "attendeeAddress").strip()
 CAL_BOOKING_INTEGRATION = os.getenv("CAL_BOOKING_INTEGRATION", "").strip()
+DEFAULT_BOOKING_INTEGRATION = "cal-video"
 CAL_EVENT_TYPES_API_VERSION = os.getenv("CAL_EVENT_TYPES_API_VERSION", "2024-06-14")
 
-_cached_booking_integration: str | None = None
+IN_PERSON_LOCATION_TYPES = ("attendeeAddress", "address", "attendeeDefined")
+
+_cached_event_locations: list[dict[str, Any]] | None = None
+_cached_locations_event_id: str | None = None
 
 
 def get_cal_headers(*, for_booking: bool = False) -> dict[str, str]:
@@ -127,13 +132,19 @@ def fetch_available_slots(days_ahead: int = 7) -> tuple[bool, list[dict[str, str
         return False, f"Error de connexió amb Cal.com: {e}"
 
 
-def _fetch_event_type_integration() -> str | None:
-    """Lee la integración configurada en el event type (p. ej. google-meet, cal-video)."""
-    global _cached_booking_integration
-    if _cached_booking_integration:
-        return _cached_booking_integration
+def _fetch_event_type_locations() -> list[dict[str, Any]]:
+    """Ubicaciones configuradas en el event type (GET /event-types/{id})."""
+    global _cached_event_locations, _cached_locations_event_id
+    if (
+        _cached_event_locations is not None
+        and _cached_locations_event_id == CAL_EVENT_TYPE_ID
+    ):
+        return _cached_event_locations
+
+    _cached_event_locations = []
+    _cached_locations_event_id = CAL_EVENT_TYPE_ID
     if not CAL_API_KEY:
-        return None
+        return _cached_event_locations
 
     try:
         resp = requests.get(
@@ -146,25 +157,88 @@ def _fetch_event_type_integration() -> str | None:
         )
         if resp.status_code != 200:
             print(f"DEBUG Cal event-type: status={resp.status_code} body={resp.text[:200]}")
-            return None
+            return _cached_event_locations
         data = resp.json()
         event = data.get("data") if isinstance(data.get("data"), dict) else {}
-        locations = event.get("locations") or []
-        for loc in locations:
-            if isinstance(loc, dict) and loc.get("type") == "integration":
-                integration = (loc.get("integration") or "").strip()
-                if integration:
-                    _cached_booking_integration = integration
-                    return integration
+        raw = event.get("locations") or []
+        for loc in raw:
+            if isinstance(loc, dict) and loc.get("type"):
+                _cached_event_locations.append(loc)
     except requests.RequestException as e:
         print(f"DEBUG Cal event-type fetch failed: {e}")
+
+    return _cached_event_locations
+
+
+def _location_types_from_event_type() -> set[str]:
+    return {str(loc.get("type")) for loc in _fetch_event_type_locations() if loc.get("type")}
+
+
+def _integrations_from_event_type() -> list[str]:
+    found: list[str] = []
+    for loc in _fetch_event_type_locations():
+        if loc.get("type") == "integration":
+            integration = (loc.get("integration") or "").strip()
+            if integration and integration not in found:
+                found.append(integration)
+    return found
+
+
+def _integration_location_dict() -> dict[str, str]:
+    integration = CAL_BOOKING_INTEGRATION or DEFAULT_BOOKING_INTEGRATION
+    integrations = _integrations_from_event_type()
+    if integration != DEFAULT_BOOKING_INTEGRATION:
+        if DEFAULT_BOOKING_INTEGRATION in integrations or integration == "google-meet":
+            integration = DEFAULT_BOOKING_INTEGRATION
+    elif DEFAULT_BOOKING_INTEGRATION in integrations:
+        integration = DEFAULT_BOOKING_INTEGRATION
+    elif integrations:
+        integration = integrations[0]
+    return {"type": "integration", "integration": integration}
+
+
+def _build_location_payload(
+    loc_type: str,
+    *,
+    address: str,
+    phone: str,
+) -> dict[str, str] | None:
+    if loc_type == "attendeeAddress":
+        return {"type": "attendeeAddress", "address": address}
+    if loc_type == "address":
+        return {"type": "address"}
+    if loc_type == "attendeeDefined":
+        return {"type": "attendeeDefined", "location": address}
+    if loc_type == "attendeePhone" and phone:
+        return {"type": "attendeePhone", "phone": phone}
+    if loc_type == "integration":
+        return _integration_location_dict()
     return None
 
 
-def resolve_booking_location() -> dict[str, str]:
+def resolve_booking_location(*, address: str, phone: str = "") -> dict[str, str]:
     """
-    Ubicación válida para POST /v2/bookings según el event type.
-    El 277401 solo admite type=integration (no attendeeAddress).
+    Ubicación para POST /v2/bookings.
+    CECSA: visita presencial (attendeeAddress). Integration solo si CAL_BOOKING_LOCATION_TYPE=integration.
     """
-    integration = CAL_BOOKING_INTEGRATION or _fetch_event_type_integration() or "cal-video"
-    return {"type": "integration", "integration": integration}
+    addr = (address or "Barcelona").strip()
+    phone = (phone or "").strip()
+    mode = (CAL_BOOKING_LOCATION_TYPE or "attendeeAddress").strip()
+
+    if mode == "integration":
+        payload = _integration_location_dict()
+        print(f"DEBUG Cal booking location: {payload}")
+        return payload
+
+    allowed = _location_types_from_event_type()
+    for loc_type in (*IN_PERSON_LOCATION_TYPES, "attendeePhone"):
+        if allowed and loc_type not in allowed:
+            continue
+        payload = _build_location_payload(loc_type, address=addr, phone=phone)
+        if payload:
+            print(f"DEBUG Cal booking location: {payload} (allowed={allowed or 'unknown'})")
+            return payload
+
+    payload = {"type": "attendeeAddress", "address": addr}
+    print(f"DEBUG Cal booking location: {payload} (fallback)")
+    return payload

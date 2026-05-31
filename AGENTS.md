@@ -43,7 +43,7 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 **Coolify (Backend):**
 - `DATABASE_URL` = connection string PostgreSQL
 - `CAL_API_KEY` = key de Cal.com (nunca hardcodear en código)
-- `CAL_EVENT_TYPE_ID` = `277401`
+- `CAL_EVENT_TYPE_ID` = `278962` (primerarevision / primeracita)
 - `CAL_SLOTS_API_VERSION` = `2024-09-04` (GET slots; opcional, default en código)
 - `CAL_BOOKING_API_VERSION` = `2024-08-13` (**obligatorio** para POST crear reservas)
 - `CAL_BOOKING_INTEGRATION` = opcional (`google-meet`, `cal-video`, …); si no se define, se lee del event type vía API
@@ -127,9 +127,9 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
 ### Cal.com Integration
 
-- **Event Type ID**: `277401` — **API Key** solo en env (`CAL_API_KEY`).
+- **Event Type ID**: `278962` — **API Key** solo en env (`CAL_API_KEY`).
 - **Slots**: `GET /v2/slots` con `cal-api-version: 2024-09-04` → `cal_client.fetch_available_slots`.
-- **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → `cal_booking.create_cal_booking` (location `integration`, dirección en `metadata`; ver `CAL_BOOKING_INTEGRATION` si hace falta forzar la integración).
+- **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → visita **presencial** (`location.type: attendeeAddress` + adreça del client). El event type `278962` a Cal.com ha de tenir ubicació «Presencial / adreça de l'assistent» (no només videotrucada). `CAL_BOOKING_LOCATION_TYPE=attendeeAddress` (per defecte).
 - **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cita` / `Cliente`.
 - **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`.
 - Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos (`Cannot POST /v2/bookings` = versión incorrecta).

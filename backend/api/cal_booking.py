@@ -67,7 +67,7 @@ def create_cal_booking(
             "timeZone": "Europe/Madrid",
             "language": lang,
         },
-        "location": resolve_booking_location(),
+        "location": resolve_booking_location(address=addr, phone=attendee_phone.strip()),
         "metadata": {
             "notes": combined_notes,
             "address": addr[:500],
@@ -96,18 +96,31 @@ def create_cal_booking(
             uid = booking.get("uid") if isinstance(booking, dict) else None
             if lang == "es":
                 msg = (
-                    f"✅ **Cita confirmada** para {attendee_name.strip()}. "
-                    f"Te llamaremos al {attendee_phone.strip()} si hace falta algún detalle."
+                    f"✅ **Cita confirmada** (visita presencial) para {attendee_name.strip()} "
+                    f"en {addr}. Te llamaremos al {attendee_phone.strip()} si hace falta algún detalle."
                 )
             else:
                 msg = (
-                    f"✅ **Cita confirmada** per a {attendee_name.strip()}. "
-                    f"Et trucarem al {attendee_phone.strip()} si cal algun detall."
+                    f"✅ **Cita confirmada** (visita presencial) per a {attendee_name.strip()} "
+                    f"a {addr}. Et trucarem al {attendee_phone.strip()} si cal algun detall."
                 )
             return True, msg, uid
 
         err = data.get("error") if isinstance(data.get("error"), dict) else {}
         err_msg = err.get("message") or data.get("message") or resp.text[:300]
+        err_lower = str(err_msg).lower()
+        if "location" in err_lower or "attendeeaddress" in err_lower.replace("_", ""):
+            if lang == "es":
+                hint = (
+                    "El tipo de cita en Cal.com debe tener ubicación «En persona / dirección del cliente» "
+                    f"activada (event type {CAL_EVENT_TYPE_ID}), no solo videollamada."
+                )
+            else:
+                hint = (
+                    f"El tipus de cita a Cal.com ha de tenir ubicació «Presencial / adreça de l'assistent» "
+                    f"activada (event type {CAL_EVENT_TYPE_ID}), no només videotrucada."
+                )
+            return False, f"No s'ha pogut crear la reserva: {err_msg}. {hint}", None
         return False, f"No s'ha pogut crear la reserva: {err_msg}", None
 
     except requests.RequestException as e:
