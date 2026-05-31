@@ -90,7 +90,12 @@ Entrada desde chat: `booking.address` en `POST /api/chat/` → `confirm_booking_
 
 ## Webhook
 
-`BOOKING_CREATED` → crea/actualiza `Cliente` (email sintético `cita+...@`). El panel admin lee **Cal.com API**, no solo Django `Cita`.
+`BOOKING_CREATED` / `BOOKING_REQUESTED` → `upsert_cliente_by_phone()` en `api/phone_utils.py` (clave `telefono_norm` = últimos 9 dígitos de `attendees[0].phoneNumber`). Si no hay teléfono, fallback por email con `telefono_norm=email-{uid}`.
+
+- `documento_fiscal`: `CAL-{uid[:12]}` en alta nueva
+- Email en Cal.com suele ser sintético `cita+{dígitos}@cucarachasbarcelona.cat` (ver `leadBookings.js`)
+
+El panel admin lee **Cal.com API** para la agenda; el CRM Django deduplica por teléfono.
 
 ## Frontend
 

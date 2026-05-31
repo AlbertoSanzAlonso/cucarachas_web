@@ -133,7 +133,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Event Type ID**: `278962` — **API Key** solo en env (`CAL_API_KEY`).
 - **Slots**: `GET /v2/slots` con `cal-api-version: 2024-09-04` → `cal_client.fetch_available_slots`.
 - **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → visita **presencial** (`location.type: attendeeAddress` + adreça del client). El event type `278962` a Cal.com ha de tenir ubicació «Presencial / adreça de l'assistent» (no només videotrucada). `CAL_BOOKING_LOCATION_TYPE=attendeeAddress` (per defecte).
-- **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cita` / `Cliente`.
+- **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cliente` por **teléfono normalizado** (`upsert_cliente_by_phone` en `phone_utils.py`).
 - **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`; geo: `/api/geo/search/`, `/api/geo/reverse/`.
 - Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos.
 
@@ -146,7 +146,8 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
-- **Model API `Cliente`**: campos reales `nombre`, `email`, `telefono`, `documento_fiscal`, `created_at`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar.
+- **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
+- **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja Cal.com por teléfono y email sintético `cita+{dígitos}@cucarachasbarcelona.cat`; pàgina `LeadBookingsPage.jsx`.
 - **Normalització UI**: `frontend/src/utils/leadDisplay.js` — `normalizeLead()`, `formatLeadDate()`. Usar en `DashboardOverview`, `LeadsManager` i `TopBar`.
 - **Overview**: `DashboardOverview.jsx` — stats clicables (Leads → `leads`, Cites → `calendar`); taula «Leads Recents» (4 últims); «Veure tots» i chevron naveguen a Leads.
 - **Leads**: `LeadsManager.jsx` — llistat complet de contactes (nom, email, telèfon, plaga per defecte «Cucarachas», estat «Nou»).
@@ -163,7 +164,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Endpoints protegits (admin)**: `/api/clientes/`, `/api/cal/bookings/`, `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
 - **Endpoints públics**: `/api/chat/`, `/api/cal/slots/`, `/api/auth/login/`, `/api/species/`.
 - **InsForge NO intervé en cap pas del flux d'autenticació.**
-- **Formulari de contacte**: `ContactForm.jsx` encara fa `POST` a `/api/clientes/` sense auth — **pendent** migrar a un endpoint públic dedicat (p. ex. `/api/contact/`).
+- **Formulari de contacte**: `ContactForm.jsx` envia `{ nombre, telefono, email }` a `POST /api/clientes/` (dedup per `telefono_norm`) — **pendent** endpoint públic dedicat sense auth admin (`/api/contact/`).
 
 ## 🛠 Skills Actives
 
@@ -173,6 +174,7 @@ En **`.agents/skills/<carpeta>/SKILL.md`** (versionadas en git). Leer la skill a
 |-------|---------|
 | **Bio-Assistent** (principal) | `bio_assistant/` (+ `reference.md`) |
 | **Cal.com** | `cal_com/` |
+| **CRM Leads** | `crm_leads/` |
 | **Geo / mapas OSM** | `geo_maps/` |
 | **Branding Manager** | `branding_manager/` |
 | **Service Auditor** | `service_auditor/` |

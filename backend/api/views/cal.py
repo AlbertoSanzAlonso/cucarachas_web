@@ -3,7 +3,7 @@ import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..models import Cliente
+from ..phone_utils import normalize_phone, upsert_cliente_by_phone
 from api.cal_client import (
     CAL_BASE_URL,
     CAL_BOOKING_API_VERSION,
@@ -29,32 +29,43 @@ def cal_webhook(request):
         return Response({"status": "ok", "message": "Ping rebut correctament"})
 
     try:
-        if trigger_event == 'BOOKING_CREATED':
+        if trigger_event in ('BOOKING_CREATED', 'BOOKING_REQUESTED'):
             attendee = data.get('attendees', [{}])[0]
-            cliente, _ = Cliente.objects.get_or_create(
-                email=attendee.get('email'),
-                defaults={
-                    'nombre': attendee.get('name', 'Client Cal.com'),
-                    'telefono': attendee.get('phoneNumber', ''),
-                    'documento_fiscal': f"CAL-{data.get('uid', 'web')[:12]}",
-                }
-            )
-            # Cita requiere ubicacion/tecnico/fechas — el panel usa Cal.com API directamente.
-            print(f"INFO Webhook BOOKING_CREATED uid={data.get('uid')} client={cliente.email}")
+            phone = attendee.get('phoneNumber', '')
+            uid = data.get('uid', 'web')
+            nombre = attendee.get('name', 'Client Cal.com')
+            email = attendee.get('email', '')
+            doc = f"CAL-{uid[:12]}"
+            norm = normalize_phone(phone)
+            if norm:
+                cliente, _ = upsert_cliente_by_phone(
+                    telefono=phone,
+                    nombre=nombre,
+                    email=email,
+                    documento_fiscal=doc,
+                )
+                print(
+                    f"INFO Webhook {trigger_event} uid={uid} "
+                    f"client={cliente.telefono_norm}"
+                )
+            elif email:
+                from ..models import Cliente
+
+                cliente, _ = Cliente.objects.get_or_create(
+                    email=email,
+                    defaults={
+                        'nombre': nombre,
+                        'telefono': phone or '',
+                        'telefono_norm': f"email-{uid[:8]}",
+                        'documento_fiscal': doc,
+                    },
+                )
+                print(f"INFO Webhook {trigger_event} uid={uid} client=email:{email}")
+            else:
+                print(f"WARN Webhook {trigger_event} uid={uid} sense telèfon ni email")
 
         elif trigger_event in ('BOOKING_CANCELLED', 'BOOKING_REJECTED'):
             print(f"INFO Webhook {trigger_event} uid={data.get('uid')}")
-
-        elif trigger_event == 'BOOKING_REQUESTED':
-            attendee = data.get('attendees', [{}])[0]
-            Cliente.objects.get_or_create(
-                email=attendee.get('email'),
-                defaults={
-                    'nombre': attendee.get('name', 'Client Cal.com'),
-                    'telefono': attendee.get('phoneNumber', ''),
-                    'documento_fiscal': f"CAL-{data.get('uid', 'web')[:12]}",
-                }
-            )
 
         return Response({"status": "success", "event": trigger_event})
     except Exception as e:

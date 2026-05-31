@@ -21,9 +21,10 @@ const ContactForm = () => {
     e.preventDefault();
     try {
       await createLead({
-        ...formData,
-        status: 'pendent', // Por defecto
-        type: 'Cucarachas (Web)'
+        nombre: formData.name.trim(),
+        telefono: formData.phone.trim(),
+        email: formData.email.trim(),
+        documento_fiscal: '',
       }).unwrap();
       
       setFormData({ name: '', email: '', phone: '', message: '' });

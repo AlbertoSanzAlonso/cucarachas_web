@@ -43,11 +43,14 @@ Flujo **3 pasos** en `BookingContactForm.jsx`:
 
 ### Leads CRM (`LeadsManager.jsx` + `DashboardOverview.jsx`)
 
-- **API**: `GET /api/clientes/` — campos Django: `nombre`, `email`, `telefono`, `created_at`
-- **Normalizar siempre** con `@/utils/leadDisplay` (`normalizeLead`, `formatLeadDate`) — no asumir `name` / `status` del frontend antiguo
+- **API**: `GET /api/clientes/` — campos Django: `id`, `nombre`, `email`, `telefono`, `telefono_norm` (solo lectura), `documento_fiscal`, `created_at`
+- **Identidad del lead**: `telefono_norm` (últimos 9 dígitos, único). `POST`/`PATCH` vía `ClienteSerializer` deduplican con `upsert_cliente_by_phone` (`backend/api/phone_utils.py`). Teléfono obligatorio en alta.
+- **Normalizar UI** con `@/utils/leadDisplay` (`normalizeLead`, `formatLeadDate`) — no asumir `name` / `status` del frontend antiguo
+- **Cites del lead**: `LeadBookingsPage` + `leadBookings.js` (`bookingMatchesLead` por teléfono / email sintético Cal.com)
 - Overview: 4 leads recientes + stat «Leads Pendents» clicable → pestaña `leads`
 - `TopBar`: campana con dropdown de leads recientes → navega a `leads`
 - Plaga por defecto «Cucarachas»; estado por defecto «Nou» (modelo `Cliente` aún sin `status`/`plaga`)
+- **Contacto web**: `ContactForm.jsx` → `{ nombre, telefono, email }` (no enviar `name`/`phone` sueltos al API)
 
 ### Admin Agenda (`CalendarManager.jsx`)
 

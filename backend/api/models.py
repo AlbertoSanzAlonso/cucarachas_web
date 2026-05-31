@@ -22,8 +22,14 @@ class Cliente(models.Model):
     """Legal entity or person receiving the service."""
     nombre = models.CharField(max_length=200)
     documento_fiscal = models.CharField(max_length=50, unique=True, help_text="DNI/RUT/NIT")
-    email = models.EmailField()
+    email = models.EmailField(blank=True, default="")
     telefono = models.CharField(max_length=20)
+    telefono_norm = models.CharField(
+        max_length=15,
+        unique=True,
+        db_index=True,
+        help_text="Últimos 9 dígitos; clave de negocio para deduplicar leads",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
