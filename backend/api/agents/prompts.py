@@ -85,11 +85,8 @@ SYSTEM_PROMPTS = {
         "ca": (
             "Ets el Gestor d'Agenda de CECSA. "
             "La teva missió és tancar la cita d'inspecció presencial. "
-            "ABANS de confirmar, has de recollir OBLIGATÒRIAMENT aquestes dades del client (pregunta el que falti):\n"
-            "1. Nom complet.\n"
-            "2. Correu electrònic (email).\n"
-            "3. Número de telèfon de contacte.\n"
-            "4. L'adreça exacta de la propietat. HAS DE VERIFICAR l'adreça usant l'eina 'verify_address' abans de donar-la per bona.\n"
+            "ABANS de confirmar, has de recollir OBLIGATÒRIAMENT: nom complet i telèfon de contacte. "
+            "L'adreça es pren del diagnòstic (zona/ciutat ja coneguda).\n"
             "Ajuda al client a trobar el millor moment per a la inspecció i explica els passos següents. "
             "IMPORTANT: Quan llistis els horaris, omple sempre el camp 'available_slots' del teu output amb la llista d'objectes que has rebut de l'eina 'get_available_slots'. "
             "Respon SEMPRE en Català. "
@@ -98,11 +95,8 @@ SYSTEM_PROMPTS = {
         "es": (
             "Eres el Gestor de Agenda de CECSA. "
             "Tu misión es cerrar la cita de inspección presencial. "
-            "ANTES de confirmar, debes recoger OBLIGATORIAMENTE estos datos del cliente (pregunta lo que falte):\n"
-            "1. Nombre completo.\n"
-            "2. Correo electrónico (email).\n"
-            "3. Número de teléfono de contacto.\n"
-            "4. La dirección exacta de la propiedad. DEBES VERIFICAR la dirección usando la herramienta 'verify_address' antes de darla por buena.\n"
+            "ANTES de confirmar, debes recoger OBLIGATORIAMENTE: nombre completo y teléfono de contacto. "
+            "La dirección se toma del diagnóstico (zona/ciudad ya conocida).\n"
             "Ayuda al cliente a encontrar el mejor momento para la inspección y explica los pasos siguientes. "
             "IMPORTANT: Cuando listes los horarios, rellena siempre el campo 'available_slots' de tu output con la lista de objetos que has recibido de la herramienta 'get_available_slots'. "
             "Responde SIEMPRE en Castellano. "
@@ -140,8 +134,8 @@ ORCHESTRATOR_MESSAGES = {
             "inspecció gratuïta a Barcelona. Tria el que et vagi millor:"
         ),
         "scheduler_collect_data": (
-            "Genial, horari seleccionat. Per confirmar la cita necessito: "
-            "nom complet, correu electrònic, telèfon i adreça exacta de la propietat."
+            "Perfecte, horari seleccionat. Omple el teu **nom** i **telèfon** "
+            "al formulari de sota per confirmar la cita gratuïta."
         ),
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
@@ -167,8 +161,8 @@ ORCHESTRATOR_MESSAGES = {
             "inspección gratuita en Barcelona. Elige el que mejor te venga:"
         ),
         "scheduler_collect_data": (
-            "Genial, horario seleccionado. Para confirmar la cita necesito: "
-            "nombre completo, correo electrónico, teléfono y dirección exacta de la propiedad."
+            "Perfecto, horario seleccionado. Rellena tu **nombre** y **teléfono** "
+            "en el formulario de abajo para confirmar la cita gratuita."
         ),
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",

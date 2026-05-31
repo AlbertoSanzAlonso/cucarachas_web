@@ -6,6 +6,7 @@ from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState
+from ..agents.booking import confirm_booking_from_chat
 from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state
 from ..agents.serialization import normalize_language, state_for_session
 
@@ -27,12 +28,9 @@ def chat_with_agents(request):
     if request.method == 'GET':
         return Response({"status": "API is online"})
 
-    message = request.data.get('message')
-    if not message or not str(message).strip():
-        return Response(
-            {"reply": "Missatge buit.", "slots": []},
-            status=400,
-        )
+    message = request.data.get('message', '')
+    message = str(message).strip() if message is not None else ''
+    booking = request.data.get('booking')
 
     language = normalize_language(request.data.get('language'))
     
@@ -52,10 +50,23 @@ def chat_with_agents(request):
         diagnostic = request.data.get("diagnostic")
         if isinstance(diagnostic, dict) and diagnostic:
             orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
-        orchestrator.state = apply_diagnostic_from_message(orchestrator.state, str(message))
+        orchestrator.state = apply_diagnostic_from_message(orchestrator.state, message)
 
-        # Ejecución
-        result = async_to_sync(orchestrator.process_message)(message)
+        if isinstance(booking, dict) and booking.get('slot_time') and booking.get('name') and booking.get('phone'):
+            result = confirm_booking_from_chat(
+                orchestrator.state,
+                slot_time=str(booking['slot_time']),
+                name=str(booking['name']),
+                phone=str(booking['phone']),
+                language=language,
+            )
+        else:
+            if not message:
+                return Response(
+                    {"reply": "Missatge buit.", "slots": []},
+                    status=400,
+                )
+            result = async_to_sync(orchestrator.process_message)(message)
 
         if isinstance(result, str):
             result = {"message": result}

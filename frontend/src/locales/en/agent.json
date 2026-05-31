@@ -37,6 +37,13 @@
       "connection_error": "Connection error. Call 933 309 169."
     },
     "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? You can ask me about our services, prices, or any questions about pest control. If you prefer, we can also talk directly via **WhatsApp**.",
+    "booking": {
+      "ask_contact": "Great! To confirm your **free inspection**, please enter your name and phone:",
+      "form_hint": "Appointment: {{date}} · {{time}}",
+      "name_placeholder": "Full name",
+      "phone_placeholder": "Contact phone",
+      "submit": "Confirm appointment"
+    },
     "chat": {
       "confirm_slot": "I want the appointment on {{date}} at {{time}}",
       "confirmed": "Perfect! I've booked your appointment for **{{date}} at {{time}}**. You'll receive a confirmation email. Need anything else?",

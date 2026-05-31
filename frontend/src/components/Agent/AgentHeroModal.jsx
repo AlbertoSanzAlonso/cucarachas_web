@@ -29,6 +29,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     scrollRef,
     getAIDiagnostic,
     handleSlotSelect,
+    handleBookingSubmit,
     handleSendMessage
   } = useAgentChat(i18n, answers, path);
 
@@ -126,6 +127,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }} 
       className="fixed inset-0 z-[200] flex items-center justify-center bg-bg-light"
+      data-lenis-prevent
       style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
@@ -236,7 +238,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
           </motion.div>
 
           {/* Content Container */}
-          <div className={`agent-hero-content-container max-w-4xl mx-auto w-full flex-1 flex flex-col items-center ${isFinished ? 'mt-2 md:-mt-16' : 'mt-2 md:mt-2'} min-h-0 overflow-y-auto pb-4 scrollbar-hide`}>
+          <div className={`agent-hero-content-container max-w-4xl mx-auto w-full flex-1 flex flex-col items-center ${isFinished ? 'mt-2 md:-mt-16 overflow-hidden' : 'mt-2 md:mt-2 overflow-y-auto'} min-h-0 pb-4 custom-scrollbar`}>
             {!isFinished ? (
               <div className="flex flex-col items-center space-y-4 md:space-y-12 w-full">
                 <DiagnosticFlow 
@@ -260,14 +262,15 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
             ) : (
               <div className="w-full max-w-3xl flex-1 flex flex-col px-1 md:px-8 pb-2 md:pb-4 min-h-0">
                 <div className="flex-1 flex flex-col rounded-[2rem] md:rounded-[3rem] border border-white/10 bg-black/30 backdrop-blur-xl shadow-2xl overflow-hidden relative min-h-0">
-                  <ScrollArea ref={scrollRef} className="flex-1 p-4 md:p-8 space-y-6">
+                  <ScrollArea ref={scrollRef} className="flex-1 min-h-0 p-4 md:p-8 space-y-6">
                     {messages.map((msg, i) => (
                       <ChatMessage 
                         key={i}
                         msg={msg}
                         handleSendMessage={handleSendMessage}
                         handleSlotSelect={handleSlotSelect}
-                        setInputValue={setInputValue}
+                        handleBookingSubmit={handleBookingSubmit}
+                        isTyping={isTyping}
                       />
                     ))}
                     {isTyping && (

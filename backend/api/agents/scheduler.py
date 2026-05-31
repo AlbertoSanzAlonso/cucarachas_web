@@ -4,9 +4,10 @@ import urllib.parse
 from pydantic_ai import Agent, RunContext
 from django.core.cache import cache
 
-from api.cal_client import CAL_API_KEY, fetch_available_slots, get_cal_headers
+from api.cal_booking import create_cal_booking
+from api.cal_client import CAL_API_KEY, fetch_available_slots
 from .models import SchedulerOutput, AgentDeps
-from .config import AGENT_MODEL, CAL_EVENT_TYPE_ID, CAL_BASE_URL
+from .config import AGENT_MODEL
 from .prompts import SYSTEM_PROMPTS
 
 # Agente 4: Agendador
@@ -88,45 +89,14 @@ def create_booking(
     notes: str = "",
 ) -> str:
     """Crea una reserva a Cal.com per a l'horari seleccionat."""
-    if not CAL_API_KEY:
-        return "Error: CAL_API_KEY no configurada al servidor."
-
-    try:
-        payload = {
-            "eventTypeId": int(CAL_EVENT_TYPE_ID),
-            "start": slot_time,
-            "attendee": {
-                "name": attendee_name,
-                "email": attendee_email,
-                "phoneNumber": attendee_phone,
-                "timeZone": "Europe/Madrid",
-                "language": "ca",
-            },
-            "location": {
-                "value": "inPerson",
-                "optionValue": address,
-            },
-            "metadata": {"notes": notes, "source": "CECSA Bio-Assistent"},
-        }
-
-        print(f"DEBUG: Creating Cal.com booking for {attendee_email}...")
-        resp = http_requests.post(
-            f"{CAL_BASE_URL}/bookings",
-            headers=get_cal_headers(),
-            json=payload,
-            timeout=8,
-        )
-        print(f"DEBUG: Cal.com booking status: {resp.status_code}")
-        data = resp.json()
-
-        if data.get("status") == "success":
-            booking = data.get("data", {})
-            return (
-                f"✅ Cita confirmada! UID: {booking.get('uid', 'OK')}. "
-                f"Rebràs un email a {attendee_email}."
-            )
-        err_msg = data.get("error", {}).get("message", "Error desconegut")
-        return f"No s'ha pogut crear la reserva: {err_msg}"
-
-    except Exception as e:
-        return f"Error creant la reserva: {str(e)}"
+    lang = ctx.deps.language if ctx.deps else "ca"
+    ok, msg, _uid = create_cal_booking(
+        slot_time=slot_time,
+        attendee_name=attendee_name,
+        attendee_phone=attendee_phone,
+        address=address,
+        attendee_email=attendee_email,
+        notes=notes,
+        language=lang,
+    )
+    return msg if ok else msg

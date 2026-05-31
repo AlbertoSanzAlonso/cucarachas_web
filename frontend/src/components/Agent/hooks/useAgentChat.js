@@ -47,7 +47,7 @@ export const useAgentChat = (i18n, answers, path) => {
     );
   };
 
-  const callAgentAPI = async (message, { forceDiagnostic = false } = {}) => {
+  const callAgentAPI = async (message, { forceDiagnostic = false, booking = null } = {}) => {
     const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
     const diagnostic = buildDiagnosticPayload();
     const response = await fetch(`${apiBase}/api/chat/`, {
@@ -55,8 +55,9 @@ export const useAgentChat = (i18n, answers, path) => {
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
       body: JSON.stringify({
-        message,
+        message: message || '',
         language: i18n.language,
+        ...(booking ? { booking } : {}),
         ...(forceDiagnostic || isSchedulingMessage(message) || diagnostic ? { diagnostic } : {}),
       })
     });
@@ -122,23 +123,46 @@ export const useAgentChat = (i18n, answers, path) => {
 
   const handleSlotSelect = useCallback((slot) => {
     const confirmMsg = t('agent.chat.confirm_slot', { date: slot.date, time: slot.time });
-    setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
+    setMessages(prev => [
+      ...prev,
+      { role: 'user', content: confirmMsg },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_contact'),
+        showBookingForm: true,
+        selectedSlot: slot,
+      },
+    ]);
+  }, [t]);
+
+  const handleBookingSubmit = useCallback(({ name, phone, slot }) => {
+    const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
+    setMessages(prev => prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)));
     setIsTyping(true);
 
-    callAgentAPI(`Reserva: ${slot.slot_time || slot.date} ${slot.time}`)
-      .then(data => {
+    callAgentAPI('', {
+      booking: { slot_time: slotTime, name, phone },
+      forceDiagnostic: true,
+    })
+      .then((data) => {
         setIsTyping(false);
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: data.reply || t('agent.chat.confirmed', { date: slot.date, time: slot.time }),
-          slots: data.slots?.length ? data.slots : null
-        }]);
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: data.reply || t('agent.chat.error'),
+            bookingConfirmed: data.booking_confirmed,
+          },
+        ]);
       })
       .catch(() => {
         setIsTyping(false);
-        setMessages(prev => [...prev, { role: 'assistant', content: t('agent.chat.confirmed', { date: slot.date, time: slot.time }) }]);
+        setMessages((prev) => [
+          ...prev,
+          { role: 'assistant', content: t('agent.chat.error') },
+        ]);
       });
-  }, [i18n.language, t]);
+  }, [t]);
 
   const handleSendMessage = useCallback((e, directValue = null) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -180,6 +204,7 @@ export const useAgentChat = (i18n, answers, path) => {
     scrollRef,
     getAIDiagnostic,
     handleSlotSelect,
+    handleBookingSubmit,
     handleSendMessage
   };
 };

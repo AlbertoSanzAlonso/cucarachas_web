@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { MessageSquare, Phone, X, Send, Bot, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
 
 const FloatingCTA = () => {
   const { t, i18n } = useTranslation();
@@ -100,24 +101,46 @@ const FloatingCTA = () => {
     }
   };
 
-  const handleSlotSelect = async (slot) => {
+  const handleSlotSelect = (slot) => {
     const confirmMsg = t('agent.chat.confirm_slot', { date: slot.date, time: slot.time });
-    setMessages(prev => [...prev, { role: 'user', content: confirmMsg }]);
+    setMessages(prev => [
+      ...prev,
+      { role: 'user', content: confirmMsg },
+      {
+        role: 'assistant',
+        content: t('agent.booking.ask_contact'),
+        showBookingForm: true,
+        selectedSlot: slot,
+      },
+    ]);
+  };
+
+  const handleBookingSubmit = async ({ name, phone, slot }) => {
+    const slotTime = slot.slot_time || `${slot.date} ${slot.time}`;
+    setMessages(prev => prev.map((m) => (m.showBookingForm ? { ...m, showBookingForm: false } : m)));
     setIsLoading(true);
 
     try {
-      const response = await axios.post(`${apiBase}/api/chat/`, {
-        message: `Reserva: ${slot.slot_time || slot.date} ${slot.time}`,
-        language: i18n.language
-      }, chatConfig);
+      const response = await axios.post(
+        `${apiBase}/api/chat/`,
+        {
+          message: '',
+          language: i18n.language,
+          booking: { slot_time: slotTime, name, phone },
+        },
+        chatConfig
+      );
 
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: response.data.reply,
-        slots: response.data.slots 
-      }]);
+      setMessages(prev => [
+        ...prev,
+        {
+          role: 'assistant',
+          content: response.data.reply,
+          slots: response.data.slots?.length ? response.data.slots : null,
+        },
+      ]);
     } catch (error) {
-      console.error('Error confirming slot:', error);
+      console.error('Error confirming booking:', error);
       setMessages(prev => [...prev, { role: 'assistant', content: t('agent.chat.error') }]);
     } finally {
       setIsLoading(false);
@@ -210,6 +233,14 @@ const FloatingCTA = () => {
                                </button>
                              ))}
                            </div>
+                         )}
+                         {msg.showBookingForm && msg.selectedSlot && (
+                           <BookingContactForm
+                             variant="light"
+                             slot={msg.selectedSlot}
+                             onSubmit={handleBookingSubmit}
+                             disabled={isLoading}
+                           />
                          )}
                        </div>
                      ))}

@@ -171,6 +171,13 @@
       "problema_serio": "Serà un problema seriós a tota la finca",
       "zonas_comunes": "Zones comunes"
     },
+    "booking": {
+      "ask_contact": "Perfecte! Per confirmar la teva **inspecció gratuïta**, indica el teu nom i telèfon:",
+      "form_hint": "Cita: {{date}} · {{time}}",
+      "name_placeholder": "Nom complet",
+      "phone_placeholder": "Telèfon de contacte",
+      "submit": "Confirmar cita"
+    },
     "chat": {
       "confirm_slot": "Vull la cita el {{date}} a les {{time}}",
       "confirmed": "Perfecte! He bloquejat la teva cita per **{{date}} a les {{time}}**. Rebràs un correu de confirmació. Necessites res més?",

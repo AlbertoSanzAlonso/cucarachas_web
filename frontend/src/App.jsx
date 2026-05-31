@@ -47,10 +47,15 @@ function App() {
     if (isAgentOpen) {
       document.body.classList.add('agent-open');
       window.scrollTo(0, 0); // Ensure background starts at top
+      window.lenis?.stop();
     } else {
       document.body.classList.remove('agent-open');
+      window.lenis?.start();
     }
-    return () => document.body.classList.remove('agent-open');
+    return () => {
+      document.body.classList.remove('agent-open');
+      window.lenis?.start();
+    };
   }, [isAgentOpen]);
 
   return (

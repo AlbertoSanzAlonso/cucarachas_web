@@ -1,9 +1,9 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import CalEmbed from './CalEmbed';
+import BookingContactForm from './BookingContactForm';
 
-const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, setInputValue }) => {
+const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBookingSubmit, isTyping }) => {
   const { t } = useTranslation();
 
   return (
@@ -45,7 +45,7 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, setInputVa
           <div className="grid grid-cols-2 gap-2 mt-2">
             {msg.slots.map(slot => (
               <button 
-                key={slot.id} 
+                key={slot.id ?? `${slot.date}-${slot.time}`}
                 onClick={() => handleSlotSelect(slot)}
                 className="bg-white/10 hover:bg-accent-green hover:text-black border border-white/10 rounded-xl p-3 text-xs font-bold text-white transition-all text-center backdrop-blur-sm"
               >
@@ -54,6 +54,14 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, setInputVa
               </button>
             ))}
           </div>
+        )}
+
+        {msg.showBookingForm && msg.selectedSlot && handleBookingSubmit && (
+          <BookingContactForm
+            slot={msg.selectedSlot}
+            onSubmit={handleBookingSubmit}
+            disabled={isTyping}
+          />
         )}
       </div>
     </motion.div>
