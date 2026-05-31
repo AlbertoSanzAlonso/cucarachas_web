@@ -242,3 +242,74 @@ def resolve_booking_location(*, address: str, phone: str = "") -> dict[str, str]
     payload = {"type": "attendeeAddress", "address": addr}
     print(f"DEBUG Cal booking location: {payload} (fallback)")
     return payload
+
+
+def fetch_cal_bookings(*, take: int = 100) -> tuple[bool, list[dict[str, Any]] | str]:
+    """
+    GET /v2/bookings (cal-api-version 2024-08-13).
+    Retorna (ok, lista normalizada) o (False, mensaje de error).
+    """
+    if not CAL_API_KEY:
+        return False, "Error: CAL_API_KEY no configurada al servidor."
+
+    try:
+        resp = requests.get(
+            f"{CAL_BASE_URL}/bookings",
+            params={
+                "eventTypeId": CAL_EVENT_TYPE_ID,
+                "take": take,
+                "sortStart": "desc",
+            },
+            headers=get_cal_booking_headers(),
+            timeout=12,
+        )
+        print(f"DEBUG Cal bookings list: status={resp.status_code}")
+
+        try:
+            data = resp.json()
+        except ValueError:
+            return False, f"Resposta Cal.com no vàlida ({resp.status_code})"
+
+        if resp.status_code != 200:
+            err = data.get("error", data) if isinstance(data, dict) else data
+            if isinstance(err, dict):
+                err = err.get("message", str(err))
+            return False, f"Cal.com ha retornat {resp.status_code}: {err}"
+
+        if not isinstance(data, dict) or data.get("status") not in (None, "success"):
+            return False, "Cal.com no ha retornat cites vàlides."
+
+        raw = data.get("data")
+        if isinstance(raw, list):
+            bookings = raw
+        elif isinstance(raw, dict):
+            bookings = raw.get("bookings") or raw.get("items") or []
+        else:
+            bookings = []
+
+        normalized: list[dict[str, Any]] = []
+        for b in bookings:
+            if not isinstance(b, dict):
+                continue
+            start = b.get("start") or b.get("startTime")
+            attendees = b.get("attendees") or []
+            if not attendees and b.get("attendee"):
+                attendees = [b["attendee"]]
+            normalized.append({
+                **b,
+                "id": b.get("id"),
+                "uid": b.get("uid"),
+                "title": b.get("title") or "Visita tècnica",
+                "status": b.get("status") or "accepted",
+                "startTime": start,
+                "start": start,
+                "end": b.get("end") or b.get("endTime"),
+                "location": b.get("location"),
+                "attendees": attendees,
+                "metadata": b.get("metadata") or {},
+            })
+
+        return True, normalized
+
+    except requests.RequestException as e:
+        return False, f"Error de connexió amb Cal.com: {e}"

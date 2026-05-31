@@ -28,13 +28,16 @@ const CalendarManager = () => {
       console.log("DEBUG: Cal.com data received:", data);
 
       if (data.status === 'success') {
-        // En la v2, las citas vienen en data.data.bookings
         let bookingsList = [];
         if (data.data && Array.isArray(data.data.bookings)) {
           bookingsList = data.data.bookings;
         } else if (Array.isArray(data.data)) {
           bookingsList = data.data;
         }
+        bookingsList = bookingsList.map((b) => ({
+          ...b,
+          startTime: b.startTime || b.start,
+        }));
         setBookings(bookingsList);
       } else {
         throw new Error(data.message || data.error || 'Error fetching bookings');
@@ -52,10 +55,10 @@ const CalendarManager = () => {
     fetchBookings();
   }, []);
 
-  const handleCancel = async (bookingId) => {
+  const handleCancel = async (bookingUid) => {
     if (!window.confirm('Estàs segur que vols cancel·lar aquesta cita?')) return;
     try {
-      const response = await fetch(`${API_BASE}/api/cal/bookings/${bookingId}/cancel/`, {
+      const response = await fetch(`${API_BASE}/api/cal/bookings/${bookingUid}/cancel/`, {
         method: 'POST',
         headers: authHeaders,
       });
@@ -127,7 +130,7 @@ const CalendarManager = () => {
           >
             {bookings.map((booking) => (
               <motion.div
-                key={booking.id}
+                key={booking.uid || booking.id}
                 layout
                 className="bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl transition-all flex flex-col justify-between"
               >
@@ -150,19 +153,43 @@ const CalendarManager = () => {
                   <div className="space-y-3 mb-6">
                     <div className="flex items-center text-sm text-primary-gray/60 font-medium">
                       <Clock size={16} className="mr-3 text-primary-blue" />
-                      {new Date(booking.startTime).toLocaleString('ca-ES', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {booking.startTime
+                        ? new Date(booking.startTime).toLocaleString('ca-ES', {
+                            weekday: 'short',
+                            day: 'numeric',
+                            month: 'short',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '—'}
                     </div>
                     <div className="flex items-center text-sm text-primary-gray/60 font-medium">
                       <User size={16} className="mr-3 text-primary-blue" />
                       {booking.attendees?.[0]?.name || 'Client'}
                     </div>
+                    {(booking.location || booking.metadata?.address) && (
+                      <div className="text-xs text-primary-gray/50 font-medium pl-7">
+                        {typeof booking.location === 'string'
+                          ? booking.location
+                          : booking.metadata?.address}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="flex gap-2 pt-4 border-t border-gray-50 mt-4">
-                  <button onClick={() => handleCancel(booking.id)} className="flex-1 flex items-center justify-center p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors">
+                  <button
+                    onClick={() => handleCancel(booking.uid)}
+                    disabled={!booking.uid}
+                    className="flex-1 flex items-center justify-center p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors disabled:opacity-40"
+                  >
                     <Trash2 size={18} />
                   </button>
-                  <a href={`https://cal.com/booking/${booking.uid}`} target="_blank" rel="noopener noreferrer" className="flex-1 flex items-center justify-center p-3 rounded-xl bg-gray-50 text-primary-gray hover:bg-gray-100 transition-colors">
+                  <a
+                    href={booking.uid ? `https://app.cal.eu/bookings/${booking.uid}` : '#'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 flex items-center justify-center p-3 rounded-xl bg-gray-50 text-primary-gray hover:bg-gray-100 transition-colors"
+                  >
                     <ExternalLink size={18} />
                   </a>
                 </div>

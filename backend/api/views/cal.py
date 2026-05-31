@@ -3,7 +3,8 @@ import requests
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from ..models import Cliente, Cita
+from ..models import Cliente
+from api.cal_client import CAL_BASE_URL, CAL_BOOKING_API_VERSION, fetch_cal_bookings
 
 @api_view(['GET', 'POST'])
 def cal_webhook(request):
@@ -27,35 +28,26 @@ def cal_webhook(request):
             attendee = data.get('attendees', [{}])[0]
             cliente, _ = Cliente.objects.get_or_create(
                 email=attendee.get('email'),
-                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
+                defaults={
+                    'nombre': attendee.get('name', 'Client Cal.com'),
+                    'telefono': attendee.get('phoneNumber', ''),
+                    'documento_fiscal': f"CAL-{data.get('uid', 'web')[:12]}",
+                }
             )
-            Cita.objects.create(
-                cliente=cliente,
-                fecha_hora=data.get('startTime'),
-                notas=f"Reserva automàtica via Cal.com. UID: {data.get('uid', data.get('id', ''))}",
-                estado='Confirmada'
-            )
+            # Cita requiere ubicacion/tecnico/fechas — el panel usa Cal.com API directamente.
+            print(f"INFO Webhook BOOKING_CREATED uid={data.get('uid')} client={cliente.email}")
 
         elif trigger_event in ('BOOKING_CANCELLED', 'BOOKING_REJECTED'):
-            attendee = data.get('attendees', [{}])[0]
-            uid = data.get('uid', '')
-            citas = Cita.objects.filter(notas__icontains=uid) if uid else \
-                    Cita.objects.filter(cliente__email=attendee.get('email'), fecha_hora=data.get('startTime'))
-            citas.update(estado='Cancelada')
+            print(f"INFO Webhook {trigger_event} uid={data.get('uid')}")
 
         elif trigger_event == 'BOOKING_REQUESTED':
             attendee = data.get('attendees', [{}])[0]
-            cliente, _ = Cliente.objects.get_or_create(
+            Cliente.objects.get_or_create(
                 email=attendee.get('email'),
-                defaults={'nombre': attendee.get('name', 'Client Cal.com')}
-            )
-            Cita.objects.get_or_create(
-                notas__icontains=data.get('uid', ''),
                 defaults={
-                    'cliente': cliente,
-                    'fecha_hora': data.get('startTime'),
-                    'notas': f"Sol·licitud pendent. UID: {data.get('uid', '')}",
-                    'estado': 'Pendent'
+                    'nombre': attendee.get('name', 'Client Cal.com'),
+                    'telefono': attendee.get('phoneNumber', ''),
+                    'documento_fiscal': f"CAL-{data.get('uid', 'web')[:12]}",
                 }
             )
 
@@ -67,58 +59,42 @@ def cal_webhook(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_cal_bookings(request):
-    """Proxy para obtener las reservas de Cal.com."""
-    api_key = os.getenv('CAL_API_KEY')
-    if not api_key:
-        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
-    
-    # Probamos con el endpoint europeo por si la clave es regional
-    url = "https://api.cal.eu/v2/bookings"
-    
-    try:
-        api_key = os.getenv('CAL_API_KEY', '').strip()
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "cal-api-version": "2024-06-11",
-            "Content-Type": "application/json"
-        }
-        print(f"DEBUG: Re-connecting to Cal.eu v2 with key: {api_key[:8]}...")
-        response = requests.get(url, headers=headers)
-        print(f"DEBUG: Cal.com v2 status: {response.status_code}")
-        print(f"DEBUG: Cal.com v2 response headers: {dict(response.headers)}")
-        
-        try:
-            res_data = response.json()
-        except:
-            res_data = {"error": "Invalid JSON", "raw": response.text}
-
-        if response.status_code != 200:
-            print(f"DEBUG: Cal.com v2 FULL ERROR: {response.text}")
-            return Response(res_data, status=response.status_code)
-            
-        return Response(res_data, status=200)
-    except Exception as e:
-        print(f"CRITICAL ERROR in get_cal_bookings: {str(e)}")
-        return Response({"error": str(e)}, status=500)
+    """Proxy: lista reservas de Cal.com (API v2 2024-08-13)."""
+    ok, result = fetch_cal_bookings()
+    if ok:
+        return Response({
+            "status": "success",
+            "data": {"bookings": result},
+        }, status=200)
+    return Response({"status": "error", "message": result}, status=502)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def cancel_cal_booking(request, booking_id):
-    """Proxy para cancelar una reserva en Cal.com."""
-    api_key = os.getenv('CAL_API_KEY')
+def cancel_cal_booking(request, booking_uid):
+    """Proxy para cancelar una reserva en Cal.com (por UID)."""
+    api_key = os.getenv('CAL_API_KEY', '').strip()
     if not api_key:
         return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
-    
-    url = f"https://api.cal.eu/v2/bookings/{booking_id}/cancel"
-    
+
+    url = f"{CAL_BASE_URL}/bookings/{booking_uid}/cancel"
+
     try:
         headers = {
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
-            "cal-api-version": "2024-06-11"
+            "cal-api-version": CAL_BOOKING_API_VERSION,
         }
-        response = requests.post(url, headers=headers)
-        return Response(status=response.status_code)
+        response = requests.post(
+            url,
+            headers=headers,
+            json={"cancellationReason": "Cancel·lada des del panell CECSA"},
+            timeout=12,
+        )
+        try:
+            body = response.json()
+        except ValueError:
+            body = {"raw": response.text[:300]}
+        return Response(body, status=response.status_code)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
 

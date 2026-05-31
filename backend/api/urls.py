@@ -29,6 +29,6 @@ urlpatterns = [
     path('auth/logout/', auth_logout, name='auth-logout'),
     path('auth/me/', auth_me, name='auth-me'),
     path('cal/bookings/', get_cal_bookings, name='cal-bookings'),
-    path('cal/bookings/<int:booking_id>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
+    path('cal/bookings/<str:booking_uid>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
     path('debug/', debug_system, name='debug-system'),
 ]
