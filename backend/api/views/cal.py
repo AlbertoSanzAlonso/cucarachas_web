@@ -125,23 +125,19 @@ def cancel_cal_booking(request, booking_id):
 @api_view(['GET'])
 def get_cal_slots(request):
     """Proxy para obtener slots de Cal.com evitando problemas de CORS."""
-    event_type_id = request.query_params.get('eventTypeId', '277401')
-    start_time = request.query_params.get('startTime')
-    end_time = request.query_params.get('endTime')
-    
-    api_key = os.getenv('CAL_API_KEY', '').strip()
-    if not api_key:
-        return Response({'error': 'CAL_API_KEY no configurada al servidor'}, status=500)
-    
-    url = f"https://api.cal.eu/v2/slots?eventTypeId={event_type_id}&startTime={start_time}&endTime={end_time}"
-    
-    try:
-        headers = {
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "cal-api-version": "2024-06-11"
-        }
-        response = requests.get(url, headers=headers)
-        return Response(response.json(), status=response.status_code)
-    except Exception as e:
-        return Response({"error": str(e)}, status=500)
+    from api.cal_client import fetch_available_slots
+
+    days_ahead = 7
+    if request.query_params.get('startTime') and request.query_params.get('endTime'):
+        try:
+            from datetime import datetime
+            start = datetime.fromisoformat(request.query_params['startTime'].replace('Z', '+00:00'))
+            end = datetime.fromisoformat(request.query_params['endTime'].replace('Z', '+00:00'))
+            days_ahead = max(1, (end.date() - start.date()).days)
+        except ValueError:
+            pass
+
+    ok, result = fetch_available_slots(days_ahead=days_ahead)
+    if ok:
+        return Response({"status": "success", "data": result}, status=200)
+    return Response({"status": "error", "message": result}, status=502)

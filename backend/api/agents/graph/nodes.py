@@ -119,8 +119,20 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             },
         }
     except Exception as e:
-        print(f"ERROR scheduler_node: {e}")
-        return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["error_scheduler"], "slots": []}}
+        import traceback
+
+        print(f"ERROR scheduler_node: {traceback.format_exc()}")
+        from api.cal_client import CAL_API_KEY
+
+        if not CAL_API_KEY:
+            msg = (
+                "L'agenda no està configurada al servidor (falta CAL_API_KEY a Coolify)."
+                if lang == "ca"
+                else "La agenda no está configurada en el servidor (falta CAL_API_KEY en Coolify)."
+            )
+        else:
+            msg = ORCHESTRATOR_MESSAGES[lang]["error_scheduler"]
+        return {"result": {"message": msg, "slots": []}}
 
 
 async def pricer_node(state: CECSAGraphState) -> dict:

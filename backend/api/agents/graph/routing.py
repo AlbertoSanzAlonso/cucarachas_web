@@ -7,7 +7,16 @@ DIAGNOSTIC_KEYWORDS = (
     "diagnóstico interactivo",
     "veredicte personalitzat",
 )
-SCHEDULING_KEYWORDS = ("cita", "visita", "agendar", "reservar", "quan podeu", "cuando")
+SCHEDULING_KEYWORDS = (
+    "cita",
+    "visita",
+    "agendar",
+    "reservar",
+    "quan podeu",
+    "cuando",
+    "agendar la meva",
+    "agendar mi",
+)
 PRICING_KEYWORDS = ("pressupost", "presupuesto")
 CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan")
 ES_HINTS = ("tengo", "hay", "donde", "quiero", "cita", "presupuesto")
