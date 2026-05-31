@@ -15,6 +15,11 @@ CAL_EVENT_TYPE_ID = os.getenv("CAL_EVENT_TYPE_ID", "277401")
 CAL_API_KEY = os.getenv("CAL_API_KEY", "").strip()
 CAL_SLOTS_TIMEZONE = os.getenv("CAL_SLOTS_TIMEZONE", "Europe/Madrid")
 MAX_SLOTS = int(os.getenv("CAL_MAX_SLOTS", "12"))
+# Integración Cal.com para POST /bookings (event type 277401 solo admite type=integration)
+CAL_BOOKING_INTEGRATION = os.getenv("CAL_BOOKING_INTEGRATION", "").strip()
+CAL_EVENT_TYPES_API_VERSION = os.getenv("CAL_EVENT_TYPES_API_VERSION", "2024-06-14")
+
+_cached_booking_integration: str | None = None
 
 
 def get_cal_headers(*, for_booking: bool = False) -> dict[str, str]:
@@ -120,3 +125,46 @@ def fetch_available_slots(days_ahead: int = 7) -> tuple[bool, list[dict[str, str
 
     except requests.RequestException as e:
         return False, f"Error de connexió amb Cal.com: {e}"
+
+
+def _fetch_event_type_integration() -> str | None:
+    """Lee la integración configurada en el event type (p. ej. google-meet, cal-video)."""
+    global _cached_booking_integration
+    if _cached_booking_integration:
+        return _cached_booking_integration
+    if not CAL_API_KEY:
+        return None
+
+    try:
+        resp = requests.get(
+            f"{CAL_BASE_URL}/event-types/{CAL_EVENT_TYPE_ID}",
+            headers={
+                **get_cal_headers(),
+                "cal-api-version": CAL_EVENT_TYPES_API_VERSION,
+            },
+            timeout=8,
+        )
+        if resp.status_code != 200:
+            print(f"DEBUG Cal event-type: status={resp.status_code} body={resp.text[:200]}")
+            return None
+        data = resp.json()
+        event = data.get("data") if isinstance(data.get("data"), dict) else {}
+        locations = event.get("locations") or []
+        for loc in locations:
+            if isinstance(loc, dict) and loc.get("type") == "integration":
+                integration = (loc.get("integration") or "").strip()
+                if integration:
+                    _cached_booking_integration = integration
+                    return integration
+    except requests.RequestException as e:
+        print(f"DEBUG Cal event-type fetch failed: {e}")
+    return None
+
+
+def resolve_booking_location() -> dict[str, str]:
+    """
+    Ubicación válida para POST /v2/bookings según el event type.
+    El 277401 solo admite type=integration (no attendeeAddress).
+    """
+    integration = CAL_BOOKING_INTEGRATION or _fetch_event_type_integration() or "cal-video"
+    return {"type": "integration", "integration": integration}

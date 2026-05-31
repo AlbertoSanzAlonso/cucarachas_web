@@ -11,6 +11,7 @@ from api.cal_client import (
     CAL_BASE_URL,
     CAL_EVENT_TYPE_ID,
     get_cal_booking_headers,
+    resolve_booking_location,
 )
 
 
@@ -53,6 +54,8 @@ def create_cal_booking(
     lang = "es" if language.startswith("es") else "ca"
     start_utc = _slot_start_utc_iso(slot_time)
     addr = (address or "Barcelona").strip()
+    note_parts = [p for p in ((notes or "").strip(), f"Adreça: {addr}") if p]
+    combined_notes = " | ".join(note_parts)[:500]
 
     payload = {
         "eventTypeId": int(CAL_EVENT_TYPE_ID),
@@ -64,11 +67,12 @@ def create_cal_booking(
             "timeZone": "Europe/Madrid",
             "language": lang,
         },
-        "location": {
-            "type": "attendeeAddress",
-            "address": addr,
+        "location": resolve_booking_location(),
+        "metadata": {
+            "notes": combined_notes,
+            "address": addr[:500],
+            "source": "CECSA Bio-Assistent",
         },
-        "metadata": {"notes": (notes or "")[:500], "source": "CECSA Bio-Assistent"},
     }
 
     try:

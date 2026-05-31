@@ -32,6 +32,8 @@ branding_text.txt
 .insforge/
 .agent/
 .agents/
+!.agents/skills/
+!.agents/skills/**
 .augment/
 .claude/
 .cline/

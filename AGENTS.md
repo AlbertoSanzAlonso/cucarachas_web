@@ -44,6 +44,10 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `DATABASE_URL` = connection string PostgreSQL
 - `CAL_API_KEY` = key de Cal.com (nunca hardcodear en código)
 - `CAL_EVENT_TYPE_ID` = `277401`
+- `CAL_SLOTS_API_VERSION` = `2024-09-04` (GET slots; opcional, default en código)
+- `CAL_BOOKING_API_VERSION` = `2024-08-13` (**obligatorio** para POST crear reservas)
+- `CAL_BOOKING_INTEGRATION` = opcional (`google-meet`, `cal-video`, …); si no se define, se lee del event type vía API
+- `CAL_BASE_URL` = `https://api.cal.eu/v2` (instancia EU)
 - `DJANGO_SECRET_KEY` = clave secreta Django
 - `OPENAI_API_KEY` = clave de OpenAI (principal para los agentes)
 - `GOOGLE_API_KEY` = clave de Google (usada para Geocoding y fallback de agentes)
@@ -72,23 +76,39 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 
 - **Grafo**: `backend/api/agents/graph/` — compilado en `builder.py` (`get_cecsa_graph`).
 - **Fachada API**: `orchestrator.py` (`CECSAOrchestrator`) invoca el grafo y persiste `AgentState` en sesión Django.
-- **Enrutado sin LLM**: `graph/routing.py` (keywords → intención, idioma, nodo siguiente). Ahorra tokens y latencia.
-- **Nodos**: cada agente Pydantic-AI vive en su módulo; el grafo solo orquesta cuándo se ejecuta cada uno.
-- **Optimización de recursos** (`config.py`):
-  - `AGENT_HISTORY_MAX_TURNS` — recorta historial enviado al modelo.
-  - `AGENT_ENABLE_CRM=false` — omite el nodo de síntesis CRM tras diagnóstico.
-  - `AGENT_TIMEOUT_*` — timeouts por nodo.
-- Retorna **sempre un dict** amb `message`, `slots`, `booking_confirmed`, `booking_uid`.
+- **Enrutado sin LLM**: `graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
+- **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
+- **Reserva directa**: `booking.py` + `cal_booking.py` — sin LLM cuando el frontend envía `booking` en el body.
+- **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots Cal.com sin LLM) si el mensaje pide cita explícitamente.
+- **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_TIMEOUT_*`.
+- Retorna **siempre** un dict con `message`, `slots`, `booking_confirmed`, `booking_uid`.
+
+### API de chat (`POST /api/chat/`)
+
+| Campo | Uso |
+|-------|-----|
+| `message` | Texto del usuario (puede ir vacío si solo `booking`) |
+| `language` | `ca` / `es` (normalizado en backend) |
+| `source` | `"home"` en FloatingCTA — evita mostrar slots en saludos sin intención de cita |
+| `diagnostic` | Objeto con respuestas del wizard (modal): `who`, `where`, `quantity`, `since`, … |
+| `booking` | `{ slot_time, name, phone }` — confirma cita en Cal.com |
+
+Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
 ### Frontend: Bio-Assistent Modal (`/frontend/src/components/Agent/AgentHeroModal.jsx`)
 
 - **Estructura Modular**: Separación estricta de lógica y presentación:
     - `useAgentChat.js`: Hook personalizado que gestiona el estado de los mensajes, escritura y llamadas a la API.
-    - `DiagnosticFlow.jsx`: Orquestador del flujo interactivo de 7 pasos (incluyendo recolección de info extra).
+    - `DiagnosticFlow.jsx`: Orquestador del flujo interactivo (7–10 pasos según rama, incluyendo recolección de info extra).
+    - `buildStaticVerdict.js`: Veredictos preparados sin LLM cuando el textarea final está vacío.
     - `ChatMessage.jsx`: Renderizado de burbujas inteligentes con soporte para veredictos de IA y CTAs integrados.
+    - `BookingContactForm.jsx`: Reserva en 2 pasos (nombre → teléfono → confirmar).
     - `ChatInput.jsx`: Componente de entrada desacoplado.
-- **Flujo de Diagnóstico**: Proceso de 7 pasos que culmina en un veredicto generado por IA en tiempo real, enviado al backend con contexto completo del usuario.
-- **Scroll Técnico**: Implementado mediante `ScrollArea.jsx` con soporte de `forwardRef` para auto-scroll automático en mensajes nuevos.
+- **Flujo de Diagnóstico**: 4 ramas (`particular`, `empresa`, `admin`, `comunidad`) que culminan en un paso final con textarea opcional.
+- **Veredicto estático (sin LLM)**: Si el usuario **no rellena** `extra_info`, `getAIDiagnostic()` usa `buildStaticVerdict()` — respuesta instantánea según rama + tier (`urgent` / `moderate` / `info`). Plantillas en `frontend/src/locales/{ca,es}/agent.json` bajo `agent.verdict.static.*`. **No llama a `/api/chat/`**.
+- **Veredicto con IA**: Si `extra_info` tiene contenido, se invoca el backend (agente diagnosticador) con el prompt completo del wizard.
+- **Scroll**: `ScrollArea.jsx` + `data-lenis-prevent`; `App.jsx` pausa Lenis con el modal abierto.
+- **Agendar**: envía `diagnostic` a la API; confirmación con `booking` tras elegir slot.
 - **Entrada directa al xat**: Opción "Tinc preguntes / Consultar Agent" en el paso 1.
 - **Slots interactius**: Renderitza disponibilidad real de Cal.com mediante el proxy del backend.
 - **Restricciones**: No apareix a `/admin` ni `/login`.
@@ -100,16 +120,19 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Diseño Premium**: Botón agrandado en color `--accent-green` para máxima visibilidad. Ventana de chat expandida (`550x750px`) en escritorio con tipografía optimizada.
 - **Foco en Conversión**: Centralización de toda la ayuda en el agente de IA y el agendamiento de citas, eliminando canales externos (WhatsApp/Teléfono) de la interfaz de chat inicial.
 - **Estado**: Gestiona su propio historial de mensajes de forma independiente al modal de diagnóstico.
+- **`source: "home"`** en cada petición — evita slots en un «hola» por sesión antigua del modal.
+- **Reserva**: mismo flujo nombre → teléfono → `booking`; `BookingContactForm` variant `light`.
+- **i18n**: `agent.welcome_msg_home`, `agent.home.*`; hints a nivel raíz de `agent` en `agent.json`.
 
 
 ### Cal.com Integration
 
-- **Event Type ID**: `277401`
-- **API Key**: guardada com `CAL_API_KEY` en les env vars del backend a Coolify. **Mai al codi.**
-- **Webhook URL de producció**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/`
-- **Events actius**: `BOOKING_CREATED`, `BOOKING_CANCELLED`, `BOOKING_REJECTED`, `BOOKING_REQUESTED`.
-- El webhook sincronitza automàticament `Cita` i `Cliente` a la BD interna.
-- Proxy de slots a `/api/cal/slots/` per evitar CORS des del frontend.
+- **Event Type ID**: `277401` — **API Key** solo en env (`CAL_API_KEY`).
+- **Slots**: `GET /v2/slots` con `cal-api-version: 2024-09-04` → `cal_client.fetch_available_slots`.
+- **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → `cal_booking.create_cal_booking` (location `integration`, dirección en `metadata`; ver `CAL_BOOKING_INTEGRATION` si hace falta forzar la integración).
+- **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cita` / `Cliente`.
+- **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`.
+- Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos (`Cannot POST /v2/bookings` = versión incorrecta).
 
 ### Admin Dashboard (`/frontend/src/components/Admin/CalendarManager.jsx`)
 
@@ -126,20 +149,17 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 
 ## 🛠 Skills Actives
 
-### 1. **Branding Manager** (`.agents/skills/branding_manager`)
-Encargado de la coherencia visual. Reglas estrictas sobre colores, tipografía y uso del isotipo.
+En **`.agents/skills/<carpeta>/SKILL.md`** (versionadas en git). Leer la skill antes de tocar esa área.
 
-### 2. **Service Auditor** (`.agents/skills/service_auditor`)
-Sincroniza los servicios (especies de cucarachas) presentados en la web con el backend Django.
-
-### 3. **Copywriter Local** (`.agents/skills/copywriter_local`)
-Genera contenido con autoridad para la región de Barcelona en **Catalán** y Castellano.
-
-### 4. **UI/UX Pro Max** (`.agents/skills/ui-ux-pro-max`)
-Inteligencia de diseño UI/UX. Consultar antes de implementar secciones nuevas.
-
-### 5. **Tailwind Design System** (`.agents/skills/tailwind-design-system`)
-Construcción de sistemas de diseño escalables con Tailwind CSS v4.
+| Skill | Carpeta |
+|-------|---------|
+| **Bio-Assistent** (principal) | `bio_assistant/` (+ `reference.md`) |
+| **Cal.com** | `cal_com/` |
+| **Branding Manager** | `branding_manager/` |
+| **Service Auditor** | `service_auditor/` |
+| **Copywriter Local** | `copywriter_local/` |
+| **UI/UX Pro Max** | `ui_ux_pro_max/` |
+| **Tailwind Design System** | `tailwind_design_system/` |
 
 ## 🚀 SEO & Optimización Permanente (MANDATORIO)
 
@@ -151,7 +171,7 @@ Construcción de sistemas de diseño escalables con Tailwind CSS v4.
 ## ⚙️ Convenciones de Implementación
 
 - **Inline styles** en componentes de layout (Navbar, Footer, FloatingCTA).
-- **i18n**: Usar siempre `t('clave.traduccion')`.
+- **i18n**: Usar siempre `t('clave.traduccion')`. En chats (`FloatingCTA`, modal), reaccionar a `i18n.language` para saludos y UI; enviar `language` al backend en cada petición.
 - **Aliases**: Usar siempre el alias `@/` para importar. Las rutas relativas están prohibidas.
 - **Media**: Usar formato `.webp` para todas las imágenes.
 - **Modales Premium**: Estrategia **"Wait before Open"** — verificar `img.complete` antes de abrir.
@@ -159,5 +179,7 @@ Construcción de sistemas de diseño escalables con Tailwind CSS v4.
 - **Isotipo**: `/public/assets/isotipo.png`, altura máxima `60px` en Navbar y `40px` en Footer.
 - **Mobile Landscape**: Variante `[@media(max-height:600px)_and_(orientation:landscape)]` obligatoria.
 - **Admin & Dashboard**: Gestión exclusivamente a través del Dashboard React. El `/admin` de Django es secundario.
-- **Agentes**: Todo agente nuevo necesita: (1) `Output` Pydantic en `models.py`, (2) nodo en `graph/nodes.py` + aristas en `graph/builder.py` y `graph/routing.py`, (3) retornar siempre un `dict` con al menos `message`.
+- **Agentes**: Nuevo agente → `Output` en `models.py`, nodo + aristas en `graph/`, dict con `message` (+ `slots` si aplica). Preferir **fast path** sin LLM en flujos críticos (slots, confirmación cita).
+- **Routing**: tras cambios en `routing.py`, revisar `graph/test_routing.py` (p. ej. `hola` + sesión `APPOINTMENT` → `receptionist`).
+- **Diagnóstico modal**: veredictos estáticos en i18n + `buildStaticVerdict.js`; LLM solo si hay `extra_info`.
 - **Secrets**: **Nunca** hardcodear API keys en el código. Siempre desde variables de entorno. Usar `os.getenv('KEY')` sin fallback con valor real.
