@@ -4,7 +4,7 @@ from typing import Any
 from pydantic_ai.messages import ModelMessage
 
 from ..config import AGENT_TIMEOUTS, HISTORY_MAX_TURNS
-from ..models import AgentDeps, AgentState, DiagnosisOutput, Intent
+from ..models import AgentState, DiagnosisOutput, Intent
 from ..prompts import ORCHESTRATOR_MESSAGES
 from ..serialization import dump_message_history, messages_adapter
 from ..receptionist import receptionist_agent
@@ -19,11 +19,6 @@ from .state import CECSAGraphState
 
 def _agent_state(state: CECSAGraphState) -> AgentState:
     return AgentState.model_validate(state.get("agent_state") or {})
-
-
-def _deps(state: CECSAGraphState) -> AgentDeps:
-    agent = _agent_state(state)
-    return AgentDeps(language=agent.language)
 
 
 def _trim_history(history: list) -> list[ModelMessage]:
@@ -48,13 +43,12 @@ async def _run_agent(
     timeout_key: str,
     use_full_history: bool = True,
 ) -> tuple[AgentState, Any]:
-    deps = _deps(state)
     agent_state = _agent_state(state)
     history = _trim_history(agent_state.history) if use_full_history else []
     timeout = AGENT_TIMEOUTS.get(timeout_key, 20.0)
 
     response = await asyncio.wait_for(
-        agent.run(prompt, deps=deps, message_history=history),
+        agent.run(prompt, deps=agent_state, message_history=history),
         timeout=timeout,
     )
     agent_state.history = dump_message_history(response.all_messages())

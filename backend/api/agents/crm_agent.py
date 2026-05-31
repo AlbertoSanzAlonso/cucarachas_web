@@ -6,7 +6,7 @@ import os
 import dataclasses
 from . import bootstrap  # noqa: F401
 from .config import AGENT_MODEL
-from .models import AgentDeps
+from .models import AgentState
 
 # Modelo para la síntesis final del caso
 class CaseSynthesis(BaseModel):
@@ -19,7 +19,7 @@ class CaseSynthesis(BaseModel):
 # Inicializamos el Agente de Síntesis (CRM)
 crm_agent = Agent(
     AGENT_MODEL,
-    deps_type=AgentDeps,
+    deps_type=AgentState,
     output_type=CaseSynthesis,
     system_prompt=(
         "Ets l'Agent Sintetitzador de CECSA. El teu rol és agafar tota la informació "
@@ -31,7 +31,7 @@ crm_agent = Agent(
 )
 
 @crm_agent.tool
-def get_official_treatments(ctx: RunContext[AgentDeps]) -> str:
+def get_official_treatments(ctx: RunContext[AgentState]) -> str:
     """Consulta el catàleg oficial de tractaments de CECSA."""
     try:
         treatments = Tratamiento.objects.all()
@@ -47,7 +47,7 @@ def get_official_treatments(ctx: RunContext[AgentDeps]) -> str:
         return "Catàleg de tractaments no disponible temporalment."
 
 @crm_agent.tool
-def get_species_info(ctx: RunContext[AgentDeps], name: str) -> str:
+def get_species_info(ctx: RunContext[AgentState], name: str) -> str:
     """Obté detalls tècnics d'una espècie de la base de dades."""
     try:
         species = Species.objects.filter(name__icontains=name).first()

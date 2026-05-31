@@ -46,7 +46,8 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `CAL_EVENT_TYPE_ID` = `278962` (primerarevision / primeracita)
 - `CAL_SLOTS_API_VERSION` = `2024-09-04` (GET slots; opcional, default en código)
 - `CAL_BOOKING_API_VERSION` = `2024-08-13` (**obligatorio** para POST crear reservas)
-- `CAL_BOOKING_INTEGRATION` = opcional (`google-meet`, `cal-video`, …); si no se define, se lee del event type vía API
+- `CAL_BOOKING_LOCATION_TYPE` = `attendeeAddress` (default; visitas presenciales)
+- `CAL_BOOKING_INTEGRATION` = vacío salvo que se fuerce videollamada explícitamente
 - `CAL_BASE_URL` = `https://api.cal.eu/v2` (instancia EU)
 - `DJANGO_SECRET_KEY` = clave secreta Django
 - `OPENAI_API_KEY` = clave de OpenAI (principal para los agentes)
@@ -78,6 +79,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Fachada API**: `orchestrator.py` (`CECSAOrchestrator`) invoca el grafo y persiste `AgentState` en sesión Django.
 - **Enrutado sin LLM**: `graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
 - **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
+- **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
 - **Reserva directa**: `booking.py` + `cal_booking.py` — sin LLM cuando el frontend envía `booking` en el body.
 - **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots Cal.com sin LLM) si el mensaje pide cita explícitamente.
 - **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_TIMEOUT_*`.
@@ -91,7 +93,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 | `language` | `ca` / `es` (normalizado en backend) |
 | `source` | `"home"` en FloatingCTA — evita mostrar slots en saludos sin intención de cita |
 | `diagnostic` | Objeto con respuestas del wizard (modal): `who`, `where`, `quantity`, `since`, … |
-| `booking` | `{ slot_time, name, phone }` — confirma cita en Cal.com |
+| `booking` | `{ slot_time, name, phone, address }` — confirma cita presencial en Cal.com (`attendeeAddress`) |
 
 Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
@@ -102,8 +104,9 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
     - `DiagnosticFlow.jsx`: Orquestador del flujo interactivo (7–10 pasos según rama, incluyendo recolección de info extra).
     - `buildStaticVerdict.js`: Veredictos preparados sin LLM cuando el textarea final está vacío.
     - `ChatMessage.jsx`: Renderizado de burbujas inteligentes con soporte para veredictos de IA y CTAs integrados.
-    - `BookingContactForm.jsx`: Reserva en 2 pasos (nombre → teléfono → confirmar).
-    - `ChatInput.jsx`: Componente de entrada desacoplado.
+    - `BookingContactForm.jsx`: Reserva en 3 pasos (nombre → **dirección** → teléfono).
+    - `AddressPicker.jsx`: Mapa Leaflet/OSM, búsqueda y entrada manual de dirección.
+    - `ChatInput.jsx`: Componente de entrada desacoplado (GPS opcional en chat libre).
 - **Flujo de Diagnóstico**: 4 ramas (`particular`, `empresa`, `admin`, `comunidad`) que culminan en un paso final con textarea opcional.
 - **Veredicto estático (sin LLM)**: Si el usuario **no rellena** `extra_info`, `getAIDiagnostic()` usa `buildStaticVerdict()` — respuesta instantánea según rama + tier (`urgent` / `moderate` / `info`). Plantillas en `frontend/src/locales/{ca,es}/agent.json` bajo `agent.verdict.static.*`. **No llama a `/api/chat/`**.
 - **Veredicto con IA**: Si `extra_info` tiene contenido, se invoca el backend (agente diagnosticador) con el prompt completo del wizard.
@@ -121,7 +124,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Foco en Conversión**: Centralización de toda la ayuda en el agente de IA y el agendamiento de citas, eliminando canales externos (WhatsApp/Teléfono) de la interfaz de chat inicial.
 - **Estado**: Gestiona su propio historial de mensajes de forma independiente al modal de diagnóstico.
 - **`source: "home"`** en cada petición — evita slots en un «hola» por sesión antigua del modal.
-- **Reserva**: mismo flujo nombre → teléfono → `booking`; `BookingContactForm` variant `light`.
+- **Reserva**: mismo flujo nombre → dirección → teléfono; `BookingContactForm` variant `light`.
 - **i18n**: `agent.welcome_msg_home`, `agent.home.*`; hints a nivel raíz de `agent` en `agent.json`.
 
 
@@ -134,10 +137,11 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`.
 - Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos (`Cannot POST /v2/bookings` = versión incorrecta).
 
-### Admin Dashboard (`/frontend/src/components/Admin/CalendarManager.jsx`)
+### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
-- Secció "Agenda" al Dashboard d'administració.
-- Consulta i cancela cites reals de Cal.com via API.
+- **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
+- **Agenda**: `CalendarManager.jsx` — consulta i cancel·la cites Cal.com via `/api/cal/bookings/` (també autenticat).
+- El token s'injecta automàticament des de Redux (`auth.token`) a cada petició del dashboard.
 
 ## 🔐 Autenticació (Django DRF Token)
 
@@ -145,7 +149,10 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Logout**: `POST /api/auth/logout/` amb `Authorization: Token <key>`.
 - **Me**: `GET /api/auth/me/` amb `Authorization: Token <key>`.
 - El frontend guarda el token a `localStorage` amb la clau `cecsa_token`.
+- **Endpoints protegits (admin)**: `/api/clientes/`, `/api/cal/bookings/`, `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
+- **Endpoints públics**: `/api/chat/`, `/api/cal/slots/`, `/api/auth/login/`, `/api/species/`.
 - **InsForge NO intervé en cap pas del flux d'autenticació.**
+- **Formulari de contacte**: `ContactForm.jsx` encara fa `POST` a `/api/clientes/` sense auth — **pendent** migrar a un endpoint públic dedicat (p. ex. `/api/contact/`).
 
 ## 🛠 Skills Actives
 
@@ -155,6 +162,7 @@ En **`.agents/skills/<carpeta>/SKILL.md`** (versionadas en git). Leer la skill a
 |-------|---------|
 | **Bio-Assistent** (principal) | `bio_assistant/` (+ `reference.md`) |
 | **Cal.com** | `cal_com/` |
+| **Geo / mapas OSM** | `geo_maps/` |
 | **Branding Manager** | `branding_manager/` |
 | **Service Auditor** | `service_auditor/` |
 | **Copywriter Local** | `copywriter_local/` |

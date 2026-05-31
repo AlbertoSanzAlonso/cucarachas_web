@@ -1,9 +1,8 @@
 ---
 name: cal-com
 description: >-
-  Integración Cal.com v2 (api.cal.eu): slots, crear/cancelar reservas, webhooks y
-  admin CalendarManager. Usar al modificar cal_client.py, cal_booking.py, views/cal.py
-  o variables CAL_*.
+  Integración Cal.com v2 (api.cal.eu): slots, reservas presenciales, listado admin,
+  webhooks. Usar al modificar cal_client.py, cal_booking.py, views/cal.py o CAL_*.
 ---
 
 # Cal.com — CECSA
@@ -11,46 +10,41 @@ description: >-
 ## Instancia y IDs
 
 - **API base**: `https://api.cal.eu/v2` (`CAL_BASE_URL`)
-- **Event type**: `277401` (`CAL_EVENT_TYPE_ID`)
-- **Webhook producción**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/`
+- **Event type**: **`278962`** (`CAL_EVENT_TYPE_ID`) — slug `primeracita`, título `primerarevision`
+- **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/`
 - **Clave**: `CAL_API_KEY` en Coolify — **nunca en código**
 
-## Configuración obligatoria en Cal.com (visitas presenciales)
+## Configuración en Cal.com (obligatorio)
 
-CECSA agenda **visitas en el domicilio del cliente**, no videollamadas.
+CECSA = **visita presencial** en domicilio del cliente.
 
-En el panel de Cal.com → event type `277401`:
+1. Event type `278962` → Location: **In Person (Attendee Address)** / «Dirección de inspección».
+2. Sin videollamada como única opción (Cal Video / Meet desactivados si no se usan).
+3. ID en URL al editar: `.../event-types/278962?tabName=setup`
 
-1. **Ubicación / Location**: activar **«En persona» / «A la ubicación del asistente»** (`attendeeAddress`).
-2. **Quitar o desactivar** Cal Video, Google Meet y demás integraciones de vídeo si no se usan.
-3. Guardar el event type.
+## Variables Coolify
 
-Sin este paso, `POST /bookings` fallará si solo admite `integration` (cal-video).
-
-Variables en Coolify (opcionales):
-
-| Variable | Valor recomendado |
-|----------|-------------------|
+| Variable | Valor |
+|----------|--------|
+| `CAL_EVENT_TYPE_ID` | `278962` |
 | `CAL_BOOKING_LOCATION_TYPE` | `attendeeAddress` (default en código) |
-| `CAL_BOOKING_INTEGRATION` | vacío (solo si forzas videollamada) |
+| `CAL_BOOKING_INTEGRATION` | vacío (solo si forzas vídeo explícitamente) |
+| `CAL_BOOKING_API_VERSION` | `2024-08-13` |
+| `CAL_SLOTS_API_VERSION` | `2024-09-04` |
 
-## Versiones de API (crítico)
+## Versiones API
 
-| Operación | Header `cal-api-version` | Archivo |
-|-----------|-------------------------|---------|
-| **GET /slots** | `2024-09-04` (default `CAL_SLOTS_API_VERSION`) | `cal_client.py` |
-| **POST /bookings** | `2024-08-13` (default `CAL_BOOKING_API_VERSION`) | `cal_booking.py` |
-| **GET /bookings** (admin) | `2024-06-11` en `views/cal.py` | Revisar al actualizar admin |
+| Operación | `cal-api-version` | Código |
+|-----------|-------------------|--------|
+| GET /slots | `2024-09-04` | `cal_client.fetch_available_slots` |
+| POST /bookings | `2024-08-13` | `cal_booking.create_cal_booking` |
+| GET /bookings (admin) | `2024-08-13` | `cal_client.fetch_cal_bookings` |
 
-Si POST bookings devuelve `Cannot POST /v2/bookings` → versión incorrecta (404).
-
-## Crear reserva (`cal_booking.create_cal_booking`)
-
-Payload v2 (visita presencial):
+## Crear reserva
 
 ```json
 {
-  "eventTypeId": 277401,
+  "eventTypeId": 278962,
   "start": "2026-06-01T09:00:00Z",
   "attendee": {
     "name": "...",
@@ -61,35 +55,45 @@ Payload v2 (visita presencial):
   },
   "location": {
     "type": "attendeeAddress",
-    "address": "Carrer Example 1, Barcelona"
+    "address": "Carrer Example 1, 08001 Barcelona"
   },
   "metadata": {
-    "notes": "Adreça: ...",
-    "address": "Carrer Example 1, Barcelona",
+    "notes": "Adreça inspecció: ...",
+    "address": "...",
     "source": "CECSA Bio-Assistent"
   }
 }
 ```
 
-- `start` en **UTC** ISO 8601 (`Z`).
-- `resolve_booking_location(address=..., phone=...)` en `cal_client.py` prioriza tipos presenciales; solo usa `integration` si el event type no tiene otra opción.
-- La dirección viene del diagnóstico (`state.city` / zona) o `Barcelona` por defecto.
-- Éxito: `status === "success"` y HTTP 200/201.
+- `resolve_booking_location(address=..., phone=...)` en `cal_client.py`: **siempre `attendeeAddress`** salvo `CAL_BOOKING_LOCATION_TYPE=integration`.
+- No usar `google-meet` / `cal-video` si el event type solo admite `attendeeAddress`.
+- Caché de locations ligada a `CAL_EVENT_TYPE_ID` (evita datos del event type antiguo).
 
-## Slots
+Entrada desde chat: `booking.address` en `POST /api/chat/` → `confirm_booking_from_chat()`.
 
-- `GET {CAL_BASE_URL}/slots?eventTypeId=&start=&end=&timeZone=Europe/Madrid`
-- Proxy público: `GET /api/cal/slots/`
+## Listado admin
+
+- `fetch_cal_bookings(eventTypeId=278962, take=100)` → array normalizado con `startTime`, `uid`, `attendees`.
+- Proxy: `GET /api/cal/bookings/` (Token auth).
+- Frontend espera `data.data.bookings`.
+- Cancelar: `POST /api/cal/bookings/{uid}/cancel/`
+
+## Errores típicos
+
+| Error | Fix |
+|-------|-----|
+| `Cannot POST /v2/bookings` | Header `2024-08-13` |
+| `integration not valid` … `attendeeAddress` | Redeploy + `attendeeAddress` en location |
+| `google-meet not valid` | No auto-detectar Meet; forzar presencial |
+| Admin «Sense cites» | API version + parseo `data[]` |
+| Slots de otro evento | `CAL_EVENT_TYPE_ID=278962` |
 
 ## Webhook
 
-Eventos: `BOOKING_CREATED`, `BOOKING_CANCELLED`, … → sincroniza `Cliente` y `Cita` en Django.
+`BOOKING_CREATED` → crea/actualiza `Cliente` (email sintético `cita+...@`). El panel admin lee **Cal.com API**, no solo Django `Cita`.
 
 ## Frontend
 
-- Slots en chat: `ChatMessage.jsx`
-- Reserva: nombre → teléfono → `booking` con dirección implícita vía sesión/diagnóstico
-
-## Admin
-
-`CalendarManager.jsx` — listado y cancelación vía `/api/cal/bookings/`.
+- Slots: `ChatMessage.jsx`
+- Reserva: `BookingContactForm` → nombre → dirección → teléfono
+- Admin: `CalendarManager.jsx`

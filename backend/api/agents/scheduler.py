@@ -6,27 +6,27 @@ from django.core.cache import cache
 
 from api.cal_booking import create_cal_booking
 from api.cal_client import CAL_API_KEY, fetch_available_slots
-from .models import SchedulerOutput, AgentDeps
+from .models import AgentState, SchedulerOutput
 from .config import AGENT_MODEL
 from .prompts import SYSTEM_PROMPTS
 
 # Agente 4: Agendador
 scheduler_agent = Agent(
     AGENT_MODEL,
-    deps_type=AgentDeps,
+    deps_type=AgentState,
     output_type=SchedulerOutput,
     retries=3,
 )
 
 
 @scheduler_agent.system_prompt
-def get_scheduler_prompt(ctx: RunContext[AgentDeps]) -> str:
+def get_scheduler_prompt(ctx: RunContext[AgentState]) -> str:
     lang = ctx.deps.language if ctx.deps else "ca"
     return SYSTEM_PROMPTS["scheduler"].get(lang, SYSTEM_PROMPTS["scheduler"]["ca"])
 
 
 @scheduler_agent.tool
-def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str | list:
+def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = 7) -> str | list:
     """Consulta els horaris lliures a Cal.com pels propers dies."""
     cache_key = f"cal_slots_{days_ahead}"
     cached_slots = cache.get(cache_key)
@@ -42,7 +42,7 @@ def get_available_slots(ctx: RunContext[AgentDeps], days_ahead: int = 7) -> str 
 
 
 @scheduler_agent.tool
-def verify_address(ctx: RunContext[AgentDeps], address: str) -> str:
+def verify_address(ctx: RunContext[AgentState], address: str) -> str:
     """Verifica si una adreça existeix a Barcelona/Catalunya usando Google Maps API."""
     cache_key = f"geocode_{address.lower().replace(' ', '_')}"
     cached_address = cache.get(cache_key)
@@ -80,7 +80,7 @@ def verify_address(ctx: RunContext[AgentDeps], address: str) -> str:
 
 @scheduler_agent.tool
 def create_booking(
-    ctx: RunContext[AgentDeps],
+    ctx: RunContext[AgentState],
     slot_time: str,
     attendee_name: str,
     attendee_email: str,

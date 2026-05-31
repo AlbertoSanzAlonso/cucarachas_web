@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
 from ..models import (
     Species, Cliente, Tratamiento, Tecnico, 
     Ubicacion, Presupuesto, Cita, ReporteServicio
@@ -17,6 +18,7 @@ class SpeciesViewSet(viewsets.ReadOnlyModelViewSet):
 class ClienteViewSet(viewsets.ModelViewSet):
     queryset = Cliente.objects.all()
     serializer_class = ClienteSerializer
+    permission_classes = [IsAuthenticated]
 
 class TratamientoViewSet(viewsets.ModelViewSet):
     queryset = Tratamiento.objects.all()

@@ -24,11 +24,9 @@ class Intent(str, Enum):
 
 Language = Literal["ca", "es"]
 
-class AgentDeps(BaseModel):
-    language: Language = "ca"
 
-# Estado compartido que viaja entre agentes
 class AgentState(BaseModel):
+    """Estado compartido del grafo LangGraph y deps de Pydantic-AI (ctx.deps)."""
     customer_name: Optional[str] = None
     city: Optional[str] = None
     property_type: Optional[Literal["particular", "negoci", "comunitat"]] = None
