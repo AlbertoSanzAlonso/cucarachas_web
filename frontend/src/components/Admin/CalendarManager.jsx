@@ -8,6 +8,7 @@ import { ca } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '@/components/Admin/adminCalendar.css';
 import BookingDetailModal, { getBookingDisplayTitle } from '@/components/Admin/BookingDetailModal';
+import ConfirmModal from '@/components/Admin/ConfirmModal';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
 
@@ -55,6 +56,9 @@ const CalendarManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [cancelError, setCancelError] = useState(null);
   const [currentView, setCurrentView] = useState('week');
   const [currentDate, setCurrentDate] = useState(new Date());
   const token = useSelector((state) => state.auth.token);
@@ -108,21 +112,39 @@ const CalendarManager = () => {
     [bookings],
   );
 
-  const handleCancel = async (bookingUid) => {
-    if (!window.confirm('Estàs segur que vols cancel·lar aquesta cita?')) return;
+  const handleRequestCancel = () => {
+    setCancelError(null);
+    setShowCancelConfirm(true);
+  };
+
+  const handleCloseCancelConfirm = () => {
+    if (isCancelling) return;
+    setShowCancelConfirm(false);
+    setCancelError(null);
+  };
+
+  const handleConfirmCancel = async () => {
+    const bookingUid = selectedBooking?.uid;
+    if (!bookingUid) return;
+
+    setIsCancelling(true);
+    setCancelError(null);
     try {
       const response = await fetch(`${API_BASE}/api/cal/bookings/${bookingUid}/cancel/`, {
         method: 'POST',
         headers: authHeaders,
       });
       if (response.ok) {
+        setShowCancelConfirm(false);
         setSelectedBooking(null);
         fetchBookings();
       } else {
-        alert('Error al cancel·lar la cita');
+        setCancelError('No s\'ha pogut cancel·lar la cita. Torna-ho a provar.');
       }
     } catch {
-      alert('Error al cancel·lar la cita');
+      setCancelError('Error de connexió en cancel·lar la cita.');
+    } finally {
+      setIsCancelling(false);
     }
   };
 
@@ -251,9 +273,26 @@ const CalendarManager = () => {
         <BookingDetailModal
           booking={selectedBooking}
           onClose={() => setSelectedBooking(null)}
-          onCancel={handleCancel}
+          onRequestCancel={handleRequestCancel}
         />
       )}
+
+      <ConfirmModal
+        isOpen={showCancelConfirm}
+        onClose={handleCloseCancelConfirm}
+        onConfirm={handleConfirmCancel}
+        title="Cancel·lar cita"
+        message={
+          selectedBooking
+            ? `Estàs segur que vols cancel·lar «${getBookingDisplayTitle(selectedBooking)}»? Aquesta acció no es pot desfer.`
+            : 'Estàs segur que vols cancel·lar aquesta cita?'
+        }
+        confirmLabel="Sí, cancel·lar"
+        cancelLabel="No, tornar"
+        variant="danger"
+        isLoading={isCancelling}
+        error={cancelError}
+      />
     </div>
   );
 };

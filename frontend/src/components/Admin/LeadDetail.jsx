@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft,
@@ -10,7 +10,14 @@ import {
   MapPin,
   FileText,
   User,
+  ChevronDown,
+  ChevronUp,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
+import LeadEditModal from '@/components/Admin/LeadEditModal';
+import ConfirmModal from '@/components/Admin/ConfirmModal';
+import { useDeleteLeadMutation } from '@/store/apis/leadsApi';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 import {
   filterBookingsForLead,
@@ -18,6 +25,9 @@ import {
   getBookingStatusClass,
 } from '@/utils/leadBookings';
 import { useCalBookings } from '@/hooks/useCalBookings';
+import { getBookingDisplayTitle } from '@/components/Admin/BookingDetailModal';
+
+const PREVIEW_BOOKINGS_LIMIT = 3;
 
 const formatBookingDate = (iso) => {
   if (!iso) return '—';
@@ -34,6 +44,35 @@ const formatBookingDate = (iso) => {
 const LeadDetail = ({ leadRaw, onBack }) => {
   const lead = normalizeLead(leadRaw);
   const { bookings, isLoading, isError, refetch } = useCalBookings();
+  const [showAllBookings, setShowAllBookings] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [deleteLead, { isLoading: isDeleting }] = useDeleteLeadMutation();
+
+  const handleCloseDeleteConfirm = () => {
+    if (isDeleting) return;
+    setShowDeleteConfirm(false);
+    setDeleteError(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    setDeleteError(null);
+    try {
+      await deleteLead(leadRaw.id).unwrap();
+      setShowDeleteConfirm(false);
+      onBack();
+    } catch (err) {
+      setDeleteError(
+        err?.data?.detail ||
+          'No s\'ha pogut eliminar el lead. Pot tenir dades vinculades al sistema.'
+      );
+    }
+  };
+
+  useEffect(() => {
+    setShowAllBookings(false);
+  }, [lead?.id]);
 
   if (!lead) {
     return (
@@ -47,6 +86,57 @@ const LeadDetail = ({ leadRaw, onBack }) => {
   }
 
   const leadBookings = filterBookingsForLead(bookings, lead);
+  const hasMoreBookings = leadBookings.length > PREVIEW_BOOKINGS_LIMIT;
+  const visibleBookings = showAllBookings
+    ? leadBookings
+    : leadBookings.slice(0, PREVIEW_BOOKINGS_LIMIT);
+
+  const renderBookingCard = (booking, i) => {
+    const address = getBookingAddress(booking);
+    return (
+      <motion.div
+        key={booking.uid || booking.id || i}
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: i * 0.04 }}
+        className="p-5 md:p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 hover:bg-gray-50/60 transition-colors"
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
+          <div>
+            <p className="font-black text-primary-gray text-base md:text-lg">
+              {getBookingDisplayTitle(booking)}
+            </p>
+            <p className="flex items-center gap-2 text-sm text-primary-gray/60 font-medium mt-2">
+              <Clock size={16} className="text-primary-blue shrink-0" />
+              {formatBookingDate(booking.startTime)}
+            </p>
+          </div>
+          <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${getBookingStatusClass(booking.status)}`}>
+            {booking.status}
+          </span>
+        </div>
+
+        {address && (
+          <p className="flex items-start gap-2 text-sm text-primary-gray/60 font-medium mb-4">
+            <MapPin size={16} className="text-primary-blue shrink-0 mt-0.5" />
+            {address}
+          </p>
+        )}
+
+        {booking.uid && (
+          <a
+            href={`https://app.cal.eu/bookings/${booking.uid}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-xs font-bold text-primary-blue hover:underline"
+          >
+            <ExternalLink size={14} />
+            Obrir a Cal.com
+          </a>
+        )}
+      </motion.div>
+    );
+  };
 
   return (
     <div className="animate-fade-in">
@@ -66,9 +156,32 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               <div className="p-3 bg-primary-blue/5 rounded-2xl text-primary-blue">
                 <User size={24} />
               </div>
-              <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${lead.statusClass}`}>
-                {lead.statusLabel}
-              </span>
+              <div className="flex flex-col items-end gap-2">
+                <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${lead.statusClass}`}>
+                  {lead.statusLabel}
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary-blue/15 bg-primary-blue/5 text-primary-blue text-xs font-bold hover:bg-primary-blue/10 transition-colors"
+                  >
+                    <Pencil size={14} />
+                    Editar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeleteError(null);
+                      setShowDeleteConfirm(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-red-200 bg-red-50 text-red-600 text-xs font-bold hover:bg-red-100 transition-colors"
+                  >
+                    <Trash2 size={14} />
+                    Eliminar
+                  </button>
+                </div>
+              </div>
             </div>
             <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight leading-tight">
               {lead.name}
@@ -158,58 +271,59 @@ const LeadDetail = ({ leadRaw, onBack }) => {
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
-                {leadBookings.map((booking, i) => {
-                  const address = getBookingAddress(booking);
-                  return (
-                    <motion.div
-                      key={booking.uid || booking.id || i}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="p-5 md:p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 hover:bg-gray-50/60 transition-colors"
-                    >
-                      <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
-                        <div>
-                          <p className="font-black text-primary-gray text-base md:text-lg">
-                            Primera revisió
-                          </p>
-                          <p className="flex items-center gap-2 text-sm text-primary-gray/60 font-medium mt-2">
-                            <Clock size={16} className="text-primary-blue shrink-0" />
-                            {formatBookingDate(booking.startTime)}
-                          </p>
-                        </div>
-                        <span className={`text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest ${getBookingStatusClass(booking.status)}`}>
-                          {booking.status}
-                        </span>
-                      </div>
+              <>
+                <div
+                  className={`space-y-4 overflow-y-auto overscroll-contain pr-1 ${
+                    showAllBookings ? 'max-h-[min(560px,65vh)]' : ''
+                  }`}
+                  data-lenis-prevent
+                >
+                  {visibleBookings.map((booking, i) => renderBookingCard(booking, i))}
+                </div>
 
-                      {address && (
-                        <p className="flex items-start gap-2 text-sm text-primary-gray/60 font-medium mb-4">
-                          <MapPin size={16} className="text-primary-blue shrink-0 mt-0.5" />
-                          {address}
-                        </p>
-                      )}
-
-                      {booking.uid && (
-                        <a
-                          href={`https://app.cal.eu/bookings/${booking.uid}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-xs font-bold text-primary-blue hover:underline"
-                        >
-                          <ExternalLink size={14} />
-                          Obrir a Cal.com
-                        </a>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
+                {hasMoreBookings && (
+                  <button
+                    type="button"
+                    onClick={() => setShowAllBookings((prev) => !prev)}
+                    className="mt-5 w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl border border-primary-blue/15 bg-primary-blue/5 text-primary-blue font-bold text-sm hover:bg-primary-blue/10 transition-colors"
+                  >
+                    {showAllBookings ? (
+                      <>
+                        <ChevronUp size={18} />
+                        Mostrar només les últimes {PREVIEW_BOOKINGS_LIMIT}
+                      </>
+                    ) : (
+                      <>
+                        <ChevronDown size={18} />
+                        Veure llista completa ({leadBookings.length} cites)
+                      </>
+                    )}
+                  </button>
+                )}
+              </>
             )}
           </div>
         </section>
       </div>
+
+      <LeadEditModal
+        isOpen={isEditOpen}
+        onClose={() => setIsEditOpen(false)}
+        leadRaw={leadRaw}
+      />
+
+      <ConfirmModal
+        isOpen={showDeleteConfirm}
+        onClose={handleCloseDeleteConfirm}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar lead"
+        message={`Estàs segur que vols eliminar «${lead.name}»? Es perdran les dades del contacte al CRM. Aquesta acció no es pot desfer.`}
+        confirmLabel="Sí, eliminar"
+        cancelLabel="No, tornar"
+        variant="danger"
+        isLoading={isDeleting}
+        error={deleteError}
+      />
     </div>
   );
 };

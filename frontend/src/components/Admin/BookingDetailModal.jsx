@@ -10,7 +10,7 @@ export const getBookingDisplayTitle = (booking) => {
   return booking.title || 'Visita tècnica';
 };
 
-const BookingDetailModal = ({ booking, onClose, onCancel }) => {
+const BookingDetailModal = ({ booking, onClose, onRequestCancel }) => {
   if (!booking) return null;
 
   const location =
@@ -93,7 +93,8 @@ const BookingDetailModal = ({ booking, onClose, onCancel }) => {
 
             <div className="flex gap-2 pt-4 border-t border-gray-50">
               <button
-                onClick={() => onCancel(booking.uid)}
+                type="button"
+                onClick={onRequestCancel}
                 disabled={!booking.uid}
                 className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl bg-red-50 text-red-600 hover:bg-red-100 transition-colors disabled:opacity-40 font-bold text-sm"
               >

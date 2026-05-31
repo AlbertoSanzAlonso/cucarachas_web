@@ -14,6 +14,21 @@ export const leadsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Leads'],
     }),
+    updateLead: builder.mutation({
+      query: ({ id, nombre, email, telefono, documento_fiscal }) => ({
+        url: `clientes/${id}/`,
+        method: 'PATCH',
+        body: { nombre, email, telefono, documento_fiscal },
+      }),
+      invalidatesTags: ['Leads'],
+    }),
+    deleteLead: builder.mutation({
+      query: (id) => ({
+        url: `clientes/${id}/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Leads'],
+    }),
     createLead: builder.mutation({
       query: (newLead) => ({
         url: 'clientes/',
@@ -25,8 +40,10 @@ export const leadsApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { 
-  useGetLeadsQuery, 
-  useUpdateLeadStatusMutation, 
-  useCreateLeadMutation 
+export const {
+  useGetLeadsQuery,
+  useUpdateLeadStatusMutation,
+  useUpdateLeadMutation,
+  useDeleteLeadMutation,
+  useCreateLeadMutation,
 } = leadsApi;
