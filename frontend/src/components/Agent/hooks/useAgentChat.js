@@ -18,6 +18,7 @@ export const useAgentChat = (i18n, answers, path) => {
     const response = await fetch(`${apiBase}/api/chat/`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ message, language: i18n.language })
     });
     if (!response.ok) throw new Error('Network response was not ok');

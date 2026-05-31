@@ -18,8 +18,31 @@ SCHEDULING_KEYWORDS = (
     "agendar mi",
 )
 PRICING_KEYWORDS = ("pressupost", "presupuesto")
+PEST_KEYWORDS = (
+    "cucarach",
+    "panerol",
+    "cucaracha",
+    "plaga",
+    "insect",
+    "roedor",
+    "rat",
+    "rata",
+    "termit",
+)
 CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan")
 ES_HINTS = ("tengo", "hay", "donde", "quiero", "cita", "presupuesto")
+
+
+def mentions_pest(msg_lower: str) -> bool:
+    return any(kw in msg_lower for kw in PEST_KEYWORDS)
+
+
+def should_diagnose(agent: AgentState, msg_lower: str) -> bool:
+    if agent.pest_type:
+        return False
+    if mentions_pest(msg_lower):
+        return True
+    return agent.intent in (Intent.QUOTE, Intent.URGENCY, Intent.DOUBT) and bool(agent.city)
 
 
 def apply_preprocess(state: CECSAGraphState) -> dict:
@@ -40,6 +63,9 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
     if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS) and agent.intent != Intent.QUOTE:
         agent.intent = Intent.APPOINTMENT
+
+    if mentions_pest(msg_lower) and not agent.intent:
+        agent.intent = Intent.QUOTE
 
     return {
         "language": agent.language,
@@ -64,7 +90,7 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     ):
         return "pricer"
 
-    if agent.intent in (Intent.QUOTE, Intent.URGENCY) and not agent.pest_type:
+    if should_diagnose(agent, msg_lower):
         return "diagnostician"
 
     return "fallback"
@@ -72,8 +98,17 @@ def choose_agent_route(state: CECSAGraphState) -> str:
 
 def after_receptionist(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
-    if agent.intent == Intent.APPOINTMENT:
+    msg_lower = state.get("message", "").lower()
+    pending = state.get("route")
+
+    if pending == "scheduler" or agent.intent == Intent.APPOINTMENT:
         return "scheduler"
+    if pending == "diagnostician" or should_diagnose(agent, msg_lower):
+        return "diagnostician"
+    if pending == "pricer" or (
+        agent.pest_type and agent.intent in (Intent.QUOTE, Intent.URGENCY)
+    ):
+        return "pricer"
     return "done"
 
 

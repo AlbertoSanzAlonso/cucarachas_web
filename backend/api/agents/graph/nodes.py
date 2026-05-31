@@ -82,13 +82,20 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
         agent = output.collected_data
         agent.history = updated.history
 
+        next_route = None
         if output.next_agent == "scheduler":
             agent.intent = Intent.APPOINTMENT
+            next_route = "scheduler"
+        elif output.next_agent in ("diagnostician", "pricer"):
+            next_route = output.next_agent
 
-        return {
+        payload: dict[str, Any] = {
             "agent_state": agent.model_dump(mode="json"),
             "result": {"message": output.message},
         }
+        if next_route:
+            payload["route"] = next_route
+        return payload
     except Exception as e:
         print(f"ERROR receptionist_node: {e}")
         return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}

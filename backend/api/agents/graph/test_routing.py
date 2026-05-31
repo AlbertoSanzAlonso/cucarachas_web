@@ -1,0 +1,37 @@
+from api.agents.graph.routing import apply_preprocess, choose_agent_route, should_diagnose
+from api.agents.models import AgentState, Intent
+
+
+def _route(agent: AgentState, message: str) -> str:
+    state = {
+        "message": message,
+        "language": agent.language,
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    return choose_agent_route(state)
+
+
+def test_cockroaches_with_doubt_intent_routes_to_diagnostician():
+    agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
+    assert _route(agent, "tengo cucarachas en el baño") == "diagnostician"
+
+
+def test_cockroaches_without_city_routes_to_diagnostician():
+    agent = AgentState(language="es")
+    assert _route(agent, "tengo cucarachas en el baño") == "diagnostician"
+
+
+def test_incomplete_intake_routes_to_receptionist():
+    agent = AgentState(language="es")
+    assert _route(agent, "tengo un problema en casa") == "receptionist"
+
+
+def test_doubt_with_city_does_not_fallback():
+    agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
+    assert _route(agent, "es en el baño del piso") == "diagnostician"
+
+
+def test_should_diagnose_detects_pest_keywords():
+    agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
+    assert should_diagnose(agent, "tengo cucarachas en el baño") is True

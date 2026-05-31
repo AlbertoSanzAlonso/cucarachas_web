@@ -6,6 +6,8 @@ import axios from 'axios';
 
 const FloatingCTA = () => {
   const { t, i18n } = useTranslation();
+  const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+  const chatConfig = { withCredentials: true };
   const [isOpen, setIsOpen] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -17,7 +19,7 @@ const FloatingCTA = () => {
   }, [t, messages.length]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef(null);
+  const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -41,13 +43,12 @@ const FloatingCTA = () => {
     }
   }, [isOpen]);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
+  }, [messages, isLoading]);
 
   useEffect(() => {
     if (isOpen) {
@@ -70,10 +71,10 @@ const FloatingCTA = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('https://api.cucarachasbarcelona.cat/api/chat/', {
+      const response = await axios.post(`${apiBase}/api/chat/`, {
         message: userMessage,
         language: i18n.language
-      });
+      }, chatConfig);
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
@@ -94,10 +95,10 @@ const FloatingCTA = () => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('https://api.cucarachasbarcelona.cat/api/chat/', {
+      const response = await axios.post(`${apiBase}/api/chat/`, {
         message: `Reserva: ${slot.slot_time || slot.date} ${slot.time}`,
         language: i18n.language
-      });
+      }, chatConfig);
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
@@ -113,11 +114,11 @@ const FloatingCTA = () => {
   };
 
   return (
-    <div id="floating-cta" className="fixed bottom-4 md:bottom-8 right-4 md:right-12 z-[100] flex justify-end pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
-       <div className="w-full max-w-sm flex flex-col items-end pointer-events-auto">
+    <div id="floating-cta" className="fixed bottom-4 md:bottom-8 right-4 md:right-12 z-[100] flex flex-col items-end pointer-events-none [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2">
+       <div className="flex flex-col items-end pointer-events-auto">
           
           {/* Integrated Chat Widget */}
-          <div className="relative w-full">
+          <div className="relative flex flex-col items-end">
              <AnimatePresence>
                {showHint && !isOpen && (
                  <motion.div 
@@ -150,7 +151,7 @@ const FloatingCTA = () => {
                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
                    animate={{ opacity: 1, y: 0, scale: 1 }}
                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                   className="fixed md:absolute bottom-28 md:bottom-full left-4 right-4 md:left-auto md:right-0 md:mb-8 md:w-[550px] h-[80vh] md:h-[750px] bg-white rounded-[3rem] shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right z-[120]"
+                   className="fixed md:relative bottom-28 md:bottom-auto left-4 right-4 md:left-auto md:right-auto md:mb-4 w-auto md:w-[550px] max-w-[calc(100vw-2rem)] md:max-w-[min(550px,calc(100vw-3rem))] h-[80vh] md:h-[750px] md:max-h-[calc(100vh-10rem)] bg-white rounded-[3rem] shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right z-[120]"
                  >
                    {/* Header */}
                    <div className="p-8 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
@@ -174,7 +175,11 @@ const FloatingCTA = () => {
                    </div>
 
                    {/* Messages */}
-                   <div className="flex-1 overflow-y-auto p-6 space-y-6 bg-gray-50/50 custom-scrollbar">
+                   <div
+                     ref={messagesContainerRef}
+                     data-lenis-prevent
+                     className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 space-y-6 bg-gray-50/50 custom-scrollbar"
+                   >
                      {messages.map((msg, i) => (
                        <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                            <div 
@@ -198,7 +203,6 @@ const FloatingCTA = () => {
                        </div>
                      ))}
                      {isLoading && <div className="text-xs text-gray-400 animate-pulse font-bold uppercase tracking-widest px-2">L'agent està pensant...</div>}
-                     <div ref={messagesEndRef} />
                    </div>
 
                    {/* Input */}

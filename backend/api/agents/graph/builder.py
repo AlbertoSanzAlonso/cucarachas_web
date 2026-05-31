@@ -37,7 +37,12 @@ def get_cecsa_graph():
     graph.add_conditional_edges(
         "receptionist",
         after_receptionist,
-        {"scheduler": "scheduler", "done": END},
+        {
+            "scheduler": "scheduler",
+            "diagnostician": "diagnostician",
+            "pricer": "pricer",
+            "done": END,
+        },
     )
     graph.add_conditional_edges(
         "diagnostician",

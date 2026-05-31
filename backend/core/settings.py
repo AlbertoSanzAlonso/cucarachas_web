@@ -195,6 +195,12 @@ CORS_ALLOW_HEADERS = [
     "x-requested-with",
 ]
 
+# Session cookies (cross-subdomain chat: cucarachasbarcelona.cat → api.cucarachasbarcelona.cat)
+SESSION_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
+if not DEBUG:
+    SESSION_COOKIE_DOMAIN = ".cucarachasbarcelona.cat"
+
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [
     'https://api.cucarachasbarcelona.cat',
