@@ -26,6 +26,22 @@
     },
     "finish_cta": "Generate Diagnosis",
     "persistent_msg": "I am here if you need me",
-    "minimized_hint": "Click to talk to the assistant"
+    "minimized_hint": "Click to talk to the assistant",
+    "home": {
+      "title": "CECSA Assistant",
+      "subtitle": "Bio-Conscious AI",
+      "thinking": "The agent is thinking...",
+      "open_chat": "AI Chat Agent",
+      "close_chat": "Close",
+      "placeholder": "Write a message...",
+      "connection_error": "Connection error. Call 933 309 169."
+    },
+    "welcome_msg_home": "Hello! I'm the CECSA receptionist. How can I help you today? You can ask me about our services, prices, or any questions about pest control. If you prefer, we can also talk directly via **WhatsApp**.",
+    "chat": {
+      "confirm_slot": "I want the appointment on {{date}} at {{time}}",
+      "confirmed": "Perfect! I've booked your appointment for **{{date}} at {{time}}**. You'll receive a confirmation email. Need anything else?",
+      "error": "Sorry, there was a problem. You can call us at 933 309 169.",
+      "server_error": "I can't connect to the server right now. Call us at **933 309 169** for immediate assistance."
+    }
   }
 }

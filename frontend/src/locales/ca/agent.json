@@ -10,6 +10,15 @@
     "chat_placeholder": "Fes-me qualsevol pregunta sobre el veredicte...",
     "persistent_msg": "Estic disponible quan ho necessitis",
     "minimized_hint": "Consulta'm el que vulguis",
+    "home": {
+      "title": "Assistent CECSA",
+      "subtitle": "IA Bio-Conscient",
+      "thinking": "L'agent està pensant...",
+      "open_chat": "Xat AI Agent",
+      "close_chat": "Tancar",
+      "placeholder": "Escriu un missatge...",
+      "connection_error": "Error de connexió. Truca al 933 309 169."
+    },
     "cta": {
       "schedule": "AGENDAR CITA",
       "budget": "DEMANAR PRESSUPOST",

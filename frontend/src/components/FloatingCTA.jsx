@@ -13,10 +13,21 @@ const FloatingCTA = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    if (messages.length === 0) {
-      setMessages([{ role: 'assistant', content: t('agent.welcome_msg_home') }]);
-    }
-  }, [t, messages.length]);
+    setMessages((prev) => {
+      const hasUserMessages = prev.some((m) => m.role === 'user');
+      if (hasUserMessages) return prev;
+
+      if (prev.length === 0) {
+        return [{ role: 'assistant', content: t('agent.welcome_msg_home'), isInitial: true }];
+      }
+
+      if (prev.length === 1 && prev[0].role === 'assistant') {
+        return [{ role: 'assistant', content: t('agent.welcome_msg_home'), isInitial: true }];
+      }
+
+      return prev;
+    });
+  }, [i18n.language, t]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesContainerRef = useRef(null);
@@ -83,7 +94,7 @@ const FloatingCTA = () => {
       }]);
     } catch (error) {
       console.error('Error in chat:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: 'Error de connexió. Truca al 933 309 169.' }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: t('agent.home.connection_error') }]);
     } finally {
       setIsLoading(false);
     }
@@ -160,8 +171,8 @@ const FloatingCTA = () => {
                            <Bot size={28} className="text-primary-blue" />
                          </div>
                          <div>
-                            <h3 className="font-black text-base uppercase tracking-widest">Assistent CECSA</h3>
-                            <p className="text-[10px] opacity-60 font-bold uppercase tracking-tighter">IA Bio-Conscient</p>
+                            <h3 className="font-black text-base uppercase tracking-widest">{t('agent.home.title')}</h3>
+                            <p className="text-[10px] opacity-60 font-bold uppercase tracking-tighter">{t('agent.home.subtitle')}</p>
                          </div>
                       </div>
                       <div className="flex items-center space-x-3">
@@ -202,7 +213,7 @@ const FloatingCTA = () => {
                          )}
                        </div>
                      ))}
-                     {isLoading && <div className="text-xs text-gray-400 animate-pulse font-bold uppercase tracking-widest px-2">L'agent està pensant...</div>}
+                     {isLoading && <div className="text-xs text-gray-400 animate-pulse font-bold uppercase tracking-widest px-2">{t('agent.home.thinking')}</div>}
                    </div>
 
                    {/* Input */}
@@ -213,7 +224,7 @@ const FloatingCTA = () => {
                          type="text"
                          value={input}
                          onChange={(e) => setInput(e.target.value)}
-                         placeholder={t('agent.chat_placeholder') || "Escriu un missatge..."}
+                         placeholder={t('agent.home.placeholder')}
                          className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-4 px-1 text-base md:text-lg"
                          disabled={isLoading}
                        />
@@ -240,8 +251,8 @@ const FloatingCTA = () => {
                 <div className="bg-primary-blue/10 p-2 md:p-3 rounded-xl group-hover:bg-primary-blue group-hover:text-white transition-colors">
                    {isOpen ? <X size={24} /> : <Bot size={24} />}
                 </div>
-                {!isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">Xat AI Agent</span>}
-                {isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">Tancar</span>}
+                {!isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">{t('agent.home.open_chat')}</span>}
+                {isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">{t('agent.home.close_chat')}</span>}
              </motion.button>
           </div>
 

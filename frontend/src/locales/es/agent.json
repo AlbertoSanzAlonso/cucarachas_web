@@ -8,6 +8,17 @@
     "finish_diagnostic": "Finalizar Diagnóstico",
     "typing": "El agente está escribiendo...",
     "chat_placeholder": "Hazme cualquier pregunta sobre el veredicto...",
+    "persistent_msg": "Estoy disponible cuando lo necesites",
+    "minimized_hint": "Consúltame lo que quieras",
+    "home": {
+      "title": "Asistente CECSA",
+      "subtitle": "IA Bio-Consciente",
+      "thinking": "El agente está pensando...",
+      "open_chat": "Chat IA Agente",
+      "close_chat": "Cerrar",
+      "placeholder": "Escribe un mensaje...",
+      "connection_error": "Error de conexión. Llama al 933 309 169."
+    },
     "cta": {
       "schedule": "AGENDAR CITA",
       "budget": "PEDIR PRESUPUESTO",
@@ -158,6 +169,12 @@
     },
     "welcome_msg": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas.",
     "welcome_msg_home": "¡Hola! Soy el recepcionista de CECSA. ¿Cómo puedo ayudarte hoy? Puedes preguntarme sobre nuestros servicios, precios o cualquier duda que tengas sobre el control de plagas. Si lo prefieres, también podemos hablar directamente por **WhatsApp**.",
+    "chat": {
+      "confirm_slot": "Quiero la cita el {{date}} a las {{time}}",
+      "confirmed": "¡Perfecto! He bloqueado tu cita para el **{{date}} a las {{time}}**. Recibirás un correo de confirmación. ¿Necesitas algo más?",
+      "error": "Lo siento, ha habido un problema. Puedes llamarnos al 933 309 169.",
+      "server_error": "En este momento no puedo conectar con el servidor. Llámanos al **933 309 169** para asistencia inmediata."
+    },
     "chat_direct": "Tengo preguntas / Consultar Agente"
   }
 }
