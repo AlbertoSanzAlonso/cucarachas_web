@@ -125,9 +125,9 @@ def update_cal_booking_view(request, booking_uid):
 @api_view(['GET'])
 def get_cal_slots(request):
     """Proxy para obtener slots de Cal.com evitando problemas de CORS."""
-    from api.cal_client import fetch_available_slots
+    from api.cal_client import CAL_DAYS_AHEAD, fetch_available_slots
 
-    days_ahead = 7
+    days_ahead = CAL_DAYS_AHEAD
     if request.query_params.get('startTime') and request.query_params.get('endTime'):
         try:
             from datetime import datetime

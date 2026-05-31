@@ -14,7 +14,8 @@ CAL_BASE_URL = os.getenv("CAL_BASE_URL", "https://api.cal.eu/v2").rstrip("/")
 CAL_EVENT_TYPE_ID = os.getenv("CAL_EVENT_TYPE_ID", "278962")
 CAL_API_KEY = os.getenv("CAL_API_KEY", "").strip()
 CAL_SLOTS_TIMEZONE = os.getenv("CAL_SLOTS_TIMEZONE", "Europe/Madrid")
-MAX_SLOTS = int(os.getenv("CAL_MAX_SLOTS", "12"))
+CAL_DAYS_AHEAD = int(os.getenv("CAL_DAYS_AHEAD", "14"))
+CAL_MAX_DAYS = int(os.getenv("CAL_MAX_DAYS", "14"))
 # Ubicación por defecto: visita presencial en domicilio del cliente (no videollamada)
 CAL_BOOKING_LOCATION_TYPE = os.getenv("CAL_BOOKING_LOCATION_TYPE", "attendeeAddress").strip()
 CAL_BOOKING_INTEGRATION = os.getenv("CAL_BOOKING_INTEGRATION", "").strip()
@@ -59,10 +60,14 @@ def parse_slots_response(data: dict) -> list[dict[str, str]]:
             slots_by_day = payload
 
     result: list[dict[str, str]] = []
+    days_included = 0
     for day in sorted(slots_by_day.keys()):
+        if days_included >= CAL_MAX_DAYS:
+            break
         day_slots = slots_by_day.get(day)
         if not isinstance(day_slots, list):
             continue
+        day_added = False
         for slot_item in day_slots:
             time_str = _slot_start_iso(slot_item)
             if not time_str:
@@ -78,20 +83,24 @@ def parse_slots_response(data: dict) -> list[dict[str, str]]:
                     "time": dt.strftime("%H:%M"),
                     "slot_time": time_str,
                 })
+                day_added = True
             except ValueError:
                 continue
-            if len(result) >= MAX_SLOTS:
-                return result
+        if day_added:
+            days_included += 1
     return result
 
 
-def fetch_available_slots(days_ahead: int = 7) -> tuple[bool, list[dict[str, str]] | str]:
+def fetch_available_slots(days_ahead: int | None = None) -> tuple[bool, list[dict[str, str]] | str]:
     """
     Consulta GET /v2/slots (Cal.com API actual).
     Retorna (ok, slots) o (False, mensaje de error para el agente/usuario).
     """
     if not CAL_API_KEY:
         return False, "Error: CAL_API_KEY no configurada al servidor."
+
+    if days_ahead is None:
+        days_ahead = CAL_DAYS_AHEAD
 
     start = datetime.now(timezone.utc).date().isoformat()
     end = (datetime.now(timezone.utc).date() + timedelta(days=days_ahead)).isoformat()

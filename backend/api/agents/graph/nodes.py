@@ -149,7 +149,7 @@ def _is_initial_scheduling_request(message: str, agent: AgentState) -> bool:
 
 async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
     """Lista horarios vía Cal.com sin LLM (evita timeout y ahorra tokens)."""
-    from api.cal_client import CAL_API_KEY, fetch_available_slots
+    from api.cal_client import CAL_API_KEY, CAL_DAYS_AHEAD, fetch_available_slots
 
     if not CAL_API_KEY:
         msg = (
@@ -159,7 +159,7 @@ async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, 
         )
         return {"result": {"message": msg, "slots": []}}
 
-    ok, result = fetch_available_slots(days_ahead=7)
+    ok, result = fetch_available_slots(days_ahead=CAL_DAYS_AHEAD)
     if ok:
         return {
             "agent_state": agent.model_dump(mode="json"),

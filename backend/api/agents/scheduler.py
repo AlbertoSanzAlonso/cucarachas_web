@@ -5,7 +5,7 @@ from pydantic_ai import Agent, RunContext
 from django.core.cache import cache
 
 from api.cal_booking import create_cal_booking
-from api.cal_client import CAL_API_KEY, fetch_available_slots
+from api.cal_client import CAL_API_KEY, CAL_DAYS_AHEAD, fetch_available_slots
 from .models import AgentState, SchedulerOutput
 from .config import AGENT_MODEL
 from .prompts import SYSTEM_PROMPTS
@@ -26,7 +26,7 @@ def get_scheduler_prompt(ctx: RunContext[AgentState]) -> str:
 
 
 @scheduler_agent.tool
-def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = 7) -> str | list:
+def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = CAL_DAYS_AHEAD) -> str | list:
     """Consulta els horaris lliures a Cal.com pels propers dies."""
     cache_key = f"cal_slots_{days_ahead}"
     cached_slots = cache.get(cache_key)
