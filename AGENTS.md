@@ -68,10 +68,16 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 | **Presupuestador** | `pricer.py` | Calcula preu basant-se en catàleg oficial, zona i complexitat | `PricingOutput` |
 | **Agendador** | `scheduler.py` | Consulta slots reals a Cal.com i crea reserves confirmades | `SchedulerOutput` |
 
-### Orquestador (`orchestrator.py`)
+### Orquestador (LangGraph + Pydantic-AI)
 
-- Detecta intención por keywords (ej: "cita", "visita", "agendar" → `Intent.CITA`).
-- Enruta a l'agent adequat segons l'estat de la sessió (`AgentState`).
+- **Grafo**: `backend/api/agents/graph/` — compilado en `builder.py` (`get_cecsa_graph`).
+- **Fachada API**: `orchestrator.py` (`CECSAOrchestrator`) invoca el grafo y persiste `AgentState` en sesión Django.
+- **Enrutado sin LLM**: `graph/routing.py` (keywords → intención, idioma, nodo siguiente). Ahorra tokens y latencia.
+- **Nodos**: cada agente Pydantic-AI vive en su módulo; el grafo solo orquesta cuándo se ejecuta cada uno.
+- **Optimización de recursos** (`config.py`):
+  - `AGENT_HISTORY_MAX_TURNS` — recorta historial enviado al modelo.
+  - `AGENT_ENABLE_CRM=false` — omite el nodo de síntesis CRM tras diagnóstico.
+  - `AGENT_TIMEOUT_*` — timeouts por nodo.
 - Retorna **sempre un dict** amb `message`, `slots`, `booking_confirmed`, `booking_uid`.
 
 ### Frontend: Bio-Assistent Modal (`/frontend/src/components/Agent/AgentHeroModal.jsx`)
@@ -153,5 +159,5 @@ Construcción de sistemas de diseño escalables con Tailwind CSS v4.
 - **Isotipo**: `/public/assets/isotipo.png`, altura máxima `60px` en Navbar y `40px` en Footer.
 - **Mobile Landscape**: Variante `[@media(max-height:600px)_and_(orientation:landscape)]` obligatoria.
 - **Admin & Dashboard**: Gestión exclusivamente a través del Dashboard React. El `/admin` de Django es secundario.
-- **Agentes**: Todo agente nuevo necesita: (1) `Output` Pydantic en `models.py`, (2) registro en `orchestrator.py`, (3) retornar siempre un `dict` con al menos `message`.
+- **Agentes**: Todo agente nuevo necesita: (1) `Output` Pydantic en `models.py`, (2) nodo en `graph/nodes.py` + aristas en `graph/builder.py` y `graph/routing.py`, (3) retornar siempre un `dict` con al menos `message`.
 - **Secrets**: **Nunca** hardcodear API keys en el código. Siempre desde variables de entorno. Usar `os.getenv('KEY')` sin fallback con valor real.

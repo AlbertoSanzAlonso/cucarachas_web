@@ -8,6 +8,8 @@ psycopg2-binary
 python-decouple
 pgvector
 pydantic-ai
+langgraph>=0.2.0
+langchain-core>=0.3.0
 google-generativeai
 python-dotenv
 uvicorn[standard]

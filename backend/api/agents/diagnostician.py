@@ -2,10 +2,9 @@ from pydantic_ai import Agent, RunContext
 from .models import AgentState, DiagnosisOutput, PestType, Severity, AgentDeps
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
-from .config import AGENT_MODEL, setup_ai_keys
-
-setup_ai_keys()
-from .prompts import SYSTEM_PROMPTS, BIO_TIPS
+from . import bootstrap  # noqa: F401
+from .config import AGENT_MODEL
+from .prompts import BIO_TIPS, SYSTEM_PROMPTS
 
 # Agente 2: Diagnóstico Técnico
 diagnostician_agent = Agent(

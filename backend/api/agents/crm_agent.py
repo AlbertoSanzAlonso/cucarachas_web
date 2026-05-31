@@ -4,9 +4,8 @@ from typing import List, Optional
 from pydantic import BaseModel
 import os
 import dataclasses
-from .config import AGENT_MODEL, setup_ai_keys
-
-setup_ai_keys()
+from . import bootstrap  # noqa: F401
+from .config import AGENT_MODEL
 from .models import AgentDeps
 
 # Modelo para la síntesis final del caso

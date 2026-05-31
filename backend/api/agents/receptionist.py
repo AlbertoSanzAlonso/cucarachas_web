@@ -1,11 +1,9 @@
-import os
 from pydantic_ai import Agent, RunContext
-from .models import ReceptionistOutput, AgentDeps
-from .config import setup_ai_keys, AGENT_MODEL
-from .prompts import SYSTEM_PROMPTS
 
-# Inicializar configuración global
-setup_ai_keys()
+from . import bootstrap  # noqa: F401
+from .config import AGENT_MODEL
+from .models import AgentDeps, ReceptionistOutput
+from .prompts import SYSTEM_PROMPTS
 
 # Agente 1: Recepcionista
 receptionist_agent = Agent(

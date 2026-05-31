@@ -4,6 +4,21 @@ import os
 # Por defecto usamos OpenAI GPT-4o-mini, pero se puede sobrescribir vía env var
 AGENT_MODEL = os.getenv('AGENT_MODEL', 'openai:gpt-4o-mini')
 
+# Límite de turnos de historial enviados al LLM (reduce tokens por petición)
+HISTORY_MAX_TURNS = int(os.getenv('AGENT_HISTORY_MAX_TURNS', '6'))
+
+# Síntesis CRM post-diagnóstico (LLM extra); desactivar con AGENT_ENABLE_CRM=false
+ENABLE_CRM_SYNTHESIS = os.getenv('AGENT_ENABLE_CRM', 'true').lower() in ('1', 'true', 'yes')
+
+# Timeouts por nodo (segundos)
+AGENT_TIMEOUTS = {
+    'receptionist': float(os.getenv('AGENT_TIMEOUT_RECEPTIONIST', '20')),
+    'scheduler': float(os.getenv('AGENT_TIMEOUT_SCHEDULER', '20')),
+    'pricer': float(os.getenv('AGENT_TIMEOUT_PRICER', '20')),
+    'diagnostician': float(os.getenv('AGENT_TIMEOUT_DIAGNOSTICIAN', '25')),
+    'crm': float(os.getenv('AGENT_TIMEOUT_CRM', '20')),
+}
+
 # Asegurar que las API Keys estén presentes en el entorno
 def setup_ai_keys(model_name: str = AGENT_MODEL):
     """
