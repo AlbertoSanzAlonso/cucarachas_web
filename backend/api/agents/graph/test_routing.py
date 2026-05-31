@@ -27,6 +27,24 @@ def test_incomplete_intake_routes_to_receptionist():
     assert _route(agent, "tengo un problema en casa") == "receptionist"
 
 
+def test_generic_hola_problema_routes_to_receptionist():
+    agent = AgentState(language="es")
+    assert _route(agent, "hola tengo un problema") == "receptionist"
+
+
+def test_stale_session_generic_problem_routes_to_receptionist():
+    """Sesión con plaga previa no debe mandar 'tengo un problema' al fallback."""
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        city="Barcelona",
+        intent=Intent.QUOTE,
+        pest_type=PestType.GERMAN_COCKROACH,
+    )
+    assert _route(agent, "hola tengo un problema") == "receptionist"
+
+
 def test_doubt_with_city_does_not_fallback():
     agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
     assert _route(agent, "es en el baño del piso") == "diagnostician"

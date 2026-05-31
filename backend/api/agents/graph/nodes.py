@@ -97,8 +97,11 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
             payload["route"] = next_route
         return payload
     except Exception as e:
-        print(f"ERROR receptionist_node: {e}")
-        return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}
+        import traceback
+
+        print(f"ERROR receptionist_node: {traceback.format_exc()}")
+        msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+        return {"result": {"message": msgs.get("intake_fallback", msgs["fallback"])}}
 
 
 def _is_slot_booking_step(message: str) -> bool:
@@ -312,5 +315,12 @@ async def crm_node(state: CECSAGraphState) -> dict:
 
 
 async def fallback_node(state: CECSAGraphState) -> dict:
+    from .routing import mentions_pest
+
     agent = _agent_state(state)
-    return {"result": {"message": ORCHESTRATOR_MESSAGES[agent.language]["fallback"]}}
+    lang = agent.language if agent.language in ("ca", "es") else "ca"
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+    msg_lower = state.get("message", "").lower()
+    if not mentions_pest(msg_lower):
+        return {"result": {"message": msgs.get("intake_fallback", msgs["fallback"])}}
+    return {"result": {"message": msgs["fallback"]}}

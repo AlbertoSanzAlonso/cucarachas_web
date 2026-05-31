@@ -146,6 +146,11 @@ ORCHESTRATOR_MESSAGES = {
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
         "fallback": "Gràcies. Un agent humà es posarà en contacte amb tu.",
+        "intake_fallback": (
+            "Entenc que tens un problema. Per poder ajudar-te millor, "
+            "em pots dir quin tipus de plaga has vist (per exemple paneroles o rosegadors) "
+            "i si es tracta d'un habitatge particular o d'un negoci?"
+        ),
         "timeout_error": "S'ha esgotat el temps d'espera. Si us plau, torna-ho a intentar.",
         "general_error": "CECSA Assistant Error: {error}"
     },
@@ -168,6 +173,11 @@ ORCHESTRATOR_MESSAGES = {
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",
         "fallback": "Gracias. Un agente humano se pondrá en contacto contigo.",
+        "intake_fallback": (
+            "Entiendo que tienes un problema. Para poder ayudarte mejor, "
+            "¿me puedes decir qué tipo de plaga has visto (por ejemplo cucarachas o roedores) "
+            "y si se trata de una vivienda particular o de un negocio?"
+        ),
         "timeout_error": "Se ha agotado el tiempo de espera. Por favor, inténtalo de nuevo.",
         "general_error": "CECSA Assistant Error: {error}"
     }

@@ -91,9 +91,6 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     ):
         return "scheduler"
 
-    if (not agent.intent or not agent.city) and agent.intent != Intent.QUOTE:
-        return "receptionist"
-
     if agent.pest_type and (
         agent.intent == Intent.QUOTE or any(kw in msg_lower for kw in PRICING_KEYWORDS)
     ):
@@ -101,6 +98,13 @@ def choose_agent_route(state: CECSAGraphState) -> str:
 
     if should_diagnose(agent, msg_lower):
         return "diagnostician"
+
+    # Mensajes sin plaga concreta (p. ej. "tengo un problema") → recepcionista, no fallback
+    if not mentions_pest(msg_lower):
+        return "receptionist"
+
+    if not agent.city or not agent.property_type:
+        return "receptionist"
 
     return "fallback"
 

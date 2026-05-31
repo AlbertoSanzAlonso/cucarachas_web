@@ -82,8 +82,7 @@ def apply_diagnostic_from_message(state: AgentState, message: str) -> AgentState
                     state.city = loc.split(",")[0].strip()
             elif "tipus de client:" in low or "tipo de cliente:" in low:
                 merge_diagnostic_into_state(state, {"who": line.split(":", 1)[-1].strip()})
-
-    if not state.city:
-        state.city = "Barcelona"
+        if not state.city:
+            state.city = "Barcelona"
 
     return state
