@@ -5,9 +5,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
-from ..agents.models import AgentState
+from ..agents.models import AgentState, Intent
 from ..agents.booking import confirm_booking_from_chat
 from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state
+from ..agents.graph.routing import wants_scheduling
 from ..agents.serialization import normalize_language, state_for_session
 
 @api_view(['GET', 'POST', 'OPTIONS'])
@@ -46,6 +47,10 @@ def chat_with_agents(request):
                 orchestrator.state = AgentState(language=language)
         else:
             orchestrator.state.language = language
+
+        # Chat home (sin formulario): no reutilizar intención de cita de otra visita
+        if request.data.get("source") == "home" and not wants_scheduling(message.lower()):
+            orchestrator.state.intent = Intent.DOUBT
 
         diagnostic = request.data.get("diagnostic")
         if isinstance(diagnostic, dict) and diagnostic:

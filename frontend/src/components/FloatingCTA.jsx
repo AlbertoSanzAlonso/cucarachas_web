@@ -85,7 +85,8 @@ const FloatingCTA = () => {
     try {
       const response = await axios.post(`${apiBase}/api/chat/`, {
         message: userMessage,
-        language: i18n.language
+        language: i18n.language,
+        source: 'home',
       }, chatConfig);
 
       setMessages(prev => [...prev, { 
@@ -145,6 +146,7 @@ const FloatingCTA = () => {
         {
           message: '',
           language: i18n.language,
+          source: 'home',
           booking: { slot_time: slotTime, name, phone },
         },
         chatConfig

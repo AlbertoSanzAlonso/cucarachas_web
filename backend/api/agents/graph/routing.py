@@ -31,6 +31,43 @@ PEST_KEYWORDS = (
 )
 CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan", "gratuïta", "meva")
 ES_HINTS = ("tengo", "hay", "donde", "quiero", "presupuesto", "gratuita", "mi cita")
+SCHEDULING_PHRASES = (
+    "agendar",
+    "reservar",
+    "cita gratuïta",
+    "cita gratuita",
+    "visita gratuïta",
+    "visita gratuita",
+    "inspecció gratuïta",
+    "inspección gratuita",
+)
+GREETING_ONLY = (
+    "hola",
+    "bon dia",
+    "buenos días",
+    "buenos dias",
+    "buenas",
+    "hey",
+    "ei",
+    "hello",
+    "salut",
+    "què tal",
+    "que tal",
+)
+
+
+def wants_scheduling(msg_lower: str) -> bool:
+    """True solo si el mensaje actual pide cita/visita explícitamente."""
+    if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS):
+        return True
+    return any(p in msg_lower for p in SCHEDULING_PHRASES)
+
+
+def is_simple_greeting(msg_lower: str) -> bool:
+    text = msg_lower.strip().rstrip("!?.…")
+    if len(text) > 40:
+        return False
+    return text in GREETING_ONLY
 
 
 def mentions_pest(msg_lower: str) -> bool:
@@ -68,8 +105,14 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
         if "barcelona" in msg_lower:
             agent.city = "Barcelona"
 
-    if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS):
+    if wants_scheduling(msg_lower):
         agent.intent = Intent.APPOINTMENT
+    elif agent.intent == Intent.APPOINTMENT:
+        # Sesión anterior (p. ej. modal): no arrastrar cita a un "hola" genérico
+        agent.intent = Intent.DOUBT
+
+    if is_simple_greeting(msg_lower) and not wants_scheduling(msg_lower):
+        agent.intent = Intent.DOUBT
 
     if mentions_pest(msg_lower) and not agent.intent:
         agent.intent = Intent.QUOTE
@@ -86,9 +129,7 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
-    if agent.intent == Intent.APPOINTMENT or any(
-        kw in msg_lower for kw in SCHEDULING_KEYWORDS
-    ):
+    if wants_scheduling(msg_lower):
         return "scheduler"
 
     if agent.pest_type and (
@@ -114,7 +155,9 @@ def after_receptionist(state: CECSAGraphState) -> str:
     msg_lower = state.get("message", "").lower()
     pending = state.get("route")
 
-    if pending == "scheduler" or agent.intent == Intent.APPOINTMENT:
+    if pending == "scheduler" or (
+        agent.intent == Intent.APPOINTMENT and wants_scheduling(msg_lower)
+    ):
         return "scheduler"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"

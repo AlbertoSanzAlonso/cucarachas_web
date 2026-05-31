@@ -111,22 +111,11 @@ def _is_slot_booking_step(message: str) -> bool:
 
 def _is_initial_scheduling_request(message: str, agent: AgentState) -> bool:
     """Primera petición de cita (CTA o texto explícito), no datos de contacto posteriores."""
-    lower = message.lower()
+    from .routing import wants_scheduling
+
     if _is_slot_booking_step(message):
         return False
-    if agent.intent == Intent.APPOINTMENT:
-        return True
-    phrases = (
-        "agendar",
-        "reservar",
-        "cita gratuïta",
-        "cita gratuita",
-        "visita gratuïta",
-        "visita gratuita",
-        "inspecció gratuïta",
-        "inspección gratuita",
-    )
-    return any(p in lower for p in phrases)
+    return wants_scheduling(message.lower())
 
 
 async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:

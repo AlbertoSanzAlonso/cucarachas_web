@@ -7,7 +7,9 @@ from typing import Any
 
 import requests
 
-CAL_API_VERSION = os.getenv("CAL_API_VERSION", "2024-09-04")
+CAL_SLOTS_API_VERSION = os.getenv("CAL_SLOTS_API_VERSION", os.getenv("CAL_API_VERSION", "2024-09-04"))
+# Crear reservas: endpoint registrado solo en esta versión (2024-09-04 → 404 Cannot POST /v2/bookings)
+CAL_BOOKING_API_VERSION = os.getenv("CAL_BOOKING_API_VERSION", "2024-08-13")
 CAL_BASE_URL = os.getenv("CAL_BASE_URL", "https://api.cal.eu/v2").rstrip("/")
 CAL_EVENT_TYPE_ID = os.getenv("CAL_EVENT_TYPE_ID", "277401")
 CAL_API_KEY = os.getenv("CAL_API_KEY", "").strip()
@@ -15,12 +17,16 @@ CAL_SLOTS_TIMEZONE = os.getenv("CAL_SLOTS_TIMEZONE", "Europe/Madrid")
 MAX_SLOTS = int(os.getenv("CAL_MAX_SLOTS", "12"))
 
 
-def get_cal_headers() -> dict[str, str]:
+def get_cal_headers(*, for_booking: bool = False) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {CAL_API_KEY}",
-        "cal-api-version": CAL_API_VERSION,
+        "cal-api-version": CAL_BOOKING_API_VERSION if for_booking else CAL_SLOTS_API_VERSION,
         "Content-Type": "application/json",
     }
+
+
+def get_cal_booking_headers() -> dict[str, str]:
+    return get_cal_headers(for_booking=True)
 
 
 def _slot_start_iso(slot_item: Any) -> str | None:
