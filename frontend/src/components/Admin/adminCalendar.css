@@ -194,6 +194,14 @@
   cursor: pointer;
 }
 
+.admin-calendar-wrapper .rbc-time-view .rbc-header {
+  cursor: pointer;
+}
+
+.admin-calendar-wrapper .rbc-time-view .rbc-day-slot {
+  cursor: pointer;
+}
+
 .admin-calendar-wrapper .rbc-button-link {
   cursor: pointer;
   font-weight: 800;

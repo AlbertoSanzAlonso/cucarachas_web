@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, RefreshCcw } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
-import { format, parse, startOfWeek, getDay, addHours } from 'date-fns';
+import { format, parse, startOfWeek, getDay, addHours, startOfDay } from 'date-fns';
 import { ca } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '@/components/Admin/adminCalendar.css';
@@ -131,15 +131,20 @@ const CalendarManager = () => {
   }, []);
 
   const handleDrillDown = useCallback((date) => {
-    setCurrentDate(date);
+    setCurrentDate(startOfDay(date));
     setCurrentView('day');
   }, []);
 
   const handleSelectSlot = useCallback((slotInfo) => {
-    if (currentView !== 'month') return;
-    setCurrentDate(slotInfo.start);
+    if (currentView !== 'month' && currentView !== 'week') return;
+    setCurrentDate(startOfDay(slotInfo.start));
     setCurrentView('day');
   }, [currentView]);
+
+  const getDrilldownView = useCallback((_date, view) => {
+    if (view === 'day') return null;
+    return 'day';
+  }, []);
 
   const eventPropGetter = useCallback(() => ({
     style: {
@@ -226,8 +231,9 @@ const CalendarManager = () => {
                 timeslots={2}
                 min={new Date(1970, 0, 1, 7, 0, 0)}
                 max={new Date(1970, 0, 1, 21, 0, 0)}
-                selectable={currentView === 'month'}
+                selectable={currentView === 'month' || currentView === 'week'}
                 drilldownView="day"
+                getDrilldownView={getDrilldownView}
                 doShowMoreDrillDown
                 popup
                 onDrillDown={handleDrillDown}
