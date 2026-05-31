@@ -1,84 +1,47 @@
 ---
 name: geo-maps
 description: >-
-  Mapa y geocoding para reservas CECSA: Leaflet + OpenStreetMap + proxy Nominatim.
-  Usar al modificar AddressPicker.jsx, views/geo.py o endpoints /api/geo/.
+  Geocoding para reservas presenciales: proxy Nominatim en Django, Leaflet/OSM
+  en AddressPicker. Usar al modificar views/geo.py, AddressPicker o flujo booking.
 ---
 
-# Geo / Mapas — CECSA (autoalojado OSM)
+# Geo / mapas — CECSA
 
-## Enfoque
+## Principio
 
-No se requiere **Google Maps API** en el frontend para el flujo de reserva.
+**Nunca** llamar a Nominatim desde el navegador (CORS + política de uso). Todo pasa por el backend.
 
-| Capa | Tecnología |
-|------|------------|
-| Mapa interactivo | **Leaflet** + teselas OSM |
-| Búsqueda de direcciones | **Nominatim** vía proxy Django |
-| Entrada manual | Siempre disponible en `AddressPicker` |
-| GPS | `navigator.geolocation` + reverse proxy |
+## Backend (`backend/api/views/geo.py`)
 
-Dependencia npm: `leaflet` (CSS importado en `AddressPicker.jsx`).
+| Endpoint | Query | Respuesta |
+|----------|-------|-----------|
+| `GET /api/geo/search/` | `q` (mín. 3 chars) | `{ results: [{ label, lat, lng }] }` |
+| `GET /api/geo/reverse/` | `lat`, `lng` | `{ label, lat, lng }` |
 
-## Archivos
+- Proxy: `nominatim.openstreetmap.org`
+- `User-Agent`: `CECSA-CucarachasBarcelona/1.0 (info@cucarachasbarcelona.cat)`
+- Búsqueda prioriza Catalunya (`countrycodes=es`, viewbox Barcelona)
+- Público (`AllowAny`) — sin token
 
-| Archivo | Rol |
-|---------|-----|
-| `frontend/src/components/Agent/Chat/AddressPicker.jsx` | UI mapa + búsqueda + GPS |
-| `backend/api/views/geo.py` | Proxy Nominatim |
-| `backend/api/urls.py` | Rutas `/api/geo/search/`, `/api/geo/reverse/` |
+## Frontend (`AddressPicker.jsx`)
 
-## API backend
+- **Leaflet** + teselas OpenStreetMap
+- Autocompletar: debounce → `GET {VITE_API_URL}/api/geo/search/?q=`
+- GPS: `navigator.geolocation` → `GET /api/geo/reverse/?lat=&lng=`
+- Campo de texto siempre editable (entrada manual)
+- Props: `value`, `onChange`, `variant` (`dark` | `light`)
+- `data-lenis-prevent` en contenedor del mapa
 
-### `GET /api/geo/search/?q=carrer+example`
+## Integración reserva
 
-- Mínimo 3 caracteres.
-- `countrycodes=es`, viewbox Barcelona metropolitana.
-- Respuesta: `{ results: [{ label, lat, lng }, ...] }`
-- User-Agent: `CECSA-CucarachasBarcelona/1.0 (info@cucarachasbarcelona.cat)`
+Flujo en `BookingContactForm`: nombre → **dirección** (`AddressPicker`) → teléfono.
 
-### `GET /api/geo/reverse/?lat=41.39&lng=2.17`
-
-- Respuesta: `{ label, lat, lng }`
-
-Permisos: `AllowAny` (público para el chat de reserva).
-
-## Uso en reserva
-
-`BookingContactForm` paso `address`:
-
-```javascript
-onChange({ address, lat, lng })
-```
-
-Se envía al confirmar:
-
-```javascript
-booking: { slot_time, name, phone, address }
-```
-
-`lat`/`lng` opcionales (futuro: metadata Cal.com).
-
-## i18n
-
-Claves en `agent.booking.*`: `address_placeholder`, `address_hint`, `use_gps`, `ask_address`.
-
-Geolocalización: `agent.geolocation_not_supported`, `geolocation_denied`, `geolocation_error`.
-
-## UX
-
-- Mapa ~140px alto, `data-lenis-prevent` para no bloquear scroll del chat.
-- Debounce búsqueda ~450 ms.
-- Marcador arrastrable → reverse geocode.
-- Variantes `light` (FloatingCTA) y `dark` (modal).
-
-## Límites Nominatim
-
-- Uso moderado (política OSM); el proxy centraliza peticiones.
-- No llamar a `nominatim.openstreetmap.org` directamente desde el browser en producción.
+- Mínimo **5 caracteres** en dirección (frontend + `booking.py`)
+- Payload: `booking.address` en `POST /api/chat/`
+- Cal.com: `location.type: attendeeAddress` — ver skill `cal_com/`
 
 ## Anti-patterns
 
-- Exponer `VITE_GOOGLE_MAPS_API_KEY` como requisito del flujo de reserva.
-- Omitir validación de longitud mínima de dirección antes de POST booking.
-- Añadir otro proveedor de mapas sin pasar por el proxy (CORS + rate limits).
+- Google Maps JS en frontend solo para este flujo (usar proxy OSM)
+- Hardcodear `GOOGLE_API_KEY` en cliente
+- Omitir `address` en booking presencial

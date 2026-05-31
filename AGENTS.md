@@ -134,13 +134,18 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Slots**: `GET /v2/slots` con `cal-api-version: 2024-09-04` → `cal_client.fetch_available_slots`.
 - **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → visita **presencial** (`location.type: attendeeAddress` + adreça del client). El event type `278962` a Cal.com ha de tenir ubicació «Presencial / adreça de l'assistent» (no només videotrucada). `CAL_BOOKING_LOCATION_TYPE=attendeeAddress` (per defecte).
 - **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cita` / `Cliente`.
-- **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`.
-- Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos (`Cannot POST /v2/bookings` = versión incorrecta).
+- **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`; geo: `/api/geo/search/`, `/api/geo/reverse/`.
+- Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos.
+
+### Geo / mapas (reserva)
+
+- **Leaflet** + OpenStreetMap en `AddressPicker.jsx` (sin Google Maps obligatorio en frontend).
+- Proxy Nominatim: `backend/api/views/geo.py`. Skill: **`.agents/skills/geo_maps/SKILL.md`**.
 
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
-- **Agenda**: `CalendarManager.jsx` — consulta i cancel·la cites Cal.com via `/api/cal/bookings/` (també autenticat).
+- **Agenda**: `CalendarManager.jsx` — llistat Cal.com (`fetch_cal_bookings`, event `278962`); cancel·lar per `uid`; enllaç `app.cal.eu`.
 - El token s'injecta automàticament des de Redux (`auth.token`) a cada petició del dashboard.
 
 ## 🔐 Autenticació (Django DRF Token)
