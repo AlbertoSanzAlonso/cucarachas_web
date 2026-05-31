@@ -1,9 +1,14 @@
+from typing import ClassVar
+
 from django.db import models
+from django.db.models import Manager
 
 # 1. Tablas de Base (Maestros)
 
 class Species(models.Model):
     """Technical information about cockroach species for the frontend."""
+    objects: ClassVar[Manager]
+
     name = models.CharField(max_length=100)
     slug = models.SlugField(unique=True)
     description = models.TextField()
@@ -26,6 +31,8 @@ class Cliente(models.Model):
 
 class Tratamiento(models.Model):
     """Catalog of pest control services."""
+    objects: ClassVar[Manager]
+
     nombre = models.CharField(max_length=200) # Ej: Desratització
     descripcion = models.TextField()
     precio_base = models.DecimalField(max_digits=10, decimal_places=2)
