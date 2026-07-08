@@ -1,5 +1,5 @@
-import os
 import traceback
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
@@ -10,24 +10,17 @@ from ..agents.booking import confirm_booking_from_chat
 from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state, apply_facts_from_message
 from ..agents.graph.routing import wants_scheduling
 from ..agents.serialization import normalize_language, state_for_session
+from ..cors_utils import apply_cors_headers
 
+
+@csrf_exempt
 @api_view(['GET', 'POST', 'OPTIONS'])
 @permission_classes([AllowAny])
 def chat_with_agents(request):
-    """
-    Endpoint con refuerzo manual de CORS y manejo de errores robusto.
-    """
-    # Manejo manual de preflight (OPTIONS)
-    if request.method == 'OPTIONS':
-        response = Response()
-        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
-        response["Access-Control-Allow-Methods"] = "POST, GET, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "*"
-        response["Access-Control-Allow-Credentials"] = "true"
-        return response
-
+    """Endpoint público del Bio-Assistent (CORS vía corsheaders + refuerzo dinámico)."""
     if request.method == 'GET':
-        return Response({"status": "API is online"})
+        response = Response({"status": "API is online"})
+        return apply_cors_headers(response, request)
 
     message = request.data.get('message', '')
     message = str(message).strip() if message is not None else ''
@@ -70,10 +63,11 @@ def chat_with_agents(request):
             )
         else:
             if not message:
-                return Response(
+                response = Response(
                     {"reply": "Missatge buit.", "slots": []},
                     status=400,
                 )
+                return apply_cors_headers(response, request)
             result = async_to_sync(orchestrator.process_message)(
                 message,
                 source=request.data.get("source"),
@@ -97,10 +91,7 @@ def chat_with_agents(request):
         }
         
         response = Response(res_data)
-        # Refuerzo manual de CORS
-        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
-        response["Access-Control-Allow-Credentials"] = "true"
-        return response
+        return apply_cors_headers(response, request)
 
     except Exception as e:
         print(f"CRITICAL ERROR: {traceback.format_exc()}")
@@ -109,6 +100,4 @@ def chat_with_agents(request):
             "reply": "Error intern de connexió. Si us plau, intenta-ho de nou.",
             "slots": [],
         }, status=200)
-        response["Access-Control-Allow-Origin"] = "https://cucarachasbarcelona.cat"
-        response["Access-Control-Allow-Credentials"] = "true"
-        return response
+        return apply_cors_headers(response, request)

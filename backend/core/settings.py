@@ -171,9 +171,17 @@ REST_FRAMEWORK = {
     ],
 }
 
-# CORS settings
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ORIGIN_ALLOW_ALL = True # Compatibilidad con versiones antiguas
+# CORS settings (credentials=true → origen explícito, no wildcard)
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOWED_ORIGINS = [
+    'https://cucarachasbarcelona.cat',
+    'https://www.cucarachasbarcelona.cat',
+    'http://localhost:5173',
+    'http://127.0.0.1:5173',
+] + [o.strip() for o in os.environ.get('CORS_EXTRA_ORIGINS', '').split(',') if o.strip()]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r'^https://([a-z0-9-]+\.)*vercel\.app$',
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [
     "DELETE",
@@ -205,5 +213,7 @@ if not DEBUG:
 CSRF_TRUSTED_ORIGINS = [
     'https://api.cucarachasbarcelona.cat',
     'https://cucarachasbarcelona.cat',
+    'https://www.cucarachasbarcelona.cat',
     'http://localhost:5173',
-]
+    'http://127.0.0.1:5173',
+] + [o.strip() for o in os.environ.get('CORS_EXTRA_ORIGINS', '').split(',') if o.strip()]
