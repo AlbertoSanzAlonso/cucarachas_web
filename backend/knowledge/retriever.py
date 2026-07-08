@@ -1,6 +1,5 @@
 import os
 import django
-import numpy as np
 from google import genai
 from django.conf import settings
 from pgvector.django import CosineDistance
