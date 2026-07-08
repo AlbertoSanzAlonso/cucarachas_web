@@ -137,6 +137,51 @@ def test_wizard_diagnostic_skips_diagnostician():
     assert choose_agent_route(state) == "scheduler"
 
 
+def test_affirmative_after_wizard_routes_to_scheduler():
+    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.models import PestType
+
+    agent = AgentState(language="es")
+    diagnostic = {
+        "path": "empresa",
+        "who": "empresa",
+        "where_empresa": "almacen",
+        "business_type": "restaurante",
+        "level": "grave",
+        "sanitary_risk": "urgent",
+    }
+    agent = merge_diagnostic_into_state(agent, diagnostic)
+    assert agent.pest_type == PestType.GERMAN_COCKROACH
+    state = {
+        "message": "si",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "diagnostic": diagnostic,
+    }
+    state.update(apply_preprocess(state))
+    updated = AgentState.model_validate(state["agent_state"])
+    assert updated.intent == Intent.APPOINTMENT
+    assert choose_agent_route(state) == "scheduler"
+
+
+def test_affirmative_without_case_stays_receptionist():
+    agent = AgentState(language="es")
+    assert _route(agent, "si") == "receptionist"
+
+
+def test_vale_after_quote_with_pest_routes_to_scheduler():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        intent=Intent.QUOTE,
+        pest_type=PestType.GERMAN_COCKROACH,
+        city="Barcelona",
+        property_type="negoci",
+    )
+    assert _route(agent, "vale") == "scheduler"
+
+
 def test_wizard_diagnostic_routes_pricing_to_pricer():
     from api.agents.diagnostic_merge import merge_diagnostic_into_state
 

@@ -55,6 +55,39 @@ GREETING_ONLY = (
     "què tal",
     "que tal",
 )
+SCHEDULING_AFFIRMATIVES = frozenset({
+    "si",
+    "sí",
+    "ok",
+    "vale",
+    "venga",
+    "claro",
+    "perfecto",
+    "genial",
+    "endavant",
+    "adelante",
+    "d'acord",
+    "de acuerdo",
+    "sí, por favor",
+    "si, por favor",
+    "sí por favor",
+    "si por favor",
+})
+
+
+def accepts_scheduling_affirmative(msg_lower: str) -> bool:
+    """Respostes curtes que confirmen agendar després d'una oferta de cita."""
+    text = msg_lower.strip().rstrip("!?.…")
+    if len(text) > 30:
+        return False
+    return text in SCHEDULING_AFFIRMATIVES
+
+
+def should_offer_slots(agent: AgentState, msg_lower: str) -> bool:
+    """True quan cal mostrar horaris Cal.com (petició explícita o confirmació)."""
+    if wants_scheduling(msg_lower):
+        return True
+    return accepts_scheduling_affirmative(msg_lower) and bool(agent.pest_type)
 
 
 def wants_scheduling(msg_lower: str) -> bool:
@@ -153,7 +186,9 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
     if wants_scheduling(msg_lower):
         agent.intent = Intent.APPOINTMENT
-    elif agent.intent == Intent.APPOINTMENT:
+    elif accepts_scheduling_affirmative(msg_lower) and agent.pest_type:
+        agent.intent = Intent.APPOINTMENT
+    elif agent.intent == Intent.APPOINTMENT and not should_offer_slots(agent, msg_lower):
         # Sesión anterior (p. ej. modal): no arrastrar cita a un "hola" genérico
         agent.intent = Intent.DOUBT
 
@@ -175,7 +210,7 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
-    if wants_scheduling(msg_lower):
+    if should_offer_slots(agent, msg_lower):
         return "scheduler"
 
     if agent.pest_type and any(kw in msg_lower for kw in PRICING_KEYWORDS):
@@ -199,9 +234,7 @@ def after_receptionist(state: CECSAGraphState) -> str:
     msg_lower = state.get("message", "").lower()
     pending = state.get("route")
 
-    if pending == "scheduler" or (
-        agent.intent == Intent.APPOINTMENT and wants_scheduling(msg_lower)
-    ):
+    if pending == "scheduler" or should_offer_slots(agent, msg_lower):
         return "scheduler"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"

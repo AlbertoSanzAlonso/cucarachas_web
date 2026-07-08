@@ -173,8 +173,6 @@ async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, 
 
 
 async def scheduler_node(state: CECSAGraphState) -> dict:
-    from ..diagnostic_merge import has_wizard_diagnostic
-
     agent = _agent_state(state)
     lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
     if lang not in ("ca", "es"):
@@ -192,13 +190,10 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             },
         }
 
-    wizard_ready = has_wizard_diagnostic(state.get("diagnostic")) and agent.pest_type
-    from .routing import wants_scheduling
+    msg_lower = state["message"].lower()
+    from .routing import should_offer_slots
 
-    should_fast_slots = _is_initial_scheduling_request(state["message"], agent) or (
-        wizard_ready and wants_scheduling(state["message"].lower())
-    )
-    if should_fast_slots:
+    if should_offer_slots(agent, msg_lower):
         fast = await _scheduler_slots_fast_path(state, agent, lang)
         if fast:
             return fast
