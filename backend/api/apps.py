@@ -6,4 +6,6 @@ class ApiConfig(AppConfig):
 
     def ready(self):
         from api.agents.config import setup_ai_keys
+        from api import signals  # noqa: F401 — sincroniza presupuestos → referencia pricer
+
         setup_ai_keys()

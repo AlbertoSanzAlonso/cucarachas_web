@@ -104,15 +104,34 @@ class UbicacionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PresupuestoDetalleSerializer(serializers.ModelSerializer):
+    line_label = serializers.SerializerMethodField()
+
     class Meta:
         model = PresupuestoDetalle
         fields = '__all__'
 
+    def get_line_label(self, obj):
+        return obj.line_label
+
 class PresupuestoSerializer(serializers.ModelSerializer):
     detalles = PresupuestoDetalleSerializer(many=True, read_only=True)
+
     class Meta:
         model = Presupuesto
-        fields = '__all__'
+        fields = [
+            "id",
+            "cliente",
+            "ubicacion",
+            "estado",
+            "total_monto",
+            "validez_hasta",
+            "pest_type",
+            "severity",
+            "garantia_meses",
+            "notas",
+            "created_at",
+            "detalles",
+        ]
 
 class CitaSerializer(serializers.ModelSerializer):
     class Meta:

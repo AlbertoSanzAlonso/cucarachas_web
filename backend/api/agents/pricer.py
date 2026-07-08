@@ -22,6 +22,15 @@ def get_pricer_prompt(ctx: RunContext[AgentState]) -> str:
 
 
 @pricer_agent.tool
+def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
+    """Presupuestos históricos reales (CRM) parecidos al caso actual."""
+    from api.pricing_reference import format_historical_pricing
+
+    lang = ctx.deps.language if ctx.deps else "ca"
+    return format_historical_pricing(ctx.deps, lang)
+
+
+@pricer_agent.tool
 def get_official_prices(ctx: RunContext[AgentState]) -> str:
     """Llista de tractaments i preus base de CECSA."""
     treatments = Tratamiento.objects.all()

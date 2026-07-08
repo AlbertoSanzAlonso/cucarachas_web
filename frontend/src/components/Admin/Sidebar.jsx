@@ -6,6 +6,7 @@ import {
   MessageSquare, 
   Mail, 
   Calendar, 
+  FileText,
   ExternalLink, 
   Settings, 
   LogOut 
@@ -22,6 +23,7 @@ const Sidebar = ({
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
     { id: 'leads', icon: <MessageSquare size={20} />, label: 'Leads' },
+    { id: 'presupuestos', icon: <FileText size={20} />, label: 'Pressupostos' },
     { id: 'mail', icon: <Mail size={20} />, label: 'Correu' },
   ];
 

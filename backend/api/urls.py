@@ -7,6 +7,7 @@ from .views import (
     auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking, update_cal_booking_view,
     debug_system, geo_search, geo_reverse,
 )
+from .views.presupuestos import create_presupuesto_pdf, download_presupuesto_pdf, list_presupuestos
 from knowledge.views import TechnicalKnowledgeViewSet
 
 router = DefaultRouter()
@@ -33,5 +34,8 @@ urlpatterns = [
     path('cal/bookings/', get_cal_bookings, name='cal-bookings'),
     path('cal/bookings/<str:booking_uid>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
     path('cal/bookings/<str:booking_uid>/', update_cal_booking_view, name='cal-update-booking'),
+    path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),
+    path('presupuestos/create_pdf/', create_presupuesto_pdf, name='presupuestos-create-pdf'),
+    path('presupuestos/<int:pk>/pdf/', download_presupuesto_pdf, name='presupuestos-download-pdf'),
     path('debug/', debug_system, name='debug-system'),
 ]

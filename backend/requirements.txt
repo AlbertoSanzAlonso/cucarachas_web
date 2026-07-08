@@ -18,3 +18,4 @@ groq
 django-redis
 redis
 openai
+reportlab>=4.0.0
