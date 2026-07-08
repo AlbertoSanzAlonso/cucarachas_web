@@ -53,29 +53,29 @@
       },
       "static_offer": "🎁 **Inspección gratuita** en Barcelona y alrededores — elige horario abajo o escríbenos.",
       "static_snippets": {
-        "sensitive_yes": " Con niños o mascotas, priorizaremos productos de baja toxicidad.",
-        "cert_yes": " Incluimos certificado de actuación para inspecciones."
+        "sensitive_yes": " Y como en casa hay niños o mascotas, trabajamos con geles localizados y barreras de baja toxicidad, sin pulverizar al aire.",
+        "cert_yes": " Te entregamos informe técnico y certificado para tu inspección sanitaria."
       },
       "static": {
         "particular": {
-          "urgent": "**Prioridad alta** en la **{{where}}**: {{qty}} desde hace **{{since}}**. El foco puede escalar en 48 h.{{sensitive_note}}",
-          "moderate": "**Conviene actuar pronto** en la **{{where}}** ({{qty}}, desde **{{since}}**). Una semana de espera suele empeorar el foco.{{sensitive_note}}",
-          "info": "**Buen momento para intervenir** con calma: avistamientos en la **{{where}}** ({{qty}}). Confirmamos especie y origen antes de que crezca.{{sensitive_note}}"
+          "urgent": "Cuando hay mucha actividad en la **{{where}}**, lo normal es que ya exista un nido establecido cerca de una fuente de calor o humedad: detrás de los electrodomésticos, bajo el fregadero o dentro de alguna grieta. Las cucarachas se reproducen muy rápido (una sola hembra puede dejar decenas de huevos en una cápsula), así que cada día que pasa la colonia crece. El primer paso de verdad es identificar la especie —la alemana es la más habitual dentro de casa y la que más se extiende— para elegir el tratamiento exacto y cortar el foco, no solo las que ves.{{sensitive_note}}",
+          "moderate": "Ver cucarachas en la **{{where}}** suele apuntar a una vía de entrada concreta: un desagüe sin sifón, alguna grieta o el cartón y las bolsas que llegan de fuera. Aún estás a tiempo de evitar que se instalen del todo, pero conviene confirmar la especie y dónde se esconden durante el día, porque lo que se ve suele ser una pequeña parte de lo que realmente hay.{{sensitive_note}}",
+          "info": "Unos pocos avistamientos en la **{{where}}** pueden ser algo puntual (una que ha entrado de fuera) o el inicio de una colonia joven. La diferencia la marca si hay un refugio escondido cerca de agua y calor. En una inspección rápida podemos identificar la especie y revisar los puntos donde suelen anidar —juntas, desagües, la parte trasera de los electrodomésticos— y decirte con franqueza si hay que actuar o solo vigilar.{{sensitive_note}}"
         },
         "empresa": {
-          "urgent": "**Riesgo sanitario alto** en tu **{{business}}** ({{where}}), nivel **{{level}}**. Hace falta protocolo documentado en 48 h.{{cert_note}}",
-          "moderate": "**Planifica esta semana** para el **{{business}}**: incidencias en **{{where}}** con nivel **{{level}}**.{{cert_note}}",
-          "info": "**Actuación preventiva** en el **{{business}}**: avistamientos en **{{where}}** ({{level}}). Inspección sin parar la actividad.{{cert_note}}"
+          "urgent": "En un **{{business}}**, una presencia clara en **{{where}}** es un riesgo directo para tu inspección sanitaria y tu reputación: las cucarachas contaminan superficies y alimentos en pocas horas y dejan rastros detectables. Lo que nos interesa es identificar la especie y el punto donde cría (a menudo maquinaria caliente, almacén o juntas) para cortarlo de raíz y dejarlo todo documentado para el APPCC.{{cert_note}}",
+          "moderate": "Detectar actividad en **{{where}}** en un **{{business}}** suele indicar que hay un refugio cerca —almacén, cámaras, detrás de equipos—. Actuar esta semana evita que llegue a zonas de cliente y que se te acumulen incidencias difíciles de justificar el día de una inspección. Empezamos localizando el origen, no persiguiendo las que aparecen.{{cert_note}}",
+          "info": "Incluso unos avistamientos aislados en un **{{business}}** merecen una mirada técnica: saber qué especie es y qué puntos críticos tienes ahora te ahorra sustos y posibles sanciones más adelante. Lo revisamos sin interrumpir tu actividad y te decimos claramente si es un tema menor o conviene actuar.{{cert_note}}"
         },
         "admin": {
-          "urgent": "**Caso prioritario** de **{{gestion}}** en **{{where}}**. Puede escalar a quejas vecinales o inspecciones si se pospone.",
-          "moderate": "**Visita técnica recomendada** para localizar el foco en **{{where}}** y documentar la actuación para **{{gestion}}**.",
-          "info": "**Aún manejable** en **{{where}}**. Una inspección gratuita te da base para decidir el siguiente paso (prefieres **{{advance}}**)."
+          "urgent": "En una gestión de **{{gestion}}**, una incidencia marcada en **{{where}}** pocas veces es aislada: suele venir de zonas comunes, bajantes compartidos o locales adyacentes. Conviene identificar la especie y hacer un pequeño mapa del edificio antes de que lleguen quejas vecinales o una inspección, porque un foco estructural desatendido reaparece una y otra vez.",
+          "moderate": "Una actividad que se repite en **{{where}}** en **{{gestion}}** suele tener un origen estructural: tuberías, patios interiores o cámaras húmedas. Una visita técnica localiza de dónde sale de verdad y deja constancia documentada de la actuación, que es lo que te cubre ante la propiedad y los vecinos.",
+          "info": "Aunque ahora parezca controlado, en **{{gestion}}** vale la pena confirmar si lo que pasa en **{{where}}** es un caso puntual o la punta de un foco más amplio. Un informe técnico claro te da base sólida para decidir con la propiedad o la junta sin sobredimensionar el gasto."
         },
         "comunidad": {
-          "urgent": "**Riesgo de extensión** en el edificio: problema en **{{where}}**. Hace falta coordinación rápida por canalizaciones y zonas comunes.",
-          "moderate": "**Actúa antes de que crezca**: detectado en **{{where}}** como **{{role}}**. Si no se interviene, **{{concern}}**.",
-          "info": "**Momento ideal** para intervenir con calma: foco en **{{where}}**. Como **{{role}}**, tendrás argumentos para movilizar a la comunidad."
+          "urgent": "Cuando salen cucarachas en **{{where}}**, el riesgo real es que se muevan entre viviendas por los bajantes y las tuberías compartidas: aunque en tu casa se vean pocas, el foco puede estar en otra zona del edificio. Como **{{role}}**, coordinar una inspección del conjunto es la forma de pararlo antes de que se extienda piso a piso.",
+          "moderate": "Un foco en **{{where}}** suele nacer en zonas comunes o en una vivienda concreta y, desde ahí, se reparte por la estructura. Identificar ahora la especie y el punto de origen te permite llegar a la comunidad con una explicación clara y una solución concreta, en lugar de ir apagando fuegos.",
+          "info": "Detectarlo pronto en **{{where}}** es, de hecho, el mejor momento para actuar, porque todavía está localizado. Una inspección confirma si solo afecta a una zona o si hace falta una actuación comunitaria, y como **{{role}}** te da argumentos sólidos para plantearlo al resto de vecinos."
         }
       }
     },

@@ -52,29 +52,29 @@
       },
       "static_offer": "🎁 **Inspecció gratuïta** a Barcelona i rodalies — tria horari a sota o escriu-nos.",
       "static_snippets": {
-        "sensitive_yes": " Amb nens o mascotes, prioritzarem productes de baixa toxicitat.",
-        "cert_yes": " Incloem certificat d'actuació per a inspeccions."
+        "sensitive_yes": " I com que a casa hi ha nens o mascotes, treballem amb gels localitzats i barreres de baixa toxicitat, sense ruixats a l'aire.",
+        "cert_yes": " T'entreguem informe tècnic i certificat per a la teva inspecció sanitària."
       },
       "static": {
         "particular": {
-          "urgent": "**Prioritat alta** a la **{{where}}**: {{qty}} des de fa **{{since}}**. El focus pot escalar en 48 h.{{sensitive_note}}",
-          "moderate": "**Convé actuar aviat** a la **{{where}}** ({{qty}}, des de **{{since}}**). Una setmana d'espera sol empitjorar el focus.{{sensitive_note}}",
-          "info": "**Bon moment per intervenir** amb calma: avistaments a la **{{where}}** ({{qty}}). Confirmem espècie i origen abans que creixi.{{sensitive_note}}"
+          "urgent": "Quan hi ha molta activitat a la **{{where}}**, normalment vol dir que ja hi ha un niu establert a prop d'una font de calor o humitat: darrere d'electrodomèstics, sota la pica o dins d'escletxes. Les paneroles es reprodueixen molt de pressa (una sola femella pot deixar desenes d'ous en una càpsula), per això cada dia que passa la colònia creix. El primer pas de veritat és identificar quina espècie és —la germànica és la més habitual dins de casa i la que més s'escampa— per triar el tractament exacte i tallar el focus, no només les que veus.{{sensitive_note}}",
+          "moderate": "Veure paneroles a la **{{where}}** sol apuntar a una via d'entrada concreta: un desguàs sense sifó, alguna escletxa o cartró i bosses que arriben de fora. Encara ets a temps d'evitar que s'instal·lin del tot, però val la pena confirmar l'espècie i on s'amaguen durant el dia, perquè el que es veu acostuma a ser una petita part del que realment hi ha.{{sensitive_note}}",
+          "info": "Uns pocs avistaments a la **{{where}}** poden ser una cosa puntual (una que ha entrat de fora) o l'inici d'una colònia jove. La diferència la marca si hi ha un refugi amagat a prop d'aigua i calor. En una inspecció ràpida podem identificar l'espècie i revisar els punts on solen niar —juntes, desguassos, part del darrere dels electrodomèstics— i dir-te amb franquesa si cal actuar o només vigilar.{{sensitive_note}}"
         },
         "empresa": {
-          "urgent": "**Risc sanitari alt** al teu **{{business}}** ({{where}}), nivell **{{level}}**. Cal protocol documentat en 48 h.{{cert_note}}",
-          "moderate": "**Planifica aquesta setmana** per al **{{business}}**: incidències a **{{where}}** amb nivell **{{level}}**.{{cert_note}}",
-          "info": "**Actuació preventiva** al **{{business}}**: avistaments a **{{where}}** ({{level}}). Inspecció sense parar l'activitat.{{cert_note}}"
+          "urgent": "En un **{{business}}**, una presència clara a **{{where}}** és un risc directe per a la teva inspecció sanitària i per a la teva reputació: les paneroles contaminen superfícies i aliments en poques hores i deixen rastres detectables. El que ens interessa és identificar l'espècie i el punt on cria (sovint maquinària calenta, magatzem o juntes) per tallar-ho d'arrel i deixar-ho tot documentat per a l'APPCC.{{cert_note}}",
+          "moderate": "Detectar activitat a **{{where}}** en un **{{business}}** acostuma a indicar que hi ha un refugi a prop —magatzem, cambres, darrere d'equips—. Actuar aquesta setmana evita que arribi a zones de client i que se t'acumulin incidències difícils de justificar el dia d'una inspecció. Comencem localitzant l'origen, no perseguint les que apareixen.{{cert_note}}",
+          "info": "Fins i tot uns avistaments aïllats en un **{{business}}** valen una ullada tècnica: saber quina espècie és i quins punts crítics tens ara t'estalvia ensurts i possibles sancions més endavant. Ho revisem sense interrompre la teva activitat i et diem clarament si és un tema menor o convé actuar.{{cert_note}}"
         },
         "admin": {
-          "urgent": "**Cas prioritari** de **{{gestion}}** a **{{where}}**. Pot escalar a queixes veïnals o inspeccions si s'ajorna.",
-          "moderate": "**Visita tècnica recomanada** per localitzar el focus a **{{where}}** i documentar l'actuació per a **{{gestion}}**.",
-          "info": "**Encara manageable** a **{{where}}**. Una inspecció gratuïta et dóna base per decidir el següent pas (prefereixes **{{advance}}**)."
+          "urgent": "En una gestió de **{{gestion}}**, una incidència marcada a **{{where}}** poques vegades és aïllada: sol venir de zones comunes, baixants compartits o locals adjacents. Convé identificar l'espècie i fer un petit mapa de l'edifici abans que arribin queixes veïnals o una inspecció, perquè un focus estructural desatès reapareix una vegada i una altra.",
+          "moderate": "Una activitat que es repeteix a **{{where}}** en **{{gestion}}** acostuma a tenir un origen estructural: canonades, patis interiors o cambres humides. Una visita tècnica localitza d'on surt de veritat i deixa constància documentada de l'actuació, que és el que et cobreix davant la propietat i els veïns.",
+          "info": "Encara que ara sembli controlat, en **{{gestion}}** val la pena confirmar si el que passa a **{{where}}** és un cas puntual o la punta d'un focus més ampli. Un informe tècnic clar et dóna base sòlida per decidir amb la propietat o la junta sense sobredimensionar la despesa."
         },
         "comunidad": {
-          "urgent": "**Risc d'extensió** a l'edifici: problema a **{{where}}**. Cal coordinació ràpida per canonades i zones comunes.",
-          "moderate": "**Actua abans que creixi**: detectat a **{{where}}** com a **{{role}}**. Si no s'intervé, **{{concern}}**.",
-          "info": "**Moment ideal** per intervenir amb calma: focus a **{{where}}**. Com a **{{role}}**, tindràs arguments per mobilitzar la comunitat."
+          "urgent": "Quan surten paneroles a **{{where}}**, el risc de veritat és que es moguin entre habitatges pels baixants i les canonades compartides: encara que a casa teva es vegin poques, el focus pot estar en una altra zona de l'edifici. Com a **{{role}}**, coordinar una inspecció del conjunt és la manera d'aturar-ho abans que s'estengui pis a pis.",
+          "moderate": "Un focus a **{{where}}** sol néixer en zones comunes o en un habitatge concret i, des d'allà, es reparteix per l'estructura. Identificar ara l'espècie i el punt d'origen et permet arribar a la comunitat amb una explicació clara i una solució concreta, en comptes d'anar apagant focs.",
+          "info": "Detectar-ho aviat a **{{where}}** és, de fet, el millor moment per actuar, perquè encara està localitzat. Una inspecció confirma si només afecta una zona o si cal una actuació comunitària, i com a **{{role}}** et dóna arguments sòlids per plantejar-ho a la resta de veïns."
         }
       }
     },
