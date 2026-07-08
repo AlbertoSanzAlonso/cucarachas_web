@@ -4,6 +4,56 @@ import { useTranslation } from 'react-i18next';
 import BookingContactForm from './BookingContactForm';
 import SlotPicker from './SlotPicker';
 
+const VerdictCTAs = ({ handleSendMessage, t }) => (
+  <div className="flex flex-wrap gap-2 mt-2">
+    <button
+      type="button"
+      onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
+      className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
+    >
+      📅 {t('agent.cta.schedule')}
+    </button>
+    <button
+      type="button"
+      onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_budget'))}
+      className="bg-white/10 hover:bg-white/20 text-white border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
+    >
+      💰 {t('agent.cta.budget')}
+    </button>
+    <button
+      type="button"
+      onClick={() => window.location.href = 'tel:933309169'}
+      className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
+    >
+      📞 {t('agent.cta.call')}
+    </button>
+  </div>
+);
+
+const PostBudgetCTAs = ({ handleSendMessage, t }) => (
+  <div className="flex flex-col gap-2 mt-2">
+    <div className="flex flex-wrap gap-2">
+      <button
+        type="button"
+        onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
+        className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
+      >
+        📅 {t('agent.cta.schedule')}
+      </button>
+      <button
+        type="button"
+        onClick={() => window.location.href = 'tel:933309169'}
+        className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
+      >
+        📞 {t('agent.cta.call')}
+      </button>
+    </div>
+    <p className="text-white/40 text-[11px] md:text-xs leading-relaxed px-1">
+      {t('agent.chat.post_budget_hint')}
+    </p>
+  </div>
+);
+
 const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBookingNameNext, handleBookingAddressNext, handleBookingEmailNext, handleBookingSubmit, isTyping }) => {
   const { t } = useTranslation();
 
@@ -19,26 +69,11 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBook
         </div>
         
         {(msg.isInitial || msg.isVerdict) && (
-          <div className="flex flex-wrap gap-2 mt-2">
-            <button 
-              onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
-              className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
-            >
-              📅 {t('agent.cta.schedule')}
-            </button>
-            <button 
-              onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_budget'))}
-              className="bg-white/10 hover:bg-white/20 text-white border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
-            >
-              💰 {t('agent.cta.budget')}
-            </button>
-            <button 
-              onClick={() => window.location.href = 'tel:933309169'}
-              className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
-            >
-              📞 {t('agent.cta.call')}
-            </button>
-          </div>
+          <VerdictCTAs handleSendMessage={handleSendMessage} t={t} />
+        )}
+
+        {msg.showPostBudgetCTAs && (
+          <PostBudgetCTAs handleSendMessage={handleSendMessage} t={t} />
         )}
 
 

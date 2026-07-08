@@ -235,7 +235,8 @@
       "confirm_slot": "Quiero la cita el {{date}} a las {{time}}",
       "confirmed": "¡Perfecto! He bloqueado tu cita para el **{{date}} a las {{time}}**. Recibirás un correo de confirmación. ¿Necesitas algo más?",
       "error": "Lo siento, ha habido un problema. Puedes llamarnos al 933 309 169.",
-      "server_error": "En este momento no puedo conectar con el servidor. Llámanos al **933 309 169** para asistencia inmediata."
+      "server_error": "En este momento no puedo conectar con el servidor. Llámanos al **933 309 169** para asistencia inmediata.",
+      "post_budget_hint": "Si tienes más dudas, escríbenos abajo."
     },
     "chat_direct": "Tengo preguntas / Consultar Agente"
   }

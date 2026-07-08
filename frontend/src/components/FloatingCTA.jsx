@@ -4,6 +4,7 @@ import { MessageSquare, Phone, X, Send, Bot, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
+import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 
 const FloatingCTA = () => {
   const { t, i18n } = useTranslation();
@@ -89,7 +90,8 @@ const FloatingCTA = () => {
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: response.data.reply,
-        slots: response.data.slots 
+        slots: response.data.slots,
+        showPostBudgetCTAs: shouldShowPostBudgetCTAs(userMessage.trim(), response.data.reply),
       }]);
     } catch (error) {
       console.error('Error in chat:', error);
@@ -308,6 +310,30 @@ const FloatingCTA = () => {
                              >
                                📞 {t('agent.cta.call')}
                              </button>
+                           </div>
+                         )}
+                         {msg.showPostBudgetCTAs && (
+                           <div className="flex flex-col gap-2 mt-4 max-w-[92%]">
+                             <div className="flex flex-wrap gap-2">
+                               <button
+                                 type="button"
+                                 onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
+                                 disabled={isLoading}
+                                 className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
+                               >
+                                 📅 {t('agent.cta.schedule')}
+                               </button>
+                               <button
+                                 type="button"
+                                 onClick={() => window.location.href = 'tel:933309169'}
+                                 className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
+                               >
+                                 📞 {t('agent.cta.call')}
+                               </button>
+                             </div>
+                             <p className="text-secondary-gray/50 text-[11px] md:text-xs leading-relaxed px-1">
+                               {t('agent.chat.post_budget_hint')}
+                             </p>
                            </div>
                          )}
                          {msg.slots && (

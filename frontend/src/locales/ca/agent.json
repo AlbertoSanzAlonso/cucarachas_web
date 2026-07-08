@@ -229,7 +229,8 @@
       "confirm_slot": "Vull la cita el {{date}} a les {{time}}",
       "confirmed": "Perfecte! He bloquejat la teva cita per **{{date}} a les {{time}}**. Rebràs un correu de confirmació. Necessites res més?",
       "error": "Ho sento, hi ha hagut un problema. Pots trucar-nos al 933 309 169.",
-      "server_error": "En aquest moment no puc connectar amb el servidor. Truca'ns al **933 309 169** per a assistència immediata."
+      "server_error": "En aquest moment no puc connectar amb el servidor. Truca'ns al **933 309 169** per a assistència immediata.",
+      "post_budget_hint": "Si tens més dubtes, escriu-nos a sota."
     },
     "geolocation_not_supported": "El teu navegador no admet geolocalització.",
     "geolocation_denied": "Permís d'ubicació denegat.",

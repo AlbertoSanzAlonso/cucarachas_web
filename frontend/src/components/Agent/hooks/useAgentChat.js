@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { buildStaticVerdict, hasExtraInfo } from '@/components/Agent/Diagnostic/buildStaticVerdict';
+import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 
 export const useAgentChat = (i18n, answers, path) => {
   const { t } = useTranslation();
@@ -262,10 +263,12 @@ export const useAgentChat = (i18n, answers, path) => {
     callAgentAPI(contextualMessage, { forceDiagnostic: Boolean(prefix) })
       .then(data => {
         setIsTyping(false);
+        const reply = data.reply || t('agent.chat.error');
         setMessages(prev => [...prev, { 
           role: 'assistant', 
-          content: data.reply || t('agent.chat.error'),
-          slots: data.slots?.length ? data.slots.map((s, i) => ({ id: i, ...s })) : null
+          content: reply,
+          slots: data.slots?.length ? data.slots.map((s, i) => ({ id: i, ...s })) : null,
+          showPostBudgetCTAs: shouldShowPostBudgetCTAs(value, reply),
         }]);
       })
       .catch(() => {
