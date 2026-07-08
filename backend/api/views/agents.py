@@ -7,7 +7,7 @@ from asgiref.sync import async_to_sync
 from ..agents.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState, Intent
 from ..agents.booking import confirm_booking_from_chat
-from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state
+from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state, apply_facts_from_message
 from ..agents.graph.routing import wants_scheduling
 from ..agents.serialization import normalize_language, state_for_session
 
@@ -56,6 +56,7 @@ def chat_with_agents(request):
         if isinstance(diagnostic, dict) and diagnostic:
             orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
         orchestrator.state = apply_diagnostic_from_message(orchestrator.state, message)
+        orchestrator.state = apply_facts_from_message(orchestrator.state, message)
 
         if isinstance(booking, dict) and booking.get('slot_time') and booking.get('name') and booking.get('phone') and booking.get('email'):
             result = confirm_booking_from_chat(
@@ -76,6 +77,7 @@ def chat_with_agents(request):
             result = async_to_sync(orchestrator.process_message)(
                 message,
                 source=request.data.get("source"),
+                diagnostic=diagnostic if isinstance(diagnostic, dict) else None,
             )
 
         if isinstance(result, str):

@@ -12,6 +12,7 @@ from ..diagnostician import diagnostician_agent
 from ..pricer import pricer_agent
 from ..scheduler import scheduler_agent
 from ..crm_agent import crm_agent
+from ..diagnostic_merge import build_case_context, merge_agent_updates
 from ..text_utils import limit_one_question
 from .routing import is_simple_greeting, mentions_pest
 from .state import CECSAGraphState
@@ -95,19 +96,16 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
         if fast:
             return fast
 
-        context = (
-            f"Idioma: {lang}. Ciudad actual: {agent.city or 'Desconocida'}. "
-            f"Intención: {agent.intent or 'Desconocida'}."
-        )
+        context = build_case_context(agent, lang)
         if _is_home_chat(state):
-            context += " Modo: chat home (widget). Máximo UNA pregunta. Respuesta breve."
+            context += "\nModo: chat home (widget). Máximo UNA pregunta. Respuesta breve."
         updated, output = await _run_agent(
             receptionist_agent,
-            f"Context: {context}\nUsuario: {state['message']}",
+            f"Context actual:\n{context}\n\nMissatge del client: {state['message']}",
             state,
             timeout_key="receptionist",
         )
-        agent = output.collected_data
+        agent = merge_agent_updates(_agent_state(state), output.collected_data)
         agent.history = updated.history
 
         next_route = None
@@ -175,6 +173,8 @@ async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, 
 
 
 async def scheduler_node(state: CECSAGraphState) -> dict:
+    from ..diagnostic_merge import has_wizard_diagnostic
+
     agent = _agent_state(state)
     lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
     if lang not in ("ca", "es"):
@@ -192,7 +192,13 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             },
         }
 
-    if _is_initial_scheduling_request(state["message"], agent):
+    wizard_ready = has_wizard_diagnostic(state.get("diagnostic")) and agent.pest_type
+    from .routing import wants_scheduling
+
+    should_fast_slots = _is_initial_scheduling_request(state["message"], agent) or (
+        wizard_ready and wants_scheduling(state["message"].lower())
+    )
+    if should_fast_slots:
         fast = await _scheduler_slots_fast_path(state, agent, lang)
         if fast:
             return fast
@@ -291,30 +297,27 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
     lang = agent.language
     home = _is_home_chat(state)
     try:
-        context = (
-            f"Missatge del client: {state['message']}\n"
-            f"Ciutat: {agent.city or 'desconeguda'}. "
-            "Respon en segona persona i fes UNA sola pregunta concreta sobre el seu cas."
-        )
+        context = build_case_context(agent, lang)
+        context += f"\n\nMissatge actual del client: {state['message']}"
         if home:
-            context += " Modo chat home: máximo 1 pregunta, sin listas."
+            context += "\nModo chat home: máximo 1 pregunta, sin listas."
         agent, output = await _run_agent(
             diagnostician_agent,
             context,
             state,
             timeout_key="diagnostician",
-            use_full_history=False,
+            use_full_history=True,
         )
         message = _format_diagnosis_message(output, home=home, lang=lang) or ORCHESTRATOR_MESSAGES[lang]["fallback"]
         message = limit_one_question(message)
+        if output.identified_pest:
+            agent.pest_type = output.identified_pest
+        if output.severity:
+            agent.severity = output.severity
         updates: dict[str, Any] = {
             "agent_state": agent.model_dump(mode="json"),
             "result": {"message": message},
         }
-        if output.identified_pest:
-            agent.pest_type = output.identified_pest
-            agent.severity = output.severity
-            updates["agent_state"] = agent.model_dump(mode="json")
         return updates
     except Exception as e:
         print(f"ERROR diagnostician_node: {e}")

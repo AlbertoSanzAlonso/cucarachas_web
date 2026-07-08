@@ -73,6 +73,11 @@ function getTier(path, answers) {
   }
 }
 
+function snippet(t, key, answers, field) {
+  if (answers[field] === 'yes') return t(`agent.verdict.static_snippets.${key}`);
+  return '';
+}
+
 function buildParams(path, answers, t) {
   switch (path) {
     case 'particular':
@@ -80,33 +85,26 @@ function buildParams(path, answers, t) {
         where: opt(t, answers.where),
         qty: opt(t, answers.quantity),
         since: opt(t, answers.since),
-        urgency: opt(t, answers.urgency),
-        sensitive: opt(t, answers.sensitive),
+        sensitive_note: snippet(t, 'sensitive_yes', answers, 'sensitive'),
       };
     case 'empresa':
       return {
         business: opt(t, answers.business_type),
         where: opt(t, answers.where_empresa),
-        risk: opt(t, answers.sanitary_risk),
         level: opt(t, answers.level),
-        certificate: opt(t, answers.certificate),
+        cert_note: snippet(t, 'cert_yes', answers, 'certificate'),
       };
     case 'admin':
       return {
         gestion: opt(t, answers.gestion_tipo),
         where: opt(t, answers.where_admin),
-        since: opt(t, answers.since_admin),
-        volume: opt(t, answers.volume_admin),
-        priority: opt(t, answers.priority_admin),
         advance: opt(t, answers.advance_admin),
       };
     case 'comunidad':
       return {
         where: opt(t, answers.where_comunidad),
-        since: opt(t, answers.since_comunidad),
         role: opt(t, answers.role_comunidad),
         concern: opt(t, answers.what_if_not),
-        help: opt(t, answers.help_community),
       };
     default:
       return {};
@@ -117,9 +115,8 @@ export function buildStaticVerdict(path, answers, t) {
   const safePath = ['particular', 'empresa', 'admin', 'comunidad'].includes(path) ? path : 'particular';
   const tier = getTier(safePath, answers);
   const params = buildParams(safePath, answers, t);
+  const intro = t(`agent.verdict.static_intro.${safePath}`);
   const body = t(`agent.verdict.static.${safePath}.${tier}`, params);
-  const intro = t('agent.verdict.intro');
-  const offer = `🎁 **${t('agent.verdict.offer_title')}**: ${t('agent.verdict.offer_desc')}`;
-  const contact = t('agent.verdict.contact_help');
-  return `${intro}\n\n${body}\n\n${offer}\n\n${contact}`;
+  const offer = t('agent.verdict.static_offer');
+  return `${intro}\n\n${body}\n\n${offer}`;
 }

@@ -1,4 +1,5 @@
 """Enrutado determinista (sin LLM) para ahorrar tokens y latencia."""
+from ..diagnostic_merge import has_wizard_diagnostic
 from ..models import AgentState, Intent
 from .state import CECSAGraphState
 
@@ -74,11 +75,56 @@ def mentions_pest(msg_lower: str) -> bool:
     return any(kw in msg_lower for kw in PEST_KEYWORDS)
 
 
+def is_case_follow_up(msg_lower: str) -> bool:
+    """Respostes curtes o detalls d'un cas en curs (ubicació, descripció…)."""
+    follow_up_hints = (
+        "baño",
+        "bano",
+        "bany",
+        "cocina",
+        "cuina",
+        "dormitorio",
+        "dormitori",
+        "salon",
+        "saló",
+        "garaje",
+        "garatge",
+        "marron",
+        "marrón",
+        "marró",
+        "grand",
+        "grande",
+        "grans",
+        "petit",
+        "pequeñ",
+        "moltes",
+        "muchas",
+        "n'he vist",
+        "he visto",
+        "sota",
+        "debajo",
+        "nevera",
+        "des de",
+        "desde",
+        "en el",
+        "en la",
+        "al ",
+        "a la ",
+        "color",
+        "nits",
+        "noche",
+        "nit",
+    )
+    return any(h in msg_lower for h in follow_up_hints)
+
+
 def should_diagnose(agent: AgentState, msg_lower: str) -> bool:
-    if agent.pest_type:
-        return False
     if mentions_pest(msg_lower):
         return True
+    if agent.pest_type and is_case_follow_up(msg_lower):
+        return True
+    if agent.pest_type:
+        return False
     return agent.intent in (Intent.QUOTE, Intent.URGENCY, Intent.DOUBT) and bool(agent.city)
 
 
@@ -132,9 +178,7 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     if wants_scheduling(msg_lower):
         return "scheduler"
 
-    if agent.pest_type and (
-        agent.intent == Intent.QUOTE or any(kw in msg_lower for kw in PRICING_KEYWORDS)
-    ):
+    if agent.pest_type and any(kw in msg_lower for kw in PRICING_KEYWORDS):
         return "pricer"
 
     if should_diagnose(agent, msg_lower):
@@ -170,6 +214,9 @@ def after_receptionist(state: CECSAGraphState) -> str:
 
 def after_diagnostician(state: CECSAGraphState) -> str:
     from ..config import ENABLE_CRM_SYNTHESIS
+
+    if has_wizard_diagnostic(state.get("diagnostic")):
+        return "done"
 
     agent = AgentState.model_validate(state.get("agent_state") or {})
     if ENABLE_CRM_SYNTHESIS and agent.pest_type:

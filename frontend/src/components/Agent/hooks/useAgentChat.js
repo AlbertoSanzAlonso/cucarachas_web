@@ -20,11 +20,32 @@ export const useAgentChat = (i18n, answers, path) => {
     return {
       path: pathRef.current || 'general',
       who: a.who,
-      where: a.where || a.where_empresa,
-      quantity: a.quantity || a.level,
-      since: a.since,
+      where: a.where || a.where_empresa || a.where_admin || a.where_comunidad,
+      quantity: a.quantity,
+      level: a.level,
+      since: a.since || a.since_admin || a.since_comunidad,
       urgency: a.urgency || a.sanitary_risk,
-      sensitive: a.sensitive || a.certificate,
+      sensitive: a.sensitive,
+      certificate: a.certificate,
+      business_type: a.business_type,
+      sanitary_risk: a.sanitary_risk,
+      where_empresa: a.where_empresa,
+      gestion_tipo: a.gestion_tipo,
+      where_admin: a.where_admin,
+      since_admin: a.since_admin,
+      volume_admin: a.volume_admin,
+      escalate_admin: a.escalate_admin,
+      prev_admin: a.prev_admin,
+      priority_admin: a.priority_admin,
+      advance_admin: a.advance_admin,
+      where_comunidad: a.where_comunidad,
+      since_comunidad: a.since_comunidad,
+      role_comunidad: a.role_comunidad,
+      has_admin: a.has_admin,
+      which_admin: a.which_admin,
+      help_community: a.help_community,
+      contact_who: a.contact_who,
+      what_if_not: a.what_if_not,
       extra_info: a.extra_info,
     };
   }, []);
@@ -93,14 +114,10 @@ export const useAgentChat = (i18n, answers, path) => {
 
   const getAIDiagnostic = useCallback(async (finalAnswers) => {
     setIsTyping(true);
-    setMessages([{ role: 'assistant', content: t('agent.verdict.intro') }]);
 
     const showVerdict = (content) => {
       setIsTyping(false);
-      setMessages(prev => [
-        ...prev,
-        { role: 'assistant', content, isVerdict: true }
-      ]);
+      setMessages([{ role: 'assistant', content, isVerdict: true }]);
     };
 
     if (!hasExtraInfo(finalAnswers.extra_info)) {
@@ -108,6 +125,8 @@ export const useAgentChat = (i18n, answers, path) => {
       showVerdict(buildStaticVerdict(pathRef.current, finalAnswers, t));
       return;
     }
+
+    setMessages([{ role: 'assistant', content: t('agent.verdict.intro') }]);
 
     const diagnosticPrompt = `He completat el diagnòstic interactiu. Aquí tens les meves dades per a un veredicte personalitzat:
     - Tipus de client: ${finalAnswers.who || 'No especificat'}

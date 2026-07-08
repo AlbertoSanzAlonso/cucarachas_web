@@ -77,3 +77,77 @@ def test_scheduling_cta_keeps_session_language_ca():
     assert updated.language == "ca"
     assert updated.intent == Intent.APPOINTMENT
     assert choose_agent_route(state) == "scheduler"
+
+
+def test_follow_up_location_with_pest_routes_to_diagnostician():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="ca",
+        intent=Intent.QUOTE,
+        pest_type=PestType.AMERICAN_COCKROACH,
+        technical_notes=["Plaga: cucaraches/paneroles"],
+    )
+    assert _route(agent, "en el baño") == "diagnostician"
+
+
+def test_quote_intent_without_pricing_keyword_stays_diagnostician():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        intent=Intent.QUOTE,
+        pest_type=PestType.AMERICAN_COCKROACH,
+    )
+    assert _route(agent, "son de color marrón y grandes") == "diagnostician"
+
+
+def test_explicit_pricing_routes_to_pricer():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        intent=Intent.QUOTE,
+        pest_type=PestType.AMERICAN_COCKROACH,
+        city="Barcelona",
+    )
+    assert _route(agent, "quiero un presupuesto") == "pricer"
+
+
+def test_wizard_diagnostic_skips_diagnostician():
+    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+
+    agent = AgentState(language="ca")
+    diagnostic = {
+        "path": "particular",
+        "who": "particular",
+        "where": "cocina",
+        "quantity": "several",
+        "urgency": "this_week",
+    }
+    agent = merge_diagnostic_into_state(agent, diagnostic)
+    assert agent.pest_type is not None
+    state = {
+        "message": "Vull agendar la meva cita gratuïta",
+        "language": "ca",
+        "agent_state": agent.model_dump(mode="json"),
+        "diagnostic": diagnostic,
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "scheduler"
+
+
+def test_wizard_diagnostic_routes_pricing_to_pricer():
+    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+
+    agent = AgentState(language="es")
+    diagnostic = {"path": "empresa", "who": "empresa", "level": "frequent", "sanitary_risk": "soon"}
+    agent = merge_diagnostic_into_state(agent, diagnostic)
+    state = {
+        "message": "Quiero un presupuesto",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "diagnostic": diagnostic,
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "pricer"

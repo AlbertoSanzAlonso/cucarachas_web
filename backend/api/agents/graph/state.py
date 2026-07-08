@@ -8,5 +8,6 @@ class CECSAGraphState(TypedDict):
     language: str
     agent_state: dict
     source: NotRequired[str]
+    diagnostic: NotRequired[dict[str, Any]]
     route: NotRequired[str]
     result: NotRequired[dict[str, Any]]
