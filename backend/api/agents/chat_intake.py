@@ -25,6 +25,7 @@ _INTAKE_QUESTIONS = {
         "terraza": "Té terrassa o pati exterior?",
         "mascotas": "Hi ha mascotes a casa?",
         "ninos": "Hi ha nens a casa?",
+        "business_type": "Quin tipus de negoci és? (restaurant, hotel, oficina…)",
     },
     "es": {
         "codigo_postal": "Para prepararte un presupuesto preciso, ¿me puedes decir el **código postal** del inmueble?",
@@ -37,6 +38,7 @@ _INTAKE_QUESTIONS = {
         "terraza": "¿Tiene terraza o patio exterior?",
         "mascotas": "¿Hay mascotas en casa?",
         "ninos": "¿Hay niños en casa?",
+        "business_type": "¿Qué tipo de negocio es? (restaurante, hotel, oficina…)",
     },
 }
 

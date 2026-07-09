@@ -70,7 +70,8 @@ class CaseContext:
         aliases = {
             "metros_cuadrados": ("m2", "metros", "metros_cuadrados", "superficie"),
             "codigo_postal": ("codigo_postal", "cp", "postal"),
-            "where": ("where", "where_empresa", "where_admin", "where_comunidad"),
+        "where": ("where", "where_empresa", "where_admin", "where_comunidad"),
+            "business_type": ("business_type",),
         }
         for key in aliases.get(name, (name,)):
             if key in self.diagnostic and self.diagnostic[key] not in (None, ""):

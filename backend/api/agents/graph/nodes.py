@@ -359,6 +359,25 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 context += f"\n\n{format_ficha_context(ficha, lang)}"
                 context += f"\nConfianza ficha: {ficha_result.confidence}%"
 
+        from api.pricing_fallback import estimate_price_deterministic
+
+        estimate = estimate_price_deterministic(agent, lang)
+        if estimate:
+            badge = _confidence_badge(estimate["confidence"])
+            msg = msgs["pricing_template"].format(
+                confidence_badge=badge,
+                min=f"{estimate['min']:.0f}",
+                max=f"{estimate['max']:.0f}",
+                breakdown=", ".join(estimate["breakdown"]),
+                months=estimate["months"],
+                commercial_copy="",
+            )
+            agent.estimated_price = estimate["max"]
+            return {
+                "agent_state": agent.model_dump(mode="json"),
+                "result": {"message": msg},
+            }
+
         agent, output = await _run_agent(
             pricer_agent,
             f"Context: {context}",
@@ -379,8 +398,30 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             "result": {"message": msg},
         }
     except Exception as e:
-        print(f"ERROR pricer_node: {e}")
-        return {"result": {"message": msgs["fallback"]}}
+        import traceback
+
+        print(f"ERROR pricer_node: {traceback.format_exc()}")
+        from api.pricing_fallback import estimate_price_deterministic
+
+        estimate = estimate_price_deterministic(agent, lang)
+        if estimate:
+            badge = _confidence_badge(estimate["confidence"])
+            msg = msgs["pricing_template"].format(
+                confidence_badge=badge,
+                min=f"{estimate['min']:.0f}",
+                max=f"{estimate['max']:.0f}",
+                breakdown=", ".join(estimate["breakdown"]),
+                months=estimate["months"],
+                commercial_copy="",
+            )
+            return {
+                "agent_state": agent.model_dump(mode="json"),
+                "result": {"message": msg},
+            }
+        return {"result": {"message": msgs["pricing_inspection_only"].format(
+            confidence_badge=msgs["confidence_red"].format(pct=50),
+            commercial_copy="",
+        )}}
 
 
 def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, lang: str = "ca") -> str:

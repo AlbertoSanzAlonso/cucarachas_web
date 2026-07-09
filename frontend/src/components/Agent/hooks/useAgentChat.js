@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { buildStaticVerdict, hasExtraInfo } from '@/components/Agent/Diagnostic/buildStaticVerdict';
-import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
+import { isBudgetRequest, shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 
 export const useAgentChat = (i18n, answers, path) => {
   const { t } = useTranslation();
@@ -19,7 +19,7 @@ export const useAgentChat = (i18n, answers, path) => {
     const a = answersRef.current;
     if (!a || !Object.keys(a).length) return undefined;
     return {
-      path: pathRef.current || 'general',
+      path: pathRef.current || a.who || 'general',
       who: a.who,
       where: a.where || a.where_empresa || a.where_admin || a.where_comunidad,
       quantity: a.quantity,
@@ -261,8 +261,10 @@ export const useAgentChat = (i18n, answers, path) => {
 
     const prefix = isSchedulingMessage(value) ? buildDiagnosticPrefix() : '';
     const contextualMessage = `${prefix}${value}`;
+    const diagnosticPayload = buildDiagnosticPayload();
+    const mustSendDiagnostic = Boolean(diagnosticPayload) || isSchedulingMessage(value) || isBudgetRequest(value);
 
-    callAgentAPI(contextualMessage, { forceDiagnostic: Boolean(prefix) })
+    callAgentAPI(contextualMessage, { forceDiagnostic: mustSendDiagnostic })
       .then(data => {
         setIsTyping(false);
         const reply = data.reply || t('agent.chat.error');

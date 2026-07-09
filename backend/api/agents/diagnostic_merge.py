@@ -103,11 +103,20 @@ def _apply_property_type(state: AgentState, path: str | None, who: str | None) -
             state.property_type = "particular"
 
 
-def has_wizard_diagnostic(diagnostic: dict | None) -> bool:
+def _resolve_wizard_path(diagnostic: dict | None) -> str | None:
     if not isinstance(diagnostic, dict):
-        return False
+        return None
     path = _clean(diagnostic.get("path"))
-    return path in _WIZARD_PATHS
+    if path in _WIZARD_PATHS:
+        return path
+    who = _clean(diagnostic.get("who"))
+    if who in _WIZARD_PATHS:
+        return who
+    return None
+
+
+def has_wizard_diagnostic(diagnostic: dict | None) -> bool:
+    return _resolve_wizard_path(diagnostic) is not None
 
 
 def merge_diagnostic_into_state(state: AgentState, diagnostic: dict | None) -> AgentState:
@@ -115,7 +124,10 @@ def merge_diagnostic_into_state(state: AgentState, diagnostic: dict | None) -> A
     if not diagnostic:
         return state
 
-    path = _clean(diagnostic.get("path"))
+    path = _resolve_wizard_path(diagnostic)
+    if path:
+        diagnostic = {**diagnostic, "path": path}
+
     where = (
         _clean(diagnostic.get("where"))
         or _clean(diagnostic.get("where_empresa"))
@@ -131,6 +143,12 @@ def merge_diagnostic_into_state(state: AgentState, diagnostic: dict | None) -> A
     if has_wizard_diagnostic(diagnostic):
         state.pest_type = PestType.GERMAN_COCKROACH
         _apply_severity_from_wizard(state, diagnostic)
+        chat = dict(state.chat_diagnostic or {})
+        for key, val in diagnostic.items():
+            cleaned = _clean(val) if not isinstance(val, (int, float)) else val
+            if cleaned is not None and cleaned != "":
+                chat[key] = cleaned
+        state.chat_diagnostic = chat
 
     notes: list[str] = []
     for key, label in (
@@ -145,7 +163,8 @@ def merge_diagnostic_into_state(state: AgentState, diagnostic: dict | None) -> A
         ("sanitary_risk", "Risc sanitari"),
         ("sensitive", "Sensibilitat"),
         ("certificate", "Certificat"),
-        ("gestion_tipo", "Gestió"),
+        ("business_type", "Tipus negoci"),
+        ("where_empresa", "Zona"),
         ("volume_admin", "Volum"),
         ("priority_admin", "Prioritat"),
         ("advance_admin", "Avanç"),

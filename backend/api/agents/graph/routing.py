@@ -221,10 +221,19 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
     if mentions_pest(msg_lower) and not agent.intent:
         agent.intent = Intent.QUOTE
 
+    if any(kw in msg_lower for kw in PRICING_KEYWORDS):
+        agent.intent = Intent.QUOTE
+
     return {
         "language": agent.language,
         "agent_state": agent.model_dump(mode="json"),
     }
+
+
+def _wants_pricing(agent: AgentState, diagnostic: dict | None, msg_lower: str) -> bool:
+    if not any(kw in msg_lower for kw in PRICING_KEYWORDS):
+        return False
+    return bool(agent.pest_type) or has_wizard_diagnostic(diagnostic)
 
 
 def choose_agent_route(state: CECSAGraphState) -> str:
@@ -240,7 +249,7 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     if should_run_intake(agent, diagnostic, msg_lower):
         return "intake"
 
-    if agent.pest_type and any(kw in msg_lower for kw in PRICING_KEYWORDS):
+    if _wants_pricing(agent, diagnostic, msg_lower):
         return "pricer"
 
     if should_diagnose(agent, msg_lower):

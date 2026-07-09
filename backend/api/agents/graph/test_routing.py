@@ -196,3 +196,30 @@ def test_wizard_diagnostic_routes_pricing_to_pricer():
     }
     state.update(apply_preprocess(state))
     assert choose_agent_route(state) == "pricer"
+
+
+def test_hotel_wizard_pedir_presupuesto_routes_to_pricer_or_intake():
+    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+
+    agent = AgentState(language="es")
+    diagnostic = {
+        "who": "empresa",
+        "path": "general",
+        "business_type": "hotel",
+        "where_empresa": "cocina",
+        "sanitary_risk": "soon",
+        "level": "frequent",
+        "certificate": "yes",
+    }
+    agent = merge_diagnostic_into_state(agent, diagnostic)
+    assert agent.pest_type is not None
+    assert agent.property_type == "negoci"
+    state = {
+        "message": "Pedir presupuesto",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "diagnostic": diagnostic,
+    }
+    state.update(apply_preprocess(state))
+    route = choose_agent_route(state)
+    assert route in ("pricer", "intake")

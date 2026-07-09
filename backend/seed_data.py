@@ -169,6 +169,52 @@ def seed():
             "seguimiento": {"24h": "whatsapp", "7d": "email", "30d": "email"},
             "garantia_meses": 12,
         },
+        {
+            "codigo": "CUC-GER-NEG",
+            "nombre_comercial": "Control de cucaracha alemana en negocio",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "lugares": ["cocina", "almacen", "banos", "clientes", "exterior"],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "metros_cuadrados", "where"],
+            },
+            "reglas_diagnostico": [
+                {"keywords": ["noche", "nit"], "severity": "low"},
+                {"keywords": ["día", "dia", "clientes"], "severity": "high"},
+            ],
+            "prioridad_default": "alta",
+            "sistema_recomendado": {
+                "recomendar": ["gel", "trampas", "monitorización", "certificado APPCC"],
+                "no_recomendar": ["pulverizar en cocina abierta"],
+            },
+            "tiempo_medio": {"visita_1": 60, "visita_2": 45},
+            "material_medio": ["6 trampas", "40g gel", "monitorización HACCP"],
+            "riesgo": "alto",
+            "dificultad": 4,
+            "coste_interno": {"tiempo_tecnico": 85, "material": 35, "desplazamiento": 15},
+            "reglas_comerciales": [
+                {"condition": {"field": "metros_cuadrados", "op": "lt", "value": 150}, "precio_venta": 380},
+                {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 150}, "precio_venta": 520},
+                {"condition": {"field": "business_type", "op": "eq", "value": "hotel"}, "precio_venta": 450},
+            ],
+            "bloqueos_presupuesto": [
+                {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 800}, "message_key": "metros_excesivos"},
+            ],
+            "copy_comercial": {
+                "ca": (
+                    "Per a negocis i hotels, recomanem un pla de control integrat amb gel, trampes de "
+                    "monitorització i informe tècnic per a la teva inspecció sanitària, amb certificat CECSA."
+                ),
+                "es": (
+                    "Para negocios y hoteles, recomendamos un plan de control integrado con gel, trampas de "
+                    "monitorización e informe técnico para tu inspección sanitaria, con certificado CECSA."
+                ),
+            },
+            "objeciones": [],
+            "venta_cruzada": [],
+            "seguimiento": {"24h": "whatsapp", "7d": "email", "30d": "email"},
+            "garantia_meses": 12,
+        },
     ]
 
     for item in fichas_data:
