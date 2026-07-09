@@ -367,8 +367,9 @@ const PresupuestosManager = () => {
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
         <form
           onSubmit={handleSubmit}
-          className="xl:col-span-3 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 p-6 md:p-10 space-y-6"
+          className="xl:col-span-3 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 p-6 md:p-10 flex flex-col gap-6 overflow-visible"
         >
+          <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
             <h3 className="text-sm font-black uppercase tracking-widest text-primary-gray/50">
               {editingId ? `Editar #${String(editingId).padStart(4, '0')}` : 'Nou pressupost'}
@@ -606,8 +607,9 @@ const PresupuestosManager = () => {
               className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue resize-none"
             />
           </label>
+          </div>
 
-          <div className="sticky bottom-0 z-10 -mx-6 md:-mx-10 px-6 md:px-10 py-4 bg-white/95 backdrop-blur-sm border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="rounded-2xl bg-[#f8fafc] border-2 border-gray-100 p-5 md:p-6 space-y-4 shrink-0">
             <div className="text-sm font-bold text-primary-gray space-y-1">
               <p>
                 Base imposable:{' '}
@@ -622,7 +624,7 @@ const PresupuestosManager = () => {
               <button
                 type="submit"
                 disabled={isSaving || loadingEdit}
-                className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
+                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
                 style={{ background: 'var(--primary-blue)' }}
               >
                 {isSaving ? (
@@ -633,11 +635,11 @@ const PresupuestosManager = () => {
                 Desar canvis
               </button>
             ) : (
-              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 flex-1 sm:flex-none"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 min-h-[52px]"
                   style={{ background: 'var(--accent-green)' }}
                 >
                   {saving ? (
@@ -651,7 +653,7 @@ const PresupuestosManager = () => {
                   type="button"
                   onClick={handleSaveAndPdf}
                   disabled={isSaving}
-                  className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 flex-1 sm:flex-none"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 min-h-[52px]"
                   style={{ background: 'var(--primary-blue)' }}
                 >
                   {creating ? (

@@ -88,7 +88,7 @@ const AdminDashboard = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-12" data-lenis-prevent>
+      <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 lg:p-12 pb-24" data-lenis-prevent>
         <TopBar 
           user={user}
           leads={leads}
