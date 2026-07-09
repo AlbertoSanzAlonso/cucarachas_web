@@ -624,8 +624,7 @@ const PresupuestosManager = () => {
               <button
                 type="submit"
                 disabled={isSaving || loadingEdit}
-                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
-                style={{ background: 'var(--primary-blue)' }}
+                className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white bg-primary-blue hover:bg-primary-blue-hv disabled:opacity-60 transition-colors shadow-md"
               >
                 {isSaving ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -639,8 +638,7 @@ const PresupuestosManager = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 min-h-[52px]"
-                  style={{ background: 'var(--accent-green)' }}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white bg-accent-green hover:bg-accent-green-hv disabled:opacity-60 min-h-[52px] transition-colors shadow-md"
                 >
                   {saving ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -653,8 +651,7 @@ const PresupuestosManager = () => {
                   type="button"
                   onClick={handleSaveAndPdf}
                   disabled={isSaving}
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 min-h-[52px]"
-                  style={{ background: 'var(--primary-blue)' }}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-4 text-xs font-black uppercase tracking-widest text-white bg-primary-blue hover:bg-primary-blue-hv disabled:opacity-60 min-h-[52px] transition-colors shadow-md"
                 >
                   {creating ? (
                     <Loader2 size={16} className="animate-spin" />
@@ -812,8 +809,7 @@ const PresupuestosManager = () => {
             <button
               type="submit"
               disabled={sending}
-              className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
-              style={{ background: 'var(--accent-green)' }}
+              className="w-full inline-flex items-center justify-center gap-2 rounded-2xl px-6 py-3 text-xs font-black uppercase tracking-widest text-white bg-accent-green hover:bg-accent-green-hv disabled:opacity-60 transition-colors shadow-md"
             >
               {sending ? <Loader2 size={16} className="animate-spin" /> : <Mail size={16} />}
               Enviar PDF per correu

@@ -11,6 +11,13 @@
     --color-secondary-gray: #3c3c3b;
     --color-primary-gray: #3c3c3b;
     --color-bg-light: #f8fafc;
+    /* Aliases usados en inline styles (Navbar, Footer, admin) */
+    --primary-blue: #0080bb;
+    --primary-blue-hv: #006fa3;
+    --accent-green: #34d399;
+    --accent-green-hv: #10b981;
+    --secondary-gray: #3c3c3b;
+    --bg-light: #f8fafc;
   }
 
   html {
