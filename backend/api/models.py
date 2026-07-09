@@ -89,6 +89,11 @@ class Presupuesto(models.Model):
     severity = models.CharField(max_length=20, blank=True, default="")
     garantia_meses = models.PositiveIntegerField(default=12)
     notas = models.TextField(blank=True, default="")
+    origen = models.CharField(
+        max_length=20,
+        choices=[("admin", "Admin"), ("agent", "Agent")],
+        default="admin",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

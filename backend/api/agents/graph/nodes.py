@@ -20,6 +20,63 @@ from .routing import is_simple_greeting, mentions_pest, is_case_follow_up, is_ba
 from .state import CECSAGraphState
 
 
+def _persist_pricing_to_crm(
+    agent: AgentState,
+    raw_diagnostic: dict | None,
+    *,
+    price_min: float,
+    price_max: float,
+    final_price: float | None,
+    breakdown: list[str],
+    guarantee_months: int,
+    ficha_codigo: str = "",
+) -> None:
+    """Guarda o actualitza el pressupost al CRM (best-effort)."""
+    try:
+        from api.models import Presupuesto
+        from api.presupuesto_agent import persist_agent_presupuesto, refresh_agent_presupuesto
+
+        diagnostic = raw_diagnostic or {}
+        if agent.last_presupuesto_id:
+            try:
+                pres = Presupuesto.objects.get(
+                    pk=agent.last_presupuesto_id,
+                    origen="agent",
+                    estado=Presupuesto.Estado.BORRADOR,
+                )
+                refresh_agent_presupuesto(
+                    pres,
+                    agent,
+                    diagnostic,
+                    price_min=price_min,
+                    price_max=price_max,
+                    final_price=final_price,
+                    breakdown=breakdown,
+                    guarantee_months=guarantee_months,
+                    ficha_codigo=ficha_codigo,
+                )
+                return
+            except Presupuesto.DoesNotExist:
+                pass
+
+        pres = persist_agent_presupuesto(
+            agent,
+            diagnostic,
+            price_min=price_min,
+            price_max=price_max,
+            final_price=final_price,
+            breakdown=breakdown,
+            guarantee_months=guarantee_months,
+            ficha_codigo=ficha_codigo,
+        )
+        if pres:
+            agent.last_presupuesto_id = pres.id
+    except Exception as exc:
+        import traceback
+
+        print(f"WARN persist presupuesto CRM: {exc}\n{traceback.format_exc()}")
+
+
 def _agent_state(state: CECSAGraphState) -> AgentState:
     return AgentState.model_validate(state.get("agent_state") or {})
 
@@ -365,6 +422,18 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 )
 
             agent.estimated_price = ficha_result.final_price or ficha_result.price_range_max
+            pmin = ficha_result.price_range_min or ficha_result.final_price or 0
+            pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
+            _persist_pricing_to_crm(
+                agent,
+                state.get("diagnostic"),
+                price_min=pmin,
+                price_max=pmax,
+                final_price=ficha_result.final_price,
+                breakdown=list(ficha_result.breakdown or []),
+                guarantee_months=ficha_result.guarantee_months,
+                ficha_codigo=ficha_result.ficha_codigo or "",
+            )
             return {
                 "agent_state": agent.model_dump(mode="json"),
                 "result": {"message": msg},
@@ -393,6 +462,15 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 commercial_copy="",
             )
             agent.estimated_price = estimate["max"]
+            _persist_pricing_to_crm(
+                agent,
+                state.get("diagnostic"),
+                price_min=estimate["min"],
+                price_max=estimate["max"],
+                final_price=None,
+                breakdown=list(estimate.get("breakdown") or []),
+                guarantee_months=estimate.get("months", 12),
+            )
             return {
                 "agent_state": agent.model_dump(mode="json"),
                 "result": {"message": msg},
@@ -412,6 +490,16 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             breakdown=", ".join(output.breakdown),
             months=output.guarantee_months,
             commercial_copy="",
+        )
+        agent.estimated_price = output.price_range_max
+        _persist_pricing_to_crm(
+            agent,
+            state.get("diagnostic"),
+            price_min=float(output.price_range_min),
+            price_max=float(output.price_range_max),
+            final_price=float(output.final_price) if output.final_price else None,
+            breakdown=list(output.breakdown or []),
+            guarantee_months=output.guarantee_months,
         )
         return {
             "agent_state": agent.model_dump(mode="json"),
@@ -433,6 +521,16 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 breakdown=", ".join(estimate["breakdown"]),
                 months=estimate["months"],
                 commercial_copy="",
+            )
+            agent.estimated_price = estimate["max"]
+            _persist_pricing_to_crm(
+                agent,
+                state.get("diagnostic"),
+                price_min=estimate["min"],
+                price_max=estimate["max"],
+                final_price=None,
+                breakdown=list(estimate.get("breakdown") or []),
+                guarantee_months=estimate.get("months", 12),
             )
             return {
                 "agent_state": agent.model_dump(mode="json"),

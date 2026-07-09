@@ -17,6 +17,10 @@ export const presupuestosApi = baseApi.injectEndpoints({
       query: () => 'presupuestos/list/',
       providesTags: ['Presupuestos'],
     }),
+    getPresupuestoDetail: builder.query({
+      query: (id) => `presupuestos/${id}/`,
+      providesTags: (_result, _err, id) => [{ type: 'Presupuestos', id }],
+    }),
     createPresupuestoPdf: builder.mutation({
       query: (body) => ({
         url: 'presupuestos/create_pdf/',
@@ -34,10 +38,38 @@ export const presupuestosApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Presupuestos'],
     }),
+    updatePresupuesto: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `presupuestos/${id}/update/`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['Presupuestos'],
+    }),
+    deletePresupuesto: builder.mutation({
+      query: (id) => ({
+        url: `presupuestos/${id}/delete/`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Presupuestos'],
+    }),
+    sendPresupuestoEmail: builder.mutation({
+      query: ({ id, ...body }) => ({
+        url: `presupuestos/${id}/send/`,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Presupuestos'],
+    }),
     downloadPresupuestoPdf: builder.mutation({
       query: (id) => ({
         url: `presupuestos/${id}/pdf/`,
-        responseHandler: (response) => response.blob(),
+        responseHandler: async (response) => {
+          if (!response.ok) {
+            throw new Error('No s\'ha pogut descarregar el PDF');
+          }
+          return response.blob();
+        },
       }),
     }),
   }),
@@ -45,7 +77,11 @@ export const presupuestosApi = baseApi.injectEndpoints({
 
 export const {
   useGetPresupuestosQuery,
+  useGetPresupuestoDetailQuery,
   useCreatePresupuestoPdfMutation,
+  useUpdatePresupuestoMutation,
+  useDeletePresupuestoMutation,
+  useSendPresupuestoEmailMutation,
   useDownloadPresupuestoPdfMutation,
 } = presupuestosApi;
 

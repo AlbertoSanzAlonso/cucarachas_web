@@ -102,3 +102,72 @@ def create_presupuesto_from_form(
         )
 
     return presupuesto
+
+
+@transaction.atomic
+def update_presupuesto_from_form(
+    presupuesto: Presupuesto,
+    *,
+    lineas: list[dict],
+    validez_dias: int | None = None,
+    garantia_meses: int | None = None,
+    notas: str | None = None,
+    estado: str | None = None,
+    direccion: str | None = None,
+    ciudad: str | None = None,
+    tipo_propiedad: str | None = None,
+) -> Presupuesto:
+    cliente = presupuesto.cliente
+    if direccion is not None or ciudad is not None or tipo_propiedad is not None:
+        ubicacion = _get_or_create_ubicacion(
+            cliente,
+            direccion=direccion or presupuesto.ubicacion.direccion,
+            ciudad=ciudad or presupuesto.ubicacion.ciudad,
+            tipo_propiedad=tipo_propiedad or presupuesto.ubicacion.tipo_propiedad,
+        )
+        presupuesto.ubicacion = ubicacion
+
+    total = Decimal("0")
+    normalized_lines: list[dict] = []
+    for raw in lineas:
+        concepto = str(raw.get("concepto", "")).strip()
+        descripcion = str(raw.get("descripcion", "")).strip()
+        precio = Decimal(str(raw.get("precio", "0")))
+        cantidad = int(raw.get("cantidad", 1) or 1)
+        if not concepto or precio <= 0 or cantidad < 1:
+            continue
+        total += precio * cantidad
+        normalized_lines.append(
+            {
+                "concepto": concepto,
+                "descripcion": descripcion,
+                "precio": precio,
+                "cantidad": cantidad,
+            }
+        )
+
+    if not normalized_lines:
+        raise ValueError("Cal afegir almenys una línia amb concepte i preu vàlids.")
+
+    presupuesto.detalles.all().delete()
+    for line in normalized_lines:
+        PresupuestoDetalle.objects.create(
+            presupuesto=presupuesto,
+            concepto=line["concepto"],
+            descripcion=line.get("descripcion", ""),
+            precio_unitario=line["precio"],
+            cantidad=line["cantidad"],
+        )
+
+    presupuesto.total_monto = total
+    if validez_dias is not None:
+        presupuesto.validez_hasta = date.today() + timedelta(days=max(validez_dias, 1))
+    if garantia_meses is not None:
+        presupuesto.garantia_meses = garantia_meses
+    if notas is not None:
+        presupuesto.notas = notas.strip()
+    if estado is not None:
+        presupuesto.estado = estado
+
+    presupuesto.save()
+    return presupuesto

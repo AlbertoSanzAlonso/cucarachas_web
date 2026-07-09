@@ -35,6 +35,7 @@ class AgentState(BaseModel):
     severity: Severity = Severity.LOW
     technical_notes: List[str] = []
     estimated_price: Optional[float] = None
+    last_presupuesto_id: Optional[int] = None
     is_urgent: bool = False
     summary: Optional[str] = None # Nueva síntesis inteligente del caso
     language: Language = "ca" # Soporte para catalán y español

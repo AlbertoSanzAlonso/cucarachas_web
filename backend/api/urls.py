@@ -7,7 +7,15 @@ from .views import (
     auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking, update_cal_booking_view,
     debug_system, geo_search, geo_reverse, ficha_wizard_questions,
 )
-from .views.presupuestos import create_presupuesto_pdf, download_presupuesto_pdf, list_presupuestos
+from .views.presupuestos import (
+    create_presupuesto_pdf,
+    delete_presupuesto,
+    download_presupuesto_pdf,
+    get_presupuesto_detail,
+    list_presupuestos,
+    send_presupuesto_email_view,
+    update_presupuesto,
+)
 from knowledge.views import TechnicalKnowledgeViewSet
 
 router = DefaultRouter()
@@ -22,6 +30,13 @@ router.register(r'reportes', ReporteServicioViewSet)
 router.register(r'knowledge', TechnicalKnowledgeViewSet)
 
 urlpatterns = [
+    path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),
+    path('presupuestos/create_pdf/', create_presupuesto_pdf, name='presupuestos-create-pdf'),
+    path('presupuestos/<int:pk>/update/', update_presupuesto, name='presupuestos-update'),
+    path('presupuestos/<int:pk>/delete/', delete_presupuesto, name='presupuestos-delete'),
+    path('presupuestos/<int:pk>/send/', send_presupuesto_email_view, name='presupuestos-send'),
+    path('presupuestos/<int:pk>/pdf/', download_presupuesto_pdf, name='presupuestos-download-pdf'),
+    path('presupuestos/<int:pk>/', get_presupuesto_detail, name='presupuestos-detail'),
     path('', include(router.urls)),
     path('chat/', chat_with_agents, name='agent-chat'),
     path('webhooks/cal/', cal_webhook, name='cal-webhook'),
@@ -35,8 +50,5 @@ urlpatterns = [
     path('cal/bookings/', get_cal_bookings, name='cal-bookings'),
     path('cal/bookings/<str:booking_uid>/cancel/', cancel_cal_booking, name='cal-cancel-booking'),
     path('cal/bookings/<str:booking_uid>/', update_cal_booking_view, name='cal-update-booking'),
-    path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),
-    path('presupuestos/create_pdf/', create_presupuesto_pdf, name='presupuestos-create-pdf'),
-    path('presupuestos/<int:pk>/pdf/', download_presupuesto_pdf, name='presupuestos-download-pdf'),
     path('debug/', debug_system, name='debug-system'),
 ]

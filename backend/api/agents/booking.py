@@ -53,6 +53,11 @@ def confirm_booking_from_chat(
 
     state.customer_name = name
     state.city = addr.split(",")[0].strip() if "," in addr else addr[:80]
+    state.chat_diagnostic = {
+        **(state.chat_diagnostic or {}),
+        "telefono": phone,
+        "email": attendee_email,
+    }
     notes_parts = list(state.technical_notes) if state.technical_notes else []
     notes_parts.append(f"Adreça inspecció: {addr}")
     notes = "; ".join(notes_parts)
