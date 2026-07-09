@@ -11,3 +11,4 @@ class CECSAGraphState(TypedDict):
     diagnostic: NotRequired[dict[str, Any]]
     route: NotRequired[str]
     result: NotRequired[dict[str, Any]]
+    missing_intake_fields: NotRequired[list[str]]

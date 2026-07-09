@@ -176,18 +176,29 @@ def should_diagnose(agent: AgentState, msg_lower: str) -> bool:
     )
 
 
-def needs_ficha_intake(agent: AgentState, diagnostic: dict | None) -> bool:
+def needs_ficha_intake(
+    agent: AgentState,
+    diagnostic: dict | None,
+    missing_fields: list[str] | None = None,
+) -> bool:
     """True si la ficha activa tiene campos obligatorios sin rellenar."""
     if not agent.pest_type:
         return False
+    if missing_fields is not None:
+        return bool(missing_fields)
     return bool(get_missing_mandatory_fields(agent, diagnostic))
 
 
-def should_run_intake(agent: AgentState, diagnostic: dict | None, msg_lower: str) -> bool:
+def should_run_intake(
+    agent: AgentState,
+    diagnostic: dict | None,
+    msg_lower: str,
+    missing_fields: list[str] | None = None,
+) -> bool:
     """Chat libre: recoger datos de ficha con preguntas de texto."""
     if agent.pending_intake_field:
         return True
-    if not needs_ficha_intake(agent, diagnostic):
+    if not needs_ficha_intake(agent, diagnostic, missing_fields):
         return False
     if any(kw in msg_lower for kw in PRICING_KEYWORDS):
         return True
@@ -260,11 +271,12 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
     diagnostic = state.get("diagnostic")
+    missing = state.get("missing_intake_fields")
 
     if should_offer_slots(agent, msg_lower):
         return "scheduler"
 
-    if should_run_intake(agent, diagnostic, msg_lower):
+    if should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
 
     if _wants_pricing(agent, diagnostic, msg_lower):
@@ -288,17 +300,18 @@ def after_receptionist(state: CECSAGraphState) -> str:
     msg_lower = state.get("message", "").lower()
     pending = state.get("route")
     diagnostic = state.get("diagnostic")
+    missing = state.get("missing_intake_fields")
 
     if pending == "scheduler" or should_offer_slots(agent, msg_lower):
         return "scheduler"
-    if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower):
+    if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"
     if pending == "pricer" or (
         agent.pest_type
         and agent.intent in (Intent.QUOTE, Intent.URGENCY)
-        and not needs_ficha_intake(agent, diagnostic)
+        and not needs_ficha_intake(agent, diagnostic, missing)
     ):
         return "pricer"
     return "done"

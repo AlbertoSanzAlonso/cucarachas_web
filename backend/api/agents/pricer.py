@@ -1,3 +1,4 @@
+from asgiref.sync import sync_to_async
 from pydantic_ai import Agent, RunContext
 
 from api.models import Tratamiento
@@ -22,39 +23,47 @@ def get_pricer_prompt(ctx: RunContext[AgentState]) -> str:
 
 
 @pricer_agent.tool
-def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
+async def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
     """Presupuestos históricos reales (CRM) parecidos al caso actual."""
     from api.pricing_reference import format_historical_pricing
 
     lang = ctx.deps.language if ctx.deps else "ca"
-    return format_historical_pricing(ctx.deps, lang)
+    return await sync_to_async(format_historical_pricing)(ctx.deps, lang)
 
 
 @pricer_agent.tool
-def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
+async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
     """Reglas de negocio de la Ficha Maestra para el caso actual (precio, bloqueos, copy)."""
     from api.agents.chat_intake import build_unified_diagnostic
     from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
 
     lang = ctx.deps.language if ctx.deps else "ca"
     diagnostic = build_unified_diagnostic(ctx.deps, {})
-    ficha = find_ficha(ctx.deps, diagnostic)
-    if not ficha:
-        return "No hay ficha maestra para este caso."
-    result = evaluate_ficha_pricing(ctx.deps, diagnostic, lang=lang)
-    lines = [format_ficha_context(ficha, lang)]
-    if result:
-        lines.append(f"Confianza: {result.confidence}%")
-        lines.append(f"Puede presupuestar: {result.can_quote}")
-        if result.final_price:
-            lines.append(f"Precio regla: {result.final_price}€")
-        if result.block_reason:
-            lines.append(f"Bloqueo: {result.block_reason}")
-    return "\n".join(lines)
+
+    def _load() -> str:
+        ficha = find_ficha(ctx.deps, diagnostic)
+        if not ficha:
+            return "No hay ficha maestra para este caso."
+        result = evaluate_ficha_pricing(ctx.deps, diagnostic, lang=lang)
+        lines = [format_ficha_context(ficha, lang)]
+        if result:
+            lines.append(f"Confianza: {result.confidence}%")
+            lines.append(f"Puede presupuestar: {result.can_quote}")
+            if result.final_price:
+                lines.append(f"Precio regla: {result.final_price}€")
+            if result.block_reason:
+                lines.append(f"Bloqueo: {result.block_reason}")
+        return "\n".join(lines)
+
+    return await sync_to_async(_load)()
 
 
 @pricer_agent.tool
-def get_official_prices(ctx: RunContext[AgentState]) -> str:
+async def get_official_prices(ctx: RunContext[AgentState]) -> str:
     """Llista de tractaments i preus base de CECSA."""
-    treatments = Tratamiento.objects.all()
-    return "\n".join([f"{t.nombre}: {t.precio_base}€ - {t.descripcion}" for t in treatments])
+
+    def _load() -> str:
+        treatments = Tratamiento.objects.all()
+        return "\n".join([f"{t.nombre}: {t.precio_base}€ - {t.descripcion}" for t in treatments])
+
+    return await sync_to_async(_load)()

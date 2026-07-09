@@ -1,6 +1,7 @@
 import asyncio
 from typing import Any
 
+from asgiref.sync import sync_to_async
 from pydantic_ai.messages import ModelMessage
 
 from ..config import AGENT_TIMEOUTS, HISTORY_MAX_TURNS
@@ -118,7 +119,14 @@ async def _run_agent(
 async def preprocess_node(state: CECSAGraphState) -> dict:
     from .routing import apply_preprocess
 
-    return apply_preprocess(state)
+    updates = apply_preprocess(state)
+    agent = AgentState.model_validate(updates.get("agent_state") or {})
+    missing = await sync_to_async(get_missing_mandatory_fields)(
+        agent,
+        state.get("diagnostic"),
+    )
+    updates["missing_intake_fields"] = missing
+    return updates
 
 
 def _is_home_chat(state: CECSAGraphState) -> bool:
@@ -324,7 +332,9 @@ async def intake_node(state: CECSAGraphState) -> dict:
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
     msg_lower = state.get("message", "").lower()
 
-    missing = get_missing_mandatory_fields(agent, diagnostic)
+    missing = state.get("missing_intake_fields")
+    if missing is None:
+        missing = await sync_to_async(get_missing_mandatory_fields)(agent, diagnostic)
     wants_price = any(kw in msg_lower for kw in PRICING_KEYWORDS) or agent.intent in (
         Intent.QUOTE,
         Intent.URGENCY,
@@ -374,7 +384,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
     try:
         from api.ficha_engine import evaluate_ficha_pricing, severity_to_agent
 
-        ficha_result = evaluate_ficha_pricing(
+        ficha_result = await sync_to_async(evaluate_ficha_pricing)(
             agent,
             diagnostic,
             message=state.get("message", ""),
@@ -424,7 +434,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             agent.estimated_price = ficha_result.final_price or ficha_result.price_range_max
             pmin = ficha_result.price_range_min or ficha_result.final_price or 0
             pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
-            _persist_pricing_to_crm(
+            await sync_to_async(_persist_pricing_to_crm)(
                 agent,
                 state.get("diagnostic"),
                 price_min=pmin,
@@ -443,14 +453,14 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         if ficha_result:
             from api.ficha_engine import find_ficha, format_ficha_context
 
-            ficha = find_ficha(agent, diagnostic)
+            ficha = await sync_to_async(find_ficha)(agent, diagnostic)
             if ficha:
                 context += f"\n\n{format_ficha_context(ficha, lang)}"
                 context += f"\nConfianza ficha: {ficha_result.confidence}%"
 
         from api.pricing_fallback import estimate_price_deterministic
 
-        estimate = estimate_price_deterministic(agent, lang)
+        estimate = await sync_to_async(estimate_price_deterministic)(agent, lang)
         if estimate:
             badge = _confidence_badge(estimate["confidence"])
             msg = msgs["pricing_template"].format(
@@ -462,7 +472,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 commercial_copy="",
             )
             agent.estimated_price = estimate["max"]
-            _persist_pricing_to_crm(
+            await sync_to_async(_persist_pricing_to_crm)(
                 agent,
                 state.get("diagnostic"),
                 price_min=estimate["min"],
@@ -492,7 +502,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             commercial_copy="",
         )
         agent.estimated_price = output.price_range_max
-        _persist_pricing_to_crm(
+        await sync_to_async(_persist_pricing_to_crm)(
             agent,
             state.get("diagnostic"),
             price_min=float(output.price_range_min),
@@ -511,7 +521,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         print(f"ERROR pricer_node: {traceback.format_exc()}")
         from api.pricing_fallback import estimate_price_deterministic
 
-        estimate = estimate_price_deterministic(agent, lang)
+        estimate = await sync_to_async(estimate_price_deterministic)(agent, lang)
         if estimate:
             badge = _confidence_badge(estimate["confidence"])
             msg = msgs["pricing_template"].format(
@@ -523,7 +533,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 commercial_copy="",
             )
             agent.estimated_price = estimate["max"]
-            _persist_pricing_to_crm(
+            await sync_to_async(_persist_pricing_to_crm)(
                 agent,
                 state.get("diagnostic"),
                 price_min=estimate["min"],
