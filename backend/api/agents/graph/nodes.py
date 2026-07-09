@@ -16,7 +16,7 @@ from ..scheduler import scheduler_agent
 from ..crm_agent import crm_agent
 from ..diagnostic_merge import build_case_context, merge_agent_updates
 from ..text_utils import limit_one_question
-from .routing import is_simple_greeting, mentions_pest
+from .routing import is_simple_greeting, mentions_pest, is_case_follow_up, is_bare_pest_mention
 from .state import CECSAGraphState
 
 
@@ -73,6 +73,12 @@ def _home_vague_problem(msg_lower: str) -> bool:
     return any(kw in msg_lower for kw in vague) and not mentions_pest(msg_lower)
 
 
+def _resolve_lang(agent: AgentState, state: CECSAGraphState) -> str:
+    """Idioma efectivo: estado del agente o petición (UI)."""
+    lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
+    return lang if lang in ("ca", "es") else "ca"
+
+
 def _home_fast_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
     """Respuestas deterministas para el chat home: una pregunta, sin LLM."""
     if not _is_home_chat(state):
@@ -80,19 +86,33 @@ def _home_fast_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> di
 
     msg_lower = state["message"].lower()
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+    agent.language = lang
 
     if is_simple_greeting(msg_lower):
-        return {"result": {"message": msgs["home_greeting_reply"]}}
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {"message": msgs["home_greeting_reply"]},
+        }
 
     if _home_vague_problem(msg_lower):
-        return {"result": {"message": msgs["home_ask_pest"]}}
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {"message": msgs["home_ask_pest"]},
+        }
+
+    if is_bare_pest_mention(msg_lower):
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {"message": msgs["home_ask_location"]},
+        }
 
     return None
 
 
 async def receptionist_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
-    lang = agent.language
+    lang = _resolve_lang(agent, state)
+    agent.language = lang
     try:
         fast = _home_fast_reply(state, agent, lang)
         if fast:
@@ -447,13 +467,17 @@ def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, la
 
 async def diagnostician_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
-    lang = agent.language
+    lang = _resolve_lang(agent, state)
+    agent.language = lang
     home = _is_home_chat(state)
     try:
         context = build_case_context(agent, lang)
-        context += f"\n\nMissatge actual del client: {state['message']}"
+        msg_label = "Mensaje actual del cliente" if lang == "es" else "Missatge actual del client"
+        context += f"\n\n{msg_label}: {state['message']}"
         if home:
             context += "\nModo chat home: máximo 1 pregunta, sin listas."
+        lang_rule = "Responde SIEMPRE en castellano." if lang == "es" else "Respon SEMPRE en català."
+        context += f"\n{lang_rule}"
         agent, output = await _run_agent(
             diagnostician_agent,
             context,

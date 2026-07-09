@@ -190,8 +190,11 @@ ORCHESTRATOR_MESSAGES = {
         "intake_fallback": (
             "Entenc que tens un problema. Quin tipus de plaga has vist?"
         ),
-        "home_greeting_reply": "Perfecte! Quin tipus de plaga et preocupa?",
+        "home_greeting_reply": "Hola! Explica'm, en què et puc ajudar?",
         "home_ask_pest": "Entenc. Has vist paneroles, rosegadors o una altra plaga?",
+        "home_ask_location": (
+            "Entesos, paneroles. On les has vist — cuina, bany o una altra zona?"
+        ),
         "home_cta_offer": (
             "Si ho prefereixes, pots **agendar una inspecció gratuïta**, demanar **pressupost** o trucar al **933 309 169**."
         ),
@@ -243,8 +246,11 @@ ORCHESTRATOR_MESSAGES = {
         "intake_fallback": (
             "Entiendo que tienes un problema. ¿Qué tipo de plaga has visto?"
         ),
-        "home_greeting_reply": "¡Perfecto! ¿Qué tipo de plaga te preocupa?",
+        "home_greeting_reply": "¡Hola! Cuéntame, ¿en qué te puedo ayudar?",
         "home_ask_pest": "Entiendo. ¿Has visto cucarachas, roedores u otra plaga?",
+        "home_ask_location": (
+            "Entendido, cucarachas. ¿Dónde las has visto — cocina, baño u otra zona?"
+        ),
         "home_cta_offer": (
             "Si lo prefieres, puedes **agendar una inspección gratuita**, pedir **presupuesto** o llamar al **933 309 169**."
         ),

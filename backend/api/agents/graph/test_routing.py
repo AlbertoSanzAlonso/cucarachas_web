@@ -17,7 +17,12 @@ def test_cockroaches_with_doubt_intent_routes_to_diagnostician():
     assert _route(agent, "tengo cucarachas en el baño") == "diagnostician"
 
 
-def test_cockroaches_without_city_routes_to_diagnostician():
+def test_cockroaches_without_city_routes_to_receptionist():
+    agent = AgentState(language="es")
+    assert _route(agent, "de cucarachas") == "receptionist"
+
+
+def test_cockroaches_with_location_routes_to_diagnostician():
     agent = AgentState(language="es")
     assert _route(agent, "tengo cucarachas en el baño") == "diagnostician"
 
@@ -50,9 +55,41 @@ def test_doubt_with_city_does_not_fallback():
     assert _route(agent, "es en el baño del piso") == "diagnostician"
 
 
-def test_should_diagnose_detects_pest_keywords():
+def test_should_diagnose_requires_location_or_follow_up():
+    from api.agents.chat_intake import ensure_pest_from_message
+
     agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
+    assert should_diagnose(agent, "de cucarachas") is False
+    agent = ensure_pest_from_message(agent, "de cucarachas")
+    assert should_diagnose(agent, "de cucarachas") is False
     assert should_diagnose(agent, "tengo cucarachas en el baño") is True
+
+
+def test_session_language_wins_over_message_hints():
+    agent = AgentState(language="ca")
+    state = {
+        "message": "tengo cucarachas en el baño",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    updated = AgentState.model_validate(state["agent_state"])
+    assert updated.language == "es"
+
+
+def test_bare_pest_mention_routes_to_receptionist():
+    from api.agents.chat_intake import ensure_pest_from_message
+
+    agent = AgentState(language="es", intent=Intent.DOUBT)
+    agent = ensure_pest_from_message(agent, "de cucarachas")
+    state = {
+        "message": "de cucarachas",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "source": "home",
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "receptionist"
 
 
 def test_hola_with_stale_appointment_routes_to_receptionist():
