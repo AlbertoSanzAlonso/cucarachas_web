@@ -327,7 +327,8 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
 async def intake_node(state: CECSAGraphState) -> dict:
     """Recoge datos de Ficha Maestra por chat (una pregunta por turno, sin LLM)."""
     agent = _agent_state(state)
-    lang = agent.language if agent.language in ("ca", "es") else "ca"
+    lang = _resolve_lang(agent, state)
+    agent.language = lang
     diagnostic = state.get("diagnostic")
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
     msg_lower = state.get("message", "").lower()
@@ -370,7 +371,8 @@ async def intake_node(state: CECSAGraphState) -> dict:
 
 async def pricer_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
-    lang = agent.language if agent.language in ("ca", "es") else "ca"
+    lang = _resolve_lang(agent, state)
+    agent.language = lang
     diagnostic = build_unified_diagnostic(agent, state.get("diagnostic") or {})
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
 

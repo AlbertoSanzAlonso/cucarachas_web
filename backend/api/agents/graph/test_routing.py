@@ -260,3 +260,28 @@ def test_hotel_wizard_pedir_presupuesto_routes_to_pricer_or_intake():
     state.update(apply_preprocess(state))
     route = choose_agent_route(state)
     assert route in ("pricer", "intake")
+
+
+def test_intake_answer_routes_to_pricer():
+    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+
+    agent = AgentState(language="es", intent=Intent.QUOTE)
+    diagnostic = {
+        "who": "empresa",
+        "path": "empresa",
+        "business_type": "oficina",
+        "where_empresa": "zona_clientes",
+        "sanitary_risk": "soon",
+        "level": "frequent",
+    }
+    agent = merge_diagnostic_into_state(agent, diagnostic)
+    agent.chat_diagnostic = {"metros_cuadrados": 600}
+    state = {
+        "message": "600",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "diagnostic": diagnostic,
+        "missing_intake_fields": [],
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "pricer"

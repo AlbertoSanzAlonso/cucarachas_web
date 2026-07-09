@@ -265,6 +265,24 @@ def _wants_pricing(agent: AgentState, diagnostic: dict | None, msg_lower: str) -
     return bool(agent.pest_type) or has_wizard_diagnostic(diagnostic)
 
 
+def _pricing_flow_route(
+    agent: AgentState,
+    diagnostic: dict | None,
+    missing: list[str] | None,
+) -> str | None:
+    """Intake → pricer mientras el cliente pide presupuesto (sin pasar por recepcionista)."""
+    if agent.intent not in (Intent.QUOTE, Intent.URGENCY) or not agent.pest_type:
+        return None
+    if agent.pending_intake_field:
+        return "intake"
+    fields_missing = missing
+    if fields_missing is None:
+        fields_missing = get_missing_mandatory_fields(agent, diagnostic)
+    if fields_missing:
+        return "intake"
+    return "pricer"
+
+
 def choose_agent_route(state: CECSAGraphState) -> str:
     """Decide el siguiente nodo del grafo."""
     message = state["message"]
@@ -275,6 +293,10 @@ def choose_agent_route(state: CECSAGraphState) -> str:
 
     if should_offer_slots(agent, msg_lower):
         return "scheduler"
+
+    pricing_route = _pricing_flow_route(agent, diagnostic, missing)
+    if pricing_route:
+        return pricing_route
 
     if should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
@@ -304,6 +326,11 @@ def after_receptionist(state: CECSAGraphState) -> str:
 
     if pending == "scheduler" or should_offer_slots(agent, msg_lower):
         return "scheduler"
+
+    pricing_route = _pricing_flow_route(agent, diagnostic, missing)
+    if pricing_route:
+        return pricing_route
+
     if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
