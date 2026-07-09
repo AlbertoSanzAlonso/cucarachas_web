@@ -1,5 +1,5 @@
 """Enrutado determinista (sin LLM) para ahorrar tokens y latencia."""
-from ..chat_intake import build_unified_diagnostic, get_missing_mandatory_fields
+from ..chat_intake import get_missing_mandatory_fields
 from ..diagnostic_merge import has_wizard_diagnostic
 from ..models import AgentState, Intent
 from .state import CECSAGraphState
@@ -19,7 +19,7 @@ SCHEDULING_KEYWORDS = (
     "agendar la meva",
     "agendar mi",
 )
-PRICING_KEYWORDS = ("pressupost", "presupuesto")
+PRICING_KEYWORDS = ("pressupost", "presupuesto", "precio", "preu", "cuánto", "cuanto", "quanto")
 PEST_KEYWORDS = (
     "cucarach",
     "panerol",
@@ -232,9 +232,13 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     message = state["message"]
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
+    diagnostic = state.get("diagnostic")
 
     if should_offer_slots(agent, msg_lower):
         return "scheduler"
+
+    if should_run_intake(agent, diagnostic, msg_lower):
+        return "intake"
 
     if agent.pest_type and any(kw in msg_lower for kw in PRICING_KEYWORDS):
         return "pricer"
@@ -256,13 +260,18 @@ def after_receptionist(state: CECSAGraphState) -> str:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = state.get("message", "").lower()
     pending = state.get("route")
+    diagnostic = state.get("diagnostic")
 
     if pending == "scheduler" or should_offer_slots(agent, msg_lower):
         return "scheduler"
+    if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower):
+        return "intake"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"
     if pending == "pricer" or (
-        agent.pest_type and agent.intent in (Intent.QUOTE, Intent.URGENCY)
+        agent.pest_type
+        and agent.intent in (Intent.QUOTE, Intent.URGENCY)
+        and not needs_ficha_intake(agent, diagnostic)
     ):
         return "pricer"
     return "done"

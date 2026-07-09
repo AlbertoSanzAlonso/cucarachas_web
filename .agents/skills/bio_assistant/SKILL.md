@@ -33,6 +33,7 @@ Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el
 | Estado / deps | `backend/api/agents/models.py` → `AgentState` (grafo + `ctx.deps`; sin `AgentDeps`) |
 | Merge diagnóstico | `backend/api/agents/diagnostic_merge.py` |
 | **Ficha Maestra** | `backend/api/models.py` → `FichaServicio`; motor `backend/api/ficha_engine.py` |
+| **Intake chat libre** | `backend/api/agents/chat_intake.py`; nodo `intake` en `graph/nodes.py` |
 
 ## Flujo del wizard modal
 

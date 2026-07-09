@@ -182,6 +182,8 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
 
     if any(k in low for k in ("cucarach", "panerol", "cucaracha")):
         _append_note(state, "Plaga: cucaraches/paneroles")
+        if not state.pest_type:
+            state.pest_type = PestType.GERMAN_COCKROACH
         if not state.intent:
             state.intent = Intent.QUOTE
 
@@ -272,6 +274,8 @@ def merge_agent_updates(base: AgentState, updates: AgentState) -> AgentState:
         "is_urgent",
         "summary",
         "language",
+        "chat_diagnostic",
+        "pending_intake_field",
     ):
         val = getattr(updates, field, None)
         if val is None:
@@ -281,6 +285,10 @@ def merge_agent_updates(base: AgentState, updates: AgentState) -> AgentState:
         merged.technical_notes = list(
             dict.fromkeys([*merged.technical_notes, *updates.technical_notes])
         )[:25]
+    if updates.chat_diagnostic:
+        merged.chat_diagnostic = {**(merged.chat_diagnostic or {}), **updates.chat_diagnostic}
+    if updates.pending_intake_field is not None:
+        merged.pending_intake_field = updates.pending_intake_field
     return merged
 
 

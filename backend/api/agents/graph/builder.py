@@ -14,6 +14,7 @@ def _route_map() -> dict:
         "receptionist": "receptionist",
         "pricer": "pricer",
         "diagnostician": "diagnostician",
+        "intake": "intake",
         "fallback": "fallback",
     }
 
@@ -28,6 +29,7 @@ def get_cecsa_graph():
     graph.add_node("scheduler", nodes.scheduler_node)
     graph.add_node("pricer", nodes.pricer_node)
     graph.add_node("diagnostician", nodes.diagnostician_node)
+    graph.add_node("intake", nodes.intake_node)
     graph.add_node("crm", nodes.crm_node)
     graph.add_node("fallback", nodes.fallback_node)
 
@@ -41,6 +43,7 @@ def get_cecsa_graph():
             "scheduler": "scheduler",
             "diagnostician": "diagnostician",
             "pricer": "pricer",
+            "intake": "intake",
             "done": END,
         },
     )
@@ -50,7 +53,7 @@ def get_cecsa_graph():
         {"crm": "crm", "done": END},
     )
 
-    for terminal in ("scheduler", "pricer", "crm", "fallback"):
+    for terminal in ("scheduler", "pricer", "intake", "crm", "fallback"):
         graph.add_edge(terminal, END)
 
     return graph.compile()

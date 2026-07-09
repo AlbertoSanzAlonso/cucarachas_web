@@ -185,6 +185,8 @@ ORCHESTRATOR_MESSAGES = {
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
         "fallback": "Gràcies. Un agent humà es posarà en contacte amb tu.",
+        "intake_complete": "Perfecte, ja tinc la informació necessària. Vols que et prepari el pressupost o prefereixes agendar una inspecció gratuïta?",
+        "intake_retry": "No he pogut interpretar la resposta. Si us plau, respon de forma breu.",
         "intake_fallback": (
             "Entenc que tens un problema. Quin tipus de plaga has vist?"
         ),
@@ -236,6 +238,8 @@ ORCHESTRATOR_MESSAGES = {
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",
         "fallback": "Gracias. Un agente humano se pondrá en contacto contigo.",
+        "intake_complete": "Perfecto, ya tengo la información necesaria. ¿Quieres que te prepare el presupuesto o prefieres agendar una inspección gratuita?",
+        "intake_retry": "No he podido interpretar la respuesta. Por favor, responde de forma breve.",
         "intake_fallback": (
             "Entiendo que tienes un problema. ¿Qué tipo de plaga has visto?"
         ),

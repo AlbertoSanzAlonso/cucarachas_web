@@ -4,8 +4,10 @@ from typing import Any
 from pydantic_ai.messages import ModelMessage
 
 from ..config import AGENT_TIMEOUTS, HISTORY_MAX_TURNS
+from ..chat_intake import get_missing_mandatory_fields, get_intake_question, parse_field_value, build_unified_diagnostic
 from ..models import AgentState, DiagnosisOutput, Intent
 from ..prompts import ORCHESTRATOR_MESSAGES
+from .routing import PRICING_KEYWORDS
 from ..serialization import dump_message_history, messages_adapter
 from ..receptionist import receptionist_agent
 from ..diagnostician import diagnostician_agent
@@ -237,10 +239,52 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": msg, "slots": []}}
 
 
+async def intake_node(state: CECSAGraphState) -> dict:
+    """Recoge datos de Ficha Maestra por chat (una pregunta por turno, sin LLM)."""
+    agent = _agent_state(state)
+    lang = agent.language if agent.language in ("ca", "es") else "ca"
+    diagnostic = state.get("diagnostic")
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+    msg_lower = state.get("message", "").lower()
+
+    missing = get_missing_mandatory_fields(agent, diagnostic)
+    wants_price = any(kw in msg_lower for kw in PRICING_KEYWORDS) or agent.intent in (
+        Intent.QUOTE,
+        Intent.URGENCY,
+    )
+
+    if not missing:
+        agent.pending_intake_field = None
+        if wants_price:
+            return await pricer_node({**state, "agent_state": agent.model_dump(mode="json")})
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": {"message": msgs["intake_complete"]},
+        }
+
+    field = missing[0]
+    if agent.pending_intake_field == field and state.get("message", "").strip():
+        if parse_field_value(field, state["message"]) is None:
+            question = get_intake_question(field, lang)
+            retry = msgs.get("intake_retry", "")
+            text = f"{retry}\n\n{question}" if retry else question
+            return {
+                "agent_state": agent.model_dump(mode="json"),
+                "result": {"message": text},
+            }
+
+    agent.pending_intake_field = field
+    question = get_intake_question(field, lang)
+    return {
+        "agent_state": agent.model_dump(mode="json"),
+        "result": {"message": question},
+    }
+
+
 async def pricer_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
     lang = agent.language if agent.language in ("ca", "es") else "ca"
-    diagnostic = state.get("diagnostic") or {}
+    diagnostic = build_unified_diagnostic(agent, state.get("diagnostic") or {})
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
 
     def _confidence_badge(confidence: float) -> str:

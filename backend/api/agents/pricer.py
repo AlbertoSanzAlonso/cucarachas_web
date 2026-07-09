@@ -33,13 +33,15 @@ def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
 @pricer_agent.tool
 def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
     """Reglas de negocio de la Ficha Maestra para el caso actual (precio, bloqueos, copy)."""
+    from api.agents.chat_intake import build_unified_diagnostic
     from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
 
     lang = ctx.deps.language if ctx.deps else "ca"
-    ficha = find_ficha(ctx.deps, {})
+    diagnostic = build_unified_diagnostic(ctx.deps, {})
+    ficha = find_ficha(ctx.deps, diagnostic)
     if not ficha:
         return "No hay ficha maestra para este caso."
-    result = evaluate_ficha_pricing(ctx.deps, {}, lang=lang)
+    result = evaluate_ficha_pricing(ctx.deps, diagnostic, lang=lang)
     lines = [format_ficha_context(ficha, lang)]
     if result:
         lines.append(f"Confianza: {result.confidence}%")
