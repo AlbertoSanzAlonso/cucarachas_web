@@ -152,14 +152,28 @@ def is_case_follow_up(msg_lower: str) -> bool:
     return any(h in msg_lower for h in follow_up_hints)
 
 
+def is_rich_pest_report(msg_lower: str) -> bool:
+    """Mención de plaga con ubicación o detalles (p. ej. «cucarachas en el baño»)."""
+    return mentions_pest(msg_lower) and is_case_follow_up(msg_lower)
+
+
+def is_bare_pest_mention(msg_lower: str) -> bool:
+    """Solo nombra la plaga sin ubicación ni detalles (p. ej. «de cucarachas»)."""
+    return mentions_pest(msg_lower) and not is_case_follow_up(msg_lower)
+
+
 def should_diagnose(agent: AgentState, msg_lower: str) -> bool:
-    if mentions_pest(msg_lower):
-        return True
     if agent.pest_type and is_case_follow_up(msg_lower):
+        return True
+    if is_rich_pest_report(msg_lower):
         return True
     if agent.pest_type:
         return False
-    return agent.intent in (Intent.QUOTE, Intent.URGENCY, Intent.DOUBT) and bool(agent.city)
+    return (
+        agent.intent in (Intent.QUOTE, Intent.URGENCY, Intent.DOUBT)
+        and bool(agent.city)
+        and is_rich_pest_report(msg_lower)
+    )
 
 
 def needs_ficha_intake(agent: AgentState, diagnostic: dict | None) -> bool:
@@ -223,6 +237,10 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
     if any(kw in msg_lower for kw in PRICING_KEYWORDS):
         agent.intent = Intent.QUOTE
+
+    # El idioma de la petición (UI) tiene prioridad sobre heurísticas del mensaje
+    if session_lang in ("ca", "es"):
+        agent.language = session_lang
 
     return {
         "language": agent.language,
