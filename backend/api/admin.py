@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    FichaServicio,
     Presupuesto,
     PresupuestoDetalle,
     PresupuestoReferencia,
@@ -38,6 +39,7 @@ class PresupuestoAdmin(admin.ModelAdmin):
 @admin.register(PresupuestoReferencia)
 class PresupuestoReferenciaAdmin(admin.ModelAdmin):
     list_display = (
+        "codigo",
         "total_monto",
         "city",
         "pest_type",
@@ -47,5 +49,13 @@ class PresupuestoReferenciaAdmin(admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("source", "pest_type", "property_type", "severity")
-    search_fields = ("city", "notes", "pest_type")
+    search_fields = ("codigo", "city", "notes", "pest_type")
     readonly_fields = ("presupuesto", "created_at", "updated_at")
+
+
+@admin.register(FichaServicio)
+class FichaServicioAdmin(admin.ModelAdmin):
+    list_display = ("codigo", "nombre_comercial", "pest_type", "prioridad_default", "activa", "updated_at")
+    list_filter = ("activa", "pest_type", "prioridad_default", "riesgo")
+    search_fields = ("codigo", "nombre_comercial")
+    readonly_fields = ("created_at", "updated_at")

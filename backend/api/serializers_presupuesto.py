@@ -7,6 +7,7 @@ from api.models import Presupuesto, PresupuestoDetalle
 
 class PresupuestoLineaInputSerializer(serializers.Serializer):
     concepto = serializers.CharField(max_length=300)
+    descripcion = serializers.CharField(required=False, allow_blank=True, default="")
     precio = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
     cantidad = serializers.IntegerField(min_value=1, default=1, required=False)
 
@@ -16,6 +17,7 @@ class CreatePresupuestoSerializer(serializers.Serializer):
     lineas = PresupuestoLineaInputSerializer(many=True, min_length=1)
     direccion = serializers.CharField(max_length=255, required=False, allow_blank=True, default="")
     ciudad = serializers.CharField(max_length=100, required=False, allow_blank=True, default="Barcelona")
+    tipo_propiedad = serializers.CharField(max_length=100, required=False, allow_blank=True, default="Residencial")
     fecha = serializers.DateField(required=False)
     validez_dias = serializers.IntegerField(min_value=1, max_value=365, default=30)
     pest_type = serializers.CharField(max_length=50, required=False, allow_blank=True, default="")
@@ -29,7 +31,7 @@ class PresupuestoDetalleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PresupuestoDetalle
-        fields = ["id", "concepto", "tratamiento", "precio_unitario", "cantidad", "line_label"]
+        fields = ["id", "concepto", "descripcion", "tratamiento", "precio_unitario", "cantidad", "line_label"]
 
 
 class PresupuestoListSerializer(serializers.ModelSerializer):

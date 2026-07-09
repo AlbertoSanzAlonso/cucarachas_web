@@ -47,6 +47,8 @@ export const useAgentChat = (i18n, answers, path) => {
       help_community: a.help_community,
       contact_who: a.contact_who,
       what_if_not: a.what_if_not,
+      codigo_postal: a.codigo_postal,
+      metros_cuadrados: a.metros_cuadrados,
       extra_info: a.extra_info,
     };
   }, []);

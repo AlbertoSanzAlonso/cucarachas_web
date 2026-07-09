@@ -39,8 +39,17 @@ class PresupuestoPdfTests(TestCase):
     def test_build_pdf_returns_bytes(self):
         presupuesto = create_presupuesto_from_form(
             cliente_id=self.cliente.id,
-            lineas=[{"concepto": "Visita tècnica", "precio": "85.00", "cantidad": 1}],
+            lineas=[
+                {
+                    "concepto": "DESINSECTACIÓ CUCARACHES",
+                    "descripcion": "Gel biocida sense termini de seguretat.",
+                    "precio": "125.00",
+                    "cantidad": 2,
+                },
+            ],
             fecha=timezone.now().date(),
+            notas="CUOTA SEMESTRAL 151,25 € IVA INCLUIDO.",
         )
         pdf = build_presupuesto_pdf(presupuesto)
         assert pdf[:4] == b"%PDF"
+        assert len(pdf) > 2000

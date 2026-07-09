@@ -31,6 +31,27 @@ def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
 
 
 @pricer_agent.tool
+def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
+    """Reglas de negocio de la Ficha Maestra para el caso actual (precio, bloqueos, copy)."""
+    from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
+
+    lang = ctx.deps.language if ctx.deps else "ca"
+    ficha = find_ficha(ctx.deps, {})
+    if not ficha:
+        return "No hay ficha maestra para este caso."
+    result = evaluate_ficha_pricing(ctx.deps, {}, lang=lang)
+    lines = [format_ficha_context(ficha, lang)]
+    if result:
+        lines.append(f"Confianza: {result.confidence}%")
+        lines.append(f"Puede presupuestar: {result.can_quote}")
+        if result.final_price:
+            lines.append(f"Precio regla: {result.final_price}€")
+        if result.block_reason:
+            lines.append(f"Bloqueo: {result.block_reason}")
+    return "\n".join(lines)
+
+
+@pricer_agent.tool
 def get_official_prices(ctx: RunContext[AgentState]) -> str:
     """Llista de tractaments i preus base de CECSA."""
     treatments = Tratamiento.objects.all()

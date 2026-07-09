@@ -12,12 +12,14 @@ import ChatInput from './Chat/ChatInput';
 
 import { useAgentChat } from './hooks/useAgentChat';
 import CalEmbed from './Chat/CalEmbed';
+import { fetchFichaWizardQuestions, getParticularMaxStep } from '@/utils/fichaWizard';
 
 const AgentHeroModal = ({ isOpen, onClose }) => {
   const { t, i18n } = useTranslation();
   const [step, setStep] = useState(1);
   const [path, setPath] = useState(null); 
   const [answers, setAnswers] = useState({});
+  const [fichaQuestions, setFichaQuestions] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
 
   const {
@@ -36,6 +38,18 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     handleSendMessage
   } = useAgentChat(i18n, answers, path);
 
+  useEffect(() => {
+    if (path !== 'particular') {
+      setFichaQuestions([]);
+      return;
+    }
+    let active = true;
+    fetchFichaWizardQuestions('particular').then((questions) => {
+      if (active) setFichaQuestions(questions);
+    });
+    return () => { active = false; };
+  }, [path]);
+
   const handleAnswer = useCallback((key, value, isSilent = false) => {
     const newAnswers = { ...answers, [key]: value };
     setAnswers(newAnswers);
@@ -51,6 +65,9 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     if (key === 'who') {
       const nextPath = ['particular', 'empresa', 'comunidad', 'admin'].includes(value) ? value : 'empresa';
       setPath(nextPath);
+      if (nextPath === 'particular') {
+        setFichaQuestions(['codigo_postal', 'metros_cuadrados']);
+      }
       startTransition(() => {
         setStep(2);
       });
@@ -96,6 +113,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
     }
 
     let maxSteps = 7;
+    if (path === 'particular') maxSteps = getParticularMaxStep(fichaQuestions);
     if (path === 'admin') maxSteps = 10;
     if (path === 'comunidad') maxSteps = 10;
 
@@ -107,7 +125,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       setIsFinished(true);
       getAIDiagnostic(newAnswers);
     }
-  }, [answers, step, path, t, setMessages, getAIDiagnostic]);
+  }, [answers, step, path, fichaQuestions, t, setMessages, getAIDiagnostic]);
 
   const handleBack = useCallback(() => {
     if (step > 1) {
@@ -247,6 +265,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                 <DiagnosticFlow 
                   step={step}
                   path={path}
+                  fichaQuestions={fichaQuestions}
                   answers={answers}
                   handleAnswer={handleAnswer}
                   handleBack={handleBack}

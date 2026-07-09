@@ -239,11 +239,82 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
 
 async def pricer_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
-    lang = agent.language
+    lang = agent.language if agent.language in ("ca", "es") else "ca"
+    diagnostic = state.get("diagnostic") or {}
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+
+    def _confidence_badge(confidence: float) -> str:
+        if confidence >= 95:
+            return msgs["confidence_green"].format(pct=int(confidence))
+        if confidence >= 70:
+            return msgs["confidence_yellow"].format(pct=int(confidence))
+        return msgs["confidence_red"].format(pct=int(confidence))
+
     try:
-        context = (
-            f"Plaga: {agent.pest_type}. Gravedad: {agent.severity}. Ciudad: {agent.city}."
+        from api.ficha_engine import evaluate_ficha_pricing, severity_to_agent
+
+        ficha_result = evaluate_ficha_pricing(
+            agent,
+            diagnostic,
+            message=state.get("message", ""),
+            lang=lang,
         )
+
+        if ficha_result and not ficha_result.use_llm:
+            if ficha_result.severity:
+                sev = severity_to_agent(ficha_result.severity)
+                if sev:
+                    agent.severity = sev
+
+            breakdown_text = ", ".join(ficha_result.breakdown) if ficha_result.breakdown else ""
+            badge = _confidence_badge(ficha_result.confidence)
+
+            if not ficha_result.can_quote or ficha_result.schedule_inspection:
+                msg = msgs["pricing_inspection_only"].format(
+                    confidence_badge=badge,
+                    commercial_copy=ficha_result.commercial_copy or "",
+                )
+                return {
+                    "agent_state": agent.model_dump(mode="json"),
+                    "result": {"message": msg},
+                    "route": "scheduler",
+                }
+
+            if ficha_result.final_price and ficha_result.confidence >= 95:
+                msg = msgs["pricing_closed_template"].format(
+                    confidence_badge=badge,
+                    price=f"{ficha_result.final_price:.0f}",
+                    breakdown=breakdown_text,
+                    months=ficha_result.guarantee_months,
+                    commercial_copy=ficha_result.commercial_copy or "",
+                )
+            else:
+                pmin = ficha_result.price_range_min or ficha_result.final_price or 0
+                pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
+                msg = msgs["pricing_template"].format(
+                    confidence_badge=badge,
+                    min=f"{pmin:.0f}",
+                    max=f"{pmax:.0f}",
+                    breakdown=breakdown_text,
+                    months=ficha_result.guarantee_months,
+                    commercial_copy=ficha_result.commercial_copy or "",
+                )
+
+            agent.estimated_price = ficha_result.final_price or ficha_result.price_range_max
+            return {
+                "agent_state": agent.model_dump(mode="json"),
+                "result": {"message": msg},
+            }
+
+        context = f"Plaga: {agent.pest_type}. Gravedad: {agent.severity}. Ciudad: {agent.city}."
+        if ficha_result:
+            from api.ficha_engine import find_ficha, format_ficha_context
+
+            ficha = find_ficha(agent, diagnostic)
+            if ficha:
+                context += f"\n\n{format_ficha_context(ficha, lang)}"
+                context += f"\nConfianza ficha: {ficha_result.confidence}%"
+
         agent, output = await _run_agent(
             pricer_agent,
             f"Context: {context}",
@@ -251,11 +322,13 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             timeout_key="pricer",
             use_full_history=False,
         )
-        msg = ORCHESTRATOR_MESSAGES[lang]["pricing_template"].format(
+        msg = msgs["pricing_template"].format(
+            confidence_badge=msgs["confidence_yellow"].format(pct=80),
             min=output.price_range_min,
             max=output.price_range_max,
             breakdown=", ".join(output.breakdown),
             months=output.guarantee_months,
+            commercial_copy="",
         )
         return {
             "agent_state": agent.model_dump(mode="json"),
@@ -263,7 +336,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         }
     except Exception as e:
         print(f"ERROR pricer_node: {e}")
-        return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["fallback"]}}
+        return {"result": {"message": msgs["fallback"]}}
 
 
 def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, lang: str = "ca") -> str:

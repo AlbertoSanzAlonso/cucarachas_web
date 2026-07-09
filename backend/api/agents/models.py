@@ -39,6 +39,8 @@ class AgentState(BaseModel):
     summary: Optional[str] = None # Nueva síntesis inteligente del caso
     language: Language = "ca" # Soporte para catalán y español
     history: List[dict] = [] # Historial de mensajes para memoria conversacional
+    chat_diagnostic: dict = Field(default_factory=dict)  # Datos recogidos por chat libre
+    pending_intake_field: Optional[str] = None  # Campo ficha pendiente de respuesta
 
 # Respuesta del Agente Recepcionista
 class ReceptionistOutput(BaseModel):

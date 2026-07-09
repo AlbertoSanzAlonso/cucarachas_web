@@ -1,4 +1,5 @@
 """Enrutado determinista (sin LLM) para ahorrar tokens y latencia."""
+from ..chat_intake import build_unified_diagnostic, get_missing_mandatory_fields
 from ..diagnostic_merge import has_wizard_diagnostic
 from ..models import AgentState, Intent
 from .state import CECSAGraphState
@@ -159,6 +160,28 @@ def should_diagnose(agent: AgentState, msg_lower: str) -> bool:
     if agent.pest_type:
         return False
     return agent.intent in (Intent.QUOTE, Intent.URGENCY, Intent.DOUBT) and bool(agent.city)
+
+
+def needs_ficha_intake(agent: AgentState, diagnostic: dict | None) -> bool:
+    """True si la ficha activa tiene campos obligatorios sin rellenar."""
+    if not agent.pest_type:
+        return False
+    return bool(get_missing_mandatory_fields(agent, diagnostic))
+
+
+def should_run_intake(agent: AgentState, diagnostic: dict | None, msg_lower: str) -> bool:
+    """Chat libre: recoger datos de ficha con preguntas de texto."""
+    if agent.pending_intake_field:
+        return True
+    if not needs_ficha_intake(agent, diagnostic):
+        return False
+    if any(kw in msg_lower for kw in PRICING_KEYWORDS):
+        return True
+    if agent.intent in (Intent.QUOTE, Intent.URGENCY):
+        return True
+    if agent.pest_type and agent.property_type and not is_simple_greeting(msg_lower):
+        return True
+    return False
 
 
 def apply_preprocess(state: CECSAGraphState) -> dict:

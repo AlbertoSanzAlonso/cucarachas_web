@@ -2,8 +2,13 @@ import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Home, Building2, Users, AlertTriangle, MessageSquare, ChevronLeft } from 'lucide-react';
 import Button from '@/components/ui/Button';
+import {
+  getParticularFichaField,
+  getParticularMaxStep,
+  isParticularExtraStep,
+} from '@/utils/fichaWizard';
 
-const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
+const DiagnosticFlow = memo(({ step, path, fichaQuestions = [], answers = {}, handleAnswer, handleBack }) => {
   const { t } = useTranslation();
   
   const renderOptions = (key, opts) => opts.map(opt => (
@@ -12,7 +17,48 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
     </button>
   ));
 
+  const renderFichaInput = (fieldKey) => {
+    const isNumeric = fieldKey === 'metros_cuadrados';
+    const currentValue = answers[fieldKey] ?? '';
+    return (
+      <div className="w-full max-w-4xl mx-auto flex flex-col space-y-4 px-4 items-center col-span-full">
+        <input
+          type={isNumeric ? 'number' : 'text'}
+          inputMode={isNumeric ? 'numeric' : 'text'}
+          min={isNumeric ? 1 : undefined}
+          value={currentValue}
+          className="w-full max-w-md bg-white/5 border border-white/10 rounded-2xl p-4 text-white text-base placeholder:text-white/30 focus:outline-none focus:border-accent-green/50 shadow-lg"
+          placeholder={t(`agent.questions.${fieldKey}_placeholder`)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && String(e.target.value).trim()) {
+              handleAnswer(fieldKey, isNumeric ? Number(e.target.value) : e.target.value.trim());
+            }
+          }}
+          onChange={(e) => {
+            const raw = e.target.value;
+            handleAnswer(fieldKey, isNumeric && raw !== '' ? Number(raw) : raw, true);
+          }}
+        />
+        <Button
+          variant="accent"
+          disabled={!String(currentValue).trim()}
+          onClick={() => {
+            if (String(currentValue).trim()) {
+              handleAnswer(fieldKey, isNumeric ? Number(currentValue) : String(currentValue).trim());
+            }
+          }}
+          className="w-full max-w-md py-4 text-sm font-black uppercase tracking-widest disabled:opacity-40"
+        >
+          {t('agent.booking.continue')}
+        </Button>
+      </div>
+    );
+  };
+
   const renderParticularFlow = () => {
+    const fichaField = getParticularFichaField(step, fichaQuestions);
+    if (fichaField) return renderFichaInput(fichaField);
+
     switch (step) {
       case 2: return renderOptions('where', ['cocina', 'bano', 'dormitorio', 'salon', 'garaje', 'toda']);
       case 3: return renderOptions('quantity', ['one', 'several', 'many', 'nests']);
@@ -82,12 +128,14 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
   const getQuestion = () => {
     if (step === 1) return t('agent.questions.who');
     if (path === 'particular') {
+      const fichaField = getParticularFichaField(step, fichaQuestions);
+      if (fichaField) return t(`agent.questions.${fichaField}`);
       if (step === 2) return t('agent.questions.where_p');
       if (step === 3) return t('agent.questions.qty_p');
       if (step === 4) return t('agent.questions.since_p');
       if (step === 5) return t('agent.questions.urgency_p');
       if (step === 6) return t('agent.questions.sensitive_p');
-      if (step === 7) return t('agent.questions.extra_info');
+      if (isParticularExtraStep(step, fichaQuestions)) return t('agent.questions.extra_info');
     }
     if (path === 'empresa') {
       if (step === 2) return t('agent.questions.business_type');
@@ -140,7 +188,8 @@ const DiagnosticFlow = memo(({ step, path, handleAnswer, handleBack }) => {
     }
     
     let isLastStep = false;
-    if ((path === 'particular' || path === 'empresa') && step === 7) isLastStep = true;
+    if (path === 'particular' && isParticularExtraStep(step, fichaQuestions)) isLastStep = true;
+    if (path === 'empresa' && step === 7) isLastStep = true;
     if ((path === 'admin' || path === 'comunidad') && step === 10) isLastStep = true;
 
     if (isLastStep) {

@@ -9,20 +9,29 @@ from django.db import transaction
 from api.models import Cliente, Presupuesto, PresupuestoDetalle, Ubicacion
 
 
-def _get_or_create_ubicacion(cliente: Cliente, direccion: str, ciudad: str) -> Ubicacion:
+def _get_or_create_ubicacion(
+    cliente: Cliente,
+    direccion: str,
+    ciudad: str,
+    tipo_propiedad: str = "Residencial",
+) -> Ubicacion:
     direccion = (direccion or "").strip() or "Barcelona"
     ciudad = (ciudad or "").strip() or "Barcelona"
+    tipo = (tipo_propiedad or "Residencial").strip() or "Residencial"
     existing = cliente.ubicaciones.filter(ciudad__iexact=ciudad).first()
     if existing:
         if direccion and existing.direccion != direccion:
             existing.direccion = direccion
             existing.save(update_fields=["direccion"])
+        if tipo and existing.tipo_propiedad != tipo:
+            existing.tipo_propiedad = tipo
+            existing.save(update_fields=["tipo_propiedad"])
         return existing
     return Ubicacion.objects.create(
         cliente=cliente,
         direccion=direccion,
         ciudad=ciudad,
-        tipo_propiedad="Residencial",
+        tipo_propiedad=tipo,
     )
 
 
@@ -33,6 +42,7 @@ def create_presupuesto_from_form(
     lineas: list[dict],
     direccion: str = "",
     ciudad: str = "Barcelona",
+    tipo_propiedad: str = "Residencial",
     fecha: date | None = None,
     validez_dias: int = 30,
     pest_type: str = "",
@@ -42,7 +52,7 @@ def create_presupuesto_from_form(
     estado: str = Presupuesto.Estado.ENVIADO,
 ) -> Presupuesto:
     cliente = Cliente.objects.get(pk=cliente_id)
-    ubicacion = _get_or_create_ubicacion(cliente, direccion, ciudad)
+    ubicacion = _get_or_create_ubicacion(cliente, direccion, ciudad, tipo_propiedad)
 
     issue_date = fecha or date.today()
     validez_hasta = issue_date + timedelta(days=max(validez_dias, 1))
@@ -51,6 +61,7 @@ def create_presupuesto_from_form(
     normalized_lines: list[dict] = []
     for raw in lineas:
         concepto = str(raw.get("concepto", "")).strip()
+        descripcion = str(raw.get("descripcion", "")).strip()
         precio = Decimal(str(raw.get("precio", "0")))
         cantidad = int(raw.get("cantidad", 1) or 1)
         if not concepto or precio <= 0 or cantidad < 1:
@@ -58,7 +69,12 @@ def create_presupuesto_from_form(
         line_total = precio * cantidad
         total += line_total
         normalized_lines.append(
-            {"concepto": concepto, "precio": precio, "cantidad": cantidad}
+            {
+                "concepto": concepto,
+                "descripcion": descripcion,
+                "precio": precio,
+                "cantidad": cantidad,
+            }
         )
 
     if not normalized_lines:
@@ -80,6 +96,7 @@ def create_presupuesto_from_form(
         PresupuestoDetalle.objects.create(
             presupuesto=presupuesto,
             concepto=line["concepto"],
+            descripcion=line.get("descripcion", ""),
             precio_unitario=line["precio"],
             cantidad=line["cantidad"],
         )

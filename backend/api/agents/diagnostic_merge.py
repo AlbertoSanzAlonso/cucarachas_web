@@ -151,6 +151,8 @@ def merge_diagnostic_into_state(state: AgentState, diagnostic: dict | None) -> A
         ("advance_admin", "Avanç"),
         ("role_comunidad", "Rol"),
         ("what_if_not", "Risc"),
+        ("codigo_postal", "CP"),
+        ("metros_cuadrados", "m²"),
         ("extra_info", "Extra"),
     ):
         val = _clean(diagnostic.get(key))

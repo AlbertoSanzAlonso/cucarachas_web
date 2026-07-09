@@ -33,6 +33,7 @@ def create_presupuesto_pdf(request):
             lineas=data["lineas"],
             direccion=data.get("direccion", ""),
             ciudad=data.get("ciudad", "Barcelona"),
+            tipo_propiedad=data.get("tipo_propiedad", "Residencial"),
             fecha=data.get("fecha"),
             validez_dias=data.get("validez_dias", 30),
             pest_type=data.get("pest_type", ""),

@@ -99,6 +99,7 @@ class PresupuestoDetalle(models.Model):
     presupuesto = models.ForeignKey(Presupuesto, on_delete=models.CASCADE, related_name='detalles')
     tratamiento = models.ForeignKey(Tratamiento, on_delete=models.PROTECT, null=True, blank=True)
     concepto = models.CharField(max_length=300, blank=True, default="")
+    descripcion = models.TextField(blank=True, default="")
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
     cantidad = models.PositiveIntegerField(default=1)
 
@@ -142,6 +143,13 @@ class PresupuestoReferencia(models.Model):
         related_name="referencia_agent",
     )
     notes = models.TextField(blank=True, default="")
+    codigo = models.CharField(
+        max_length=30,
+        blank=True,
+        null=True,
+        unique=True,
+        help_text="Código del modelo de referencia (ej. 11675P)",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -153,6 +161,76 @@ class PresupuestoReferencia(models.Model):
     def __str__(self):
         label = self.city or "sense ciutat"
         return f"Ref {self.total_monto}€ — {label} ({self.get_source_display()})"
+
+
+class FichaServicio(models.Model):
+    """
+    Ficha maestra de conocimiento operativo para el Bio-Assistent.
+    Reglas de diagnóstico, presupuesto, bloqueos y copy comercial por servicio.
+    """
+    objects: ClassVar[Manager]
+
+    codigo = models.CharField(max_length=30, unique=True, help_text="Ej: CUC-GER-PISO")
+    nombre_comercial = models.CharField(max_length=200)
+    pest_type = models.CharField(
+        max_length=50,
+        blank=True,
+        default="",
+        help_text="Valor PestType del agente (german_cockroach, american_cockroach, …)",
+    )
+    activa = models.BooleanField(default=True)
+
+    tipos_cliente = models.JSONField(default=list, help_text='["particular", "restaurante", …]')
+    lugares = models.JSONField(default=list, help_text='["cocina", "bano", …]')
+    preguntas_obligatorias = models.JSONField(
+        default=dict,
+        help_text='Por tipo cliente: {"particular": ["codigo_postal", "metros_cuadrados", …]}',
+    )
+    reglas_diagnostico = models.JSONField(
+        default=list,
+        help_text='[{"keywords": ["noche"], "severity": "low"}, …]',
+    )
+    prioridad_default = models.CharField(max_length=20, default="media")
+    sistema_recomendado = models.JSONField(
+        default=dict,
+        help_text='{"recomendar": ["gel", "trampas"], "no_recomendar": ["pulverizar"]}',
+    )
+    tiempo_medio = models.JSONField(default=dict, help_text='{"visita_1": 45, "visita_2": 30}')
+    material_medio = models.JSONField(default=list)
+    riesgo = models.CharField(max_length=20, default="medio")
+    dificultad = models.PositiveSmallIntegerField(default=3)
+    coste_interno = models.JSONField(
+        default=dict,
+        help_text='{"tiempo_tecnico": 52, "material": 18, "desplazamiento": 12}',
+    )
+    reglas_comerciales = models.JSONField(
+        default=list,
+        help_text='[{"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 220}, …]',
+    )
+    bloqueos_presupuesto = models.JSONField(default=list)
+    copy_comercial = models.JSONField(default=dict, help_text='{"ca": "…", "es": "…"}')
+    objeciones = models.JSONField(
+        default=list,
+        help_text='[{"trigger": "solo una visita", "respuesta_ca": "…", "respuesta_es": "…"}]',
+    )
+    venta_cruzada = models.JSONField(default=list)
+    seguimiento = models.JSONField(
+        default=dict,
+        help_text='{"24h": "whatsapp", "7d": "email", "30d": "email"}',
+    )
+    garantia_meses = models.PositiveIntegerField(default=12)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Ficha de servicio"
+        verbose_name_plural = "Fichas de servicio"
+        ordering = ["codigo"]
+
+    def __str__(self):
+        return f"{self.codigo} — {self.nombre_comercial}"
+
 
 # 3. Tablas de Operación (Agenda y Resultados)
 

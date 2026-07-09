@@ -85,8 +85,9 @@ SYSTEM_PROMPTS = {
         "ca": (
             "Ets l'Expert en Valoració de CECSA. "
             "Calcula pressupostos basats en l'espècie, la severitat i el tipus d'immoble. "
-            "PROCEDIMENT: 1) Crida get_historical_budget_cases per veure pressupostos reals anteriors. "
-            "2) Si no n'hi ha prou, complementa amb get_official_prices (catàleg base). "
+            "PROCEDIMENT: 1) Crida get_ficha_servicio per aplicar regles de la Ficha Maestra. "
+            "2) Crida get_historical_budget_cases per veure pressupostos reals anteriors. "
+            "3) Si no n'hi ha prou, complementa amb get_official_prices (catàleg base). "
             "Prioritza SEMPRE els imports històrics quan existeixin casos similars. "
             "Sigues transparent amb el que inclou el preu (garantia, productes, visites). "
             "Indica que és una estimació orientativa fins a la visita tècnica. "
@@ -95,8 +96,9 @@ SYSTEM_PROMPTS = {
         "es": (
             "Eres el Experto en Valoración de CECSA. "
             "Calcula presupuestos basados en la especie, la severidad y el tipo de inmueble. "
-            "PROCEDIMIENTO: 1) Llama a get_historical_budget_cases para ver presupuestos reales anteriores. "
-            "2) Si no hay suficientes, complementa con get_official_prices (catálogo base). "
+            "PROCEDIMIENTO: 1) Llama a get_ficha_servicio para aplicar reglas de la Ficha Maestra. "
+            "2) Llama a get_historical_budget_cases para ver presupuestos reales anteriores. "
+            "3) Si no hay suficientes, complementa con get_official_prices (catálogo base). "
             "Prioriza SIEMPRE los importes históricos cuando existan casos similares. "
             "Sé transparente con lo que incluye el precio (garantía, productos, visitas). "
             "Indica que es una estimación orientativa hasta la visita técnica. "
@@ -146,11 +148,32 @@ ORCHESTRATOR_MESSAGES = {
     "ca": {
         "pricing_template": (
             "Basant-nos en el diagnòstic tècnic, aquí tens l'estimació del servei:\n\n"
+            "{confidence_badge}\n"
             "💰 **Pressupost estimat**: {min}€ - {max}€\n"
             "📋 **Desglossament**: {breakdown}\n"
             "🛡️ **Garantia**: {months} mesos de cobertura total.\n\n"
+            "{commercial_copy}\n\n"
             "Vols agendar la inspecció gratuïta per confirmar aquests detalls?"
         ),
+        "pricing_closed_template": (
+            "Basant-nos en el diagnòstic tècnic, aquí tens el pressupost:\n\n"
+            "{confidence_badge}\n"
+            "💰 **Preu tancat**: {price}€\n"
+            "📋 **Desglossament**: {breakdown}\n"
+            "🛡️ **Garantia**: {months} mesos de cobertura total.\n\n"
+            "{commercial_copy}\n\n"
+            "Pots contractar directament o agendar la primera visita."
+        ),
+        "pricing_inspection_only": (
+            "Per garantir la màxima precisió, en aquest cas **no donem un preu automàtic**.\n\n"
+            "{confidence_badge}\n"
+            "{commercial_copy}\n\n"
+            "Recomanem una **inspecció gratuïta** per valorar el cas amb precisió. "
+            "Vols veure els horaris disponibles?"
+        ),
+        "confidence_green": "🟢 **{pct}% de precisió** — pressupost tancat.",
+        "confidence_yellow": "🟡 **{pct}% de precisió** — poden haver-hi petits ajustos després de la visita tècnica.",
+        "confidence_red": "🔴 **Menys del {pct}% de precisió** — cal una inspecció gratuïta abans de comprometre un preu.",
         "scheduler_slots_intro": (
             "Perfecte! Aquests són els horaris disponibles per a la teva "
             "inspecció gratuïta a Barcelona. Tria el que et vagi millor:"
@@ -176,11 +199,32 @@ ORCHESTRATOR_MESSAGES = {
     "es": {
         "pricing_template": (
             "Basándonos en el diagnóstico técnico, aquí tienes la estimación del servicio:\n\n"
+            "{confidence_badge}\n"
             "💰 **Presupuesto estimado**: {min}€ - {max}€\n"
             "📋 **Desglose**: {breakdown}\n"
             "🛡️ **Garantía**: {months} meses de cobertura total.\n\n"
+            "{commercial_copy}\n\n"
             "¿Quieres agendar la inspección gratuita para confirmar estos detalles?"
         ),
+        "pricing_closed_template": (
+            "Basándonos en el diagnóstico técnico, aquí tienes el presupuesto:\n\n"
+            "{confidence_badge}\n"
+            "💰 **Precio cerrado**: {price}€\n"
+            "📋 **Desglose**: {breakdown}\n"
+            "🛡️ **Garantía**: {months} meses de cobertura total.\n\n"
+            "{commercial_copy}\n\n"
+            "Puedes contratar directamente o agendar la primera visita."
+        ),
+        "pricing_inspection_only": (
+            "Para garantizar la máxima precisión, en este caso **no damos un precio automático**.\n\n"
+            "{confidence_badge}\n"
+            "{commercial_copy}\n\n"
+            "Recomendamos una **inspección gratuita** para valorar el caso con precisión. "
+            "¿Quieres ver los horarios disponibles?"
+        ),
+        "confidence_green": "🟢 **{pct}% de precisión** — presupuesto cerrado.",
+        "confidence_yellow": "🟡 **{pct}% de precisión** — puede haber pequeños ajustes tras la visita técnica.",
+        "confidence_red": "🔴 **Menos del {pct}% de precisión** — hace falta una inspección gratuita antes de comprometer un precio.",
         "scheduler_slots_intro": (
             "¡Perfecto! Estos son los horarios disponibles para tu "
             "inspección gratuita en Barcelona. Elige el que mejor te venga:"

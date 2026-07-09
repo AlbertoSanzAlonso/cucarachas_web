@@ -9,8 +9,13 @@ import {
   downloadBlob,
 } from '@/store/apis/presupuestosApi';
 import { normalizeLead } from '@/utils/leadDisplay';
+import {
+  PRESUPUESTO_TEMPLATES,
+  calcTotalConIva,
+  getPresupuestoTemplate,
+} from '@/utils/presupuestoTemplates';
 
-const emptyLine = () => ({ concepto: '', precio: '', cantidad: 1 });
+const emptyLine = () => ({ concepto: '', descripcion: '', precio: '', cantidad: 1 });
 
 const formatMoney = (value) => {
   const num = Number(value);
@@ -37,7 +42,11 @@ const PresupuestosManager = () => {
   const [validezDias, setValidezDias] = useState(30);
   const [garantiaMeses, setGarantiaMeses] = useState(12);
   const [notas, setNotas] = useState('');
-  const [lineas, setLineas] = useState([emptyLine(), emptyLine()]);
+  const [pestType, setPestType] = useState('');
+  const [severity, setSeverity] = useState('');
+  const [tipoPropiedad, setTipoPropiedad] = useState('Residencial');
+  const [templateId, setTemplateId] = useState('');
+  const [lineas, setLineas] = useState([emptyLine()]);
   const [error, setError] = useState('');
 
   const normalizedLeads = useMemo(
@@ -55,6 +64,29 @@ const PresupuestosManager = () => {
       }, 0),
     [lineas],
   );
+
+  const totalConIvaPreview = useMemo(() => calcTotalConIva(totalPreview), [totalPreview]);
+
+  const applyTemplate = (id) => {
+    setTemplateId(id);
+    if (!id) return;
+    const tpl = getPresupuestoTemplate(id);
+    if (!tpl) return;
+    setGarantiaMeses(tpl.garantia_meses);
+    setValidezDias(tpl.validez_dias);
+    setNotas(tpl.notas);
+    setPestType(tpl.pest_type);
+    setSeverity(tpl.severity);
+    setTipoPropiedad(tpl.tipo_propiedad);
+    setLineas(
+      tpl.lineas.map((line) => ({
+        concepto: line.concepto,
+        descripcion: line.descripcion || '',
+        precio: line.precio,
+        cantidad: line.cantidad,
+      })),
+    );
+  };
 
   const updateLine = (index, field, value) => {
     setLineas((prev) => prev.map((line, i) => (i === index ? { ...line, [field]: value } : line)));
@@ -79,13 +111,17 @@ const PresupuestosManager = () => {
       cliente_id: Number(clienteId),
       direccion,
       ciudad,
+      tipo_propiedad: tipoPropiedad,
       fecha,
       validez_dias: Number(validezDias),
       garantia_meses: Number(garantiaMeses),
+      pest_type: pestType,
+      severity,
       notas,
       lineas: lineas
         .map((line) => ({
           concepto: line.concepto.trim(),
+          descripcion: (line.descripcion || '').trim(),
           precio: parseFloat(line.precio),
           cantidad: parseInt(line.cantidad, 10) || 1,
         }))
@@ -104,6 +140,9 @@ const PresupuestosManager = () => {
       refetch();
       setLineas([emptyLine()]);
       setNotas('');
+      setTemplateId('');
+      setPestType('');
+      setSeverity('');
     } catch (err) {
       setError(err.message || 'No s\'ha pogut generar el pressupost.');
     }
@@ -145,6 +184,24 @@ const PresupuestosManager = () => {
           <h3 className="text-sm font-black uppercase tracking-widest text-primary-gray/50">
             Nou pressupost
           </h3>
+
+          <label className="block space-y-2">
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              Plantilla (model CECSA)
+            </span>
+            <select
+              value={templateId}
+              onChange={(e) => applyTemplate(e.target.value)}
+              className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+            >
+              <option value="">Sense plantilla — línes en blanc</option>
+              {PRESUPUESTO_TEMPLATES.map((tpl) => (
+                <option key={tpl.id} value={tpl.id}>
+                  {tpl.label} ({tpl.id})
+                </option>
+              ))}
+            </select>
+          </label>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="block space-y-2">
@@ -253,48 +310,57 @@ const PresupuestosManager = () => {
                 key={index}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-12 gap-2 items-end"
+                className="space-y-2 p-4 rounded-2xl border border-gray-100 bg-gray-50/50"
               >
-                <div className="col-span-12 md:col-span-6">
-                  <input
-                    type="text"
-                    value={line.concepto}
-                    onChange={(e) => updateLine(index, 'concepto', e.target.value)}
-                    placeholder="Concepte (ex: Desinsectació paneroles)"
-                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
-                  />
+                <div className="grid grid-cols-12 gap-2 items-end">
+                  <div className="col-span-12 md:col-span-6">
+                    <input
+                      type="text"
+                      value={line.concepto}
+                      onChange={(e) => updateLine(index, 'concepto', e.target.value)}
+                      placeholder="Concepte (ex: Desinsectació paneroles)"
+                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                    />
+                  </div>
+                  <div className="col-span-5 md:col-span-2">
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={line.precio}
+                      onChange={(e) => updateLine(index, 'precio', e.target.value)}
+                      placeholder="Preu € (sense IVA)"
+                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                    />
+                  </div>
+                  <div className="col-span-5 md:col-span-2">
+                    <input
+                      type="number"
+                      min="1"
+                      value={line.cantidad}
+                      onChange={(e) => updateLine(index, 'cantidad', e.target.value)}
+                      placeholder="Qt."
+                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                    />
+                  </div>
+                  <div className="col-span-2 md:col-span-2 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={() => removeLine(index)}
+                      className="p-3 rounded-2xl text-red-400 hover:bg-red-50 transition-colors"
+                      aria-label="Eliminar línia"
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
                 </div>
-                <div className="col-span-5 md:col-span-2">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={line.precio}
-                    onChange={(e) => updateLine(index, 'precio', e.target.value)}
-                    placeholder="Preu €"
-                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
-                  />
-                </div>
-                <div className="col-span-5 md:col-span-2">
-                  <input
-                    type="number"
-                    min="1"
-                    value={line.cantidad}
-                    onChange={(e) => updateLine(index, 'cantidad', e.target.value)}
-                    placeholder="Qt."
-                    className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
-                  />
-                </div>
-                <div className="col-span-2 md:col-span-2 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={() => removeLine(index)}
-                    className="p-3 rounded-2xl text-red-400 hover:bg-red-50 transition-colors"
-                    aria-label="Eliminar línia"
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                <textarea
+                  value={line.descripcion}
+                  onChange={(e) => updateLine(index, 'descripcion', e.target.value)}
+                  rows={2}
+                  placeholder="Descripció detallada del servei (opcional, surt al PDF)"
+                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-xs font-medium text-primary-gray/70 focus:outline-none focus:border-primary-blue bg-white resize-none"
+                />
               </motion.div>
             ))}
           </div>
@@ -313,10 +379,16 @@ const PresupuestosManager = () => {
           </label>
 
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-gray-100">
-            <p className="text-sm font-bold text-primary-gray">
-              Total estimat:{' '}
-              <span className="text-primary-blue text-lg">{formatMoney(totalPreview)}</span>
-            </p>
+            <div className="text-sm font-bold text-primary-gray space-y-1">
+              <p>
+                Base imposable:{' '}
+                <span className="text-primary-blue">{formatMoney(totalPreview)}</span>
+              </p>
+              <p>
+                Total amb IVA (21%):{' '}
+                <span className="text-primary-blue text-lg">{formatMoney(totalConIvaPreview)}</span>
+              </p>
+            </div>
             <button
               type="submit"
               disabled={creating}

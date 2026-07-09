@@ -8,3 +8,4 @@ from .cal import cal_webhook, get_cal_slots, get_cal_bookings, cancel_cal_bookin
 from .agents import chat_with_agents
 from .debug import debug_system
 from .geo import geo_search, geo_reverse
+from .fichas import ficha_wizard_questions

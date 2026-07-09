@@ -5,7 +5,7 @@ from .views import (
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet, 
     CitaViewSet, ReporteServicioViewSet, chat_with_agents, cal_webhook, get_cal_slots,
     auth_login, auth_logout, auth_me, get_cal_bookings, cancel_cal_booking, update_cal_booking_view,
-    debug_system, geo_search, geo_reverse,
+    debug_system, geo_search, geo_reverse, ficha_wizard_questions,
 )
 from .views.presupuestos import create_presupuesto_pdf, download_presupuesto_pdf, list_presupuestos
 from knowledge.views import TechnicalKnowledgeViewSet
@@ -28,6 +28,7 @@ urlpatterns = [
     path('cal/slots/', get_cal_slots, name='cal-slots'),
     path('geo/search/', geo_search, name='geo-search'),
     path('geo/reverse/', geo_reverse, name='geo-reverse'),
+    path('fichas/wizard/', ficha_wizard_questions, name='ficha-wizard'),
     path('auth/login/', auth_login, name='auth-login'),
     path('auth/logout/', auth_logout, name='auth-logout'),
     path('auth/me/', auth_me, name='auth-me'),
