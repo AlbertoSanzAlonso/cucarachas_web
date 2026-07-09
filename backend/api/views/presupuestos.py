@@ -119,6 +119,35 @@ def send_presupuesto_email_view(request, pk: int):
 
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
+def create_presupuesto(request):
+    serializer = CreatePresupuestoSerializer(data=request.data)
+    serializer.is_valid(raise_exception=True)
+    data = serializer.validated_data
+
+    try:
+        presupuesto = create_presupuesto_from_form(
+            cliente_id=data["cliente_id"],
+            lineas=data["lineas"],
+            direccion=data.get("direccion", ""),
+            ciudad=data.get("ciudad", "Barcelona"),
+            tipo_propiedad=data.get("tipo_propiedad", "Residencial"),
+            fecha=data.get("fecha"),
+            validez_dias=data.get("validez_dias", 30),
+            pest_type=data.get("pest_type", ""),
+            severity=data.get("severity", ""),
+            garantia_meses=data.get("garantia_meses", 12),
+            notas=data.get("notas", ""),
+        )
+    except Cliente.DoesNotExist:
+        return Response({"detail": "Client no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    except ValueError as exc:
+        return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(PresupuestoDetailSerializer(presupuesto).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def create_presupuesto_pdf(request):
     serializer = CreatePresupuestoSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)

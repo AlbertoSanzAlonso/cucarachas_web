@@ -8,6 +8,7 @@ from .views import (
     debug_system, geo_search, geo_reverse, ficha_wizard_questions,
 )
 from .views.presupuestos import (
+    create_presupuesto,
     create_presupuesto_pdf,
     delete_presupuesto,
     download_presupuesto_pdf,
@@ -31,6 +32,7 @@ router.register(r'knowledge', TechnicalKnowledgeViewSet)
 
 urlpatterns = [
     path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),
+    path('presupuestos/create/', create_presupuesto, name='presupuestos-create'),
     path('presupuestos/create_pdf/', create_presupuesto_pdf, name='presupuestos-create-pdf'),
     path('presupuestos/<int:pk>/update/', update_presupuesto, name='presupuestos-update'),
     path('presupuestos/<int:pk>/delete/', delete_presupuesto, name='presupuestos-delete'),

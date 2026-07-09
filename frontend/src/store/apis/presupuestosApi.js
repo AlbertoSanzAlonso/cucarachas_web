@@ -21,6 +21,14 @@ export const presupuestosApi = baseApi.injectEndpoints({
       query: (id) => `presupuestos/${id}/`,
       providesTags: (_result, _err, id) => [{ type: 'Presupuestos', id }],
     }),
+    createPresupuesto: builder.mutation({
+      query: (body) => ({
+        url: 'presupuestos/create/',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Presupuestos'],
+    }),
     createPresupuestoPdf: builder.mutation({
       query: (body) => ({
         url: 'presupuestos/create_pdf/',
@@ -78,6 +86,7 @@ export const presupuestosApi = baseApi.injectEndpoints({
 export const {
   useGetPresupuestosQuery,
   useGetPresupuestoDetailQuery,
+  useCreatePresupuestoMutation,
   useCreatePresupuestoPdfMutation,
   useUpdatePresupuestoMutation,
   useDeletePresupuestoMutation,

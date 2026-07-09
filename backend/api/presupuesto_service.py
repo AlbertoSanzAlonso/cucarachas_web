@@ -49,7 +49,7 @@ def create_presupuesto_from_form(
     severity: str = "",
     garantia_meses: int = 12,
     notas: str = "",
-    estado: str = Presupuesto.Estado.ENVIADO,
+    estado: str = Presupuesto.Estado.BORRADOR,
 ) -> Presupuesto:
     cliente = Cliente.objects.get(pk=cliente_id)
     ubicacion = _get_or_create_ubicacion(cliente, direccion, ciudad, tipo_propiedad)

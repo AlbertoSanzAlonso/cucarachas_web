@@ -11,9 +11,11 @@ import {
   X,
   Bot,
   User,
+  Save,
 } from 'lucide-react';
 import { useGetLeadsQuery } from '@/store/apis/leadsApi';
 import {
+  useCreatePresupuestoMutation,
   useCreatePresupuestoPdfMutation,
   useDownloadPresupuestoPdfMutation,
   useGetPresupuestosQuery,
@@ -53,6 +55,7 @@ const formatDate = (value) => {
 const PresupuestosManager = () => {
   const { data: leads, isLoading: leadsLoading } = useGetLeadsQuery();
   const { data: presupuestos, isLoading: listLoading, refetch } = useGetPresupuestosQuery();
+  const [createPresupuesto, { isLoading: saving }] = useCreatePresupuestoMutation();
   const [createPdf, { isLoading: creating }] = useCreatePresupuestoPdfMutation();
   const [updatePresupuesto, { isLoading: updating }] = useUpdatePresupuestoMutation();
   const [deletePresupuesto] = useDeletePresupuestoMutation();
@@ -192,6 +195,67 @@ const PresupuestosManager = () => {
       }))
       .filter((line) => line.concepto && line.precio > 0);
 
+  const buildNewPayload = () => ({
+    cliente_id: Number(clienteId),
+    direccion,
+    ciudad,
+    tipo_propiedad: tipoPropiedad,
+    fecha,
+    validez_dias: Number(validezDias),
+    garantia_meses: Number(garantiaMeses),
+    pest_type: pestType,
+    severity,
+    notas,
+    lineas: buildLineasPayload(),
+  });
+
+  const validateNewForm = () => {
+    const lineasPayload = buildLineasPayload();
+    if (!lineasPayload.length) {
+      setError('Afegeix almenys una línia amb concepte i preu.');
+      return null;
+    }
+    if (!clienteId) {
+      setError('Selecciona un client de la base de dades.');
+      return null;
+    }
+    return buildNewPayload();
+  };
+
+  const handleSaveNew = async () => {
+    setError('');
+    setSuccess('');
+    const payload = validateNewForm();
+    if (!payload) return;
+
+    try {
+      const created = await createPresupuesto(payload).unwrap();
+      setSuccess(`Pressupost #${String(created.id).padStart(4, '0')} desat correctament.`);
+      refetch();
+      resetForm();
+    } catch (err) {
+      setError(err.data?.detail || err.message || 'No s\'ha pogut desar el pressupost.');
+    }
+  };
+
+  const handleSaveAndPdf = async () => {
+    setError('');
+    setSuccess('');
+    const payload = validateNewForm();
+    if (!payload) return;
+
+    try {
+      const result = await createPdf(payload).unwrap();
+      const filename = `pressupost-cecsa-${String(result.id || 'nou').padStart(4, '0')}.pdf`;
+      downloadBlob(result.blob, filename);
+      setSuccess('Pressupost desat i PDF descarregat.');
+      refetch();
+      resetForm();
+    } catch (err) {
+      setError(err.message || 'No s\'ha pogut generar el pressupost.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
@@ -224,34 +288,7 @@ const PresupuestosManager = () => {
       return;
     }
 
-    if (!clienteId) {
-      setError('Selecciona un client de la base de dades.');
-      return;
-    }
-
-    const payload = {
-      cliente_id: Number(clienteId),
-      direccion,
-      ciudad,
-      tipo_propiedad: tipoPropiedad,
-      fecha,
-      validez_dias: Number(validezDias),
-      garantia_meses: Number(garantiaMeses),
-      pest_type: pestType,
-      severity,
-      notas,
-      lineas: lineasPayload,
-    };
-
-    try {
-      const result = await createPdf(payload).unwrap();
-      const filename = `pressupost-cecsa-${String(result.id || 'nou').padStart(4, '0')}.pdf`;
-      downloadBlob(result.blob, filename);
-      refetch();
-      resetForm();
-    } catch (err) {
-      setError(err.message || 'No s\'ha pogut generar el pressupost.');
-    }
+    await handleSaveNew();
   };
 
   const handleDownloadExisting = async (id) => {
@@ -309,7 +346,7 @@ const PresupuestosManager = () => {
     }
   };
 
-  const isSaving = creating || updating;
+  const isSaving = creating || updating || saving;
 
   return (
     <div className="animate-fade-in space-y-8">
@@ -570,7 +607,7 @@ const PresupuestosManager = () => {
             />
           </label>
 
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-gray-100">
+          <div className="sticky bottom-0 z-10 -mx-6 md:-mx-10 px-6 md:px-10 py-4 bg-white/95 backdrop-blur-sm border-t border-gray-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="text-sm font-bold text-primary-gray space-y-1">
               <p>
                 Base imposable:{' '}
@@ -581,21 +618,51 @@ const PresupuestosManager = () => {
                 <span className="text-primary-blue text-lg">{formatMoney(totalConIvaPreview)}</span>
               </p>
             </div>
-            <button
-              type="submit"
-              disabled={isSaving || (editingId && loadingEdit)}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
-              style={{ background: 'var(--primary-blue)' }}
-            >
-              {isSaving ? (
-                <Loader2 size={16} className="animate-spin" />
-              ) : editingId ? (
-                <Pencil size={16} />
-              ) : (
-                <Download size={16} />
-              )}
-              {editingId ? 'Desar canvis' : 'Generar PDF'}
-            </button>
+            {editingId ? (
+              <button
+                type="submit"
+                disabled={isSaving || loadingEdit}
+                className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60"
+                style={{ background: 'var(--primary-blue)' }}
+              >
+                {isSaving ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Pencil size={16} />
+                )}
+                Desar canvis
+              </button>
+            ) : (
+              <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                <button
+                  type="submit"
+                  disabled={isSaving}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 flex-1 sm:flex-none"
+                  style={{ background: 'var(--accent-green)' }}
+                >
+                  {saving ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Save size={16} />
+                  )}
+                  Desar pressupost
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveAndPdf}
+                  disabled={isSaving}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl px-8 py-4 text-xs font-black uppercase tracking-widest text-white disabled:opacity-60 flex-1 sm:flex-none"
+                  style={{ background: 'var(--primary-blue)' }}
+                >
+                  {creating ? (
+                    <Loader2 size={16} className="animate-spin" />
+                  ) : (
+                    <Download size={16} />
+                  )}
+                  Desar i PDF
+                </button>
+              </div>
+            )}
           </div>
 
           {error && (
