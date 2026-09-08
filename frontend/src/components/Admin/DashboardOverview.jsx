@@ -9,7 +9,7 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
   const stats = [
     { id: 'active', title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...', tab: null },
     { id: 'leads', title: 'Leads Pendents', value: String(normalizedLeads.length), icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual', tab: 'leads' },
-    { id: 'calendar', title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Cal.com', tab: 'calendar' },
+    { id: 'calendar', title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Agenda', tab: 'calendar' },
     { id: 'teams', title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...', tab: null },
   ];
 

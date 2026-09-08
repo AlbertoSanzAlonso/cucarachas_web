@@ -1,0 +1,277 @@
+import {
+  isSegmentedPattern,
+  patternToOccupiedSegments,
+  patternTotalSpanMinutes,
+  type ServiceBookingPattern,
+} from './servicePattern.js'
+import type { AppointmentOccupiedSlot } from '../types/index.js'
+
+/** Tramos de 30 min con 30 min de pausa (tiempo de exposición del color). */
+export const COLOR_SPLIT_SEGMENT_MINUTES = 30
+export const COLOR_SPLIT_GAP_MINUTES = 30
+export const COLOR_SPLIT_TOTAL_SPAN_MINUTES =
+  COLOR_SPLIT_SEGMENT_MINUTES * 2 + COLOR_SPLIT_GAP_MINUTES
+
+export const COLOR_GROUP_ROLE = {
+  color: 'color',
+  wash: 'wash',
+} as const
+
+export type ColorGroupRole = (typeof COLOR_GROUP_ROLE)[keyof typeof COLOR_GROUP_ROLE]
+
+/** Plugin opcional: IDs de coloración en dos tramos (vacío por defecto). */
+export type ColorSplitPlugin = {
+  washServiceId: string
+  colorServiceIds: ReadonlySet<string>
+}
+
+let colorSplitPlugin: ColorSplitPlugin = {
+  washServiceId: '',
+  colorServiceIds: new Set(),
+}
+
+/** ID del servicio «lavar color»; vacío hasta `setColorSplitPlugin`. */
+export function getWashColorServiceId(): string {
+  return colorSplitPlugin.washServiceId
+}
+
+/** @deprecated Prefer getWashColorServiceId(); se actualiza con setColorSplitPlugin. */
+export let WASH_COLOR_SERVICE_ID = ''
+
+/** Servicios de coloración en dos franjas; vacío hasta `setColorSplitPlugin`. */
+export let COLOR_SPLIT_SERVICE_IDS: ReadonlySet<string> = new Set()
+
+export function setColorSplitPlugin(opts: {
+  washServiceId: string
+  colorServiceIds: Iterable<string>
+}): ColorSplitPlugin {
+  colorSplitPlugin = {
+    washServiceId: opts.washServiceId,
+    colorServiceIds: new Set(opts.colorServiceIds),
+  }
+  WASH_COLOR_SERVICE_ID = colorSplitPlugin.washServiceId
+  COLOR_SPLIT_SERVICE_IDS = colorSplitPlugin.colorServiceIds
+  return colorSplitPlugin
+}
+
+export function getColorSplitPlugin(): ColorSplitPlugin {
+  return colorSplitPlugin
+}
+
+export type OccupiedSegment = {
+  startMinutes: number
+  durationMinutes: number
+}
+
+export type OccupiedSegmentOptions = {
+  colorGroupRole?: string | null
+  bookingPattern?: ServiceBookingPattern | null
+}
+
+export function usesColorSplitBooking(serviceId: string): boolean {
+  return colorSplitPlugin.colorServiceIds.has(serviceId)
+}
+
+export function isColorGroupWashRow(colorGroupRole: string | null | undefined): boolean {
+  return colorGroupRole === COLOR_GROUP_ROLE.wash
+}
+
+export function isColorGroupColorRow(colorGroupRole: string | null | undefined): boolean {
+  return colorGroupRole === COLOR_GROUP_ROLE.color
+}
+
+/** Citas antiguas: una sola fila con duración de 90 min y sin `color_group_role`. */
+export function isLegacyColorSplitAppointment(
+  serviceId: string,
+  durationMinutes: number,
+  colorGroupRole?: string | null,
+): boolean {
+  return (
+    usesColorSplitBooking(serviceId) &&
+    !colorGroupRole &&
+    durationMinutes >= COLOR_SPLIT_TOTAL_SPAN_MINUTES
+  )
+}
+
+export function getWashPhaseStartMinutes(colorStartMinutes: number): number {
+  return colorStartMinutes + COLOR_SPLIT_SEGMENT_MINUTES + COLOR_SPLIT_GAP_MINUTES
+}
+
+export function getBookingSpanMinutes(
+  serviceId: string,
+  durationMinutes: number,
+  bookingPattern?: ServiceBookingPattern | null,
+): number {
+  if (bookingPattern && isSegmentedPattern(bookingPattern)) {
+    return patternTotalSpanMinutes(bookingPattern)
+  }
+  if (usesColorSplitBooking(serviceId)) return COLOR_SPLIT_TOTAL_SPAN_MINUTES
+  return durationMinutes
+}
+
+/** Duración mostrada al cliente (reserva, WhatsApp, calendario). */
+export function getCustomerFacingDurationMinutes(
+  serviceId: string,
+  durationMinutes: number,
+  colorGroupRole?: string | null,
+): number {
+  if (isColorGroupColorRow(colorGroupRole) && usesColorSplitBooking(serviceId)) {
+    return COLOR_SPLIT_TOTAL_SPAN_MINUTES
+  }
+  return durationMinutes
+}
+
+export function getOccupiedSegmentsForBooking(
+  serviceId: string,
+  startMinutes: number,
+  durationMinutes: number,
+  options?: OccupiedSegmentOptions,
+): OccupiedSegment[] {
+  const pattern = options?.bookingPattern
+  if (pattern && isSegmentedPattern(pattern)) {
+    return patternToOccupiedSegments(pattern, startMinutes)
+  }
+  if (!usesColorSplitBooking(serviceId)) {
+    return [{ startMinutes, durationMinutes }]
+  }
+  return [
+    { startMinutes, durationMinutes: COLOR_SPLIT_SEGMENT_MINUTES },
+    {
+      startMinutes: getWashPhaseStartMinutes(startMinutes),
+      durationMinutes: COLOR_SPLIT_SEGMENT_MINUTES,
+    },
+  ]
+}
+
+export function getOccupiedSegmentsForAppointment(
+  serviceId: string,
+  startMinutes: number,
+  durationMinutes: number,
+  options?: OccupiedSegmentOptions,
+): OccupiedSegment[] {
+  const role = options?.colorGroupRole
+  if (isColorGroupColorRow(role) || isColorGroupWashRow(role)) {
+    return [{ startMinutes, durationMinutes }]
+  }
+  const pattern = options?.bookingPattern
+  if (pattern && isSegmentedPattern(pattern)) {
+    return patternToOccupiedSegments(pattern, startMinutes)
+  }
+  if (isLegacyColorSplitAppointment(serviceId, durationMinutes, role)) {
+    return getOccupiedSegmentsForBooking(serviceId, startMinutes, durationMinutes, options)
+  }
+  return [{ startMinutes, durationMinutes }]
+}
+
+function segmentsOverlap(a: OccupiedSegment, b: OccupiedSegment): boolean {
+  const endA = a.startMinutes + a.durationMinutes
+  const endB = b.startMinutes + b.durationMinutes
+  return a.startMinutes < endB && b.startMinutes < endA
+}
+
+export function occupiedSegmentsOverlap(
+  a: OccupiedSegment[],
+  b: OccupiedSegment[],
+): boolean {
+  return a.some((segA) => b.some((segB) => segmentsOverlap(segA, segB)))
+}
+
+function timeToMinutes(time: string): number {
+  const [h, m] = time.split(':').map(Number)
+  return h * 60 + m
+}
+
+function minutesToTime(minutes: number): string {
+  const h = Math.floor(minutes / 60)
+  const m = minutes % 60
+  return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`
+}
+
+function rangeBetween(
+  start: string,
+  end: string,
+  locale: 'es' | 'en',
+  separator: 'dash' | 'word',
+): string {
+  if (separator === 'word') {
+    const connector = locale === 'en' ? ' to ' : ' a '
+    return `${start}${connector}${end}`
+  }
+  return `${start} – ${end}`
+}
+
+export function formatAppointmentTimeRange(
+  serviceId: string,
+  startTime: string,
+  durationMinutes: number,
+  locale: 'es' | 'en' = 'es',
+  options?: {
+    rangeSeparator?: 'dash' | 'word'
+    colorGroupRole?: string | null
+    bookingPattern?: ServiceBookingPattern | null
+  },
+): string {
+  const separator = options?.rangeSeparator ?? 'dash'
+  const role = options?.colorGroupRole
+  const pattern = options?.bookingPattern
+  const start = timeToMinutes(startTime)
+
+  if (isColorGroupColorRow(role) || isColorGroupWashRow(role)) {
+    return rangeBetween(
+      startTime,
+      minutesToTime(start + durationMinutes),
+      locale,
+      separator,
+    )
+  }
+
+  const showPatternRange = pattern && isSegmentedPattern(pattern)
+  const showSplitRange = isLegacyColorSplitAppointment(serviceId, durationMinutes, role)
+
+  if (showPatternRange) {
+    const connector = locale === 'en' ? 'and' : 'y'
+    const parts: string[] = []
+    let cursor = start
+    for (const step of pattern) {
+      if (step.type === 'work') {
+        const end = cursor + step.minutes
+        parts.push(rangeBetween(minutesToTime(cursor), minutesToTime(end), locale, separator))
+        cursor = end
+      } else {
+        cursor += step.minutes
+      }
+    }
+    return parts.join(` ${connector} `)
+  }
+
+  if (!showSplitRange) {
+    const displayDuration = getCustomerFacingDurationMinutes(serviceId, durationMinutes, role)
+    return rangeBetween(startTime, minutesToTime(start + displayDuration), locale, separator)
+  }
+
+  const seg1End = start + COLOR_SPLIT_SEGMENT_MINUTES
+  const seg2Start = getWashPhaseStartMinutes(start)
+  const seg2End = start + COLOR_SPLIT_TOTAL_SPAN_MINUTES
+  const connector = locale === 'en' ? 'and' : 'y'
+  const seg1 = rangeBetween(startTime, minutesToTime(seg1End), locale, separator)
+  const seg2 = rangeBetween(minutesToTime(seg2Start), minutesToTime(seg2End), locale, separator)
+  return `${seg1} ${connector} ${seg2}`
+}
+
+export function appointmentOccupiedSlots(
+  serviceId: string,
+  startTime: string,
+  durationMinutes: number,
+  options?: OccupiedSegmentOptions,
+): AppointmentOccupiedSlot[] {
+  const startMinutes = timeToMinutes(startTime)
+  return getOccupiedSegmentsForAppointment(
+    serviceId,
+    startMinutes,
+    durationMinutes,
+    options,
+  ).map((seg) => ({
+    startTime: minutesToTime(seg.startMinutes),
+    endTime: minutesToTime(seg.startMinutes + seg.durationMinutes),
+  }))
+}

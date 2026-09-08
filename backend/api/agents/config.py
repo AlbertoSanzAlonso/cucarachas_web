@@ -54,8 +54,3 @@ def setup_ai_keys(model_name: str = AGENT_MODEL):
     
     print(f"❌ AI Config: No se ha encontrado ninguna llave para el proveedor {provider}")
     return None
-
-# --- Configuración de Agenda (Cal.com) ---
-CAL_EVENT_TYPE_ID = os.getenv('CAL_EVENT_TYPE_ID', '278962')
-CAL_API_KEY = os.getenv('CAL_API_KEY', '').strip()
-CAL_BASE_URL = "https://api.cal.eu/v2" # Usamos la instancia europea por defecto

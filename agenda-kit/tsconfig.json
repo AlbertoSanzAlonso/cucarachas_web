@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@agenda-kit/core": ["./src/core/index.ts"],
+      "@agenda-kit/core/*": ["./src/core/*"],
+      "@agenda-kit/adapters": ["./src/adapters/index.ts"],
+      "@agenda-kit/react": ["./src/react/index.ts"],
+      "@agenda-kit/server": ["./src/server/index.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}

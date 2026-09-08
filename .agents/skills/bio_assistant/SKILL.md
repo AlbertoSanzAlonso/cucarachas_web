@@ -2,15 +2,15 @@
 name: bio-assistant
 description: >-
   Orquestación del Bio-Assistent CECSA: modal de diagnóstico, chat home, LangGraph,
-  veredictos estáticos vs IA, Cal.com, reservas con dirección (OSM). Consultar antes
-  de tocar frontend/src/components/Agent/ o backend/api/agents/.
+  agenda propia, reservas con dirección (OSM). Consultar antes de tocar
+  frontend/src/components/Agent/ o backend/api/agents/.
 ---
 
 # Skill: Bio-Assistent (CECSA Control de Plagas)
 
 ## Propósito
 
-Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el grafo LangGraph, Cal.com y la captura de **dirección presencial** para inspecciones.
+Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el grafo LangGraph, la agenda propia y la captura de **dirección presencial** para inspecciones.
 
 ## Mapa de archivos
 
@@ -26,7 +26,8 @@ Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el
 | Chat home | `frontend/src/components/FloatingCTA.jsx` |
 | i18n agente | `frontend/src/locales/{ca,es,en}/agent.json` |
 | API chat | `backend/api/views/agents.py` → `POST /api/chat/` |
-| Confirmación cita | `backend/api/agents/booking.py` |
+| Confirmación cita | `backend/api/agents/booking.py` → agenda propia |
+| Agenda | `backend/api/agenda/` + `/api/agenda/*` |
 | Geo (proxy OSM) | `backend/api/views/geo.py` |
 | Orquestador | `backend/api/agents/orchestrator.py` |
 | Grafo | `backend/api/agents/graph/` |
@@ -110,13 +111,12 @@ Todos los agentes Pydantic-AI usan `deps_type=AgentState`. En tools y system pro
 ## Checklist al modificar reservas
 
 - [ ] ¿Nuevo paso? → `BookingContactForm`, `useAgentChat`, `FloatingCTA`, `ChatMessage`, claves `agent.booking.*` en ca/es/en
-- [ ] ¿Campo nuevo en booking? → `agents.py`, `booking.py`, `cal_booking.py`
+- [ ] ¿Campo nuevo en booking? → `agents.py`, `booking.py`, `api/agenda/engine.py`
 - [ ] ¿Textos? → `ca/agent.json` + `es/agent.json` (+ `en` si aplica)
 
 ## Anti-patterns
 
 - Hardcodear veredictos en JSX (usar i18n).
 - Llamar al diagnosticador sin `extra_info`.
-- Enviar `integration` a Cal.com para visitas presenciales (usar `attendeeAddress`).
-- Usar `277401` si producción usa `278962` (`CAL_EVENT_TYPE_ID`).
+- Volver a enganchar Cal.com para slots/reservas (usar agenda propia).
 - Geocoding directo desde el browser a Nominatim (usar proxy `/api/geo/`).

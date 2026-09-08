@@ -12,6 +12,7 @@
   "dependencies": {
     "@insforge/sdk": "^1.2.4",
     "@reduxjs/toolkit": "^2.11.2",
+    "agenda-kit": "file:../agenda-kit",
     "autoprefixer": "^10.4.19",
     "axios": "^1.14.0",
     "clsx": "^2.1.1",

@@ -167,3 +167,59 @@ body.agent-open {
 .animate-slide-up {
   animation: slide-up 0.5s ease-out;
 }
+
+/* agenda-kit (admin) — estilos CECSA via data-agenda-* */
+.cecsa-agenda-root [data-agenda-calendar] {
+  display: grid;
+  gap: 0.5rem;
+  min-height: 520px;
+}
+
+.cecsa-agenda-root [data-agenda-control-bar] {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cecsa-agenda-root [data-agenda-event] {
+  background: var(--primary-blue);
+  color: #fff;
+  border: 0;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px rgba(0, 128, 187, 0.25);
+  overflow: hidden;
+}
+
+.cecsa-agenda-root [data-agenda-event][data-status='cancelled'] {
+  background: #94a3b8;
+  opacity: 0.7;
+}
+
+.cecsa-agenda-root [data-agenda-block] {
+  background: rgba(60, 60, 59, 0.12);
+  border: 1px dashed rgba(60, 60, 59, 0.35);
+  border-radius: 0.5rem;
+}
+
+.cecsa-agenda-root [data-agenda-slot][data-selected='true'] {
+  outline: 2px solid var(--accent-green);
+  outline-offset: -2px;
+  background: rgba(52, 211, 153, 0.15);
+}
+
+.cecsa-agenda-root [data-agenda-now-line] {
+  background: var(--accent-green-hv);
+}
+
+.cecsa-agenda-root [data-agenda-column-header] {
+  font-weight: 800;
+  color: var(--secondary-gray);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.cecsa-agenda-root button {
+  border-radius: 0.75rem;
+}

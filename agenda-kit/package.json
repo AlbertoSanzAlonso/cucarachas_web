@@ -1,0 +1,51 @@
+{
+  "name": "agenda-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless multi-staff agenda kit (core + React UI + Hono/Postgres skeleton)",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./core": {
+      "types": "./src/core/index.ts",
+      "default": "./src/core/index.ts"
+    },
+    "./react": {
+      "types": "./src/react/index.ts",
+      "default": "./src/react/index.ts"
+    },
+    "./server": {
+      "types": "./src/server/index.ts",
+      "default": "./src/server/index.ts"
+    },
+    "./adapters": {
+      "types": "./src/adapters/index.ts",
+      "default": "./src/adapters/index.ts"
+    }
+  },
+  "peerDependencies": {
+    "hono": "^4.0.0",
+    "postgres": "^3.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "hono": { "optional": true },
+    "postgres": { "optional": true },
+    "react": { "optional": true },
+    "react-dom": { "optional": true }
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "hono": "^4.12.23",
+    "postgres": "^3.4.7",
+    "typescript": "~5.8.3"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  }
+}

@@ -1,9 +1,7 @@
-const SYNTHETIC_EMAIL_DOMAIN = '@cucarachasbarcelona.cat';
-
 export function syntheticEmailFromPhone(phone) {
   const digits = String(phone || '').replace(/\D/g, '');
   const suffix = digits.slice(-12) || 'web';
-  return `cita+${suffix}${SYNTHETIC_EMAIL_DOMAIN}`;
+  return `cita+${suffix}@cucarachasbarcelona.cat`;
 }
 
 function getAttendee(booking) {
@@ -11,7 +9,7 @@ function getAttendee(booking) {
 }
 
 export function getBookingAttendeeEmail(booking) {
-  return (getAttendee(booking).email || '').trim().toLowerCase();
+  return (getAttendee(booking).email || booking?.customerEmail || '').trim().toLowerCase();
 }
 
 function normalizePhoneDigits(phone) {
@@ -37,7 +35,8 @@ export function bookingMatchesLead(booking, lead) {
   }
 
   const attendee = getAttendee(booking);
-  if (phonesMatch(lead.phone, attendee.phoneNumber)) {
+  const bookingPhone = attendee.phoneNumber || booking.customerPhone;
+  if (phonesMatch(lead.phone, bookingPhone)) {
     return true;
   }
 
@@ -45,7 +44,7 @@ export function bookingMatchesLead(booking, lead) {
     return true;
   }
 
-  const attendeeName = (attendee.name || '').trim().toLowerCase();
+  const attendeeName = (attendee.name || booking.customerName || '').trim().toLowerCase();
   const leadName = (lead.name || '').trim().toLowerCase();
   if (leadName && attendeeName && leadName === attendeeName) {
     return true;
@@ -61,14 +60,15 @@ export function filterBookingsForLead(bookings, lead) {
 }
 
 export function getBookingAddress(booking) {
-  if (typeof booking.location === 'string') return booking.location;
+  if (typeof booking.location === 'string' && booking.location) return booking.location;
   if (booking.location?.address) return booking.location.address;
+  if (booking.customerAddress) return booking.customerAddress;
   return booking.metadata?.address || '';
 }
 
 export function getBookingStatusClass(status) {
-  if (status === 'accepted') return 'bg-green-100 text-green-600';
+  if (status === 'accepted' || status === 'confirmed') return 'bg-green-100 text-green-600';
   if (status === 'cancelled') return 'bg-red-100 text-red-500';
-  if (status === 'pending') return 'bg-orange-100 text-orange-600';
+  if (status === 'pending' || status === 'no_show') return 'bg-orange-100 text-orange-600';
   return 'bg-blue-100 text-blue-600';
 }

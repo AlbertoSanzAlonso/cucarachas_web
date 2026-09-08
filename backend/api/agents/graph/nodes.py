@@ -233,18 +233,11 @@ def _is_initial_scheduling_request(message: str, agent: AgentState) -> bool:
 
 
 async def _scheduler_slots_fast_path(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
-    """Lista horarios vía Cal.com sin LLM (evita timeout y ahorra tokens)."""
-    from api.cal_client import CAL_API_KEY, CAL_DAYS_AHEAD, fetch_available_slots
+    """Lista horarios de la agenda propia sin LLM (evita timeout y ahorra tokens)."""
+    from api.agenda.config import AGENDA_DAYS_AHEAD
+    from api.agenda.engine import fetch_available_slots
 
-    if not CAL_API_KEY:
-        msg = (
-            "L'agenda no està configurada al servidor (falta CAL_API_KEY a Coolify)."
-            if lang == "ca"
-            else "La agenda no está configurada en el servidor (falta CAL_API_KEY en Coolify)."
-        )
-        return {"result": {"message": msg, "slots": []}}
-
-    ok, result = fetch_available_slots(days_ahead=CAL_DAYS_AHEAD)
+    ok, result = await sync_to_async(fetch_available_slots)(days_ahead=AGENDA_DAYS_AHEAD)
     if ok:
         return {
             "agent_state": agent.model_dump(mode="json"),
@@ -311,16 +304,7 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
         import traceback
 
         print(f"ERROR scheduler_node: {traceback.format_exc()}")
-        from api.cal_client import CAL_API_KEY
-
-        if not CAL_API_KEY:
-            msg = (
-                "L'agenda no està configurada al servidor (falta CAL_API_KEY a Coolify)."
-                if lang == "ca"
-                else "La agenda no está configurada en el servidor (falta CAL_API_KEY en Coolify)."
-            )
-        else:
-            msg = ORCHESTRATOR_MESSAGES[lang]["error_scheduler"]
+        msg = ORCHESTRATOR_MESSAGES[lang]["error_scheduler"]
         return {"result": {"message": msg, "slots": []}}
 
 

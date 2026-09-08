@@ -4,8 +4,8 @@ import urllib.parse
 from pydantic_ai import Agent, RunContext
 from django.core.cache import cache
 
-from api.cal_booking import create_cal_booking
-from api.cal_client import CAL_API_KEY, CAL_DAYS_AHEAD, fetch_available_slots
+from api.agenda.config import AGENDA_DAYS_AHEAD
+from api.agenda.engine import create_booking_from_slot, fetch_available_slots
 from .models import AgentState, SchedulerOutput
 from .config import AGENT_MODEL
 from .prompts import SYSTEM_PROMPTS
@@ -26,12 +26,12 @@ def get_scheduler_prompt(ctx: RunContext[AgentState]) -> str:
 
 
 @scheduler_agent.tool
-def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = CAL_DAYS_AHEAD) -> str | list:
-    """Consulta els horaris lliures a Cal.com pels propers dies."""
-    cache_key = f"cal_slots_{days_ahead}"
+def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = AGENDA_DAYS_AHEAD) -> str | list:
+    """Consulta els horaris lliures de l'agenda pròpia pels propers dies."""
+    cache_key = f"agenda_slots_{days_ahead}"
     cached_slots = cache.get(cache_key)
     if cached_slots:
-        print("DEBUG: Serving Cal.com slots from Redis cache")
+        print("DEBUG: Serving agenda slots from Redis cache")
         return cached_slots
 
     ok, result = fetch_available_slots(days_ahead=days_ahead)
@@ -88,9 +88,9 @@ def create_booking(
     address: str,
     notes: str = "",
 ) -> str:
-    """Crea una reserva a Cal.com per a l'horari seleccionat."""
+    """Crea una reserva a l'agenda pròpia per a l'horari seleccionat."""
     lang = ctx.deps.language if ctx.deps else "ca"
-    ok, msg, _uid = create_cal_booking(
+    ok, msg, _uid = create_booking_from_slot(
         slot_time=slot_time,
         attendee_name=attendee_name,
         attendee_phone=attendee_phone,
@@ -98,5 +98,6 @@ def create_booking(
         attendee_email=attendee_email,
         notes=notes,
         language=lang,
+        origin="chat",
     )
     return msg if ok else msg

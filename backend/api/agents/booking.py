@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import re
 
-from api.cal_booking import create_cal_booking
+from api.agenda.engine import create_booking_from_slot
 
 from .models import AgentState
 from .prompts import ORCHESTRATOR_MESSAGES
@@ -62,7 +62,7 @@ def confirm_booking_from_chat(
     notes_parts.append(f"Adreça inspecció: {addr}")
     notes = "; ".join(notes_parts)
 
-    ok, msg, uid = create_cal_booking(
+    ok, msg, uid = create_booking_from_slot(
         slot_time=slot_time,
         attendee_name=name,
         attendee_phone=phone,
@@ -70,6 +70,7 @@ def confirm_booking_from_chat(
         address=addr,
         notes=notes,
         language=language,
+        origin="chat",
     )
 
     return {

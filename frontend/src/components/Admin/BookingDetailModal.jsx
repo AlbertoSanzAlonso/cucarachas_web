@@ -3,11 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar as CalendarIcon, Clock, User, Trash2, ExternalLink, X, Pencil } from 'lucide-react';
 
 export const getBookingDisplayTitle = (booking) => {
-  const clientName = booking.attendees?.[0]?.name?.trim();
+  const clientName =
+    booking.attendees?.[0]?.name?.trim() ||
+    booking.customerName?.trim();
   if (clientName) {
     return `Primera revisió amb ${clientName}`;
   }
-  return booking.title || 'Visita tècnica';
+  return booking.title || booking.serviceName || 'Visita tècnica';
 };
 
 const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }) => {
@@ -16,7 +18,7 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
   const location =
     typeof booking.location === 'string'
       ? booking.location
-      : booking.metadata?.address;
+      : booking.customerAddress || booking.metadata?.address;
 
   return (
     <AnimatePresence>
@@ -82,7 +84,7 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
               </div>
               <div className="flex items-center text-sm text-primary-gray/60 font-medium">
                 <User size={16} className="mr-3 text-primary-blue shrink-0" />
-                {booking.attendees?.[0]?.name || 'Client'}
+                {booking.attendees?.[0]?.name || booking.customerName || 'Client'}
               </div>
               {location && (
                 <div className="text-xs text-primary-gray/50 font-medium pl-7 leading-relaxed">
@@ -111,11 +113,9 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
                 Cancel·lar
               </button>
               <a
-                href={booking.uid ? `https://app.cal.eu/bookings/${booking.uid}` : '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-primary-gray/60 hover:bg-gray-100 transition-colors font-bold text-sm px-4"
-                title="Obrir a Cal.com"
+                href="#agenda"
+                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-primary-gray/60 font-bold text-sm px-4 pointer-events-none opacity-40"
+                title="Gestionar a l'agenda admin"
               >
                 <ExternalLink size={18} />
               </a>

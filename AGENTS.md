@@ -42,13 +42,9 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 
 **Coolify (Backend):**
 - `DATABASE_URL` = connection string PostgreSQL
-- `CAL_API_KEY` = key de Cal.com (nunca hardcodear en código)
-- `CAL_EVENT_TYPE_ID` = `278962` (primerarevision / primeracita)
-- `CAL_SLOTS_API_VERSION` = `2024-09-04` (GET slots; opcional, default en código)
-- `CAL_BOOKING_API_VERSION` = `2024-08-13` (**obligatorio** para POST crear reservas)
-- `CAL_BOOKING_LOCATION_TYPE` = `attendeeAddress` (default; visitas presenciales)
-- `CAL_BOOKING_INTEGRATION` = vacío salvo que se fuerce videollamada explícitamente
-- `CAL_BASE_URL` = `https://api.cal.eu/v2` (instancia EU)
+- `AGENDA_TIMEZONE` = `Europe/Madrid` (opcional)
+- `AGENDA_SLOT_MINUTES` = `30` (opcional)
+- `AGENDA_DAYS_AHEAD` = `14` (ventana de slots del chat)
 - `DJANGO_SECRET_KEY` = clave secreta Django
 - `OPENAI_API_KEY` = clave de OpenAI (principal para los agentes)
 - `GOOGLE_API_KEY` = clave de Google (usada para Geocoding y fallback de agentes)
@@ -71,7 +67,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 | **Recepcionista** | `receptionist.py` | Primer contacto, detecta intención y capta ciudad/tipo cliente | `ReceptionistOutput` |
 | **Diagnosticador** | `diagnostician.py` | Identifica espècie, severitat, dona Bio-Tips de prevenció | `DiagnosisOutput` |
 | **Presupuestador** | `pricer.py` | Calcula preu basant-se en catàleg oficial, zona i complexitat | `PricingOutput` |
-| **Agendador** | `scheduler.py` | Consulta slots reals a Cal.com i crea reserves confirmades | `SchedulerOutput` |
+| **Agendador** | `scheduler.py` | Consulta slots reals de l'agenda pròpia i crea reserves confirmades | `SchedulerOutput` |
 
 ### Orquestador (LangGraph + Pydantic-AI)
 
@@ -81,7 +77,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
 - **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
 - **Reserva directa**: `booking.py` + `cal_booking.py` — sin LLM cuando el frontend envía `booking` en el body.
-- **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots Cal.com sin LLM) si el mensaje pide cita explícitamente.
+- **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots agenda propia sin LLM) si el mensaje pide cita explícitamente.
 - **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_TIMEOUT_*`.
 - Retorna **siempre** un dict con `message`, `slots`, `booking_confirmed`, `booking_uid`.
 
@@ -93,7 +89,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 | `language` | `ca` / `es` (normalizado en backend) |
 | `source` | `"home"` en FloatingCTA — evita mostrar slots en saludos sin intención de cita |
 | `diagnostic` | Objeto con respuestas del wizard (modal): `who`, `where`, `quantity`, `since`, … |
-| `booking` | `{ slot_time, name, phone, address }` — confirma cita presencial en Cal.com (`attendeeAddress`) |
+| `booking` | `{ slot_time, name, phone, address }` — confirma cita presencial en agenda propia |
 
 Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
@@ -113,7 +109,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Scroll**: `ScrollArea.jsx` + `data-lenis-prevent`; `App.jsx` pausa Lenis con el modal abierto.
 - **Agendar**: envía `diagnostic` a la API; confirmación con `booking` tras elegir slot.
 - **Entrada directa al xat**: Opción "Tinc preguntes / Consultar Agent" en el paso 1.
-- **Slots interactius**: Renderitza disponibilidad real de Cal.com mediante el proxy del backend.
+- **Slots interactius**: Renderitza disponibilitat real de l'agenda pròpia (Django).
 - **Restricciones**: No apareix a `/admin` ni `/login`.
 - **Responsive Pro**: Optimización específica para móviles con logo escalado y sombras laterales sin recortes.
 
@@ -128,14 +124,14 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **i18n**: `agent.welcome_msg_home`, `agent.home.*`; hints a nivel raíz de `agent` en `agent.json`.
 
 
-### Cal.com Integration
+### Agenda propia (sin Cal.com)
 
-- **Event Type ID**: `278962` — **API Key** solo en env (`CAL_API_KEY`).
-- **Slots**: `GET /v2/slots` con `cal-api-version: 2024-09-04` → `cal_client.fetch_available_slots`.
-- **Crear reserva**: `POST /v2/bookings` con `cal-api-version: 2024-08-13` → visita **presencial** (`location.type: attendeeAddress` + adreça del client). El event type `278962` a Cal.com ha de tenir ubicació «Presencial / adreça de l'assistent» (no només videotrucada). `CAL_BOOKING_LOCATION_TYPE=attendeeAddress` (per defecte).
-- **Webhook**: `https://api.cucarachasbarcelona.cat/api/webhooks/cal/` — sincroniza `Cliente` por **teléfono normalizado** (`upsert_cliente_by_phone` en `phone_utils.py`).
-- **Proxy**: `/api/cal/slots/` (público); admin: `/api/cal/bookings/`; geo: `/api/geo/search/`, `/api/geo/reverse/`.
-- Ver skill **`.agents/skills/cal_com/SKILL.md`** para errores típicos.
+- **Fuente de verdad**: modelos Django `AgendaStaff` / `AgendaService` / `AgendaAppointment` / `AgendaTimeBlock` + motor `backend/api/agenda/`.
+- **Slots chat**: `fetch_available_slots` → respuesta `{date, time, slot_time}`; confirmación `create_booking_from_slot` (upsert CRM por teléfono).
+- **API admin** (contrato agenda-kit): `/api/agenda/schedule/day`, `/appointments`, `/schedule/appointments`, `/schedule/blocks`, …
+- **Público**: `GET /api/agenda/slots/`.
+- **UI admin**: `agenda-kit` + `CalendarManager.jsx` (`AdminAgendaWorkspace`), estilos CECSA en `index.css` (`[data-agenda-*]`).
+- Skill: **`.agents/skills/agenda/SKILL.md`**.
 
 ### Geo / mapas (reserva)
 
@@ -147,12 +143,12 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
-- **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja Cal.com por teléfono y email sintético `cita+{dígitos}@cucarachasbarcelona.cat`; pàgina `LeadBookingsPage.jsx`.
+- **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.
 - **Normalització UI**: `frontend/src/utils/leadDisplay.js` — `normalizeLead()`, `formatLeadDate()`. Usar en `DashboardOverview`, `LeadsManager` i `TopBar`.
 - **Overview**: `DashboardOverview.jsx` — stats clicables (Leads → `leads`, Cites → `calendar`); taula «Leads Recents» (4 últims); «Veure tots» i chevron naveguen a Leads.
 - **Leads**: `LeadsManager.jsx` — llistat complet de contactes (nom, email, telèfon, plaga per defecte «Cucarachas», estat «Nou»).
 - **Notificacions**: `TopBar.jsx` — campana amb dropdown de leads recents; enllaç a pestanya Leads.
-- **Agenda**: `CalendarManager.jsx` — llistat Cal.com (`fetch_cal_bookings`, event `278962`); títol card `Primera revisió amb {client}`; cancel·lar per `uid`; enllaç `app.cal.eu`.
+- **Agenda**: `CalendarManager.jsx` — `agenda-kit` (`AdminAgendaWorkspace`) sobre `/api/agenda/*`.
 - El token s'injecta automàticament des de Redux (`auth.token`) a cada petició del dashboard.
 
 ## 🔐 Autenticació (Django DRF Token)
@@ -161,8 +157,8 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Logout**: `POST /api/auth/logout/` amb `Authorization: Token <key>`.
 - **Me**: `GET /api/auth/me/` amb `Authorization: Token <key>`.
 - El frontend guarda el token a `localStorage` amb la clau `cecsa_token`.
-- **Endpoints protegits (admin)**: `/api/clientes/`, `/api/cal/bookings/`, `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
-- **Endpoints públics**: `/api/chat/`, `/api/cal/slots/`, `/api/auth/login/`, `/api/species/`.
+- **Endpoints protegits (admin)**: `/api/clientes/`, `/api/agenda/*` (excepto slots públicos), `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
+- **Endpoints públics**: `/api/chat/`, `/api/agenda/slots/`, `/api/auth/login/`, `/api/species/`.
 - **InsForge NO intervé en cap pas del flux d'autenticació.**
 - **Formulari de contacte**: `ContactForm.jsx` envia `{ nombre, telefono, email }` a `POST /api/clientes/` (dedup per `telefono_norm`) — **pendent** endpoint públic dedicat sense auth admin (`/api/contact/`).
 
@@ -173,7 +169,8 @@ En **`.agents/skills/<carpeta>/SKILL.md`** (versionadas en git). Leer la skill a
 | Skill | Carpeta |
 |-------|---------|
 | **Bio-Assistent** (principal) | `bio_assistant/` (+ `reference.md`) |
-| **Cal.com** | `cal_com/` |
+| **Agenda propia** | `agenda/` |
+| **Cal.com** (deprecado) | `cal_com/` |
 | **CRM Leads** | `crm_leads/` |
 | **Geo / mapas OSM** | `geo_maps/` |
 | **Branding Manager** | `branding_manager/` |

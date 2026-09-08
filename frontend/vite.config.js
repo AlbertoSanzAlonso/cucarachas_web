@@ -10,6 +10,24 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'agenda-kit': path.resolve(__dirname, '../agenda-kit/src'),
+      'agenda-kit/core': path.resolve(__dirname, '../agenda-kit/src/core/index.ts'),
+      'agenda-kit/react': path.resolve(__dirname, '../agenda-kit/src/react/index.ts'),
+      'agenda-kit/adapters': path.resolve(__dirname, '../agenda-kit/src/adapters/index.ts'),
+    },
+  },
+  optimizeDeps: {
+    include: ['agenda-kit'],
+    esbuildOptions: {
+      loader: {
+        '.ts': 'ts',
+        '.tsx': 'tsx',
+      },
+    },
+  },
+  server: {
+    fs: {
+      allow: [path.resolve(__dirname, '..')],
     },
   },
 })

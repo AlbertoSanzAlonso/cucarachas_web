@@ -17,6 +17,7 @@ backend/media/
 
 # Frontend
 frontend/node_modules/
+agenda-kit/node_modules/
 frontend/dist/
 frontend/dist-ssr/
 frontend/*.local

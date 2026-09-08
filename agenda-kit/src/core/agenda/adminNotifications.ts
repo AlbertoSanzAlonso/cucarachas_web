@@ -1,0 +1,571 @@
+import { isColorGroupWashRow } from '../occupancy/occupancy.js'
+import { addDaysToDateString, todayInTimezone } from '../time/index.js'
+import type { Appointment } from '../types/index.js'
+
+export type AdminAppointmentNotificationKind =
+  | 'created'
+  | 'cancelled'
+  | 'modified'
+  | 'series_created'
+  | 'series_ended'
+
+export type AdminAppointmentNotificationItem = {
+  key: string
+  kind: AdminAppointmentNotificationKind
+  id: string
+  date: string
+  staffId: string
+  staffName: string
+  customerName: string
+  customerPhone: string
+  serviceName: string
+  startTime: string
+  timestamp: number
+  seriesId?: string
+  seriesCount?: number
+  seriesEndDate?: string
+  bookingGroupId?: string
+  treatmentCount?: number
+}
+
+export type AppointmentSnapshot = {
+  id: string
+  date: string
+  startTime: string
+  staffId: string
+  staffName: string
+  customerName: string
+  customerPhone: string
+  serviceId: string
+  serviceName: string
+  status: string
+  seriesId: string | null
+  bookingGroupId: string | null
+}
+
+export const ADMIN_APPOINTMENT_NOTIFY_RANGE_DAYS = 90
+export const ADMIN_APPOINTMENT_TOAST_MS = 6_000
+/** Novedades de la campana: se conservan durante 4 horas. */
+export const ADMIN_APPOINTMENT_NOTIFY_MAX_AGE_MS = 4 * 3_600_000
+
+const INBOX_STORAGE_KEY = 'agenda-kit-notify-inbox'
+const LAST_SEEN_STORAGE_KEY = 'agenda-kit-notify-last-seen'
+
+const ACTIVE_STATUSES = new Set(['confirmed', 'pending'])
+
+const NOTIFY_KINDS = new Set<AdminAppointmentNotificationKind>([
+  'created',
+  'cancelled',
+  'modified',
+  'series_created',
+  'series_ended',
+])
+
+function asString(value: unknown, fallback = ''): string {
+  if (typeof value === 'string') return value
+  if (value == null) return fallback
+  return String(value)
+}
+
+function sanitizeNotificationItem(value: unknown): AdminAppointmentNotificationItem | null {
+  if (!value || typeof value !== 'object') return null
+  const raw = value as Record<string, unknown>
+  const kind = raw.kind
+  if (typeof kind !== 'string' || !NOTIFY_KINDS.has(kind as AdminAppointmentNotificationKind)) {
+    return null
+  }
+  const key = asString(raw.key)
+  const id = asString(raw.id)
+  const timestamp = typeof raw.timestamp === 'number' ? raw.timestamp : Number(raw.timestamp)
+  if (!key || !id || !Number.isFinite(timestamp)) return null
+
+  const item: AdminAppointmentNotificationItem = {
+    key,
+    kind: kind as AdminAppointmentNotificationKind,
+    id,
+    date: asString(raw.date),
+    staffId: asString(raw.staffId),
+    staffName: asString(raw.staffName),
+    customerName: asString(raw.customerName),
+    customerPhone: asString(raw.customerPhone),
+    serviceName: asString(raw.serviceName),
+    startTime: asString(raw.startTime),
+    timestamp,
+  }
+  if (typeof raw.seriesId === 'string') item.seriesId = raw.seriesId
+  if (typeof raw.seriesCount === 'number') item.seriesCount = raw.seriesCount
+  if (typeof raw.seriesEndDate === 'string') item.seriesEndDate = raw.seriesEndDate
+  if (typeof raw.bookingGroupId === 'string') item.bookingGroupId = raw.bookingGroupId
+  if (typeof raw.treatmentCount === 'number') item.treatmentCount = raw.treatmentCount
+  return item
+}
+
+export function pruneAdminAppointmentNotifyInbox(
+  items: AdminAppointmentNotificationItem[],
+  now = Date.now(),
+): AdminAppointmentNotificationItem[] {
+  const cutoff = now - ADMIN_APPOINTMENT_NOTIFY_MAX_AGE_MS
+  return items
+    .filter((i) => i.timestamp >= cutoff)
+    .sort((a, b) => b.timestamp - a.timestamp)
+}
+
+export function mergeAdminAppointmentNotifyInbox(
+  ...lists: AdminAppointmentNotificationItem[][]
+): AdminAppointmentNotificationItem[] {
+  const byKey = new Map<string, AdminAppointmentNotificationItem>()
+  for (const list of lists) {
+    for (const item of list) {
+      const prev = byKey.get(item.key)
+      if (!prev || item.timestamp >= prev.timestamp) byKey.set(item.key, item)
+    }
+  }
+  return pruneAdminAppointmentNotifyInbox([...byKey.values()])
+}
+
+export function loadAdminAppointmentNotifyInbox(): AdminAppointmentNotificationItem[] {
+  if (typeof localStorage === 'undefined') return []
+  try {
+    const raw = localStorage.getItem(INBOX_STORAGE_KEY)
+    if (!raw) return []
+    const parsed: unknown = JSON.parse(raw)
+    if (!Array.isArray(parsed)) return []
+    const items: AdminAppointmentNotificationItem[] = []
+    for (const entry of parsed) {
+      const item = sanitizeNotificationItem(entry)
+      if (item) items.push(item)
+    }
+    return pruneAdminAppointmentNotifyInbox(items)
+  } catch {
+    return []
+  }
+}
+
+export function saveAdminAppointmentNotifyInbox(items: AdminAppointmentNotificationItem[]): void {
+  if (typeof localStorage === 'undefined') return
+  try {
+    const pruned = pruneAdminAppointmentNotifyInbox(items)
+    localStorage.setItem(INBOX_STORAGE_KEY, JSON.stringify(pruned))
+  } catch {
+    // Cuota o modo privado: la campana sigue en memoria.
+  }
+}
+
+export function loadAdminAppointmentNotifyLastSeenAt(): number {
+  if (typeof localStorage === 'undefined') return 0
+  try {
+    const raw = localStorage.getItem(LAST_SEEN_STORAGE_KEY)
+    if (!raw) return 0
+    const value = Number(raw)
+    return Number.isFinite(value) ? value : 0
+  } catch {
+    return 0
+  }
+}
+
+export function saveAdminAppointmentNotifyLastSeenAt(timestamp: number): void {
+  if (typeof localStorage === 'undefined') return
+  try {
+    localStorage.setItem(LAST_SEEN_STORAGE_KEY, String(timestamp))
+  } catch {
+    // Silencioso.
+  }
+}
+
+export function clearAdminAppointmentNotifyStorage(): void {
+  if (typeof localStorage === 'undefined') return
+  try {
+    localStorage.removeItem(INBOX_STORAGE_KEY)
+    localStorage.removeItem(LAST_SEEN_STORAGE_KEY)
+  } catch {
+    // Silencioso.
+  }
+}
+
+export function adminAppointmentNotifyDateRange(): { from: string; to: string } {
+  const from = todayInTimezone()
+  return { from, to: addDaysToDateString(from, ADMIN_APPOINTMENT_NOTIFY_RANGE_DAYS) }
+}
+
+export function isTrackableAdminAppointment(apt: Appointment): boolean {
+  if (!apt.staffId) return false
+  return !isColorGroupWashRow(apt.colorGroupRole)
+}
+
+function isActiveAppointmentStatus(status: string): boolean {
+  return ACTIVE_STATUSES.has(status)
+}
+
+export function buildAppointmentSnapshot(apt: Appointment): AppointmentSnapshot | null {
+  if (!isTrackableAdminAppointment(apt)) return null
+  return {
+    id: apt.id,
+    date: apt.date,
+    startTime: apt.startTime,
+    staffId: apt.staffId!,
+    staffName: apt.staffName ?? '',
+    customerName: apt.customerName,
+    customerPhone: apt.customerPhone,
+    serviceId: apt.serviceId,
+    serviceName: apt.serviceName,
+    status: apt.status,
+    seriesId: apt.seriesId ?? null,
+    bookingGroupId: apt.bookingGroupId ?? null,
+  }
+}
+
+function snapshotToNotificationItem(
+  snapshot: AppointmentSnapshot,
+  kind: AdminAppointmentNotificationKind,
+): AdminAppointmentNotificationItem {
+  return {
+    key: `${snapshot.id}-${kind}-${Date.now()}`,
+    kind,
+    id: snapshot.id,
+    date: snapshot.date,
+    staffId: snapshot.staffId,
+    staffName: snapshot.staffName,
+    customerName: snapshot.customerName,
+    customerPhone: snapshot.customerPhone,
+    serviceName: snapshot.serviceName,
+    startTime: snapshot.startTime,
+    timestamp: Date.now(),
+    seriesId: snapshot.seriesId ?? undefined,
+    bookingGroupId: snapshot.bookingGroupId ?? undefined,
+  }
+}
+
+export function detectAppointmentNotificationKind(
+  previous: AppointmentSnapshot | undefined,
+  current: AppointmentSnapshot,
+  isNew: boolean,
+): AdminAppointmentNotificationKind | null {
+  if (isNew) {
+    return isActiveAppointmentStatus(current.status) ? 'created' : null
+  }
+  if (!previous) return null
+
+  const wasActive = isActiveAppointmentStatus(previous.status)
+  const isActive = isActiveAppointmentStatus(current.status)
+
+  if (wasActive && !isActive) return 'cancelled'
+  if (!wasActive) return null
+
+  if (
+    previous.date !== current.date ||
+    previous.startTime !== current.startTime ||
+    previous.staffId !== current.staffId ||
+    previous.serviceId !== current.serviceId
+  ) {
+    return 'modified'
+  }
+
+  return null
+}
+
+function collapseSeriesItems(
+  items: AdminAppointmentNotificationItem[],
+): AdminAppointmentNotificationItem[] {
+  const seriesGroups = new Map<string, AdminAppointmentNotificationItem[]>()
+  const standalone: AdminAppointmentNotificationItem[] = []
+
+  for (const item of items) {
+    if (item.seriesId && item.kind === 'created') {
+      const group = seriesGroups.get(item.seriesId) ?? []
+      group.push(item)
+      seriesGroups.set(item.seriesId, group)
+    } else {
+      standalone.push(item)
+    }
+  }
+
+  for (const [, group] of seriesGroups) {
+    const first = group[0]!
+    standalone.push({
+      ...first,
+      key: `series-${first.seriesId}-created-${Date.now()}`,
+      kind: 'series_created',
+      seriesCount: group.length,
+    })
+  }
+
+  return standalone
+}
+
+function normalizeNotifyPhone(phone: string): string {
+  return phone.replace(/\D/g, '')
+}
+
+function treatmentWeight(item: AdminAppointmentNotificationItem): number {
+  return item.treatmentCount != null && item.treatmentCount > 0 ? item.treatmentCount : 1
+}
+
+function countVisitTreatments(group: AdminAppointmentNotificationItem[]): number {
+  const created = group.filter((item) => item.kind === 'created')
+  const cancelled = group.filter((item) => item.kind === 'cancelled')
+  const modified = group.filter((item) => item.kind === 'modified')
+  const sum = (items: AdminAppointmentNotificationItem[]) =>
+    items.reduce((total, item) => total + treatmentWeight(item), 0)
+
+  if (created.length > 0 && cancelled.length > 0) {
+    return sum(created) || sum(modified) || sum(cancelled)
+  }
+  if (modified.length > 0 && (created.length > 0 || cancelled.length > 0)) {
+    return Math.max(sum(modified), sum(created), sum(cancelled))
+  }
+  return sum(group) || new Set(group.map((item) => item.id)).size
+}
+
+function collapseToVisitNotification(
+  group: AdminAppointmentNotificationItem[],
+): AdminAppointmentNotificationItem {
+  const sorted = [...group].sort(
+    (a, b) => a.startTime.localeCompare(b.startTime) || a.id.localeCompare(b.id),
+  )
+  const kinds = new Set(group.map((item) => item.kind))
+  const hasCancel = kinds.has('cancelled')
+  const hasCreate = kinds.has('created')
+  const hasModified = kinds.has('modified')
+
+  let kind: AdminAppointmentNotificationKind
+  if (hasCancel && (hasCreate || hasModified)) {
+    kind = 'modified'
+  } else if (hasCreate && hasModified) {
+    kind = 'modified'
+  } else if (hasCreate) {
+    kind = 'created'
+  } else if (hasCancel) {
+    kind = 'cancelled'
+  } else {
+    kind = 'modified'
+  }
+
+  const preferred =
+    sorted.find((item) => item.kind === 'created' || item.kind === 'modified') ?? sorted[0]!
+
+  const treatmentCount = countVisitTreatments(group)
+  const bookingGroupId =
+    group.find((item) => item.bookingGroupId)?.bookingGroupId ?? preferred.bookingGroupId
+
+  return {
+    ...preferred,
+    key: `visit-${kind}-${bookingGroupId ?? normalizeNotifyPhone(preferred.customerPhone)}-${preferred.date}-${Date.now()}`,
+    kind,
+    startTime: sorted[0]!.startTime,
+    bookingGroupId,
+    treatmentCount,
+    serviceName:
+      treatmentCount > 1 ? `${treatmentCount} tratamientos` : preferred.serviceName,
+  }
+}
+
+function isRecreateKindMix(kinds: Set<AdminAppointmentNotificationKind>): boolean {
+  return (
+    (kinds.has('cancelled') && (kinds.has('created') || kinds.has('modified'))) ||
+    (kinds.has('created') && kinds.has('modified'))
+  )
+}
+
+function collapseVisitItems(
+  items: AdminAppointmentNotificationItem[],
+): AdminAppointmentNotificationItem[] {
+  const seriesItems = items.filter(
+    (item) => item.kind === 'series_created' || item.kind === 'series_ended',
+  )
+  const rest = items.filter(
+    (item) => item.kind !== 'series_created' && item.kind !== 'series_ended',
+  )
+
+  const byGroupId = new Map<string, AdminAppointmentNotificationItem[]>()
+  const withoutGroup: AdminAppointmentNotificationItem[] = []
+  for (const item of rest) {
+    if (item.bookingGroupId) {
+      const group = byGroupId.get(item.bookingGroupId) ?? []
+      group.push(item)
+      byGroupId.set(item.bookingGroupId, group)
+    } else {
+      withoutGroup.push(item)
+    }
+  }
+
+  const afterGroupCollapse: AdminAppointmentNotificationItem[] = []
+
+  for (const [, group] of byGroupId) {
+    afterGroupCollapse.push(
+      group.length === 1 ? group[0]! : collapseToVisitNotification(group),
+    )
+  }
+
+  const legacyByCustomerDate = new Map<string, AdminAppointmentNotificationItem[]>()
+  for (const item of withoutGroup) {
+    const key = `${normalizeNotifyPhone(item.customerPhone)}|${item.date}`
+    const group = legacyByCustomerDate.get(key) ?? []
+    group.push(item)
+    legacyByCustomerDate.set(key, group)
+  }
+
+  for (const [, group] of legacyByCustomerDate) {
+    if (group.length === 1) {
+      afterGroupCollapse.push(group[0]!)
+      continue
+    }
+    const kinds = new Set(group.map((item) => item.kind))
+    const recreate =
+      isRecreateKindMix(kinds) ||
+      (kinds.size === 1 && (kinds.has('created') || kinds.has('cancelled')))
+    if (recreate) {
+      afterGroupCollapse.push(collapseToVisitNotification(group))
+    } else {
+      afterGroupCollapse.push(...group)
+    }
+  }
+
+  const byCustomerDate = new Map<string, AdminAppointmentNotificationItem[]>()
+  for (const item of afterGroupCollapse) {
+    const key = `${normalizeNotifyPhone(item.customerPhone)}|${item.date}`
+    const group = byCustomerDate.get(key) ?? []
+    group.push(item)
+    byCustomerDate.set(key, group)
+  }
+
+  const result: AdminAppointmentNotificationItem[] = [...seriesItems]
+  for (const [, group] of byCustomerDate) {
+    if (group.length === 1) {
+      result.push(group[0]!)
+      continue
+    }
+    const kinds = new Set(group.map((item) => item.kind))
+    if (isRecreateKindMix(kinds)) {
+      result.push(collapseToVisitNotification(group))
+    } else {
+      result.push(...group)
+    }
+  }
+
+  return result
+}
+
+export function snapshotsFromAppointments(
+  appointments: Iterable<Appointment>,
+): Map<string, AppointmentSnapshot> {
+  const map = new Map<string, AppointmentSnapshot>()
+  for (const apt of appointments) {
+    const snapshot = buildAppointmentSnapshot(apt)
+    if (snapshot) map.set(snapshot.id, snapshot)
+  }
+  return map
+}
+
+export function diffAppointmentSnapshots(
+  previousById: ReadonlyMap<string, AppointmentSnapshot>,
+  appointments: Appointment[],
+): AdminAppointmentNotificationItem[] {
+  const items: AdminAppointmentNotificationItem[] = []
+  const seenIds = new Set<string>()
+  const currentById = snapshotsFromAppointments(appointments)
+
+  const activeRemainingByGroup = new Map<string, number>()
+  for (const snap of currentById.values()) {
+    if (!snap.bookingGroupId || !isActiveAppointmentStatus(snap.status)) continue
+    activeRemainingByGroup.set(
+      snap.bookingGroupId,
+      (activeRemainingByGroup.get(snap.bookingGroupId) ?? 0) + 1,
+    )
+  }
+
+  function kindAfterPartialGroupCancel(
+    kind: AdminAppointmentNotificationKind,
+    bookingGroupId: string | null | undefined,
+  ): AdminAppointmentNotificationKind {
+    if (kind !== 'cancelled' || !bookingGroupId) return kind
+    if ((activeRemainingByGroup.get(bookingGroupId) ?? 0) > 0) return 'modified'
+    return kind
+  }
+
+  for (const apt of appointments) {
+    const current = buildAppointmentSnapshot(apt)
+    if (!current) continue
+    seenIds.add(current.id)
+
+    const previous = previousById.get(current.id)
+    const isNew = previous === undefined
+    const rawKind = detectAppointmentNotificationKind(previous, current, isNew)
+    if (!rawKind) continue
+    const kind = kindAfterPartialGroupCancel(rawKind, current.bookingGroupId)
+
+    if (kind === 'modified' && rawKind === 'cancelled' && current.bookingGroupId) {
+      const remainingSnap = [...currentById.values()].find(
+        (snap) =>
+          snap.bookingGroupId === current.bookingGroupId &&
+          isActiveAppointmentStatus(snap.status),
+      )
+      if (remainingSnap) {
+        const item = snapshotToNotificationItem(remainingSnap, 'modified')
+        const remaining = activeRemainingByGroup.get(current.bookingGroupId) ?? 1
+        if (remaining > 1) {
+          item.treatmentCount = remaining
+          item.serviceName = `${remaining} tratamientos`
+        }
+        items.push(item)
+        continue
+      }
+    }
+
+    items.push(snapshotToNotificationItem(current, kind))
+  }
+
+  for (const [id, previous] of previousById) {
+    if (seenIds.has(id)) continue
+    if (!isActiveAppointmentStatus(previous.status)) continue
+    const kind = kindAfterPartialGroupCancel('cancelled', previous.bookingGroupId)
+    if (kind === 'modified' && previous.bookingGroupId) {
+      const remainingSnap = [...currentById.values()].find(
+        (snap) =>
+          snap.bookingGroupId === previous.bookingGroupId &&
+          isActiveAppointmentStatus(snap.status),
+      )
+      if (remainingSnap) {
+        const item = snapshotToNotificationItem(remainingSnap, 'modified')
+        const remaining = activeRemainingByGroup.get(previous.bookingGroupId) ?? 1
+        if (remaining > 1) {
+          item.treatmentCount = remaining
+          item.serviceName = `${remaining} tratamientos`
+        }
+        items.push(item)
+        continue
+      }
+    }
+    items.push(snapshotToNotificationItem(previous, kind))
+  }
+
+  return collapseVisitItems(collapseSeriesItems(items))
+}
+
+/** Alias de `diffAppointmentSnapshots`. */
+export function buildNotificationsFromSnapshots(
+  previousById: ReadonlyMap<string, AppointmentSnapshot>,
+  appointments: Appointment[],
+): AdminAppointmentNotificationItem[] {
+  return diffAppointmentSnapshots(previousById, appointments)
+}
+
+export function formatAdminAppointmentNotificationTime(startTime: string): string {
+  return startTime.slice(0, 5)
+}
+
+export function adminAppointmentNotificationKindLabel(
+  kind: AdminAppointmentNotificationKind,
+): string {
+  switch (kind) {
+    case 'created':
+      return 'Nueva cita'
+    case 'cancelled':
+      return 'Cita anulada'
+    case 'modified':
+      return 'Cita actualizada'
+    case 'series_created':
+      return 'Serie semanal creada'
+    case 'series_ended':
+      return 'Serie finalizada'
+  }
+}

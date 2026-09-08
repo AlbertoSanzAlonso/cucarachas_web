@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Clock, ExternalLink, MapPin } from 'lucide-react';
+import { Clock, MapPin } from 'lucide-react';
 import { getBookingDisplayTitle } from '@/components/Admin/BookingDetailModal';
 import { getBookingAddress, getBookingStatusClass } from '@/utils/leadBookings';
 
@@ -51,15 +51,9 @@ const LeadBookingCard = ({ booking, index = 0 }) => {
       )}
 
       {booking.uid && (
-        <a
-          href={`https://app.cal.eu/bookings/${booking.uid}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 text-xs font-bold text-primary-blue hover:underline"
-        >
-          <ExternalLink size={14} />
-          Obrir a Cal.com
-        </a>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-primary-gray/30">
+          ID: {booking.uid.slice(0, 8)}…
+        </p>
       )}
     </motion.div>
   );
