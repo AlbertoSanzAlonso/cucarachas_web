@@ -65,6 +65,8 @@ export type AdminDayCalendarProps = {
     columnHeader?: (schedule: StaffDaySchedule) => React.ReactNode
     eventContent?: (apt: DayScheduleAppointment) => React.ReactNode
     blockContent?: (block: DayScheduleBlock) => React.ReactNode
+    /** false = atenuar en UI; la cita sigue ocupando franja */
+    filterAppointment?: (apt: DayScheduleAppointment) => boolean
   }
   onToggleSlot: (staffId: string, staffName: string, time: string) => void
   onPaintSlots: (staffId: string, staffName: string, times: Set<string>) => void
@@ -250,12 +252,14 @@ export function AdminDayCalendar({
                 const visual = getPendingVisualForAppointment(pendingMoveSummary, apt.id)
                 const startTime = visual?.targetStartTime ?? apt.startTime
                 const lane = laneMap.get(apt.id) ?? FULL_WIDTH_LANE
+                const matchesFilter = slots?.filterAppointment?.(apt) ?? true
                 return (
                   <button
                     key={apt.id}
                     type="button"
                     data-agenda-event=""
                     data-appointment-id={apt.id}
+                    data-filtered={matchesFilter ? 'in' : 'out'}
                     className={cn(classNames?.event)}
                     style={{
                       position: 'absolute',
@@ -263,7 +267,8 @@ export function AdminDayCalendar({
                       height: eventHeightPx(apt.durationMinutes, range),
                       left: `${lane.leftPercent}%`,
                       width: `${lane.widthPercent}%`,
-                      zIndex: 3,
+                      zIndex: matchesFilter ? 3 : 1,
+                      opacity: matchesFilter ? undefined : 0.22,
                     }}
                     onClick={() => onEditAppointment(schedule.staffId, apt)}
                     draggable={Boolean(proposeMove) && !gridInteractionsLocked}

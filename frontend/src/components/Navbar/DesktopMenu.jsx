@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
+import { scrollToAnchor } from '@/utils/scrollToAnchor';
 
 const DesktopMenu = ({ menuItems, isScrolled, activeSubmenu, setActiveSubmenu }) => {
   const { t } = useTranslation();
@@ -17,7 +18,11 @@ const DesktopMenu = ({ menuItems, isScrolled, activeSubmenu, setActiveSubmenu })
           onMouseLeave={() => setActiveSubmenu(null)}
         >
           <Link 
-            to={item.path} 
+            to={item.path}
+            onClick={() => {
+              const hash = item.path.split('#')[1];
+              if (hash) scrollToAnchor(hash);
+            }}
             className={`text-sm font-semibold uppercase tracking-widest transition-all duration-300 flex items-center space-x-1 ${isScrolled ? 'text-secondary-gray hover:text-primary-blue' : 'text-white/90 hover:text-white'}`}
           >
             <span>{t(item.key)}</span>
@@ -39,6 +44,10 @@ const DesktopMenu = ({ menuItems, isScrolled, activeSubmenu, setActiveSubmenu })
                     <Link
                       key={sub.key}
                       to={sub.path}
+                      onClick={() => {
+                        const hash = sub.path.split('#')[1];
+                        if (hash) scrollToAnchor(hash);
+                      }}
                       className="flex items-center space-x-3 p-3 rounded-xl hover:bg-bg-light transition-all group"
                     >
                       <div className="w-1 h-1 bg-accent-green rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>

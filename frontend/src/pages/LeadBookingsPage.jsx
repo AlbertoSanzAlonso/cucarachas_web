@@ -35,7 +35,7 @@ const LeadBookingsPage = () => {
   };
 
   const handleBackToLead = () => {
-    navigate('/admin', { state: { selectedLeadId: parsedLeadId, activeTab: 'leads' } });
+    navigate('/admin', { state: { selectedLeadId: parsedLeadId, activeTab: 'clients' } });
   };
 
   const handleSetActiveTab = (tab) => {
@@ -56,7 +56,7 @@ const LeadBookingsPage = () => {
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
-        activeTab="leads"
+        activeTab="clients"
         setActiveTab={handleSetActiveTab}
         handleLogout={handleLogout}
       />
@@ -70,8 +70,8 @@ const LeadBookingsPage = () => {
           setProfileDropdownOpen={setProfileDropdownOpen}
           setIsProfileModalOpen={() => {}}
           setActiveTab={handleSetActiveTab}
-          onSelectLead={(id) => navigate('/admin', { state: { selectedLeadId: id, activeTab: 'leads' } })}
-          onViewAllLeads={() => navigate('/admin', { state: { activeTab: 'leads' } })}
+          onSelectLead={(id) => navigate('/admin', { state: { selectedLeadId: id, activeTab: 'clients' } })}
+          onViewAllLeads={() => navigate('/admin', { state: { activeTab: 'clients' } })}
           handleLogout={handleLogout}
         />
 

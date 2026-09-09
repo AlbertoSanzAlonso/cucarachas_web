@@ -17,8 +17,9 @@ from ..scheduler import scheduler_agent
 from ..crm_agent import crm_agent
 from ..diagnostic_merge import build_case_context, merge_agent_updates
 from ..text_utils import limit_one_question
-from .routing import is_simple_greeting, mentions_pest, is_case_follow_up, is_bare_pest_mention
+from .routing import mentions_pest
 from .state import CECSAGraphState
+from .home_flow import home_scripted_reply
 
 
 def _persist_pricing_to_crm(
@@ -133,11 +134,6 @@ def _is_home_chat(state: CECSAGraphState) -> bool:
     return state.get("source") == "home"
 
 
-def _home_vague_problem(msg_lower: str) -> bool:
-    vague = ("problema", "probleme", "ajuda", "ayuda", "help", "plaga", "incidència", "incidencia")
-    return any(kw in msg_lower for kw in vague) and not mentions_pest(msg_lower)
-
-
 def _resolve_lang(agent: AgentState, state: CECSAGraphState) -> str:
     """Idioma efectivo: estado del agente o petición (UI)."""
     lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
@@ -148,30 +144,7 @@ def _home_fast_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> di
     """Respuestas deterministas para el chat home: una pregunta, sin LLM."""
     if not _is_home_chat(state):
         return None
-
-    msg_lower = state["message"].lower()
-    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
-    agent.language = lang
-
-    if is_simple_greeting(msg_lower):
-        return {
-            "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": msgs["home_greeting_reply"]},
-        }
-
-    if _home_vague_problem(msg_lower):
-        return {
-            "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": msgs["home_ask_pest"]},
-        }
-
-    if is_bare_pest_mention(msg_lower):
-        return {
-            "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": msgs["home_ask_location"]},
-        }
-
-    return None
+    return home_scripted_reply(state, agent, lang)
 
 
 async def receptionist_node(state: CECSAGraphState) -> dict:
@@ -183,9 +156,31 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
         if fast:
             return fast
 
-        context = build_case_context(agent, lang)
         if _is_home_chat(state):
-            context += "\nModo: chat home (widget). Máximo UNA pregunta. Respuesta breve."
+            from .home_flow import home_next_action, home_receptionist_context, home_should_diagnose
+
+            action = home_next_action(agent, state.get("message") or "")
+            if home_should_diagnose(agent, state.get("message") or "") or action == "verdict":
+                return {
+                    "agent_state": agent.model_dump(mode="json"),
+                    "route": "diagnostician",
+                }
+            context = home_receptionist_context(agent, lang, state.get("message") or "")
+            updated, output = await _run_agent(
+                receptionist_agent,
+                context,
+                state,
+                timeout_key="receptionist",
+                use_full_history=False,
+            )
+            agent.history = updated.history
+            reply = limit_one_question(output.message)
+            return {
+                "agent_state": agent.model_dump(mode="json"),
+                "result": {"message": reply},
+            }
+
+        context = build_case_context(agent, lang)
         updated, output = await _run_agent(
             receptionist_agent,
             f"Context actual:\n{context}\n\nMissatge del client: {state['message']}",
@@ -554,7 +549,8 @@ def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, la
     if home:
         msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
         offer = msgs.get("home_cta_offer", "")
-        if offer and offer not in message:
+        already = "inspección" in message.lower() or "inspecció" in message.lower()
+        if offer and offer not in message and not already:
             message = f"{message}\n\n{offer}" if message else offer
     return message
 
@@ -564,20 +560,32 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
     lang = _resolve_lang(agent, state)
     agent.language = lang
     home = _is_home_chat(state)
+    if home:
+        from .home_flow import home_should_diagnose
+
+        if not home_should_diagnose(agent, state.get("message") or ""):
+            fast = _home_fast_reply(state, agent, lang)
+            if fast:
+                return fast
     try:
-        context = build_case_context(agent, lang)
-        msg_label = "Mensaje actual del cliente" if lang == "es" else "Missatge actual del client"
-        context += f"\n\n{msg_label}: {state['message']}"
         if home:
-            context += "\nModo chat home: máximo 1 pregunta, sin listas."
-        lang_rule = "Responde SIEMPRE en castellano." if lang == "es" else "Respon SEMPRE en català."
-        context += f"\n{lang_rule}"
+            from .home_flow import home_llm_context
+
+            context = await sync_to_async(home_llm_context)(
+                agent, lang, state.get("message") or ""
+            )
+        else:
+            context = build_case_context(agent, lang)
+            msg_label = "Mensaje actual del cliente" if lang == "es" else "Missatge actual del client"
+            context += f"\n\n{msg_label}: {state['message']}"
+            lang_rule = "Responde SIEMPRE en castellano." if lang == "es" else "Respon SEMPRE en català."
+            context += f"\n{lang_rule}"
         agent, output = await _run_agent(
             diagnostician_agent,
             context,
             state,
             timeout_key="diagnostician",
-            use_full_history=True,
+            use_full_history=not home,
         )
         message = _format_diagnosis_message(output, home=home, lang=lang) or ORCHESTRATOR_MESSAGES[lang]["fallback"]
         message = limit_one_question(message)
@@ -592,16 +600,38 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
         return updates
     except Exception as e:
         print(f"ERROR diagnostician_node: {e}")
+        if home:
+            from .home_flow import build_home_verdict
+
+            try:
+                agent, message = await sync_to_async(build_home_verdict)(
+                    agent, lang, state.get("message") or ""
+                )
+                return {
+                    "agent_state": agent.model_dump(mode="json"),
+                    "result": {"message": message},
+                }
+            except Exception:
+                pass
         return {"result": {"message": ORCHESTRATOR_MESSAGES[lang]["error_diagnosis"]}}
 
 
 async def crm_node(state: CECSAGraphState) -> dict:
+    """Síntesis interna para CRM; NUNCA sustituye el mensaje al cliente."""
     agent = _agent_state(state)
-    lang = agent.language
+    lang = _resolve_lang(agent, state)
+    agent.language = lang
+    prior = state.get("result") or {}
     try:
+        lang_rule = (
+            "Escribe el summary en castellano."
+            if lang == "es"
+            else "Escriu el summary en català."
+        )
         agent, output = await _run_agent(
             crm_agent,
             (
+                f"Idioma: {lang}. {lang_rule}\n"
                 f"Dades identificades: {agent.pest_type}, Severitat: {agent.severity}. "
                 f"Usuari diu: {state['message']}"
             ),
@@ -610,18 +640,24 @@ async def crm_node(state: CECSAGraphState) -> dict:
             use_full_history=False,
         )
         agent.summary = output.summary
+        if output.technical_notes:
+            notes = list(agent.technical_notes or [])
+            notes.append(f"CRM: {output.technical_notes}")
+            agent.technical_notes = notes[-25:]
         return {
             "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": output.summary},
+            "result": prior,
         }
     except Exception as e:
         print(f"WARNING crm_node: {e}")
-        prior = state.get("result") or {}
-        return {"result": prior}
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": prior,
+        }
 
 
 async def fallback_node(state: CECSAGraphState) -> dict:
-    from .routing import mentions_pest
+    from .routing import is_bare_pest_mention, mentions_pest
 
     agent = _agent_state(state)
     lang = agent.language if agent.language in ("ca", "es") else "ca"
@@ -631,4 +667,7 @@ async def fallback_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": msgs.get("home_ask_pest", msgs["intake_fallback"])}}
     if not mentions_pest(msg_lower):
         return {"result": {"message": msgs.get("intake_fallback", msgs["fallback"])}}
+    # Mención de plaga sin detalles: seguir el hilo, no derivar a humano
+    if is_bare_pest_mention(msg_lower) or _is_home_chat(state):
+        return {"result": {"message": msgs.get("home_ask_location", msgs["intake_fallback"])}}
     return {"result": {"message": msgs["fallback"]}}

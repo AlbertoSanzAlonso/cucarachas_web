@@ -13,6 +13,9 @@ import DashboardOverview from '@/components/Admin/DashboardOverview';
 import WebmailAccess from '@/components/Admin/WebmailAccess';
 import ProfileModal from '@/components/Admin/ProfileModal';
 import CalendarManager from '@/components/Admin/CalendarManager';
+import TechniciansManager from '@/components/Admin/TechniciansManager';
+import ServicesManager from '@/components/Admin/ServicesManager';
+import BlogManager from '@/components/Admin/BlogManager';
 import LeadsManager from '@/components/Admin/LeadsManager';
 import PresupuestosManager from '@/components/Admin/PresupuestosManager';
 
@@ -58,12 +61,12 @@ const AdminDashboard = () => {
 
   const handleSelectLead = (leadId) => {
     setSelectedLeadId(leadId);
-    setActiveTab('leads');
+    setActiveTab('clients');
   };
 
   const handleViewAllLeads = () => {
     setSelectedLeadId(null);
-    setActiveTab('leads');
+    setActiveTab('clients');
   };
 
   const handleSetActiveTab = (tab) => {
@@ -111,7 +114,7 @@ const AdminDashboard = () => {
             onSelectLead={handleSelectLead}
             onViewAllLeads={handleViewAllLeads}
           />
-        ) : activeTab === 'leads' ? (
+        ) : activeTab === 'clients' || activeTab === 'leads' ? (
           <LeadsManager
             leads={leads}
             isLoading={isLoading}
@@ -124,8 +127,14 @@ const AdminDashboard = () => {
           <WebmailAccess />
         ) : activeTab === 'calendar' ? (
           <CalendarManager />
+        ) : activeTab === 'technicians' ? (
+          <TechniciansManager />
+        ) : activeTab === 'services' ? (
+          <ServicesManager />
         ) : activeTab === 'presupuestos' ? (
           <PresupuestosManager />
+        ) : activeTab === 'blog' ? (
+          <BlogManager />
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-center">
             <div className="p-6 bg-gray-100 rounded-full mb-6">

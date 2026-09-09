@@ -1,4 +1,5 @@
 from .auth import auth_login, auth_logout, auth_me
+from .blog import BlogArticleViewSet
 from .crm import (
     SpeciesViewSet, ClienteViewSet, TratamientoViewSet,
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet,
@@ -11,7 +12,9 @@ from .fichas import ficha_wizard_questions
 from .agenda import (
     agenda_auth_verify,
     agenda_admin_staff,
+    agenda_admin_staff_detail,
     agenda_admin_services,
+    agenda_admin_service_detail,
     agenda_admin_categories,
     agenda_schedule_services,
     agenda_schedule_day,

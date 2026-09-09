@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
+import { scrollToAnchor } from '@/utils/scrollToAnchor';
 
 const MobileMenu = ({ 
   mobileMenuOpen, 
@@ -37,7 +38,11 @@ const MobileMenu = ({
             <div className="flex items-center justify-between py-4">
               <Link 
                 to={item.path} 
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  const hash = item.path.split('#')[1];
+                  if (hash) scrollToAnchor(hash);
+                }}
                 className="text-xl font-bold text-primary-gray uppercase tracking-tighter"
               >
                 {t(item.key)}
@@ -64,7 +69,11 @@ const MobileMenu = ({
                     <Link 
                       key={sub.key}
                       to={sub.path}
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        const hash = sub.path.split('#')[1];
+                        if (hash) scrollToAnchor(hash);
+                      }}
                       className="block text-lg font-medium text-secondary-gray/80 italic border-l-2 border-accent-green/30 pl-4 py-1"
                     >
                       {t(sub.key)}

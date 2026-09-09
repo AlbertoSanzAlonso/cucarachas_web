@@ -92,6 +92,23 @@ def test_bare_pest_mention_routes_to_receptionist():
     assert choose_agent_route(state) == "receptionist"
 
 
+def test_stale_session_bare_pest_routes_to_receptionist():
+    """Sesión con city+property_type no debe mandar 'cucarachas' al fallback humano."""
+    from api.agents.chat_intake import ensure_pest_from_message
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        city="Barcelona",
+        property_type="particular",
+        pest_type=PestType.GERMAN_COCKROACH,
+        intent=Intent.DOUBT,
+    )
+    msg = "tengo un problema con cucarachas"
+    agent = ensure_pest_from_message(agent, msg)
+    assert _route(agent, msg) == "receptionist"
+
+
 def test_hola_with_stale_appointment_routes_to_receptionist():
     agent = AgentState(language="es", intent=Intent.APPOINTMENT)
     assert _route(agent, "hola") == "receptionist"

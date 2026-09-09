@@ -231,9 +231,15 @@
       "submit": "Confirmar cita"
     },
     "slots": {
+      "choose_week": "Elige una semana",
       "choose_day": "Elige un día",
       "choose_time": "Elige una hora",
-      "back_to_days": "Volver a los días"
+      "back_to_weeks": "Volver a las semanas",
+      "back_to_days": "Volver a los días",
+      "this_week": "Esta semana",
+      "next_week": "Próxima semana",
+      "week_range": "{{start}} – {{end}}",
+      "week_days_available": "{{count}} días con disponibilidad"
     },
     "chat": {
       "confirm_slot": "Quiero la cita el {{date}} a las {{time}}",

@@ -188,7 +188,7 @@ def evaluate_diagnosis_rules(ficha: FichaServicio, ctx: CaseContext) -> str | No
             best = severity
             best_rank = rank
 
-    quantity = ctx.diagnostic.get("quantity")
+    quantity = ctx.get_field("quantity") or ctx.diagnostic.get("quantity")
     if quantity in _WIZARD_SEVERITY_FROM_QUANTITY:
         sev = _WIZARD_SEVERITY_FROM_QUANTITY[quantity]
         if _SEVERITY_RANK.get(sev, 0) > best_rank:

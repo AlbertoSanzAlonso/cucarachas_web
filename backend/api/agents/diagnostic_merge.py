@@ -227,8 +227,11 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
         if not state.property_type:
             state.property_type = "particular"
 
-    if any(k in low for k in ("empresa", "negoci", "restaurant", "local", "oficina")):
+    if any(k in low for k in ("empresa", "negoci", "negocio", "restaurant", "local", "oficina", "hotel", "bar")):
         state.property_type = "negoci"
+
+    if any(k in low for k in ("comunidad", "comunitat", "vecinos", "veïns", "escalera", "escala")):
+        state.property_type = "comunitat"
 
     if ("marron" in low or "marrón" in low or "marró" in low) and any(
         k in low for k in ("grand", "grande", "grans", "gros", "grossa")

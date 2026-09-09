@@ -1,9 +1,24 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, User, ChevronRight, Search } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
+const formatDate = (value, language) => {
+  if (!value) return '';
+  try {
+    return new Date(`${value}T12:00:00`).toLocaleDateString(
+      language === 'en' ? 'en-GB' : language === 'es' ? 'es-ES' : 'ca-ES',
+      { day: 'numeric', month: 'short', year: 'numeric' }
+    );
+  } catch {
+    return value;
+  }
+};
+
 const BlogGrid = ({ articles, t }) => {
+  const { i18n } = useTranslation();
+
   if (articles.length === 0) {
     return (
       <div className="text-center py-24 space-y-4">
@@ -21,7 +36,7 @@ const BlogGrid = ({ articles, t }) => {
       <AnimatePresence mode="popLayout" initial={false}>
         {articles.map((article, idx) => (
           <motion.article
-            key={article.id}
+            key={article.slug || article.id}
             layout
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -29,30 +44,28 @@ const BlogGrid = ({ articles, t }) => {
             transition={{ duration: 0.4, delay: idx * 0.1 }}
             className="group bg-bg-light rounded-[2.5rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all border border-gray-100 flex flex-col h-full"
           >
-            {/* Image Container */}
-            <div className="relative h-64 overflow-hidden">
-              <img 
-                src={article.image} 
+            <Link to={`/blog/${article.slug}`} className="relative h-64 overflow-hidden block">
+              <img
+                src={article.image}
                 alt={article.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center space-x-2">
-                 <span className="py-1 px-3 bg-accent-green text-primary-blue text-[10px] font-black uppercase rounded-full shadow-lg">
-                   {article.category}
-                 </span>
-                 <span className="py-1 px-3 glass text-white text-[10px] font-black uppercase rounded-full">
-                   {article.readTime}
-                 </span>
+                <span className="py-1 px-3 bg-accent-green text-primary-blue text-[10px] font-black uppercase rounded-full shadow-lg">
+                  {t(`blog.categories.${article.category}`, { defaultValue: article.category })}
+                </span>
+                <span className="py-1 px-3 glass text-white text-[10px] font-black uppercase rounded-full">
+                  {article.read_time || `${article.read_time_minutes} min`}
+                </span>
               </div>
-            </div>
+            </Link>
 
-            {/* Content */}
             <div className="p-8 space-y-4 flex-grow flex flex-col">
               <div className="flex items-center space-x-4 text-[10px] font-bold text-secondary-gray/40 uppercase tracking-widest">
                 <div className="flex items-center space-x-1">
                   <Calendar size={12} />
-                  <span>{article.date}</span>
+                  <span>{formatDate(article.published_at, i18n.language)}</span>
                 </div>
                 <div className="flex items-center space-x-1">
                   <User size={12} />
@@ -60,19 +73,24 @@ const BlogGrid = ({ articles, t }) => {
                 </div>
               </div>
 
-              <h3 className="text-xl font-black text-primary-blue leading-tight tracking-tight group-hover:text-accent-green-hv transition-colors">
-                {article.title}
-              </h3>
+              <Link to={`/blog/${article.slug}`}>
+                <h3 className="text-xl font-black text-primary-blue leading-tight tracking-tight group-hover:text-accent-green-hv transition-colors">
+                  {article.title}
+                </h3>
+              </Link>
 
               <p className="text-sm text-secondary-gray/60 leading-relaxed line-clamp-3">
                 {article.excerpt}
               </p>
 
               <div className="pt-6 mt-auto">
-                <button className="flex items-center space-x-2 text-xs font-black uppercase tracking-[0.2em] text-primary-blue group/btn">
+                <Link
+                  to={`/blog/${article.slug}`}
+                  className="flex items-center space-x-2 text-xs font-black uppercase tracking-[0.2em] text-primary-blue group/btn"
+                >
                   <span>{t('blog.read_more')}</span>
                   <ChevronRight size={16} className="transition-transform group-hover/btn:translate-x-2" />
-                </button>
+                </Link>
               </div>
             </div>
           </motion.article>

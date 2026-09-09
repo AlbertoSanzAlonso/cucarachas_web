@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Lock, User, Eye, EyeOff, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { setCredentials } from '@/store/slices/authSlice';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
+import API_BASE from '@/config/api';
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -76,7 +75,12 @@ const Login = () => {
             <p className="text-primary-gray/40 text-xs font-bold uppercase tracking-[0.2em]">Sistema de Control Sanitari</p>
           </div>
 
-          <h1 className="text-2xl font-black text-primary-gray mb-8 text-center">Accés Professional</h1>
+          <h1 className="text-2xl font-black text-primary-gray mb-2 text-center">Accés Professional</h1>
+          {import.meta.env.DEV && (
+            <p className="text-[10px] text-center text-primary-gray/40 font-mono mb-6 break-all">
+              API: {API_BASE}
+            </p>
+          )}
 
           <AnimatePresence>
             {error && (

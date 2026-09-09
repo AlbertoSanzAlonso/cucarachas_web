@@ -12,6 +12,12 @@
   "dependencies": {
     "@insforge/sdk": "^1.2.4",
     "@reduxjs/toolkit": "^2.11.2",
+    "@tiptap/extension-image": "^3.31.3",
+    "@tiptap/extension-link": "^3.31.3",
+    "@tiptap/extension-placeholder": "^3.31.3",
+    "@tiptap/pm": "^3.31.3",
+    "@tiptap/react": "^3.31.3",
+    "@tiptap/starter-kit": "^3.31.3",
     "agenda-kit": "file:../agenda-kit",
     "autoprefixer": "^10.4.19",
     "axios": "^1.14.0",
@@ -30,10 +36,14 @@
     "react-dom": "^19.2.4",
     "react-helmet-async": "^3.0.0",
     "react-i18next": "^17.0.2",
+    "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.14.1",
+    "rehype-sanitize": "^6.0.0",
+    "remark-gfm": "^4.0.1",
     "tailwind-merge": "^3.5.0",
-    "tailwindcss": "^3.4.15"
+    "tailwindcss": "^3.4.15",
+    "tiptap-markdown": "^0.9.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",

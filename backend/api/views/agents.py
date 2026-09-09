@@ -10,6 +10,7 @@ from ..agents.booking import confirm_booking_from_chat
 from ..agents.chat_intake import apply_chat_intake_from_message, ensure_pest_from_message
 from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state, apply_facts_from_message
 from ..agents.graph.routing import wants_scheduling
+from ..agents.graph.home_flow import reset_stale_home_case
 from ..agents.serialization import normalize_language, state_for_session
 from ..cors_utils import apply_cors_headers
 
@@ -42,9 +43,11 @@ def chat_with_agents(request):
         else:
             orchestrator.state.language = language
 
-        # Chat home (sin formulario): no reutilizar intención de cita de otra visita
-        if request.data.get("source") == "home" and not wants_scheduling(message.lower()):
-            orchestrator.state.intent = Intent.DOUBT
+        # Chat home: no heredar comunidad/dirección/cita de otro chat o del modal
+        if request.data.get("source") == "home":
+            orchestrator.state = reset_stale_home_case(orchestrator.state, message)
+            if not wants_scheduling(message.lower()):
+                orchestrator.state.intent = Intent.DOUBT
 
         diagnostic = request.data.get("diagnostic")
         if isinstance(diagnostic, dict) and diagnostic:

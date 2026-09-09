@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Bell, User as UserIcon, LogOut, MessageSquare } from 'lucide-react';
+import { LayoutDashboard, Bell, User as UserIcon, LogOut, ContactRound } from 'lucide-react';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 import {
   getAdminUserKey,
@@ -32,7 +32,7 @@ const TopBar = ({
   const unreadLeads = useMemo(() => {
     const normalized = (leads || []).map(normalizeLead).filter(Boolean);
     return normalized
-      .filter((lead) => !readLeadIds.has(String(lead.id)))
+      .filter((lead) => lead.crmStatus === 'lead' && !readLeadIds.has(String(lead.id)))
       .slice(0, 5);
   }, [leads, readLeadIds]);
 
@@ -115,7 +115,7 @@ const TopBar = ({
                           className="w-full flex items-start gap-3 px-3 py-3 rounded-xl hover:bg-primary-blue/5 transition-all text-left"
                         >
                           <div className="p-2 bg-primary-blue/10 rounded-xl text-primary-blue shrink-0">
-                            <MessageSquare size={16} />
+                            <ContactRound size={16} />
                           </div>
                           <div className="min-w-0">
                             <p className="font-bold text-sm text-primary-gray truncate">{lead.name}</p>
@@ -132,7 +132,7 @@ const TopBar = ({
                       onClick={handleViewAllLeads}
                       className="w-full mt-2 px-4 py-3 text-primary-blue font-bold text-sm hover:bg-primary-blue/5 rounded-xl transition-all"
                     >
-                      Veure tots els leads
+                      Veure tots els clients
                     </button>
                   )}
                 </motion.div>

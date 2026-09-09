@@ -7,6 +7,7 @@ import Footer from '@/components/Footer';
 import FloatingCTA from '@/components/FloatingCTA';
 import SEO from '@/components/SEO';
 import { SectionSkeleton } from '@/components/Skeleton';
+import { scrollToAnchor } from '@/utils/scrollToAnchor';
 
 // Modular Sections
 import AboutHero from '@/components/About/AboutHero';
@@ -30,12 +31,7 @@ const About = () => {
   useEffect(() => {
     if (location.hash) {
       const id = location.hash.replace('#', '');
-      const element = document.getElementById(id);
-      if (element) {
-        setTimeout(() => {
-          element.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
-      }
+      scrollToAnchor(id);
     } else {
       window.scrollTo(0, 0);
     }

@@ -2,8 +2,23 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+try:
+    import django_stubs_ext
+
+    django_stubs_ext.monkeypatch()
+except ImportError:
+    pass
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Cargar backend/.env en local (no sobrescribe variables ya definidas en el entorno)
+try:
+    from dotenv import load_dotenv
+
+    load_dotenv(BASE_DIR / ".env", override=False)
+except ImportError:
+    pass
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-for-dev')
@@ -145,6 +160,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
 # Whitenoise storage for production
 STORAGES = {
     "default": {
@@ -209,7 +227,7 @@ SESSION_COOKIE_SAMESITE = "Lax" if DEBUG else "None"
 if not DEBUG:
     SESSION_COOKIE_DOMAIN = ".cucarachasbarcelona.cat"
 
-# Email (presupuestos al client)
+# Email (presupuestos + confirmación de citas)
 EMAIL_BACKEND = os.environ.get(
     "EMAIL_BACKEND",
     "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend",
@@ -220,6 +238,7 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True") == "True"
 DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "info@cucarachasbarcelona.cat")
+BOOKING_NOTIFY_EMAIL = os.environ.get("BOOKING_NOTIFY_EMAIL", DEFAULT_FROM_EMAIL)
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = [

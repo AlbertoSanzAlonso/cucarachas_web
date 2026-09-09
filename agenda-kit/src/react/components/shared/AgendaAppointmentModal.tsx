@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { AppointmentDraft } from '../../types.js'
 import type { BookableService } from '../../../core/types/index.js'
 import { useAgendaLabels } from '../../context.js'
@@ -74,7 +75,7 @@ export function AgendaAppointmentModal({
         ? labels.editAppointment
         : labels.editAppointment
 
-  return (
+  return createPortal(
     <div
       data-agenda-appointment-modal=""
       role="dialog"
@@ -83,10 +84,11 @@ export function AgendaAppointmentModal({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 50,
+        zIndex: 110,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 16,
       }}
       onClick={saving ? undefined : onClose}
     >
@@ -277,6 +279,7 @@ export function AgendaAppointmentModal({
           </footer>
         </form>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

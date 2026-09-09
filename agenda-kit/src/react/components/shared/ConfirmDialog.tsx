@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom'
 import { useAgendaLabels } from '../../context.js'
 import { cn } from './classNames.js'
 
@@ -38,7 +39,7 @@ export function ConfirmDialog({
   const labels = useAgendaLabels()
   if (!open) return null
 
-  return (
+  return createPortal(
     <div
       data-agenda-confirm-dialog=""
       role="dialog"
@@ -48,10 +49,11 @@ export function ConfirmDialog({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 70,
+        zIndex: 120,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 16,
       }}
       onClick={busy ? undefined : onClose}
     >
@@ -83,6 +85,7 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

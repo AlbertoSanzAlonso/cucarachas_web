@@ -6,6 +6,13 @@
     "hero_desc": "Explore our articles on technical pest control, environmental well-being, and ethical protocols in Barcelona.",
     "search_placeholder": "Search article...",
     "read_more": "Read more",
+    "back_to_blog": "Back to blog",
+    "article_not_found": "Article not found",
+    "load_error": "Could not load articles",
+    "faq_banner_title": "Have specific questions?",
+    "faq_banner_desc": "Check our FAQ section or contact our technical team.",
+    "faq_banner_cta": "View FAQ",
+    "faq_banner_contact": "Contact",
     "no_results": "No articles found",
     "no_results_desc": "Try other terms or categories",
     "categories": {

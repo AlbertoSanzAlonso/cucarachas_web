@@ -37,11 +37,18 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'ca', // default language
+    // Sin `lng` fijo: LanguageDetector lee localStorage (i18nextLng) al recargar.
     fallbackLng: 'ca',
+    supportedLngs: ['ca', 'es', 'en'],
+    nonExplicitSupportedLngs: true,
     interpolation: {
       escapeValue: false // react already safes from xss
-    }
+    },
+    detection: {
+      order: ['localStorage', 'navigator'],
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+    },
   });
 
 export default i18n;

@@ -3,10 +3,12 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     SpeciesViewSet, ClienteViewSet, TratamientoViewSet,
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet,
-    CitaViewSet, ReporteServicioViewSet, chat_with_agents,
+    CitaViewSet, ReporteServicioViewSet, BlogArticleViewSet,
+    chat_with_agents,
     auth_login, auth_logout, auth_me,
     debug_system, geo_search, geo_reverse, ficha_wizard_questions,
-    agenda_auth_verify, agenda_admin_staff, agenda_admin_services, agenda_admin_categories,
+    agenda_auth_verify, agenda_admin_staff, agenda_admin_staff_detail,
+    agenda_admin_services, agenda_admin_service_detail, agenda_admin_categories,
     agenda_schedule_services, agenda_schedule_day, agenda_schedule_slots,
     agenda_appointments_list, agenda_create_appointment, agenda_update_appointment,
     agenda_cancel_appointment, agenda_no_show, agenda_create_block, agenda_update_block,
@@ -34,6 +36,7 @@ router.register(r'presupuestos', PresupuestoViewSet)
 router.register(r'citas', CitaViewSet)
 router.register(r'reportes', ReporteServicioViewSet)
 router.register(r'knowledge', TechnicalKnowledgeViewSet)
+router.register(r'blog', BlogArticleViewSet, basename='blog')
 
 urlpatterns = [
     path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),
@@ -55,7 +58,9 @@ urlpatterns = [
     # Agenda propia (sustituye Cal.com)
     path('agenda/auth/verify', agenda_auth_verify, name='agenda-auth-verify'),
     path('agenda/admin/staff', agenda_admin_staff, name='agenda-admin-staff'),
+    path('agenda/admin/staff/<str:staff_id>', agenda_admin_staff_detail, name='agenda-admin-staff-detail'),
     path('agenda/admin/services', agenda_admin_services, name='agenda-admin-services'),
+    path('agenda/admin/services/<str:service_id>', agenda_admin_service_detail, name='agenda-admin-service-detail'),
     path('agenda/admin/service-categories', agenda_admin_categories, name='agenda-admin-categories'),
     path('agenda/schedule/day', agenda_schedule_day, name='agenda-schedule-day'),
     path('agenda/schedule/slots', agenda_schedule_slots, name='agenda-schedule-slots'),

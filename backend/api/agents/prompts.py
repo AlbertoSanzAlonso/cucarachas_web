@@ -191,9 +191,28 @@ ORCHESTRATOR_MESSAGES = {
             "Entenc que tens un problema. Quin tipus de plaga has vist?"
         ),
         "home_greeting_reply": "Hola! Explica'm, en què et puc ajudar?",
+        "home_greeting_followup": "Bé! Explica'm, en què et puc ajudar?",
         "home_ask_pest": "Entenc. Has vist paneroles, rosegadors o una altra plaga?",
+        "home_ask_pest_business": (
+            "Perfecte, treballem amb empreses i locals. "
+            "Quina plaga heu vist — paneroles o una altra?"
+        ),
+        "home_ask_pest_community": (
+            "Entesos, comunitat. Quina plaga heu vist a l'edifici?"
+        ),
         "home_ask_location": (
             "Entesos, paneroles. On les has vist — cuina, bany o una altra zona?"
+        ),
+        "home_ask_location_business": (
+            "Entesos, paneroles al local. On les heu vist — cuina, magatzem, lavabos o una altra zona?"
+        ),
+        "home_location_ack": (
+            "Entesos. Amb aquesta ubicació ja podem orientar el cas. "
+            "Quantes n'has vist — poques, diverses o moltes?"
+        ),
+        "home_qty_ack": (
+            "D'acord. Amb aquests avistaments convé actuar aviat, abans que es reprodueixin. "
+            "Et puc agendar una inspecció gratuïta o preparar un pressupost orientatiu."
         ),
         "home_cta_offer": (
             "Si ho prefereixes, pots **agendar una inspecció gratuïta**, demanar **pressupost** o trucar al **933 309 169**."
@@ -247,9 +266,28 @@ ORCHESTRATOR_MESSAGES = {
             "Entiendo que tienes un problema. ¿Qué tipo de plaga has visto?"
         ),
         "home_greeting_reply": "¡Hola! Cuéntame, ¿en qué te puedo ayudar?",
+        "home_greeting_followup": "¡Bien! Dime, ¿en qué te puedo ayudar?",
         "home_ask_pest": "Entiendo. ¿Has visto cucarachas, roedores u otra plaga?",
+        "home_ask_pest_business": (
+            "Perfecto, trabajamos con empresas y locales. "
+            "¿Qué plaga habéis visto — cucarachas u otra?"
+        ),
+        "home_ask_pest_community": (
+            "Entendido, comunidad. ¿Qué plaga habéis visto en el edificio?"
+        ),
         "home_ask_location": (
             "Entendido, cucarachas. ¿Dónde las has visto — cocina, baño u otra zona?"
+        ),
+        "home_ask_location_business": (
+            "Entendido, cucarachas en el local. ¿Dónde las habéis visto — cocina, almacén, baños u otra zona?"
+        ),
+        "home_location_ack": (
+            "Entendido. Con esa ubicación ya podemos orientar el caso. "
+            "¿Cuántas has visto — pocas, varias o muchas?"
+        ),
+        "home_qty_ack": (
+            "De acuerdo. Con esos avistamientos conviene actuar pronto, antes de que se reproduzcan. "
+            "Puedo agendarte una inspección gratuita o preparar un presupuesto orientativo."
         ),
         "home_cta_offer": (
             "Si lo prefieres, puedes **agendar una inspección gratuita**, pedir **presupuesto** o llamar al **933 309 169**."

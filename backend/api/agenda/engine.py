@@ -448,6 +448,15 @@ def update_appointment(apt_id: str, patch: dict[str, Any]) -> Any:
         apt.origin = patch["origin"] or ""
 
     apt.save()
+
+    if (
+        apt.cliente_id
+        and apt.status == AgendaAppointment.Status.COMPLETED
+    ):
+        from api.crm_status import apply_suggested_crm_status
+
+        apply_suggested_crm_status(apt.cliente)
+
     return apt
 
 
@@ -582,14 +591,30 @@ def create_booking_from_slot(
             msg = f"No s'ha pogut crear la reserva ({code})." if lang == "ca" else f"No se pudo crear la reserva ({code})."
         return False, msg, None
 
+    from api.booking_email import send_booking_confirmation_email
+
+    email_sent = send_booking_confirmation_email(apt)
+    email_note_es = (
+        f" Te hemos enviado la confirmación a {attendee_email.strip()}."
+        if email_sent
+        else " Si no recibes el correo, llámanos al 933 309 169."
+    )
+    email_note_ca = (
+        f" T'hem enviat la confirmació a {attendee_email.strip()}."
+        if email_sent
+        else " Si no reps el correu, truca'ns al 933 309 169."
+    )
+
     if lang == "es":
         msg = (
             f"✅ **Cita confirmada** (visita presencial) para {attendee_name.strip()} "
-            f"en {addr}. Te llamaremos al {attendee_phone.strip()} si hace falta algún detalle."
+            f"en {addr}.{email_note_es} "
+            f"Te llamaremos al {attendee_phone.strip()} si hace falta algún detalle."
         )
     else:
         msg = (
             f"✅ **Cita confirmada** (visita presencial) per a {attendee_name.strip()} "
-            f"a {addr}. Et trucarem al {attendee_phone.strip()} si cal algun detall."
+            f"a {addr}.{email_note_ca} "
+            f"Et trucarem al {attendee_phone.strip()} si cal algun detall."
         )
     return True, msg, apt.id

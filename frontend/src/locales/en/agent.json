@@ -54,9 +54,15 @@
       "submit": "Confirm appointment"
     },
     "slots": {
+      "choose_week": "Choose a week",
       "choose_day": "Choose a day",
       "choose_time": "Choose a time",
-      "back_to_days": "Back to days"
+      "back_to_weeks": "Back to weeks",
+      "back_to_days": "Back to days",
+      "this_week": "This week",
+      "next_week": "Next week",
+      "week_range": "{{start}} – {{end}}",
+      "week_days_available": "{{count}} days available"
     },
     "chat": {
       "confirm_slot": "I want the appointment on {{date}} at {{time}}",

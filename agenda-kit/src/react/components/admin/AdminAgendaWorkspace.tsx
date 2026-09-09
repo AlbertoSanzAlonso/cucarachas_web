@@ -34,6 +34,8 @@ export type AdminAgendaWorkspaceProps = {
     eventContent?: (apt: DayScheduleAppointment) => ReactNode
     blockContent?: (block: DayScheduleBlock) => ReactNode
     afterCalendar?: ReactNode
+    /** false = atenuar en UI; la cita sigue ocupando franja */
+    filterAppointment?: (apt: DayScheduleAppointment) => boolean
   }
 }
 
@@ -89,6 +91,7 @@ export function AdminAgendaWorkspace({
               columnHeader: slots?.columnHeader,
               eventContent: slots?.eventContent,
               blockContent: slots?.blockContent,
+              filterAppointment: slots?.filterAppointment,
             }}
             onToggleSlot={agenda.toggleSlot}
             onPaintSlots={agenda.applySlots}

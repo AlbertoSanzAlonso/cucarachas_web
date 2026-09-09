@@ -1,14 +1,16 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Activity, MessageSquare, TrendingUp, ChevronRight, Calendar } from 'lucide-react';
+import { Activity, ContactRound, TrendingUp, ChevronRight, Calendar } from 'lucide-react';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 
 const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLead, onViewAllLeads }) => {
   const normalizedLeads = (leads || []).map(normalizeLead).filter(Boolean);
+  const leadCount = normalizedLeads.filter((l) => l.crmStatus === 'lead').length;
+  const altaCount = normalizedLeads.filter((l) => l.crmStatus === 'alta').length;
 
   const stats = [
-    { id: 'active', title: 'Tractaments Actius', value: '--', icon: <Activity className="text-accent-green" />, trend: '...', tab: null },
-    { id: 'leads', title: 'Leads Pendents', value: String(normalizedLeads.length), icon: <MessageSquare className="text-primary-blue" />, trend: 'Actual', tab: 'leads' },
+    { id: 'active', title: 'Tractaments Actius', value: String(altaCount || '--'), icon: <Activity className="text-accent-green" />, trend: altaCount ? 'Altes' : '...', tab: 'clients' },
+    { id: 'leads', title: 'Leads Pendents', value: String(leadCount), icon: <ContactRound className="text-primary-blue" />, trend: 'Actual', tab: 'clients' },
     { id: 'calendar', title: 'Cites d\'avui', value: '--', icon: <Calendar className="text-accent-green" />, trend: 'Agenda', tab: 'calendar' },
     { id: 'teams', title: 'Equips en Ruta', value: '--', icon: <TrendingUp className="text-primary-blue" />, trend: '...', tab: null },
   ];
@@ -51,7 +53,7 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
         {/* Recent Leads */}
         <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
           <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
-            <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Leads Recents</h2>
+            <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Clients Recents</h2>
             <button
               onClick={onViewAllLeads}
               className="text-primary-blue font-bold text-xs md:text-sm hover:underline"
@@ -75,7 +77,7 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
                 ) : isError ? (
                   <tr><td colSpan="4" className="text-center py-10 text-red-500 font-bold">Error al connectar amb el sistema de control.</td></tr>
                 ) : normalizedLeads.length === 0 ? (
-                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha leads pendents.</td></tr>
+                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha clients registrats.</td></tr>
                 ) : normalizedLeads.slice(0, 4).map((lead) => (
                   <tr
                     key={lead.id}
@@ -101,7 +103,7 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
                           onSelectLead(lead.id);
                         }}
                         className="p-2 hover:bg-primary-blue/5 rounded-xl text-primary-blue transition-colors"
-                        aria-label="Veure lead"
+                        aria-label="Veure client"
                       >
                         <ChevronRight size={20} />
                       </button>

@@ -1,29 +1,27 @@
-const STATUS_STYLES = {
-  urgent: 'bg-red-100 text-red-600',
-  urgente: 'bg-red-100 text-red-600',
-  pending: 'bg-orange-100 text-orange-600',
-  pendiente: 'bg-orange-100 text-orange-600',
-  pendent: 'bg-orange-100 text-orange-600',
-  completed: 'bg-green-100 text-green-600',
-  completado: 'bg-green-100 text-green-600',
-  nou: 'bg-blue-100 text-blue-600',
+const CRM_STATUS_STYLES = {
+  lead: 'bg-orange-100 text-orange-600',
+  alta: 'bg-green-100 text-green-600',
+  baja: 'bg-slate-200 text-slate-600',
 };
 
-const STATUS_LABELS = {
-  urgent: 'Urgent',
-  urgente: 'Urgent',
-  pending: 'Pendent',
-  pendiente: 'Pendent',
-  pendent: 'Pendent',
-  completed: 'Completat',
-  completado: 'Completat',
-  nou: 'Nou',
+const CRM_STATUS_LABELS = {
+  lead: 'Lead',
+  alta: 'Alta',
+  baja: 'Baixa',
 };
+
+export const CRM_STATUS_FILTERS = [
+  { id: 'all', label: 'Tots' },
+  { id: 'lead', label: 'Leads' },
+  { id: 'alta', label: 'Altes' },
+  { id: 'baja', label: 'Baixes' },
+];
 
 export function normalizeLead(lead) {
   if (!lead) return null;
 
-  const rawStatus = (lead.status || 'nou').toLowerCase();
+  const rawStatus = (lead.crm_status || lead.status || 'lead').toLowerCase();
+  const crmStatus = CRM_STATUS_LABELS[rawStatus] ? rawStatus : 'lead';
 
   return {
     id: lead.id,
@@ -32,9 +30,13 @@ export function normalizeLead(lead) {
     phone: lead.telefono || lead.phone || '',
     documentoFiscal: lead.documento_fiscal || '',
     pest: lead.pest_type || lead.type || 'Cucarachas',
-    status: rawStatus,
-    statusLabel: STATUS_LABELS[rawStatus] || lead.status || 'Nou',
-    statusClass: STATUS_STYLES[rawStatus] || 'bg-blue-100 text-blue-600',
+    status: crmStatus,
+    crmStatus,
+    crmStatusLocked: Boolean(lead.crm_status_locked),
+    statusLabel: CRM_STATUS_LABELS[crmStatus],
+    statusClass: CRM_STATUS_STYLES[crmStatus],
+    appointmentsCount: lead.appointments_count ?? 0,
+    lastAppointmentAt: lead.last_appointment_at || null,
     createdAt: lead.created_at,
   };
 }

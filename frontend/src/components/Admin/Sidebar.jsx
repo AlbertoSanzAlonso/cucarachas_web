@@ -3,13 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   X, 
   LayoutDashboard, 
-  MessageSquare, 
   Mail, 
   Calendar, 
   FileText,
   ExternalLink, 
   Settings, 
-  LogOut 
+  LogOut,
+  Users,
+  Wrench,
+  ContactRound,
+  Newspaper
 } from 'lucide-react';
 
 const Sidebar = ({ 
@@ -22,10 +25,18 @@ const Sidebar = ({
   const menuItems = [
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
-    { id: 'leads', icon: <MessageSquare size={20} />, label: 'Leads' },
+    { id: 'clients', icon: <ContactRound size={20} />, label: 'Clients' },
+    { id: 'technicians', icon: <Users size={20} />, label: 'Tècnics' },
+    { id: 'services', icon: <Wrench size={20} />, label: 'Serveis' },
+    { id: 'blog', icon: <Newspaper size={20} />, label: 'Blog' },
     { id: 'presupuestos', icon: <FileText size={20} />, label: 'Pressupostos' },
     { id: 'mail', icon: <Mail size={20} />, label: 'Correu' },
   ];
+
+  const isActive = (id) => {
+    if (id === 'clients') return activeTab === 'clients' || activeTab === 'leads';
+    return activeTab === id;
+  };
 
   return (
     <>
@@ -63,7 +74,7 @@ const Sidebar = ({
             <button 
               key={item.id}
               onClick={() => { setActiveTab(item.id); setSidebarOpen(false); }}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${activeTab === item.id ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
+              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all ${isActive(item.id) ? 'bg-white/10 text-white font-bold' : 'text-white/60 hover:text-white hover:bg-white/5'}`}
             >
               {item.icon}
               <span>{item.label}</span>

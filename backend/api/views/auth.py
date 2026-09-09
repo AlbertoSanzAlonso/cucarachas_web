@@ -2,21 +2,34 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, get_user_model
+
 
 @api_view(['POST'])
 def auth_login(request):
     """Login con email/password → devuelve token DRF."""
-    email = request.data.get('email')
+    email = (request.data.get('email') or '').strip()
     password = request.data.get('password')
-    
+
     if not email or not password:
         return Response({'error': 'Email i contrasenya obligatoris'}, status=400)
-    
-    user = authenticate(request, username=email, password=password)
+
+    User = get_user_model()
+    # El formulario envía email; Django auth usa USERNAME_FIELD (username).
+    login_username = email
+    user_obj = User.objects.filter(email__iexact=email).first()
+    if user_obj:
+        login_username = user_obj.get_username()
+    else:
+        # Permitir también login directo por username
+        user_obj = User.objects.filter(username__iexact=email).first()
+        if user_obj:
+            login_username = user_obj.get_username()
+
+    user = authenticate(request, username=login_username, password=password)
     if not user:
         return Response({'error': 'Correu o contrasenya incorrectes'}, status=401)
-    
+
     token, _ = Token.objects.get_or_create(user=user)
     return Response({
         'token': token.key,

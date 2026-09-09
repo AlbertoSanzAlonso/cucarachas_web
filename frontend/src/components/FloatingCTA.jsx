@@ -4,6 +4,7 @@ import { MessageSquare, Phone, X, Send, Bot, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
+import SlotPicker from '@/components/Agent/Chat/SlotPicker';
 import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 
 const FloatingCTA = () => {
@@ -337,17 +338,12 @@ const FloatingCTA = () => {
                            </div>
                          )}
                          {msg.slots && (
-                           <div className="grid grid-cols-2 gap-3 mt-4 w-full max-w-[320px]">
-                             {msg.slots.map((slot, idx) => (
-                               <button 
-                                 key={idx} 
-                                 onClick={() => handleSlotSelect(slot)}
-                                 className="bg-white hover:bg-accent-green hover:text-primary-blue border border-gray-100 rounded-2xl p-4 text-sm font-black text-secondary-gray transition-all text-center shadow-sm hover:shadow-lg hover:-translate-y-1"
-                               >
-                                 <div className="opacity-40 text-[10px] uppercase mb-1">{slot.date}</div>
-                                 <div>{slot.time}</div>
-                               </button>
-                             ))}
+                           <div className="mt-4 w-full max-w-[320px]">
+                             <SlotPicker
+                               slots={msg.slots}
+                               onSlotSelect={handleSlotSelect}
+                               variant="light"
+                             />
                            </div>
                          )}
                          {msg.showBookingForm && msg.selectedSlot && (

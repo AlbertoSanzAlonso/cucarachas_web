@@ -49,12 +49,40 @@ GREETING_ONLY = (
     "buenos días",
     "buenos dias",
     "buenas",
+    "buenas tardes",
+    "buenas noches",
     "hey",
     "ei",
     "hello",
     "salut",
     "què tal",
     "que tal",
+    "qué tal",
+)
+GREETING_FOLLOWUPS = (
+    "que tal",
+    "qué tal",
+    "què tal",
+    "como estas",
+    "cómo estás",
+    "cómo estas",
+    "com estas",
+    "com va",
+    "qué hay",
+    "que hay",
+)
+GREETING_STARTERS = (
+    "hola",
+    "buenas",
+    "buen dia",
+    "buen día",
+    "buenos dias",
+    "buenos días",
+    "bon dia",
+    "hey",
+    "hello",
+    "ei",
+    "salut",
 )
 SCHEDULING_AFFIRMATIVES = frozenset({
     "si",
@@ -99,10 +127,36 @@ def wants_scheduling(msg_lower: str) -> bool:
 
 
 def is_simple_greeting(msg_lower: str) -> bool:
-    text = msg_lower.strip().rstrip("!?.…")
-    if len(text) > 40:
+    """Saludo corto, incl. 'hola que tal'. No traga un caso ('hola, tengo cucarachas')."""
+    text = msg_lower.strip().rstrip("!?.…,")
+    text = " ".join(text.split())
+    if not text or len(text) > 50:
         return False
-    return text in GREETING_ONLY
+    if text in GREETING_ONLY:
+        return True
+    if mentions_pest(text):
+        return False
+    if any(kw in text for kw in SCHEDULING_KEYWORDS) or any(p in text for p in SCHEDULING_PHRASES):
+        return False
+    if any(kw in text for kw in PRICING_KEYWORDS):
+        return False
+    if any(kw in text for kw in ("problema", "plaga", "ayuda", "ajuda", "cucarach", "panerol")):
+        return False
+    return any(
+        text == starter or text.startswith(starter + " ") or text.startswith(starter + ",")
+        for starter in GREETING_STARTERS
+    )
+
+
+def is_greeting_followup(msg_lower: str) -> bool:
+    text = msg_lower.strip().rstrip("!?.…,")
+    text = " ".join(text.split())
+    return text in GREETING_FOLLOWUPS
+
+
+def is_greeting_opener(msg_lower: str) -> bool:
+    """Inicio de conversación (hola/buenas), no un 'qué tal' de cortesía."""
+    return is_simple_greeting(msg_lower) and not is_greeting_followup(msg_lower)
 
 
 def mentions_pest(msg_lower: str) -> bool:
@@ -298,17 +352,30 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     if pricing_route:
         return pricing_route
 
-    if should_run_intake(agent, diagnostic, msg_lower, missing):
-        return "intake"
-
     if _wants_pricing(agent, diagnostic, msg_lower):
         return "pricer"
+
+    # Widget home: plantillas de intake; el resto lo decide el agente
+    if state.get("source") == "home":
+        from .home_flow import home_should_diagnose
+
+        if home_should_diagnose(agent, message):
+            return "diagnostician"
+        return "receptionist"
+
+    if should_run_intake(agent, diagnostic, msg_lower, missing):
+        return "intake"
 
     if should_diagnose(agent, msg_lower):
         return "diagnostician"
 
     # Mensajes sin plaga concreta (p. ej. "tengo un problema") → recepcionista, no fallback
     if not mentions_pest(msg_lower):
+        return "receptionist"
+
+    # Solo nombra la plaga (p. ej. "tengo un problema con cucarachas") → pedir ubicación,
+    # aunque la sesión tenga city/property_type de un chat o modal anterior.
+    if is_bare_pest_mention(msg_lower):
         return "receptionist"
 
     if not agent.city or not agent.property_type:
@@ -331,6 +398,11 @@ def after_receptionist(state: CECSAGraphState) -> str:
     if pricing_route:
         return pricing_route
 
+    if state.get("source") == "home":
+        if pending == "diagnostician":
+            return "diagnostician"
+        return "done"
+
     if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
@@ -348,6 +420,10 @@ def after_diagnostician(state: CECSAGraphState) -> str:
     from ..config import ENABLE_CRM_SYNTHESIS
 
     if has_wizard_diagnostic(state.get("diagnostic")):
+        return "done"
+
+    # Chat home: no gastar un LLM extra ni sustituir la respuesta al cliente
+    if state.get("source") == "home":
         return "done"
 
     agent = AgentState.model_validate(state.get("agent_state") or {})

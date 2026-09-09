@@ -40,8 +40,8 @@ const PestGrid = () => {
   }, []);
 
   return (
-    <section className="pt-12 md:pt-16 pb-24 bg-bg-light relative overflow-hidden" id="species">
-      <div className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
+    <section className="pt-12 md:pt-16 pb-24 bg-bg-light relative overflow-hidden">
+      <div id="species" className="max-w-7xl mx-auto px-6 text-center space-y-16 relative z-10">
 
 
 

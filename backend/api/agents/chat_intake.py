@@ -140,8 +140,18 @@ def parse_field_value(field: str, message: str) -> Any:
             return "many"
         if any(w in low for w in ("diverses", "varias", "algunes", "algunas", "several")):
             return "several"
-        if any(w in low for w in ("una", "one", "1 ", "1,")):
+        if any(w in low for w in ("pocas", "poques", "poca")):
             return "one"
+        if any(w in low for w in ("una", "one")):
+            return "one"
+        nums = [int(n) for n in re.findall(r"\b(\d{1,3})\b", text)]
+        if nums:
+            n = max(nums)
+            if n <= 2:
+                return "one"
+            if n <= 8:
+                return "several"
+            return "many"
         return None
 
     return text[:200]

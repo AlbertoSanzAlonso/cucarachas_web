@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import (
+    BlogArticle,
     FichaServicio,
     Presupuesto,
     PresupuestoDetalle,
@@ -58,4 +59,13 @@ class FichaServicioAdmin(admin.ModelAdmin):
     list_display = ("codigo", "nombre_comercial", "pest_type", "prioridad_default", "activa", "updated_at")
     list_filter = ("activa", "pest_type", "prioridad_default", "riesgo")
     search_fields = ("codigo", "nombre_comercial")
+    readonly_fields = ("created_at", "updated_at")
+
+
+@admin.register(BlogArticle)
+class BlogArticleAdmin(admin.ModelAdmin):
+    list_display = ("title", "category", "is_published", "published_at", "author")
+    list_filter = ("category", "is_published")
+    search_fields = ("title", "excerpt", "slug")
+    prepopulated_fields = {"slug": ("title",)}
     readonly_fields = ("created_at", "updated_at")

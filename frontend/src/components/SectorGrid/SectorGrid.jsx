@@ -81,8 +81,8 @@ const SectorGrid = () => {
   };
 
   return (
-    <section className="py-32 md:py-40 bg-white" id="sectors">
-      <div className="max-w-7xl mx-auto px-6 text-center space-y-16">
+    <section className="pt-16 pb-32 md:pt-20 md:pb-40 bg-white">
+      <div id="sectors" className="max-w-7xl mx-auto px-6 text-center space-y-16">
         
         <div className="max-w-3xl mx-auto space-y-4">
            <h2 className="text-3xl md:text-5xl font-black text-primary-blue tracking-tight uppercase">

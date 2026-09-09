@@ -30,6 +30,58 @@ def _err(exc: Exception, status: int = 400) -> Response:
     return Response({"error": ERROR_MESSAGES.get(code, code)}, status=status)
 
 
+def _photo_url(request, staff: AgendaStaff) -> str | None:
+    if not staff.photo:
+        return None
+    return request.build_absolute_uri(staff.photo.url)
+
+
+def _staff_public(request, s: AgendaStaff) -> dict:
+    return {
+        "id": s.id,
+        "name": s.name,
+        "role": s.role or None,
+        "active": s.active,
+        "photoUrl": _photo_url(request, s),
+        "serviceIds": list(s.services.values_list("id", flat=True)),
+    }
+
+
+def _parse_service_ids(raw) -> list:
+    if raw is None:
+        return ["primera-revisio"]
+    if isinstance(raw, list):
+        return raw
+    if isinstance(raw, str):
+        import json
+
+        raw = raw.strip()
+        if not raw:
+            return ["primera-revisio"]
+        try:
+            parsed = json.loads(raw)
+            if isinstance(parsed, list):
+                return parsed
+        except json.JSONDecodeError:
+            return [x.strip() for x in raw.split(",") if x.strip()]
+    return ["primera-revisio"]
+
+
+def _apply_staff_photo(request, staff: AgendaStaff) -> None:
+    """Acepta multipart `photo` o flag `clearPhoto`."""
+    clear = request.data.get("clearPhoto")
+    if clear in (True, "true", "1", "yes"):
+        if staff.photo:
+            staff.photo.delete(save=False)
+        staff.photo = None
+        return
+    uploaded = request.FILES.get("photo")
+    if uploaded:
+        if staff.photo:
+            staff.photo.delete(save=False)
+        staff.photo = uploaded
+
+
 def _service_public(s: AgendaService) -> dict:
     return {
         "id": s.id,
@@ -39,7 +91,16 @@ def _service_public(s: AgendaService) -> dict:
         "durationMinutes": s.duration_minutes,
         "categoryId": None,
         "bookingPattern": None,
+        "active": s.active,
     }
+
+
+def _slug_id(name: str, prefix: str) -> str:
+    import re
+    import uuid
+
+    slug = re.sub(r"[^a-z0-9]+", "-", (name or "").lower()).strip("-")[:40] or prefix
+    return f"{slug}-{uuid.uuid4().hex[:6]}"
 
 
 # ── Auth (admin DRF Token) ───────────────────────────────────────────────
@@ -54,25 +115,174 @@ def agenda_auth_verify(request):
 # ── Catálogo ─────────────────────────────────────────────────────────────
 
 
-@api_view(["GET"])
+@api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def agenda_admin_staff(request):
-    staff = AgendaStaff.objects.filter(active=True).order_by("name")
-    return Response(
-        {
-            "staff": [
-                {"id": s.id, "name": s.name, "role": s.role or None}
-                for s in staff
-            ]
-        }
+    if request.method == "GET":
+        include_inactive = request.query_params.get("all") == "1"
+        qs = AgendaStaff.objects.all().order_by("name")
+        if not include_inactive:
+            qs = qs.filter(active=True)
+        return Response(
+            {
+                "staff": [
+                    _staff_public(request, s)
+                    for s in qs.prefetch_related("services")
+                ]
+            }
+        )
+
+    body = request.data or {}
+    name = (body.get("name") or "").strip()
+    if not name:
+        return Response({"error": "El nombre es obligatorio"}, status=400)
+
+    raw_id = (body.get("id") or "").strip()
+    if not raw_id:
+        raw_id = _slug_id(name, "tecnic")
+    if AgendaStaff.objects.filter(id=raw_id).exists():
+        return Response({"error": "Ya existe un técnico con ese id"}, status=400)
+
+    active_raw = body.get("active", True)
+    if isinstance(active_raw, str):
+        active = active_raw.lower() in ("1", "true", "yes", "on")
+    else:
+        active = bool(active_raw)
+
+    staff = AgendaStaff(
+        id=raw_id,
+        name=name,
+        role=(body.get("role") or "").strip(),
+        active=active,
     )
+    _apply_staff_photo(request, staff)
+    staff.save()
+
+    service_ids = _parse_service_ids(body.get("serviceIds"))
+    services = list(AgendaService.objects.filter(id__in=service_ids))
+    if services:
+        staff.services.set(services)
+
+    # Copiar horario del salón como disponibilidad del técnico
+    from api.models import AgendaSalonHours, AgendaStaffAvailability
+
+    for win in AgendaSalonHours.objects.all():
+        AgendaStaffAvailability.objects.get_or_create(
+            staff=staff,
+            day_of_week=win.day_of_week,
+            start_time=win.start_time,
+            defaults={"end_time": win.end_time},
+        )
+
+    return Response({"staff": _staff_public(request, staff)}, status=201)
 
 
-@api_view(["GET"])
+@api_view(["PATCH", "DELETE"])
+@permission_classes([IsAuthenticated])
+def agenda_admin_staff_detail(request, staff_id: str):
+    staff = AgendaStaff.objects.filter(id=staff_id).first()
+    if not staff:
+        return Response({"error": "Técnico no encontrado"}, status=404)
+
+    if request.method == "DELETE":
+        if staff.photo:
+            staff.photo.delete(save=False)
+        staff.delete()
+        return Response(status=204)
+
+    body = request.data or {}
+    if "name" in body and str(body.get("name") or "").strip():
+        staff.name = str(body["name"]).strip()
+    if "role" in body:
+        staff.role = str(body.get("role") or "").strip()
+    if "active" in body:
+        active_raw = body["active"]
+        if isinstance(active_raw, str):
+            staff.active = active_raw.lower() in ("1", "true", "yes", "on")
+        else:
+            staff.active = bool(active_raw)
+
+    _apply_staff_photo(request, staff)
+    staff.save()
+
+    if "serviceIds" in body:
+        service_ids = _parse_service_ids(body.get("serviceIds"))
+        services = list(AgendaService.objects.filter(id__in=service_ids))
+        staff.services.set(services)
+
+    return Response({"staff": _staff_public(request, staff)})
+
+
+
+@api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def agenda_admin_services(request):
-    services = AgendaService.objects.filter(active=True).order_by("name_es")
-    return Response({"services": [_service_public(s) for s in services]})
+    if request.method == "GET":
+        include_inactive = request.query_params.get("all") == "1"
+        qs = AgendaService.objects.all().order_by("name_es")
+        if not include_inactive:
+            qs = qs.filter(active=True)
+        return Response({"services": [_service_public(s) for s in qs]})
+
+    body = request.data or {}
+    name_es = (body.get("nameEs") or body.get("name_es") or "").strip()
+    name_ca = (body.get("nameCa") or body.get("name_ca") or name_es).strip()
+    name_en = (body.get("nameEn") or body.get("name_en") or name_es).strip()
+    if not name_es:
+        return Response({"error": "El nombre (ES) es obligatorio"}, status=400)
+
+    try:
+        duration = int(body.get("durationMinutes") or body.get("duration_minutes") or 60)
+    except (TypeError, ValueError):
+        return Response({"error": "Duración inválida"}, status=400)
+    if duration < 15 or duration > 480:
+        return Response({"error": "Duración entre 15 y 480 minutos"}, status=400)
+
+    raw_id = (body.get("id") or "").strip()
+    if not raw_id:
+        raw_id = _slug_id(name_ca or name_es, "servei")
+    if AgendaService.objects.filter(id=raw_id).exists():
+        return Response({"error": "Ya existe un servicio con ese id"}, status=400)
+
+    service = AgendaService.objects.create(
+        id=raw_id,
+        name_es=name_es,
+        name_en=name_en or name_es,
+        name_ca=name_ca or name_es,
+        duration_minutes=duration,
+        active=bool(body.get("active", True)),
+    )
+    return Response({"service": _service_public(service)}, status=201)
+
+
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def agenda_admin_service_detail(request, service_id: str):
+    service = AgendaService.objects.filter(id=service_id).first()
+    if not service:
+        return Response({"error": "Servicio no encontrado"}, status=404)
+
+    body = request.data or {}
+    if "nameEs" in body or "name_es" in body:
+        val = (body.get("nameEs") or body.get("name_es") or "").strip()
+        if val:
+            service.name_es = val
+    if "nameEn" in body or "name_en" in body:
+        service.name_en = (body.get("nameEn") or body.get("name_en") or "").strip()
+    if "nameCa" in body or "name_ca" in body:
+        service.name_ca = (body.get("nameCa") or body.get("name_ca") or "").strip()
+    if "durationMinutes" in body or "duration_minutes" in body:
+        try:
+            duration = int(body.get("durationMinutes") or body.get("duration_minutes"))
+        except (TypeError, ValueError):
+            return Response({"error": "Duración inválida"}, status=400)
+        if duration < 15 or duration > 480:
+            return Response({"error": "Duración entre 15 y 480 minutos"}, status=400)
+        service.duration_minutes = duration
+    if "active" in body:
+        service.active = bool(body["active"])
+    service.save()
+    return Response({"service": _service_public(service)})
 
 
 @api_view(["GET"])
@@ -160,8 +370,27 @@ def agenda_appointments_list(request):
 @permission_classes([IsAuthenticated])
 def agenda_create_appointment(request):
     body = request.data or {}
-    required = ("staffId", "serviceId", "date", "startTime", "customerName", "customerPhone")
-    if not all(str(body.get(k) or "").strip() for k in required):
+    service_id = body.get("serviceId")
+    if not service_id:
+        ids = body.get("serviceIds") or []
+        if isinstance(ids, list) and ids:
+            service_id = ids[0]
+    customer_name = (body.get("customerName") or "").strip()
+    if not customer_name:
+        first = (body.get("customerFirstName") or "").strip()
+        last = (body.get("customerLastName") or "").strip()
+        customer_name = f"{first} {last}".strip()
+    required_ok = all(
+        [
+            body.get("staffId"),
+            service_id,
+            body.get("date"),
+            body.get("startTime"),
+            customer_name,
+            (body.get("customerPhone") or "").strip(),
+        ]
+    )
+    if not required_ok:
         return Response({"error": "Datos incompletos"}, status=400)
     notes = body.get("notes") or ""
     address = body.get("customerAddress") or body.get("address") or ""
@@ -170,10 +399,10 @@ def agenda_create_appointment(request):
     try:
         apt = engine.create_appointment(
             staff_id=body["staffId"],
-            service_id=body["serviceId"],
+            service_id=service_id,
             day=body["date"],
             start_time=body["startTime"],
-            customer_name=body["customerName"],
+            customer_name=customer_name,
             customer_phone=body["customerPhone"],
             customer_email=body.get("customerEmail") or "",
             customer_address=address,

@@ -170,4 +170,10 @@ def update_presupuesto_from_form(
         presupuesto.estado = estado
 
     presupuesto.save()
+
+    if presupuesto.estado == Presupuesto.Estado.ACEPTADO:
+        from api.crm_status import apply_suggested_crm_status
+
+        apply_suggested_crm_status(presupuesto.cliente)
+
     return presupuesto

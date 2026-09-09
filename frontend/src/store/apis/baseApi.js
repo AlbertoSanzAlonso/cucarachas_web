@@ -1,6 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
-const API_BASE = import.meta.env.VITE_API_URL || 'https://api.cucarachasbarcelona.cat';
+import API_BASE from '@/config/api';
 
 export const baseApi = createApi({
   reducerPath: 'api',
@@ -15,6 +14,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Leads', 'Species', 'Citas', 'Presupuestos'],
+  tagTypes: ['Leads', 'Species', 'Citas', 'Presupuestos', 'Blog'],
   endpoints: () => ({}),
 });

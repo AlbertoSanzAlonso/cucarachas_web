@@ -17,7 +17,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: ['agenda-kit'],
+    include: ['agenda-kit', '@uiw/react-md-editor'],
     esbuildOptions: {
       loader: {
         '.ts': 'ts',

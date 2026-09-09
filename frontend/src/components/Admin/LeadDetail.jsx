@@ -10,16 +10,27 @@ import {
   ArrowUpRight,
   Pencil,
   Trash2,
+  RefreshCcw,
 } from 'lucide-react';
 import LeadEditModal from '@/components/Admin/LeadEditModal';
 import ConfirmModal from '@/components/Admin/ConfirmModal';
 import LeadBookingCard from '@/components/Admin/LeadBookingCard';
-import { useDeleteLeadMutation } from '@/store/apis/leadsApi';
+import {
+  useDeleteLeadMutation,
+  useUpdateLeadStatusMutation,
+  useUnlockLeadStatusMutation,
+} from '@/store/apis/leadsApi';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 import { filterBookingsForLead } from '@/utils/leadBookings';
 import { useCalBookings } from '@/hooks/useCalBookings';
 
 const PREVIEW_BOOKINGS_LIMIT = 3;
+
+const CRM_OPTIONS = [
+  { value: 'lead', label: 'Lead' },
+  { value: 'alta', label: 'Alta' },
+  { value: 'baja', label: 'Baixa' },
+];
 
 const LeadDetail = ({ leadRaw, onBack }) => {
   const lead = normalizeLead(leadRaw);
@@ -27,7 +38,10 @@ const LeadDetail = ({ leadRaw, onBack }) => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
+  const [statusError, setStatusError] = useState(null);
   const [deleteLead, { isLoading: isDeleting }] = useDeleteLeadMutation();
+  const [updateLeadStatus, { isLoading: isUpdatingStatus }] = useUpdateLeadStatusMutation();
+  const [unlockLeadStatus, { isLoading: isUnlocking }] = useUnlockLeadStatusMutation();
 
   const handleCloseDeleteConfirm = () => {
     if (isDeleting) return;
@@ -44,7 +58,33 @@ const LeadDetail = ({ leadRaw, onBack }) => {
     } catch (err) {
       setDeleteError(
         err?.data?.detail ||
-          'No s\'ha pogut eliminar el lead. Pot tenir dades vinculades al sistema.'
+          'No s\'ha pogut eliminar el contacte. Pot tenir dades vinculades al sistema.'
+      );
+    }
+  };
+
+  const handleStatusChange = async (nextStatus) => {
+    if (!leadRaw?.id || nextStatus === lead?.crmStatus) return;
+    setStatusError(null);
+    try {
+      await updateLeadStatus({ id: leadRaw.id, status: nextStatus }).unwrap();
+    } catch (err) {
+      setStatusError(
+        err?.data?.crm_status?.[0] ||
+          err?.data?.detail ||
+          'No s\'ha pogut actualitzar l\'estat CRM.'
+      );
+    }
+  };
+
+  const handleUnlock = async () => {
+    if (!leadRaw?.id) return;
+    setStatusError(null);
+    try {
+      await unlockLeadStatus(leadRaw.id).unwrap();
+    } catch (err) {
+      setStatusError(
+        err?.data?.detail || 'No s\'ha pogut tornar al mode automàtic.'
       );
     }
   };
@@ -52,7 +92,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
   if (!lead) {
     return (
       <div className="text-center py-20 text-primary-gray/40">
-        Lead no trobat.
+        Client no trobat.
         <button onClick={onBack} className="block mx-auto mt-4 text-primary-blue font-bold">
           Tornar
         </button>
@@ -63,6 +103,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
   const leadBookings = filterBookingsForLead(bookings, lead);
   const previewBookings = leadBookings.slice(0, PREVIEW_BOOKINGS_LIMIT);
   const hasMoreBookings = leadBookings.length > PREVIEW_BOOKINGS_LIMIT;
+  const statusBusy = isUpdatingStatus || isUnlocking;
 
   return (
     <div className="animate-fade-in pb-8">
@@ -71,11 +112,10 @@ const LeadDetail = ({ leadRaw, onBack }) => {
         className="flex items-center gap-2 text-primary-blue font-bold text-sm mb-8 hover:underline"
       >
         <ArrowLeft size={18} />
-        Tornar als leads
+        Tornar als clients
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        {/* Lead info */}
         <section className="lg:col-span-1 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
           <div className="p-6 md:p-8 border-b border-gray-50">
             <div className="flex items-start justify-between gap-4 mb-4">
@@ -118,6 +158,43 @@ const LeadDetail = ({ leadRaw, onBack }) => {
           </div>
 
           <div className="p-6 md:p-8 space-y-5">
+            <div>
+              <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-2">
+                Estat CRM
+              </p>
+              <select
+                value={lead.crmStatus}
+                onChange={(e) => handleStatusChange(e.target.value)}
+                disabled={statusBusy}
+                className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 text-sm font-bold text-primary-gray cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {CRM_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+              <div className="mt-2 flex items-center justify-between gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-primary-gray/30">
+                  {lead.crmStatusLocked ? 'Manual' : 'Automàtic'}
+                </p>
+                {lead.crmStatusLocked && (
+                  <button
+                    type="button"
+                    onClick={handleUnlock}
+                    disabled={statusBusy}
+                    className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-primary-blue hover:underline disabled:opacity-40"
+                  >
+                    <RefreshCcw size={12} />
+                    Tornar a automàtic
+                  </button>
+                )}
+              </div>
+              {statusError && (
+                <p className="mt-2 text-xs text-red-500 font-medium">{statusError}</p>
+              )}
+            </div>
+
             {lead.email && (
               <div className="flex items-start gap-3">
                 <Mail size={18} className="text-primary-blue mt-0.5 shrink-0" />
@@ -152,10 +229,16 @@ const LeadDetail = ({ leadRaw, onBack }) => {
                 <p className="text-sm font-medium text-primary-gray">{lead.pest}</p>
               </div>
             </div>
+            <div className="flex items-start gap-3">
+              <Calendar size={18} className="text-primary-blue mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Cites agenda</p>
+                <p className="text-sm font-medium text-primary-gray">{lead.appointmentsCount}</p>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* Appointment history preview */}
         <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
           <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
             <div>
@@ -184,7 +267,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
             ) : isError ? (
               <div className="p-8 bg-red-50 rounded-2xl text-center">
                 <p className="text-red-600 font-bold mb-1">Error de connexió</p>
-                <p className="text-red-400 text-sm">No s&apos;ha pogut obtenir l&apos;historial de Cal.com.</p>
+                <p className="text-red-400 text-sm">No s&apos;ha pogut obtenir l&apos;historial de cites.</p>
               </div>
             ) : leadBookings.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center opacity-50">
@@ -193,7 +276,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
                   Sense cites registrades
                 </p>
                 <p className="text-xs text-primary-gray/40 mt-2 max-w-xs">
-                  Aquest client encara no té reserves vinculades per email o telèfon.
+                  Aquest contacte encara no té reserves vinculades per email o telèfon.
                 </p>
               </div>
             ) : (
@@ -229,7 +312,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
         isOpen={showDeleteConfirm}
         onClose={handleCloseDeleteConfirm}
         onConfirm={handleConfirmDelete}
-        title="Eliminar lead"
+        title="Eliminar contacte"
         message={`Estàs segur que vols eliminar «${lead.name}»? Es perdran les dades del contacte al CRM. Aquesta acció no es pot desfer.`}
         confirmLabel="Sí, eliminar"
         cancelLabel="No, tornar"

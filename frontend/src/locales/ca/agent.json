@@ -225,9 +225,15 @@
       "submit": "Confirmar cita"
     },
     "slots": {
+      "choose_week": "Tria una setmana",
       "choose_day": "Tria un dia",
       "choose_time": "Tria una hora",
-      "back_to_days": "Tornar als dies"
+      "back_to_weeks": "Tornar a les setmanes",
+      "back_to_days": "Tornar als dies",
+      "this_week": "Aquesta setmana",
+      "next_week": "Setmana vinent",
+      "week_range": "{{start}} – {{end}}",
+      "week_days_available": "{{count}} dies amb disponibilitat"
     },
     "chat": {
       "confirm_slot": "Vull la cita el {{date}} a les {{time}}",

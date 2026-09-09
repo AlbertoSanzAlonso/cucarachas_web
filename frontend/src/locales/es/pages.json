@@ -116,6 +116,13 @@
     "hero_desc": "Explora nuestros artículos sobre desinsectación técnica, bienestar ambiental y protocolos éticos en Barcelona.",
     "search_placeholder": "Buscar artículo...",
     "read_more": "Seguir leyendo",
+    "back_to_blog": "Volver al blog",
+    "article_not_found": "Artículo no encontrado",
+    "load_error": "No se han podido cargar los artículos",
+    "faq_banner_title": "¿Tienes dudas específicas?",
+    "faq_banner_desc": "Consulta la sección de preguntas frecuentes o contacta con nuestro equipo técnico.",
+    "faq_banner_cta": "Ver FAQ",
+    "faq_banner_contact": "Contactar",
     "no_results": "No hemos encontrado artículos",
     "no_results_desc": "Prueba con otros términos o categorías",
     "categories": {

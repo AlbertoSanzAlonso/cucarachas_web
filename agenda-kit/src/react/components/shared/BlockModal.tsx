@@ -1,4 +1,5 @@
 import { useState, type ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import type { DayScheduleBlock, PendingBlockGroup } from '../../../core/types/index.js'
 import { useAgendaLabels } from '../../context.js'
 import { ClockTimeInput } from './ClockTimeInput.js'
@@ -67,7 +68,7 @@ export function BlockModal({
     else setLocalNote(value)
   }
 
-  return (
+  return createPortal(
     <div
       data-agenda-block-modal={mode}
       role="dialog"
@@ -76,10 +77,11 @@ export function BlockModal({
       style={{
         position: 'fixed',
         inset: 0,
-        zIndex: 50,
+        zIndex: 110,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        padding: 16,
       }}
       onClick={busy ? undefined : onClose}
     >
@@ -195,6 +197,7 @@ export function BlockModal({
           )}
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }

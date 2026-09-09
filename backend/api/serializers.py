@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (
     Species, Cliente, Tratamiento, Tecnico,
     Ubicacion, Presupuesto, PresupuestoDetalle,
-    Cita, ReporteServicio,
+    Cita, ReporteServicio, BlogArticle,
 )
 from .phone_utils import normalize_phone, upsert_cliente_by_phone
 
@@ -14,6 +14,8 @@ class SpeciesSerializer(serializers.ModelSerializer):
 class ClienteSerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=False, write_only=True)
     phone = serializers.CharField(required=False, write_only=True)
+    appointments_count = serializers.SerializerMethodField()
+    last_appointment_at = serializers.SerializerMethodField()
 
     class Meta:
         model = Cliente
@@ -26,9 +28,33 @@ class ClienteSerializer(serializers.ModelSerializer):
             "phone",
             "telefono_norm",
             "documento_fiscal",
+            "crm_status",
+            "crm_status_locked",
+            "appointments_count",
+            "last_appointment_at",
             "created_at",
         ]
-        read_only_fields = ["id", "telefono_norm", "created_at"]
+        read_only_fields = [
+            "id",
+            "telefono_norm",
+            "created_at",
+            "crm_status_locked",
+            "appointments_count",
+            "last_appointment_at",
+        ]
+
+    def get_appointments_count(self, obj) -> int:
+        value = getattr(obj, "appointments_count", None)
+        if value is not None:
+            return int(value)
+        return obj.agenda_appointments.count()
+
+    def get_last_appointment_at(self, obj):
+        value = getattr(obj, "last_appointment_at", None)
+        if value is not None:
+            return value
+        last = obj.agenda_appointments.order_by("-created_at").values_list("created_at", flat=True).first()
+        return last
 
     def _map_aliases(self, attrs: dict) -> dict:
         data = dict(attrs)
@@ -51,6 +77,8 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         data = self._map_aliases(validated_data)
+        data.pop("crm_status", None)
+        data.pop("crm_status_locked", None)
         telefono = data["telefono"]
         try:
             cliente, _ = upsert_cliente_by_phone(
@@ -65,6 +93,9 @@ class ClienteSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         data = self._map_aliases(validated_data)
+        # crm_status is applied in the viewset (locks automatic mode)
+        data.pop("crm_status", None)
+        data.pop("crm_status_locked", None)
         telefono = data.get("telefono")
         if telefono is not None:
             norm = normalize_phone(telefono)
@@ -142,3 +173,36 @@ class ReporteServicioSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReporteServicio
         fields = '__all__'
+
+
+class BlogArticleSerializer(serializers.ModelSerializer):
+    read_time = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BlogArticle
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "excerpt",
+            "body",
+            "category",
+            "author",
+            "image",
+            "read_time_minutes",
+            "read_time",
+            "published_at",
+            "is_published",
+            "meta_description",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at", "read_time"]
+        extra_kwargs = {
+            "slug": {"required": False, "allow_blank": True},
+        }
+
+    def get_read_time(self, obj) -> str:
+        minutes = obj.read_time_minutes or 1
+        return f"{minutes} min"
+

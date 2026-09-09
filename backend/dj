@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Evita que la terminal de Cursor redirija `python` a cursor.appimage.
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")" && pwd)"
+VENV="$ROOT/.venv"
+PY="$VENV/bin/python3.12"
+SITE="$VENV/lib/python3.12/site-packages"
+ENV_FILE="$ROOT/.env"
+
+if [[ ! -x "$PY" ]]; then
+  echo "No existe $PY. Crea el venv: /usr/bin/python3.12 -m venv --copies .venv && .venv/bin/pip install -r requirements.txt"
+  exit 1
+fi
+
+# Exportar backend/.env (sin override de vars ya definidas)
+if [[ -f "$ENV_FILE" ]]; then
+  set -a
+  # shellcheck disable=SC1090
+  source "$ENV_FILE"
+  set +a
+fi
+
+export VIRTUAL_ENV="$VENV"
+export PATH="$VENV/bin:$PATH"
+export PYTHONPATH="$SITE${PYTHONPATH:+:$PYTHONPATH}"
+
+exec "$PY" "$ROOT/manage.py" "$@"

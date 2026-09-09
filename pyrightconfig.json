@@ -6,7 +6,11 @@
   "executionEnvironments": [
     {
       "root": "backend",
-      "extraPaths": ["backend"]
+      "extraPaths": [
+        "backend",
+        "backend/.venv/lib/python3.12/site-packages"
+      ],
+      "pythonVersion": "3.12"
     }
   ]
 }
