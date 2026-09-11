@@ -6,6 +6,16 @@ export function getFixedHeaderOffset() {
   return Math.round(nav.getBoundingClientRect().bottom) + HEADER_GAP_PX;
 }
 
+/** Scroll al top; Lenis ignora window.scrollTo, hay que usar su API. */
+export function scrollToTop({ immediate = true } = {}) {
+  const lenis = window.lenis;
+  if (lenis) {
+    lenis.scrollTo(0, { immediate, force: true });
+    return;
+  }
+  window.scrollTo(0, 0);
+}
+
 export function scrollToAnchor(id, { retries = 30 } = {}) {
   const element = document.getElementById(id);
   if (!element) {

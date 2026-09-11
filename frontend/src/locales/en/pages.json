@@ -7,6 +7,8 @@
     "search_placeholder": "Search article...",
     "read_more": "Read more",
     "back_to_blog": "Back to blog",
+    "open_image": "Open image fullscreen",
+    "close_image": "Close image",
     "article_not_found": "Article not found",
     "load_error": "Could not load articles",
     "faq_banner_title": "Have specific questions?",
@@ -88,7 +90,7 @@
         "id": 4,
         "category": "preus",
         "question": "What is the average price of a service in Barcelona?",
-        "answer": "The cost depends on the magnitude of the infestation and the square footage. For a standard home, prices start at €85. We offer a fixed-price quote without commitment after a telephone diagnosis."
+        "answer": "Cost depends on species, size and infestation level. We give an indicative valuation via chat or a technical visit; we do not lock a price without enough data."
       },
       {
         "id": 5,

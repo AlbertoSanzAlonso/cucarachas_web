@@ -18,9 +18,16 @@ export const useAgentChat = (i18n, answers, path) => {
   const buildDiagnosticPayload = useCallback(() => {
     const a = answersRef.current;
     if (!a || !Object.keys(a).length) return undefined;
+    // Chat libre desde el modal: no enviar diagnóstico vacío/chat_direct
+    const meaningful = Object.entries(a).some(([key, val]) => {
+      if (val == null || val === '') return false;
+      if (key === 'who' && val === 'chat_direct') return false;
+      return true;
+    });
+    if (!meaningful) return undefined;
     return {
-      path: pathRef.current || a.who || 'general',
-      who: a.who,
+      path: pathRef.current || (a.who !== 'chat_direct' ? a.who : null) || 'general',
+      who: a.who === 'chat_direct' ? undefined : a.who,
       where: a.where || a.where_empresa || a.where_admin || a.where_comunidad,
       quantity: a.quantity,
       level: a.level,

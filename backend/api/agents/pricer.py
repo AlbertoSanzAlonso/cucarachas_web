@@ -59,6 +59,30 @@ async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
 
 
 @pricer_agent.tool
+async def search_commercial_policy(ctx: RunContext[AgentState]) -> str:
+    """Política comercial CECSA desde BD (perfil + RAG categoría comercial). Sin costes internos."""
+    from api.agents.company_knowledge import format_commercial_policy
+    from knowledge.retriever import retrieve_relevant_knowledge
+
+    lang = ctx.deps.language if ctx.deps else "ca"
+    pest = ctx.deps.pest_type.value if ctx.deps and ctx.deps.pest_type else ""
+    prop = ctx.deps.property_type or ""
+    query = f"presupuesto {pest} {prop} bar preventivo certificado DDD garantia"
+
+    def _load() -> str:
+        from_db = format_commercial_policy(lang)
+        rag = retrieve_relevant_knowledge(query, limit=3, category="comercial")
+        parts = []
+        if from_db:
+            parts.append(f"--- Política CompanyProfile ---\n{from_db}")
+        if rag and "No s'han trobat" not in rag and "No s'ha pogut" not in rag:
+            parts.append(rag)
+        return "\n\n".join(parts) if parts else "Sin política comercial en BD."
+
+    return await sync_to_async(_load)()
+
+
+@pricer_agent.tool
 async def get_official_prices(ctx: RunContext[AgentState]) -> str:
     """Llista de tractaments i preus base de CECSA."""
 

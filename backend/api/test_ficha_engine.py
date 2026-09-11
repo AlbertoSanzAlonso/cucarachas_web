@@ -147,9 +147,23 @@ class FichaEngineTests(TestCase):
         result = evaluate_ficha_pricing(agent, diagnostic, lang="es")
         self.assertIsNotNone(result)
         assert result is not None
-        self.assertFalse(result.can_quote)
-        self.assertTrue(result.schedule_inspection)
+        # Sin m²: rango orientativo de la ficha (no inventar visita ni histórico plano)
+        self.assertTrue(result.can_quote)
+        self.assertEqual(result.price_range_min, 220.0)
+        self.assertEqual(result.price_range_max, 250.0)
         self.assertLess(result.confidence, 70)
+        self.assertFalse(result.use_llm)
+
+    def test_pricing_sin_m2_con_zona_sigue_orientativo(self):
+        agent = self._agent(chat_diagnostic={"where": "cocina", "quantity": "many"})
+        diagnostic = {"path": "particular", "where": "cocina", "quantity": "many"}
+        result = evaluate_ficha_pricing(agent, diagnostic, lang="es")
+        self.assertIsNotNone(result)
+        assert result is not None
+        self.assertTrue(result.can_quote)
+        self.assertEqual(result.price_range_min, 220.0)
+        self.assertEqual(result.price_range_max, 250.0)
+        self.assertTrue(any("orientativo" in b.lower() for b in result.breakdown))
 
     def test_severity_mapping(self):
         self.assertEqual(severity_to_agent("high"), Severity.HIGH)

@@ -117,6 +117,8 @@
     "search_placeholder": "Buscar artículo...",
     "read_more": "Seguir leyendo",
     "back_to_blog": "Volver al blog",
+    "open_image": "Abrir imagen a pantalla completa",
+    "close_image": "Cerrar imagen",
     "article_not_found": "Artículo no encontrado",
     "load_error": "No se han podido cargar los artículos",
     "faq_banner_title": "¿Tienes dudas específicas?",
@@ -173,7 +175,7 @@
         "id": 4,
         "category": "preus",
         "question": "¿Cuál es el precio medio de un servicio en Barcelona?",
-        "answer": "El coste depende de la magnitud de la infestación y los metros cuadrados. Para una vivienda estándar, los precios comienzan desde los 85€. Ofrecemos presupuesto cerrado sin compromiso tras un diagnóstico telefónico."
+        "answer": "El coste depende de la especie, la superficie y el nivel de infestación. Te damos una valoración orientativa por el chat o con visita técnica; no cerramos precio sin datos suficientes."
       },
       {
         "id": 5,

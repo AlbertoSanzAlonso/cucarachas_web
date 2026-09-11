@@ -117,6 +117,8 @@
     "search_placeholder": "Buscar article...",
     "read_more": "Seguir llegint",
     "back_to_blog": "Tornar al blog",
+    "open_image": "Obrir imatge a pantalla completa",
+    "close_image": "Tancar imatge",
     "article_not_found": "Article no trobat",
     "load_error": "No s'han pogut carregar els articles",
     "faq_banner_title": "Tens dubtes específics?",
@@ -173,7 +175,7 @@
         "id": 4,
         "category": "preus",
         "question": "Quin és el preu mitjà d'un servei a Barcelona?",
-        "answer": "El cost depèn de la magnitud de la infestació i els metres quadrats. Per a un habitatge estàndard, els preus comencen des dels 85€. Oferim pressupost tancat sense compromís després d'una diagnosi telefònica."
+        "answer": "El cost depèn de l'espècie, la superfície i el nivell d'infestació. Et donem una valoració orientativa pel xat o amb visita tècnica; no tanquem preu sense dades suficients."
       },
       {
         "id": 5,

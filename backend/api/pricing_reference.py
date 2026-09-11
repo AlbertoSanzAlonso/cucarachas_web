@@ -85,11 +85,15 @@ def _apply_filters(qs: QuerySet, **filters) -> QuerySet:
 
 def find_similar_references(agent: AgentState, limit: int = 8) -> list[PresupuestoReferencia]:
     """Busca presupuestos históricos parecidos al caso actual del chat."""
+    if not agent.pest_type:
+        # Sin plaga, cualquier histórico sería un falso "caso similar"
+        return []
+
     qs = PresupuestoReferencia.objects.all()
     if not qs.exists():
         return []
 
-    pest = agent.pest_type.value if agent.pest_type else ""
+    pest = agent.pest_type.value
     severity = agent.severity.value if agent.severity else ""
     city = (agent.city or "").split(",")[0].strip()
 

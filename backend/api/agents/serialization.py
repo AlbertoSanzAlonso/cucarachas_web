@@ -4,7 +4,7 @@ from typing import Any, List
 from pydantic_ai.messages import ModelMessage
 from pydantic import TypeAdapter
 
-from .models import AgentState
+from .models import AgentState, Language
 
 messages_adapter = TypeAdapter(List[ModelMessage])
 
@@ -29,7 +29,7 @@ def state_for_session(state: AgentState) -> dict:
     return make_json_safe(state.model_dump(mode="json"))
 
 
-def normalize_language(language: str | None) -> str:
+def normalize_language(language: str | None) -> Language:
     """El backend solo soporta ca/es; el frontend puede enviar 'en' o variantes regionales."""
     if not language:
         return "ca"

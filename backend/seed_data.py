@@ -155,11 +155,44 @@ def seed():
                     "trigger": "solo una visita",
                     "respuesta_ca": (
                         "Podem fer una única actuació, tot i que la recomanació professional són dos tractaments, "
-                        "ja que és l'única forma d'oferir una garantia completa i reduir el risc de reaparició."
+                        "ja que és la forma d'oferir garantia de solució segons condicions i reduir el risc de reaparició."
                     ),
                     "respuesta_es": (
                         "Podemos realizar una única actuación, aunque nuestra recomendación profesional son dos tratamientos, "
-                        "ya que es la única forma de ofrecer una garantía completa y reducir significativamente el riesgo de reaparición."
+                        "ya que es la forma de ofrecer garantía de solución según condiciones y reducir el riesgo de reaparición."
+                    ),
+                },
+                {
+                    "trigger": "caro",
+                    "respuesta_ca": (
+                        "Entenem que el pressupost pot ser una dificultat. Preferim una visita tècnica per ajustar "
+                        "espècie, focus i abast abans d'oferir un tractament més barat que no resolgui el problema."
+                    ),
+                    "respuesta_es": (
+                        "Entendemos que el presupuesto puede ser una dificultad. Preferimos una visita técnica para ajustar "
+                        "especie, focos y alcance antes de ofrecer un tratamiento más barato que no resuelva el problema."
+                    ),
+                },
+                {
+                    "trigger": "más barato",
+                    "respuesta_ca": (
+                        "Si el preu és el principal problema, podem fer una visita tècnica i proposar la solució "
+                        "més ajustada que puguem garantir tècnicament, sense prometre una rebaixa a cegues."
+                    ),
+                    "respuesta_es": (
+                        "Si el precio es el principal problema, podemos hacer una visita técnica y proponer la solución "
+                        "más ajustada que podamos garantizar técnicamente, sin prometer una rebaja a ciegas."
+                    ),
+                },
+                {
+                    "trigger": "barato",
+                    "respuesta_ca": (
+                        "Si el preu és el principal problema, podem fer una visita tècnica i proposar la solució "
+                        "més ajustada que puguem garantir tècnicament."
+                    ),
+                    "respuesta_es": (
+                        "Si el precio es el principal problema, podemos hacer una visita técnica y proponer la solución "
+                        "más ajustada que podamos garantizar técnicamente."
                     ),
                 },
             ],
@@ -184,8 +217,8 @@ def seed():
             ],
             "prioridad_default": "alta",
             "sistema_recomendado": {
-                "recomendar": ["gel", "trampas", "monitorización", "certificado APPCC"],
-                "no_recomendar": ["pulverizar en cocina abierta"],
+                "recomendar": ["gel", "trampas", "monitorización", "seguimiento", "programa eliminación"],
+                "no_recomendar": ["pulverizar en cocina abierta", "solo certificado preventivo DDD"],
             },
             "tiempo_medio": {"visita_1": 60, "visita_2": 45},
             "material_medio": ["6 trampas", "40g gel", "monitorización HACCP"],
@@ -202,18 +235,94 @@ def seed():
             ],
             "copy_comercial": {
                 "ca": (
-                    "Per a negocis i hotels, recomanem un pla de control integrat amb gel, trampes de "
-                    "monitorització i informe tècnic per a la teva inspecció sanitària, amb certificat CECSA."
+                    "Amb infestació activa (p. ex. panerola germànica) cal un programa d'eliminació amb "
+                    "actuacions i seguiment, no un certificat preventiu DDD. El preu es confirma amb diagnòstic "
+                    "i històric; si falta abast, fem visita tècnica."
                 ),
                 "es": (
-                    "Para negocios y hoteles, recomendamos un plan de control integrado con gel, trampas de "
-                    "monitorización e informe técnico para tu inspección sanitaria, con certificado CECSA."
+                    "Con infestación activa (p. ej. cucaracha germánica) hace falta un programa de eliminación con "
+                    "actuaciones y seguimiento, no un certificado preventivo DDD. El precio se confirma con diagnóstico "
+                    "e histórico; si falta alcance, hacemos visita técnica."
                 ),
             },
-            "objeciones": [],
+            "objeciones": [
+                {
+                    "trigger": "certificado",
+                    "respuesta_ca": (
+                        "Si ja hi ha paneroles actives, el certificat preventiu DDD no resol el problema. "
+                        "Cal un programa d'eliminació; et demanem dades o visita tècnica per valorar-lo."
+                    ),
+                    "respuesta_es": (
+                        "Si ya hay cucarachas activas, el certificado preventivo DDD no resuelve el problema. "
+                        "Hace falta un programa de eliminación; te pedimos datos o visita técnica para valorarlo."
+                    ),
+                },
+                {
+                    "trigger": "caro",
+                    "respuesta_ca": (
+                        "Entenem la preocupació pel preu. Preferim visita tècnica per ajustar el programa "
+                        "d'eliminació abans d'oferir un servei preventiu més barat que no elimini la plaga."
+                    ),
+                    "respuesta_es": (
+                        "Entendemos la preocupación por el precio. Preferimos visita técnica para ajustar el programa "
+                        "de eliminación antes de ofrecer un servicio preventivo más barato que no elimine la plaga."
+                    ),
+                },
+            ],
             "venta_cruzada": [],
             "seguimiento": {"24h": "whatsapp", "7d": "email", "30d": "email"},
             "garantia_meses": 12,
+        },
+        {
+            "codigo": "CUC-DDD-PREV",
+            "nombre_comercial": "Prevención y certificado DDD (sin infestación activa)",
+            "pest_type": "",
+            "tipos_cliente": ["negoci"],
+            "lugares": ["cocina", "almacen", "banos", "clientes"],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "metros_cuadrados", "certificate"],
+            },
+            "reglas_diagnostico": [],
+            "prioridad_default": "media",
+            "sistema_recomendado": {
+                "recomendar": ["monitorización", "certificado DDD", "prevención"],
+                "no_recomendar": ["programa eliminación germánica sin plaga activa"],
+            },
+            "tiempo_medio": {"visita_1": 45},
+            "material_medio": ["trampas monitorización", "informe DDD"],
+            "riesgo": "bajo",
+            "dificultad": 2,
+            "coste_interno": {},
+            "reglas_comerciales": [
+                {"action": "visita_tecnica"},
+            ],
+            "bloqueos_presupuesto": [],
+            "copy_comercial": {
+                "ca": (
+                    "Servei preventiu amb certificat DDD per a establiments sense infestació activa. "
+                    "Si detectem panerola germànica activa, cal passar al programa d'eliminació."
+                ),
+                "es": (
+                    "Servicio preventivo con certificado DDD para establecimientos sin infestación activa. "
+                    "Si detectamos cucaracha germánica activa, hay que pasar al programa de eliminación."
+                ),
+            },
+            "objeciones": [
+                {
+                    "trigger": "cucarach",
+                    "respuesta_ca": (
+                        "Si ja veus paneroles, aquest servei preventiu no és l'adequat: cal un programa d'eliminació. "
+                        "Explica'ns on apareixen i des de quan, o demana visita tècnica."
+                    ),
+                    "respuesta_es": (
+                        "Si ya ves cucarachas, este servicio preventivo no es el adecuado: hace falta un programa de eliminación. "
+                        "Cuéntanos dónde aparecen y desde cuándo, o pide visita técnica."
+                    ),
+                },
+            ],
+            "venta_cruzada": [],
+            "seguimiento": {"30d": "email"},
+            "garantia_meses": 6,
         },
     ]
 

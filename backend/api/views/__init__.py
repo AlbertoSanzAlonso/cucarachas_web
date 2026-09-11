@@ -9,6 +9,7 @@ from .agents import chat_with_agents
 from .debug import debug_system
 from .geo import geo_search, geo_reverse
 from .fichas import ficha_wizard_questions
+from .company import company_public, faq_list
 from .agenda import (
     agenda_auth_verify,
     agenda_admin_staff,

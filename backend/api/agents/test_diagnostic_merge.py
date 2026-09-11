@@ -16,6 +16,13 @@ def test_apply_facts_identifies_american_cockroach():
     assert state.pest_type == PestType.AMERICAN_COCKROACH
 
 
+def test_apply_facts_captures_phone():
+    state = AgentState(language="ca")
+    apply_facts_from_message(state, "mi teléfono es 612345678")
+    assert state.chat_diagnostic.get("telefono") == "612345678"
+    assert any("Telèfon:" in n for n in state.technical_notes)
+
+
 def test_merge_agent_updates_preserves_history():
     base = AgentState(language="ca", history=[{"role": "user", "content": "hola"}])
     updates = AgentState(language="ca", city="Barcelona", severity=Severity.MEDIUM)

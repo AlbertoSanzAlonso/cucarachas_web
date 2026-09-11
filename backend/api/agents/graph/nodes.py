@@ -15,7 +15,7 @@ from ..diagnostician import diagnostician_agent
 from ..pricer import pricer_agent
 from ..scheduler import scheduler_agent
 from ..crm_agent import crm_agent
-from ..diagnostic_merge import build_case_context, merge_agent_updates
+from ..diagnostic_merge import merge_agent_updates
 from ..text_utils import limit_one_question
 from .routing import mentions_pest
 from .state import CECSAGraphState
@@ -134,10 +134,12 @@ def _is_home_chat(state: CECSAGraphState) -> bool:
     return state.get("source") == "home"
 
 
-def _resolve_lang(agent: AgentState, state: CECSAGraphState) -> str:
+def _resolve_lang(agent: AgentState, state: CECSAGraphState):
     """Idioma efectivo: estado del agente o petición (UI)."""
-    lang = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
-    return lang if lang in ("ca", "es") else "ca"
+    from api.agents.serialization import normalize_language
+
+    raw = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
+    return normalize_language(raw if isinstance(raw, str) else "ca")
 
 
 def _home_fast_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
@@ -151,6 +153,7 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
     agent = _agent_state(state)
     lang = _resolve_lang(agent, state)
     agent.language = lang
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
     try:
         fast = _home_fast_reply(state, agent, lang)
         if fast:
@@ -158,44 +161,102 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
 
         if _is_home_chat(state):
             from .home_flow import home_next_action, home_receptionist_context, home_should_diagnose
+            from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
+            from .routing import wants_pricing_message
 
-            action = home_next_action(agent, state.get("message") or "")
-            if home_should_diagnose(agent, state.get("message") or "") or action == "verdict":
+            message = state.get("message") or ""
+            action = home_next_action(agent, message)
+            if home_should_diagnose(agent, message) or action == "verdict":
                 return {
                     "agent_state": agent.model_dump(mode="json"),
                     "route": "diagnostician",
                 }
-            context = home_receptionist_context(agent, lang, state.get("message") or "")
+            if wants_pricing_message(message):
+                agent.intent = Intent.QUOTE
+                needed = next_pricing_intake_field(agent, state.get("diagnostic"))
+                if needed:
+                    agent.pending_intake_field = needed if needed != "pest" else "pest"
+            context = home_receptionist_context(agent, lang, message)
             updated, output = await _run_agent(
                 receptionist_agent,
                 context,
                 state,
                 timeout_key="receptionist",
-                use_full_history=False,
+                use_full_history=True,
             )
+            pest_before = agent.pest_type
+            pending_before = agent.pending_intake_field
+            agent = merge_agent_updates(agent, output.collected_data)
             agent.history = updated.history
+            if agent.pest_type and not pest_before:
+                from .routing import affirms_pest_presence, mentions_pest
+
+                msg_lower = message.lower()
+                if not (
+                    mentions_pest(msg_lower)
+                    or (pending_before == "pest" and affirms_pest_presence(msg_lower))
+                ):
+                    agent.pest_type = None
             reply = limit_one_question(output.message)
-            return {
+            payload: dict[str, Any] = {
                 "agent_state": agent.model_dump(mode="json"),
                 "result": {"message": reply},
             }
+            if output.next_agent == "pricer" and has_pricing_case_details(
+                agent, state.get("diagnostic")
+            ):
+                payload["route"] = "pricer"
+            elif output.next_agent == "pricer":
+                field = next_pricing_intake_field(agent, state.get("diagnostic")) or "pest"
+                agent.pending_intake_field = field if field != "pest" else "pest"
+                payload["agent_state"] = agent.model_dump(mode="json")
+            return payload
 
-        context = build_case_context(agent, lang)
+        from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
+        from .routing import wants_pricing_message
+
+        message = state.get("message") or ""
+        if wants_pricing_message(message):
+            agent.intent = Intent.QUOTE
+        from api.agents.case_context import build_shared_case_context
+
+        context = build_shared_case_context(agent, lang, message, role="receptionist")
+        pest_before = agent.pest_type
+        pending_before = agent.pending_intake_field
         updated, output = await _run_agent(
             receptionist_agent,
-            f"Context actual:\n{context}\n\nMissatge del client: {state['message']}",
+            context,
             state,
             timeout_key="receptionist",
         )
         agent = merge_agent_updates(_agent_state(state), output.collected_data)
         agent.history = updated.history
 
+        # No aceptar plaga inventada por el LLM si el usuario no la ha confirmado
+        if agent.pest_type and not pest_before:
+            msg_lower = message.lower()
+            from .routing import affirms_pest_presence, mentions_pest
+
+            confirmed = mentions_pest(msg_lower) or (
+                pending_before == "pest" and affirms_pest_presence(msg_lower)
+            )
+            if not confirmed:
+                agent.pest_type = None
+
         next_route = None
         if output.next_agent == "scheduler":
             agent.intent = Intent.APPOINTMENT
             next_route = "scheduler"
-        elif output.next_agent in ("diagnostician", "pricer"):
-            next_route = output.next_agent
+        elif output.next_agent == "diagnostician":
+            next_route = "diagnostician"
+        elif output.next_agent == "pricer":
+            if has_pricing_case_details(agent, state.get("diagnostic")):
+                next_route = "pricer"
+            else:
+                # Criterio del LLM: conservar su pregunta; no plantilla ni pricer
+                field = next_pricing_intake_field(agent, state.get("diagnostic")) or "pest"
+                agent.pending_intake_field = field if field != "pest" else "pest"
+                agent.intent = Intent.QUOTE
 
         reply = limit_one_question(output.message)
         payload: dict[str, Any] = {
@@ -274,10 +335,10 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             return fast
 
     try:
-        context = (
-            f"Context del client: Plaga identificada: {agent.pest_type or 'no especificada'}, "
-            f"Severitat: {agent.severity}, Ciutat: {agent.city or 'Barcelona'}. "
-            f"Missatge: {state['message']}"
+        from api.agents.case_context import build_shared_case_context
+
+        context = build_shared_case_context(
+            agent, lang, state.get("message") or "", role="scheduler"
         )
         agent, output = await _run_agent(
             scheduler_agent,
@@ -322,6 +383,14 @@ async def intake_node(state: CECSAGraphState) -> dict:
 
     if not missing:
         agent.pending_intake_field = None
+        from api.agents.chat_intake import next_pricing_intake_field
+
+        needed = next_pricing_intake_field(agent, diagnostic)
+        if needed:
+            # Criterio del recepcionista en lugar de plantilla fija
+            agent.pending_intake_field = needed if needed != "pest" else "pest"
+            agent.intent = Intent.QUOTE
+            return await receptionist_node({**state, "agent_state": agent.model_dump(mode="json")})
         if wants_price:
             return await pricer_node({**state, "agent_state": agent.model_dump(mode="json")})
         return {
@@ -355,6 +424,15 @@ async def pricer_node(state: CECSAGraphState) -> dict:
     diagnostic = build_unified_diagnostic(agent, state.get("diagnostic") or {})
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
 
+    # Sin detalle de caso: el recepcionista orquesta con criterio (no plantilla)
+    from api.agents.chat_intake import next_pricing_intake_field
+
+    missing_field = next_pricing_intake_field(agent, state.get("diagnostic"))
+    if missing_field:
+        agent.pending_intake_field = missing_field if missing_field != "pest" else "pest"
+        agent.intent = Intent.QUOTE
+        return await receptionist_node({**state, "agent_state": agent.model_dump(mode="json")})
+
     def _confidence_badge(confidence: float) -> str:
         if confidence >= 95:
             return msgs["confidence_green"].format(pct=int(confidence))
@@ -363,7 +441,20 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         return msgs["confidence_red"].format(pct=int(confidence))
 
     try:
-        from api.ficha_engine import evaluate_ficha_pricing, severity_to_agent
+        from api.ficha_engine import evaluate_ficha_pricing, find_ficha, match_objection, severity_to_agent
+
+        ficha_for_obj = await sync_to_async(find_ficha)(agent, diagnostic)
+        if ficha_for_obj:
+            objection = await sync_to_async(match_objection)(
+                ficha_for_obj,
+                state.get("message", ""),
+                lang,
+            )
+            if objection:
+                return {
+                    "agent_state": agent.model_dump(mode="json"),
+                    "result": {"message": objection},
+                }
 
         ficha_result = await sync_to_async(evaluate_ficha_pricing)(
             agent,
@@ -372,7 +463,8 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             lang=lang,
         )
 
-        if ficha_result and not ficha_result.use_llm:
+        # Ficha con precio, bloqueo o visita: no saltar al histórico genérico por use_llm
+        if ficha_result and (ficha_result.can_quote or ficha_result.schedule_inspection):
             if ficha_result.severity:
                 sev = severity_to_agent(ficha_result.severity)
                 if sev:
@@ -430,7 +522,11 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 "result": {"message": msg},
             }
 
-        context = f"Plaga: {agent.pest_type}. Gravedad: {agent.severity}. Ciudad: {agent.city}."
+        from api.agents.case_context import build_shared_case_context
+
+        context = build_shared_case_context(
+            agent, lang, state.get("message") or "", role="pricer"
+        )
         if ficha_result:
             from api.ficha_engine import find_ficha, format_ficha_context
 
@@ -547,11 +643,8 @@ def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, la
         parts.append(questions[0])
     message = "\n\n".join(parts)
     if home:
-        msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
-        offer = msgs.get("home_cta_offer", "")
-        already = "inspección" in message.lower() or "inspecció" in message.lower()
-        if offer and offer not in message and not already:
-            message = f"{message}\n\n{offer}" if message else offer
+        # En home no empujar CTA genérico: el contexto ya decide cuándo ofrecer cita
+        pass
     return message
 
 
@@ -575,11 +668,11 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
                 agent, lang, state.get("message") or ""
             )
         else:
-            context = build_case_context(agent, lang)
-            msg_label = "Mensaje actual del cliente" if lang == "es" else "Missatge actual del client"
-            context += f"\n\n{msg_label}: {state['message']}"
-            lang_rule = "Responde SIEMPRE en castellano." if lang == "es" else "Respon SEMPRE en català."
-            context += f"\n{lang_rule}"
+            from api.agents.case_context import build_shared_case_context
+
+            context = build_shared_case_context(
+                agent, lang, state.get("message") or "", role="diagnostician"
+            )
         agent, output = await _run_agent(
             diagnostician_agent,
             context,
@@ -628,13 +721,14 @@ async def crm_node(state: CECSAGraphState) -> dict:
             if lang == "es"
             else "Escriu el summary en català."
         )
+        from api.agents.case_context import build_shared_case_context
+
+        crm_ctx = build_shared_case_context(
+            agent, lang, state.get("message") or "", role="crm"
+        )
         agent, output = await _run_agent(
             crm_agent,
-            (
-                f"Idioma: {lang}. {lang_rule}\n"
-                f"Dades identificades: {agent.pest_type}, Severitat: {agent.severity}. "
-                f"Usuari diu: {state['message']}"
-            ),
+            f"{crm_ctx}\n{lang_rule}",
             state,
             timeout_key="crm",
             use_full_history=False,
@@ -667,7 +761,7 @@ async def fallback_node(state: CECSAGraphState) -> dict:
         return {"result": {"message": msgs.get("home_ask_pest", msgs["intake_fallback"])}}
     if not mentions_pest(msg_lower):
         return {"result": {"message": msgs.get("intake_fallback", msgs["fallback"])}}
-    # Mención de plaga sin detalles: seguir el hilo, no derivar a humano
+    # Mención de plaga sin detalles: pedir tipo de inmueble antes que cocina/baño
     if is_bare_pest_mention(msg_lower) or _is_home_chat(state):
-        return {"result": {"message": msgs.get("home_ask_location", msgs["intake_fallback"])}}
+        return {"result": {"message": msgs.get("home_ask_property", msgs.get("home_ask_location", msgs["intake_fallback"]))}}
     return {"result": {"message": msgs["fallback"]}}

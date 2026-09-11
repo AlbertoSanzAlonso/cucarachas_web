@@ -160,16 +160,71 @@ def _eval_condition(condition: dict, ctx: CaseContext) -> bool:
 
 def find_ficha(agent: AgentState, diagnostic: dict | None = None) -> FichaServicio | None:
     diagnostic = diagnostic or {}
+    ctx = CaseContext(agent, diagnostic)
+    client_type = ctx.client_type
+
+    # Bars/locales: preventivo+certificado DDD vs eliminación con infestación
+    if client_type == "negoci" and _wants_preventive_ddd(ctx):
+        prev = FichaServicio.objects.filter(activa=True, codigo="CUC-DDD-PREV").first()
+        if prev:
+            return prev
+
     qs = FichaServicio.objects.filter(activa=True)
     if agent.pest_type:
         qs = qs.filter(pest_type=agent.pest_type.value)
 
-    client_type = CaseContext(agent, diagnostic).client_type
     for ficha in qs:
         tipos = ficha.tipos_cliente or []
         if not tipos or client_type in tipos:
             return ficha
     return None
+
+
+def _wants_preventive_ddd(ctx: CaseContext) -> bool:
+    """True si el negocio pide preventivo/certificado sin infestación activa clara."""
+    blob = ctx.text_blob
+    infestation_keys = (
+        "cucarach",
+        "panerol",
+        "infest",
+        "germán",
+        "german",
+        "germànic",
+        "actividad",
+        "activitat",
+        "las veo",
+        "les veig",
+        "plaga activa",
+    )
+    clear_no_pest = (
+        "sense plaga",
+        "sin plaga",
+        "no veo",
+        "no hi ha",
+        "no hay",
+        "preventiv",
+        "certificat",
+        "certificado",
+        "ddd",
+        "manteniment",
+        "mantenimiento",
+    )
+    has_infestation = any(k in blob for k in infestation_keys)
+    wants_prev = any(k in blob for k in clear_no_pest)
+
+    cert = str(ctx.get_field("certificate") or "").lower()
+    level = str(ctx.get_field("level") or "").lower()
+    sanitary = str(ctx.get_field("sanitary_risk") or "").lower()
+
+    if cert in ("yes", "si", "sí", "true", "1") and not has_infestation:
+        return True
+    if level in ("preventivo", "preventiu", "bajo", "baix", "monitor"):
+        return True
+    if sanitary in ("bajo", "baix", "none", "cap", "no") and wants_prev:
+        return True
+    if wants_prev and not has_infestation:
+        return True
+    return False
 
 
 def evaluate_diagnosis_rules(ficha: FichaServicio, ctx: CaseContext) -> str | None:
@@ -234,14 +289,29 @@ def _apply_commercial_rules(
             breakdown.append(f"Tractament {ficha.nombre_comercial}: {price:.0f}€")
 
     if final_price is None and not schedule_inspection:
-        prices = [
+        # Sin m² u otra condición: rango orientativo con todos los precios de la ficha
+        conditional_prices = [
+            float(r["precio_venta"])
+            for r in (ficha.reglas_comerciales or [])
+            if r.get("precio_venta") is not None
+        ]
+        unconditional = [
             float(r["precio_venta"])
             for r in (ficha.reglas_comerciales or [])
             if r.get("precio_venta") is not None and not r.get("condition")
         ]
+        prices = unconditional or conditional_prices
         if prices:
             price_min = min(prices)
             price_max = max(prices)
+            if price_min == price_max:
+                # Un solo ancla: abrir banda ±12% para no fingir precio cerrado
+                price_min = round(price_min * 0.88, -1)
+                price_max = round(price_max * 1.12, -1)
+            breakdown.append(
+                f"{ficha.nombre_comercial}: {price_min:.0f}–{price_max:.0f}€ "
+                f"(orientativo; m² y visita afinan el total)"
+            )
 
     return final_price, price_min, price_max, breakdown, schedule_inspection
 
@@ -338,12 +408,12 @@ def evaluate_ficha_pricing(
     confidence = _compute_confidence(ficha, ctx, has_price)
     tier = _confidence_tier(confidence)
 
-    if tier == "red" or not has_price:
+    if not has_price:
         return FichaPricingResult(
             ficha_codigo=ficha.codigo,
             can_quote=False,
             confidence=confidence,
-            use_llm=confidence >= 50,
+            use_llm=False,
             commercial_copy=copy,
             recommended_system=recommended,
             severity=severity,
@@ -351,15 +421,16 @@ def evaluate_ficha_pricing(
             guarantee_months=guarantee,
         )
 
+    # Hay precio/rango de ficha: cotizar siempre (el badge refleja la confianza real)
     if final_price is not None:
         return FichaPricingResult(
             ficha_codigo=ficha.codigo,
             can_quote=True,
             confidence=confidence,
-            use_llm=tier == "yellow",
+            use_llm=False,
             final_price=final_price,
-            price_range_min=final_price if tier == "green" else final_price * 0.95,
-            price_range_max=final_price if tier == "green" else final_price * 1.05,
+            price_range_min=final_price if tier == "green" else round(final_price * 0.92, -1),
+            price_range_max=final_price if tier == "green" else round(final_price * 1.12, -1),
             breakdown=breakdown or [f"Tractament {ficha.nombre_comercial}"],
             commercial_copy=copy,
             recommended_system=recommended,
@@ -371,7 +442,7 @@ def evaluate_ficha_pricing(
         ficha_codigo=ficha.codigo,
         can_quote=True,
         confidence=confidence,
-        use_llm=tier == "yellow",
+        use_llm=False,
         price_range_min=price_min,
         price_range_max=price_max,
         breakdown=breakdown or [f"Tractament {ficha.nombre_comercial}"],
@@ -400,16 +471,12 @@ def format_ficha_context(ficha: FichaServicio, lang: str = "ca") -> str:
     sistema = ficha.sistema_recomendado or {}
     rec = ", ".join(sistema.get("recomendar") or [])
     no_rec = ", ".join(sistema.get("no_recomendar") or [])
-    coste = ficha.coste_interno or {}
-    coste_total = sum(float(v) for v in coste.values() if v)
     lines = [
         f"Ficha: {ficha.codigo} — {ficha.nombre_comercial}",
         f"Sistema recomendado: {rec}",
     ]
     if no_rec:
         lines.append(f"No recomendar: {no_rec}")
-    if coste_total:
-        lines.append(f"Coste interno referencia: {coste_total:.0f}€")
     if copy:
         lines.append(f"Copy comercial: {copy}")
     return "\n".join(lines)

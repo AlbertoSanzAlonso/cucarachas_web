@@ -1,11 +1,16 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Send, MapPin, Loader2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
 
 const ChatInput = ({ inputValue, setInputValue, onSendMessage }) => {
   const { t } = useTranslation();
   const [isLocating, setIsLocating] = useState(false);
+  const inputRef = useRef(null);
+
+  const handleSubmit = (e) => {
+    onSendMessage(e);
+    requestAnimationFrame(() => inputRef.current?.focus());
+  };
 
   const handleGetLocation = () => {
     if (!navigator.geolocation) {
@@ -61,7 +66,7 @@ const ChatInput = ({ inputValue, setInputValue, onSendMessage }) => {
 
   return (
     <div className="p-4 bg-white/5 border-t border-white/10">
-      <form onSubmit={onSendMessage} className="relative flex items-center">
+      <form onSubmit={handleSubmit} className="relative flex items-center">
         <button 
           type="button" 
           onClick={handleGetLocation}
@@ -71,7 +76,8 @@ const ChatInput = ({ inputValue, setInputValue, onSendMessage }) => {
         >
           {isLocating ? <Loader2 size={20} className="animate-spin" /> : <MapPin size={20} />}
         </button>
-        <input 
+        <input
+          ref={inputRef}
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={t('agent.chat_placeholder', 'Escribe tu mensaje...')}

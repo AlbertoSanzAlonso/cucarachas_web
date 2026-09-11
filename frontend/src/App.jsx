@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardSkeleton } from '@/components/Skeleton';
 import AgentHeroModal from '@/components/Agent/AgentHeroModal';
 import SmoothScroll from '@/components/SmoothScroll';
+import { scrollToTop } from '@/utils/scrollToAnchor';
 import './index.css';
 
 const Home = lazy(() => import('@/pages/Home'));
@@ -69,6 +70,12 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
   const showAgentModal = isAgentOpen && location.pathname === '/' && !isAdminRoute;
+
+  // Lenis no respeta window.scrollTo; al cambiar de ruta hay que ir al top vía su API.
+  React.useEffect(() => {
+    if (location.hash) return;
+    scrollToTop();
+  }, [location.pathname]);
 
   return (
     <SmoothScroll>

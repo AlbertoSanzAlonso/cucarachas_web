@@ -19,18 +19,87 @@ SCHEDULING_KEYWORDS = (
     "agendar la meva",
     "agendar mi",
 )
-PRICING_KEYWORDS = ("pressupost", "presupuesto", "precio", "preu", "cuánto", "cuanto", "quanto")
+PRICING_KEYWORDS = (
+    "pressupost",
+    "presupuesto",
+    "precio",
+    "precios",
+    "preu",
+    "preus",
+    "presu",  # abrev. «presupuesto»
+    "presup",
+    "pressu",
+    "cuánto",
+    "cuanto",
+    "quanto",
+    "cuesta",
+)
+
+# Tokens cortos: solo coincidencia exacta (evitar «presidente» ⊃ «presi»)
+_PRICING_EXACT_TOKENS = frozenset({"presi", "presu", "presup", "pressu", "preu", "preus"})
+_PRICING_STEMS = ("presupuest", "pressupost", "presup", "presu", "pressu", "preci", "preu")
+_PRICING_STEM_EXCLUDE = frozenset(
+    {
+        "presion",
+        "presión",
+        "presiones",
+        "presunto",
+        "presunta",
+        "presidente",
+        "presidenta",
+        "presidencia",
+        "presidencial",
+        "presidenciales",
+    }
+)
+
+
+def wants_pricing_message(message: str) -> bool:
+    """Detecta petición de precio/presupuesto, incluidas abreviaturas (presu, presi…)."""
+    import re
+
+    low = (message or "").lower()
+    tokens = re.findall(r"[a-záéíóúüñ]+", low)
+    if any(t in _PRICING_EXACT_TOKENS for t in tokens):
+        return True
+    if any(kw in low for kw in PRICING_KEYWORDS):
+        return True
+    return any(
+        t.startswith(_PRICING_STEMS) and t not in _PRICING_STEM_EXCLUDE
+        for t in tokens
+    )
+
+
+def asks_price_of_appointment(msg_lower: str) -> bool:
+    """«¿Cuánto cuesta la cita/visita?» = precio, no mostrar slots."""
+    if not wants_pricing_message(msg_lower):
+        return False
+    return any(
+        w in msg_lower
+        for w in (
+            "cita",
+            "visita",
+            "inspecci",
+            "primera",
+            "desplazamiento",
+            "desplaçament",
+        )
+    )
 PEST_KEYWORDS = (
     "cucarach",
+    "cucurach",  # typo habitual
+    "cucas",  # coloquial
+    "cuca",  # coloquial (también cubre «cucaracha»)
     "panerol",
     "cucaracha",
-    "plaga",
     "insect",
     "roedor",
     "rat",
     "rata",
     "termit",
 )
+# "plaga" sola es demasiado vaga: no cuenta como especie confirmada
+VAGUE_PEST_WORDS = ("plaga", "plagas")
 CA_HINTS = ("tinc", "hi ha", "on", "vull", "pressupost", "quan", "gratuïta", "meva")
 ES_HINTS = ("tengo", "hay", "donde", "quiero", "presupuesto", "gratuita", "mi cita")
 SCHEDULING_PHRASES = (
@@ -112,6 +181,19 @@ def accepts_scheduling_affirmative(msg_lower: str) -> bool:
     return text in SCHEDULING_AFFIRMATIVES
 
 
+def affirms_pest_presence(msg_lower: str) -> bool:
+    """«sí», «sí, cucarachas», «si pero quiero presupuesto» tras preguntar la plaga."""
+    text = " ".join((msg_lower or "").strip().rstrip("!?.…,").split())
+    if not text:
+        return False
+    if text in SCHEDULING_AFFIRMATIVES or text in ("exacto", "exacte", "eso es", "això"):
+        return True
+    starters = ("si ", "sí ", "si,", "sí,", "yes ", "vale ", "claro ", "clar ")
+    if any(text.startswith(s) for s in starters):
+        return True
+    return False
+
+
 def should_offer_slots(agent: AgentState, msg_lower: str) -> bool:
     """True quan cal mostrar horaris Cal.com (petició explícita o confirmació)."""
     if wants_scheduling(msg_lower):
@@ -121,6 +203,9 @@ def should_offer_slots(agent: AgentState, msg_lower: str) -> bool:
 
 def wants_scheduling(msg_lower: str) -> bool:
     """True solo si el mensaje actual pide cita/visita explícitamente."""
+    # Precio de la cita/visita → recepcionista (inspección gratuita), no slots
+    if asks_price_of_appointment(msg_lower):
+        return False
     if any(kw in msg_lower for kw in SCHEDULING_KEYWORDS):
         return True
     return any(p in msg_lower for p in SCHEDULING_PHRASES)
@@ -163,9 +248,121 @@ def mentions_pest(msg_lower: str) -> bool:
     return any(kw in msg_lower for kw in PEST_KEYWORDS)
 
 
+def is_third_party_pest_mention(msg_lower: str) -> bool:
+    """Plaga atribuida a otro (vecino, el de al lado…), no al inmueble del cliente."""
+    if not mentions_pest(msg_lower):
+        return False
+    third_party = (
+        "mi vecino",
+        "mi vecina",
+        "mis vecinos",
+        "mis vecinas",
+        "el vecino",
+        "la vecina",
+        "un vecino",
+        "una vecina",
+        "su vecino",
+        "su vecina",
+        "el veí",
+        "la veïna",
+        "el veina",
+        "la veina",
+        "el meu veí",
+        "la meva veïna",
+        "els veïns",
+        "els veins",
+        "les veïnes",
+        "el de al lado",
+        "el del lado",
+        "la de al lado",
+        "el del costat",
+        "la del costat",
+        "en casa del vecino",
+        "en casa de mi vecino",
+        "a casa del veí",
+        "a casa del veina",
+    )
+    return any(p in msg_lower for p in third_party)
+
+
+def is_building_community_context(msg_lower: str) -> bool:
+    """Plaga a escala de edificio/comunidad (no plantilla cocina/baño)."""
+    keys = (
+        "edificio",
+        "edifici",
+        "comunidad",
+        "comunitat",
+        "vecinos",
+        "veïns",
+        "veins",
+        "escalera",
+        "escala",
+        "portal",
+        "finca",
+        "bloque",
+        "rellano",
+        "replanell",
+        "varias viviendas",
+        "diversos pisos",
+        "varios pisos",
+        "todo el edificio",
+        "tot l'edifici",
+        "en mi edificio",
+        "al meu edifici",
+        "en el edificio",
+        "a l'edifici",
+        "zonas comunes",
+        "zones comunes",
+        "zona comunitaria",
+    )
+    return any(k in msg_lower for k in keys)
+
+
+def is_clear_own_pest_report(msg_lower: str) -> bool:
+    """El cliente habla de plaga en SU vivienda/local (plantilla ask_where de habitación)."""
+    if not mentions_pest(msg_lower):
+        return False
+    if is_third_party_pest_mention(msg_lower):
+        return False
+    # Edificio/comunidad → lo juzga el agente, no la plantilla de cocina/baño
+    if is_building_community_context(msg_lower):
+        return False
+    own_markers = (
+        "tengo",
+        "tenemos",
+        "tinc",
+        "tenim",
+        "he visto",
+        "hemos visto",
+        "he vist",
+        "hem vist",
+        "hay en mi",
+        "en mi casa",
+        "en mi piso",
+        "en mi local",
+        "en mi negocio",
+        "en nuestro",
+        "en el nostre",
+        "a casa meva",
+        "problema de cucarach",
+        "problema de panerol",
+        "problema con cucarach",
+        "problema amb panerol",
+        "problema de plaga",
+    )
+    if any(m in msg_lower for m in own_markers):
+        return True
+    return is_rich_pest_report(msg_lower)
+
+
 def is_case_follow_up(msg_lower: str) -> bool:
     """Respostes curtes o detalls d'un cas en curs (ubicació, descripció…)."""
-    follow_up_hints = (
+    return is_location_answer(msg_lower) or is_pest_description(msg_lower) or is_quantity_hint(msg_lower)
+
+
+def is_location_answer(msg_lower: str) -> bool:
+    """El mensaje indica una zona del inmueble (no color/tamaño)."""
+    location_hints = (
         "baño",
         "bano",
         "bany",
@@ -177,33 +374,88 @@ def is_case_follow_up(msg_lower: str) -> bool:
         "saló",
         "garaje",
         "garatge",
-        "marron",
-        "marrón",
-        "marró",
-        "grand",
-        "grande",
-        "grans",
-        "petit",
-        "pequeñ",
-        "moltes",
-        "muchas",
-        "n'he vist",
-        "he visto",
+        "nevera",
+        "fregadero",
+        "aigüera",
+        "desagüe",
+        "desague",
+        "desguàs",
         "sota",
         "debajo",
-        "nevera",
-        "des de",
-        "desde",
-        "en el",
-        "en la",
-        "al ",
-        "a la ",
-        "color",
-        "nits",
-        "noche",
-        "nit",
+        "entrada",
+        "portal",
+        "acceso",
+        "accés",
+        "almacen",
+        "almacén",
+        "magatzem",
+        "escalera",
+        "escala",
+        "patio",
+        "pati",
+        "terraza",
+        "terrassa",
     )
-    return any(h in msg_lower for h in follow_up_hints)
+    if any(h in msg_lower for h in location_hints):
+        return True
+    # «en el / en la / a la» + algo, sin ser solo descripción de color
+    if any(p in msg_lower for p in ("en el ", "en la ", "al ", "a la ", "a el ")) and not is_pest_description(
+        msg_lower
+    ):
+        return True
+    return False
+
+
+def is_pest_description(msg_lower: str) -> bool:
+    """Color, tamaño u otros rasgos (no sustituye la ubicación)."""
+    return any(
+        h in msg_lower
+        for h in (
+            "marron",
+            "marrón",
+            "marró",
+            "negr",
+            "negra",
+            "blanc",
+            "blanca",
+            "clara",
+            "grand",
+            "grande",
+            "grans",
+            "gros",
+            "petit",
+            "pequeñ",
+            "color",
+            "volador",
+            "volen",
+            "vuelan",
+            "alas",
+            "ales",
+        )
+    )
+
+
+def is_quantity_hint(msg_lower: str) -> bool:
+    return any(
+        h in msg_lower
+        for h in (
+            "moltes",
+            "muchas",
+            "muchos",
+            "pocas",
+            "poques",
+            "varias",
+            "diverses",
+            "n'he vist",
+            "he visto",
+            "he vist",
+            "una sola",
+            "un par",
+            "nido",
+            "niu",
+            "ooteca",
+        )
+    )
 
 
 def is_rich_pest_report(msg_lower: str) -> bool:
@@ -269,9 +521,11 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
+    from api.agents.serialization import normalize_language
+
     session_lang = state.get("language")
     if session_lang in ("ca", "es"):
-        agent.language = session_lang
+        agent.language = normalize_language(session_lang)
     elif "idioma: es" in msg_lower:
         agent.language = "es"
     elif "idioma: ca" in msg_lower:
@@ -305,7 +559,7 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
     # El idioma de la petición (UI) tiene prioridad sobre heurísticas del mensaje
     if session_lang in ("ca", "es"):
-        agent.language = session_lang
+        agent.language = normalize_language(session_lang)
 
     return {
         "language": agent.language,
@@ -314,27 +568,51 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
 
 def _wants_pricing(agent: AgentState, diagnostic: dict | None, msg_lower: str) -> bool:
-    if not any(kw in msg_lower for kw in PRICING_KEYWORDS):
+    if not wants_pricing_message(msg_lower):
         return False
-    return bool(agent.pest_type) or has_wizard_diagnostic(diagnostic)
+    # Path/who del wizard no basta: hace falta detalle real del caso
+    from api.agents.chat_intake import has_pricing_case_details
+
+    return has_pricing_case_details(agent, diagnostic)
 
 
 def _pricing_flow_route(
     agent: AgentState,
     diagnostic: dict | None,
     missing: list[str] | None,
+    msg_lower: str = "",
 ) -> str | None:
-    """Intake → pricer mientras el cliente pide presupuesto (sin pasar por recepcionista)."""
-    if agent.intent not in (Intent.QUOTE, Intent.URGENCY) or not agent.pest_type:
+    """Intake → pricer cuando pide precio, o tras completar intake de presupuesto."""
+    from api.agents.chat_intake import has_pricing_case_details
+
+    if not agent.pest_type:
         return None
     if agent.pending_intake_field:
         return "intake"
+
+    asking_price = wants_pricing_message(msg_lower or "")
     fields_missing = missing
     if fields_missing is None:
         fields_missing = get_missing_mandatory_fields(agent, diagnostic)
-    if fields_missing:
-        return "intake"
-    return "pricer"
+
+    if asking_price:
+        if fields_missing:
+            return "intake"
+        if not has_pricing_case_details(agent, diagnostic):
+            return "intake"
+        return "pricer"
+
+    # Turno de respuesta a intake (el grafo ya pasó missing_intake_fields)
+    if (
+        missing is not None
+        and not fields_missing
+        and agent.intent in (Intent.QUOTE, Intent.URGENCY)
+        and not is_simple_greeting(msg_lower)
+        and has_pricing_case_details(agent, diagnostic)
+    ):
+        return "pricer"
+
+    return None
 
 
 def choose_agent_route(state: CECSAGraphState) -> str:
@@ -348,20 +626,25 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     if should_offer_slots(agent, msg_lower):
         return "scheduler"
 
-    pricing_route = _pricing_flow_route(agent, diagnostic, missing)
+    # Widget home: presupuesto con caso listo → pricer; si no, recepcionista / diagnóstico
+    if state.get("source") == "home":
+        from .home_flow import home_case_ready, home_should_diagnose
+
+        if _wants_pricing(agent, diagnostic, msg_lower) and home_case_ready(agent):
+            pricing_route = _pricing_flow_route(agent, diagnostic, missing, msg_lower)
+            if pricing_route:
+                return pricing_route
+            return "pricer"
+        if home_should_diagnose(agent, message):
+            return "diagnostician"
+        return "receptionist"
+
+    pricing_route = _pricing_flow_route(agent, diagnostic, missing, msg_lower)
     if pricing_route:
         return pricing_route
 
     if _wants_pricing(agent, diagnostic, msg_lower):
         return "pricer"
-
-    # Widget home: plantillas de intake; el resto lo decide el agente
-    if state.get("source") == "home":
-        from .home_flow import home_should_diagnose
-
-        if home_should_diagnose(agent, message):
-            return "diagnostician"
-        return "receptionist"
 
     if should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
@@ -394,22 +677,33 @@ def after_receptionist(state: CECSAGraphState) -> str:
     if pending == "scheduler" or should_offer_slots(agent, msg_lower):
         return "scheduler"
 
-    pricing_route = _pricing_flow_route(agent, diagnostic, missing)
-    if pricing_route:
-        return pricing_route
-
+    # Home: plantillas/recepcionista; encadenar pricer solo con caso listo
     if state.get("source") == "home":
         if pending == "diagnostician":
             return "diagnostician"
+        from api.agents.chat_intake import has_pricing_case_details
+
+        if pending == "pricer" and has_pricing_case_details(agent, diagnostic):
+            return "pricer"
         return "done"
+
+    pricing_route = _pricing_flow_route(agent, diagnostic, missing, msg_lower)
+    if pricing_route:
+        return pricing_route
 
     if pending == "intake" or should_run_intake(agent, diagnostic, msg_lower, missing):
         return "intake"
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"
+    # Nunca presupuestar sin plaga + detalle de caso (ubicación/cantidad…)
+    from api.agents.chat_intake import has_pricing_case_details
+
+    if not has_pricing_case_details(agent, diagnostic):
+        if pending == "pricer" and agent.pest_type:
+            return "intake"
+        return "done"
     if pending == "pricer" or (
-        agent.pest_type
-        and agent.intent in (Intent.QUOTE, Intent.URGENCY)
+        agent.intent in (Intent.QUOTE, Intent.URGENCY)
         and not needs_ficha_intake(agent, diagnostic, missing)
     ):
         return "pricer"

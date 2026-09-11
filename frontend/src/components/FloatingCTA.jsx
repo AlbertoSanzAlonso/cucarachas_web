@@ -1,17 +1,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { MessageSquare, Phone, X, Send, Bot, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
 import SlotPicker from '@/components/Agent/Chat/SlotPicker';
 import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
+import { useGetCompanyQuery } from '@/store/apis/companyApi';
 
 const FloatingCTA = () => {
   const { t, i18n } = useTranslation();
   const apiBase = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const chatConfig = { withCredentials: true };
+  const lang = i18n.language?.startsWith('es') ? 'es' : 'ca';
+  const { data: company } = useGetCompanyQuery(lang);
+  const phoneTel = company?.phone_tel || '+34933309169';
+  const phoneLabel = company?.phone || '933 309 169';
+  const whatsappUrl = company?.whatsapp_url || 'https://wa.me/34681033305';
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [messages, setMessages] = useState([]);
 
@@ -35,6 +42,52 @@ const FloatingCTA = () => {
   const [isLoading, setIsLoading] = useState(false);
   const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
+  const messagePointerRef = useRef(false);
+
+  const hasTextSelection = () => {
+    const selection = window.getSelection();
+    return Boolean(selection && selection.type === 'Range' && selection.toString().length > 0);
+  };
+
+  const focusChatInput = () => {
+    // No robar el foco mientras el usuario selecciona o tiene texto marcado
+    if (hasTextSelection()) return;
+    inputRef.current?.focus({ preventScroll: true });
+  };
+
+  /** Clic en la ventana (excepto campos de reserva/mapa) → escritura lista hasta cerrar */
+  const handleChatMouseDown = (e) => {
+    const target = e.target;
+    if (!(target instanceof Element)) return;
+    if (
+      target.closest(
+        'input, textarea, select, [contenteditable="true"], .leaflet-container, [data-chat-interactive]'
+      )
+    ) {
+      messagePointerRef.current = false;
+      return;
+    }
+    // Permitir seleccionar texto de los mensajes sin forzar el foco al input
+    if (target.closest('[data-chat-message]')) {
+      messagePointerRef.current = true;
+      return;
+    }
+    messagePointerRef.current = false;
+    if (target.closest('button, a, label')) {
+      requestAnimationFrame(focusChatInput);
+      return;
+    }
+    // Evita que el clic quite el foco del input al pulsar fondo vacío
+    e.preventDefault();
+    focusChatInput();
+  };
+
+  const handleChatMouseUp = () => {
+    if (!messagePointerRef.current) return;
+    messagePointerRef.current = false;
+    // Clic simple en burbuja → volver a escribir; si hay selección, no interferir
+    requestAnimationFrame(focusChatInput);
+  };
 
   useEffect(() => {
     // Show hint if the agent has been dismissed (meaning it's in bubble mode)
@@ -67,13 +120,43 @@ const FloatingCTA = () => {
   useEffect(() => {
     if (isOpen) {
       // Pequeño timeout para esperar a que la animación de apertura termine
-      const timer = setTimeout(() => {
-        inputRef.current?.focus();
-      }, 300);
+      const timer = setTimeout(focusChatInput, 300);
       return () => clearTimeout(timer);
     }
+    setIsExpanded(false);
   }, [isOpen]);
 
+  // Tras respuesta del agente, recuperar escritura (sin robar el formulario de reserva)
+  useEffect(() => {
+    if (!isOpen || isLoading) return undefined;
+    const timer = requestAnimationFrame(() => {
+      const active = document.activeElement;
+      if (
+        active instanceof Element &&
+        active !== inputRef.current &&
+        active.closest('input, textarea, select, [contenteditable="true"], .leaflet-container')
+      ) {
+        return;
+      }
+      focusChatInput();
+    });
+    return () => cancelAnimationFrame(timer);
+  }, [isOpen, isLoading]);
+
+  useEffect(() => {
+    if (!isExpanded) return undefined;
+    const onKeyDown = (event) => {
+      if (event.key === 'Escape') setIsExpanded(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [isExpanded]);
+
+  const closeChat = () => {
+    setIsOpen(false);
+    setIsExpanded(false);
+    setShowHint(false);
+  };
 
   const sendMessage = async (userMessage) => {
     if (!userMessage.trim() || isLoading) return;
@@ -86,7 +169,7 @@ const FloatingCTA = () => {
         message: userMessage.trim(),
         language: i18n.language,
         source: 'home',
-      }, chatConfig);
+      }, { ...chatConfig, timeout: 60000 });
 
       setMessages(prev => [...prev, { 
         role: 'assistant', 
@@ -96,7 +179,10 @@ const FloatingCTA = () => {
       }]);
     } catch (error) {
       console.error('Error in chat:', error);
-      setMessages(prev => [...prev, { role: 'assistant', content: t('agent.home.connection_error') }]);
+      const fallback =
+        error?.response?.data?.reply ||
+        t('agent.home.connection_error');
+      setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
     } finally {
       setIsLoading(false);
     }
@@ -107,11 +193,14 @@ const FloatingCTA = () => {
     if (!input.trim() || isLoading) return;
     const userMessage = input.trim();
     setInput('');
+    requestAnimationFrame(focusChatInput);
     await sendMessage(userMessage);
+    focusChatInput();
   };
 
   const handleQuickAction = (text) => {
     sendMessage(text);
+    requestAnimationFrame(focusChatInput);
   };
 
   const handleSlotSelect = (slot) => {
@@ -248,27 +337,55 @@ const FloatingCTA = () => {
              <AnimatePresence>
                {isOpen && (
                  <motion.div
+                   layout
                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
                    animate={{ opacity: 1, y: 0, scale: 1 }}
                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                   className="fixed md:relative bottom-28 md:bottom-auto left-4 right-4 md:left-auto md:right-auto md:mb-4 w-auto md:w-[550px] max-w-[calc(100vw-2rem)] md:max-w-[min(550px,calc(100vw-3rem))] h-[80vh] md:h-[750px] md:max-h-[calc(100vh-10rem)] bg-white rounded-[3rem] shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right z-[120]"
+                   transition={{ layout: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }}
+                   onMouseDown={handleChatMouseDown}
+                   onMouseUp={handleChatMouseUp}
+                   className={`bg-white shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right ${
+                     isExpanded
+                       ? 'fixed inset-4 md:inset-6 w-auto h-auto max-w-none max-h-none rounded-[2rem] z-[130]'
+                       : 'fixed md:relative bottom-28 md:bottom-auto left-4 right-4 md:left-auto md:right-auto md:mb-4 w-auto md:w-[550px] max-w-[calc(100vw-2rem)] md:max-w-[min(550px,calc(100vw-3rem))] h-[80vh] md:h-[750px] md:max-h-[calc(100vh-10rem)] rounded-[3rem] z-[120]'
+                   }`}
                  >
                    {/* Header */}
-                   <div className="p-8 bg-primary-blue text-white relative overflow-hidden flex items-center justify-between">
+                   <div
+                     className="p-8 text-white relative overflow-hidden flex items-center justify-between"
+                     style={{ background: 'var(--primary-blue)' }}
+                   >
                       <div className="relative z-10 flex items-center space-x-4">
-                         <div className="bg-accent-green p-3 rounded-2xl shadow-lg">
-                           <Bot size={28} className="text-primary-blue" />
+                         <div
+                           className="p-3 rounded-2xl shadow-lg"
+                           style={{ background: 'var(--accent-green)' }}
+                         >
+                           <Bot size={28} style={{ color: 'var(--primary-blue)' }} />
                          </div>
                          <div>
                             <h3 className="font-black text-base uppercase tracking-widest">{t('agent.home.title')}</h3>
                             <p className="text-[10px] opacity-60 font-bold uppercase tracking-tighter">{t('agent.home.subtitle')}</p>
                          </div>
                       </div>
-                      <div className="flex items-center space-x-3">
-                        <a href="https://wa.me/34665147414" target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white" title="WhatsApp">
+                      <div className="flex items-center space-x-1 md:space-x-2">
+                        <button
+                          type="button"
+                          onClick={() => setIsExpanded((prev) => !prev)}
+                          className="hidden md:inline-flex p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white"
+                          title={isExpanded ? t('agent.home.collapse_chat') : t('agent.home.expand_chat')}
+                          aria-label={isExpanded ? t('agent.home.collapse_chat') : t('agent.home.expand_chat')}
+                        >
+                          {isExpanded ? <Minimize2 size={22} /> : <Maximize2 size={22} />}
+                        </button>
+                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white" title="WhatsApp">
                           <MessageSquare size={24} />
                         </a>
-                        <button onClick={() => { setIsOpen(false); setShowHint(false); }} className="p-3 hover:bg-white/10 rounded-2xl transition-all">
+                        <button
+                          type="button"
+                          onClick={closeChat}
+                          className="p-3 hover:bg-white/10 rounded-2xl transition-all"
+                          aria-label={t('agent.home.close_chat')}
+                        >
                           <X size={24} />
                         </button>
                       </div>
@@ -282,8 +399,9 @@ const FloatingCTA = () => {
                    >
                      {messages.map((msg, i) => (
                        <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
-                           <div 
-                           className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
+                           <div
+                           data-chat-message
+                           className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed select-text ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
                            dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-primary-blue">$1</span>') }}
                          />
                          {msg.isInitial && (
@@ -306,7 +424,7 @@ const FloatingCTA = () => {
                              </button>
                              <button
                                type="button"
-                               onClick={() => window.location.href = 'tel:933309169'}
+                               onClick={() => window.location.href = `tel:${phoneTel.replace('+', '')}`}
                                className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
                              >
                                📞 {t('agent.cta.call')}
@@ -326,7 +444,7 @@ const FloatingCTA = () => {
                                </button>
                                <button
                                  type="button"
-                                 onClick={() => window.location.href = 'tel:933309169'}
+                                 onClick={() => window.location.href = `tel:${phoneTel.replace('+', '')}`}
                                  className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
                                >
                                  📞 {t('agent.cta.call')}
@@ -338,7 +456,7 @@ const FloatingCTA = () => {
                            </div>
                          )}
                          {msg.slots && (
-                           <div className="mt-4 w-full max-w-[320px]">
+                           <div className="mt-4 w-full max-w-[320px]" data-chat-interactive>
                              <SlotPicker
                                slots={msg.slots}
                                onSlotSelect={handleSlotSelect}
@@ -347,19 +465,21 @@ const FloatingCTA = () => {
                            </div>
                          )}
                          {msg.showBookingForm && msg.selectedSlot && (
-                           <BookingContactForm
-                             variant="light"
-                             slot={msg.selectedSlot}
-                             step={msg.bookingStep || 'name'}
-                             bookingName={msg.bookingName}
-                             bookingAddress={msg.bookingAddress}
-                             bookingEmail={msg.bookingEmail}
-                             onNameNext={(name) => handleBookingNameNext(name, msg.selectedSlot)}
-                             onAddressNext={handleBookingAddressNext}
-                             onEmailNext={handleBookingEmailNext}
-                             onSubmit={handleBookingSubmit}
-                             disabled={isLoading}
-                           />
+                           <div data-chat-interactive>
+                             <BookingContactForm
+                               variant="light"
+                               slot={msg.selectedSlot}
+                               step={msg.bookingStep || 'name'}
+                               bookingName={msg.bookingName}
+                               bookingAddress={msg.bookingAddress}
+                               bookingEmail={msg.bookingEmail}
+                               onNameNext={(name) => handleBookingNameNext(name, msg.selectedSlot)}
+                               onAddressNext={handleBookingAddressNext}
+                               onEmailNext={handleBookingEmailNext}
+                               onSubmit={handleBookingSubmit}
+                               disabled={isLoading}
+                             />
+                           </div>
                          )}
                        </div>
                      ))}
@@ -376,7 +496,6 @@ const FloatingCTA = () => {
                          onChange={(e) => setInput(e.target.value)}
                          placeholder={t('agent.home.placeholder')}
                          className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-4 px-1 text-base md:text-lg"
-                         disabled={isLoading}
                        />
                        <button 
                          type="submit"
@@ -391,19 +510,29 @@ const FloatingCTA = () => {
                )}
              </AnimatePresence>
 
-             {/* Chat Trigger Button (PRO) */}
+             {/* Chat Trigger Button (PRO) — oculto en desktop cuando está a pantalla completa */}
+             {!(isOpen && isExpanded) && (
              <motion.button
                whileHover={{ scale: 1.05 }}
                whileTap={{ scale: 0.95 }}
-               onClick={() => { setIsOpen(!isOpen); setShowHint(false); }}
-               className="flex items-center bg-accent-green text-primary-gray shadow-[0_15px_40px_rgba(52,211,153,0.3)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 border border-white/20 transition-all group"
+               onClick={() => {
+                 if (isOpen) {
+                   closeChat();
+                 } else {
+                   setIsOpen(true);
+                   setShowHint(false);
+                 }
+               }}
+               className="flex items-center shadow-[0_15px_40px_rgba(52,211,153,0.3)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 border border-white/20 transition-all group"
+               style={{ background: 'var(--accent-green)', color: 'var(--secondary-gray)' }}
              >
-                <div className="bg-primary-blue/10 p-2 md:p-3 rounded-xl group-hover:bg-primary-blue group-hover:text-white transition-colors">
+                <div className="p-2 md:p-3 rounded-xl bg-primary-blue/10 group-hover:bg-primary-blue group-hover:text-white transition-colors">
                    {isOpen ? <X size={24} /> : <Bot size={24} />}
                 </div>
                 {!isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">{t('agent.home.open_chat')}</span>}
                 {isOpen && <span className="text-sm md:text-xl font-black ml-3 uppercase tracking-tighter">{t('agent.home.close_chat')}</span>}
              </motion.button>
+             )}
           </div>
 
        </div>

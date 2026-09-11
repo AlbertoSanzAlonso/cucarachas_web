@@ -50,12 +50,11 @@ const BlogGrid = ({ articles, t }) => {
                 alt={article.title}
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary-blue/40 to-transparent" />
               <div className="absolute bottom-6 left-6 flex items-center space-x-2">
-                <span className="py-1 px-3 bg-accent-green text-primary-blue text-[10px] font-black uppercase rounded-full shadow-lg">
+                <span className="py-1 px-3 bg-accent-green text-white text-[10px] font-black uppercase rounded-full shadow-lg">
                   {t(`blog.categories.${article.category}`, { defaultValue: article.category })}
                 </span>
-                <span className="py-1 px-3 glass text-white text-[10px] font-black uppercase rounded-full">
+                <span className="py-1 px-3 bg-primary-blue text-white text-[10px] font-black uppercase rounded-full shadow-lg">
                   {article.read_time || `${article.read_time_minutes} min`}
                 </span>
               </div>

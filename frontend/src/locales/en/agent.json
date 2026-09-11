@@ -33,6 +33,8 @@
       "thinking": "The agent is thinking...",
       "open_chat": "AI Chat Agent",
       "close_chat": "Close",
+      "expand_chat": "Full screen",
+      "collapse_chat": "Normal size",
       "placeholder": "Write a message...",
       "connection_error": "Connection error. Call 933 309 169."
     },

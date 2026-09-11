@@ -16,6 +16,8 @@
       "thinking": "El agente está pensando...",
       "open_chat": "Chat IA Agente",
       "close_chat": "Cerrar",
+      "expand_chat": "Pantalla completa",
+      "collapse_chat": "Tamaño normal",
       "placeholder": "Escribe un mensaje...",
       "connection_error": "Error de conexión. Llama al 933 309 169."
     },

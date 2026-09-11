@@ -1,7 +1,6 @@
 """Persistencia de presupuestos generados por el Bio-Assistent."""
 from __future__ import annotations
 
-import uuid
 from datetime import date, timedelta
 from decimal import Decimal
 
@@ -9,7 +8,7 @@ from django.db import transaction
 
 from api.agents.chat_intake import build_unified_diagnostic
 from api.agents.models import AgentState
-from api.models import Cliente, Presupuesto, PresupuestoDetalle, Ubicacion
+from api.models import Cliente, Presupuesto, PresupuestoDetalle
 from api.phone_utils import normalize_phone, upsert_cliente_by_phone
 from api.presupuesto_service import _get_or_create_ubicacion
 
@@ -27,45 +26,41 @@ def _prospect_label(agent: AgentState, diagnostic: dict) -> str:
     return agent.customer_name or "Prospecte chat web"
 
 
-def _resolve_cliente(agent: AgentState, diagnostic: dict) -> Cliente:
+def _extract_phone(agent: AgentState, diagnostic: dict) -> str:
+    """Teléfono real del chat/diagnóstico; vacío si aún no lo ha dado el cliente."""
     unified = build_unified_diagnostic(agent, diagnostic)
-    phone = ""
 
     for key in ("telefono", "phone"):
         raw = unified.get(key)
         if raw:
             phone = str(raw).strip()
-            break
+            if len(normalize_phone(phone)) >= 9:
+                return phone
 
+    for note in agent.technical_notes:
+        low = note.lower()
+        if "tel" in low or "phone" in low or "telefon" in low:
+            digits = "".join(c for c in note if c.isdigit())
+            if len(digits) >= 9:
+                return digits
+
+    return ""
+
+
+def _resolve_cliente(agent: AgentState, diagnostic: dict) -> Cliente | None:
+    """Solo crea/actualiza lead CRM si hay teléfono real. Sin inventar placeholders."""
+    phone = _extract_phone(agent, diagnostic)
     if not phone:
-        for note in agent.technical_notes:
-            low = note.lower()
-            if "tel" in low or "phone" in low or "telefon" in low:
-                digits = "".join(c for c in note if c.isdigit())
-                if len(digits) >= 9:
-                    phone = digits
-                    break
+        return None
 
     name = agent.customer_name or _prospect_label(agent, diagnostic)
-
-    if phone and len(normalize_phone(phone)) >= 9:
-        cliente, _ = upsert_cliente_by_phone(
-            telefono=phone,
-            nombre=name,
-            email=str(unified.get("email") or "").strip(),
-        )
-        return cliente
-
-    doc = f"AGENT-{uuid.uuid4().hex[:12].upper()}"
-    suffix = str(uuid.uuid4().int)[-9:]
-    phone_placeholder = f"6{suffix}"
-    return Cliente.objects.create(
+    unified = build_unified_diagnostic(agent, diagnostic)
+    cliente, _ = upsert_cliente_by_phone(
+        telefono=phone,
         nombre=name,
-        telefono=phone_placeholder,
-        telefono_norm=normalize_phone(phone_placeholder),
         email=str(unified.get("email") or "").strip(),
-        documento_fiscal=doc,
     )
+    return cliente
 
 
 def _tipo_propiedad(agent: AgentState, diagnostic: dict) -> str:
@@ -99,6 +94,10 @@ def persist_agent_presupuesto(
         return None
 
     cliente = _resolve_cliente(agent, diagnostic)
+    if cliente is None:
+        # Sin teléfono real no creamos lead fantasma; el chat sigue mostrando el precio.
+        return None
+
     ciudad = (agent.city or "Barcelona").split(",")[0].strip() or "Barcelona"
     direccion = str(
         diagnostic.get("codigo_postal")
@@ -198,7 +197,7 @@ def refresh_agent_presupuesto(
     notas = ". ".join(notas_parts)
 
     cliente = _resolve_cliente(agent, diagnostic)
-    if presupuesto.cliente_id != cliente.id and str(presupuesto.cliente.documento_fiscal or "").startswith("AGENT-"):
+    if cliente is not None and presupuesto.cliente_id != cliente.id:
         presupuesto.cliente = cliente
         presupuesto.save(update_fields=["cliente"])
 

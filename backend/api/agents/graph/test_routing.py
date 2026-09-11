@@ -51,7 +51,15 @@ def test_stale_session_generic_problem_routes_to_receptionist():
 
 
 def test_doubt_with_city_does_not_fallback():
-    agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
+    from api.agents.models import PestType
+
+    # Follow-up de ubicación con plaga ya en sesión → diagnóstico (no fallback humano)
+    agent = AgentState(
+        language="es",
+        city="Barcelona",
+        intent=Intent.DOUBT,
+        pest_type=PestType.GERMAN_COCKROACH,
+    )
     assert _route(agent, "es en el baño del piso") == "diagnostician"
 
 
@@ -119,6 +127,25 @@ def test_scheduling_after_quote_intent_routes_to_scheduler():
     assert _route(agent, "Vull agendar la meva cita gratuïta") == "scheduler"
 
 
+def test_price_of_appointment_does_not_route_to_scheduler():
+    """«¿Cuánto cuesta la cita?» es precio (gratuita), no horarios."""
+    from api.agents.graph.routing import asks_price_of_appointment, wants_scheduling
+
+    msg = "cuanto cuesta la primera cita?"
+    assert asks_price_of_appointment(msg)
+    assert not wants_scheduling(msg)
+    agent = AgentState(language="es", city="Cornellà", intent=Intent.DOUBT)
+    assert _route(agent, msg) == "receptionist"
+    state = {
+        "message": msg,
+        "language": "es",
+        "source": "home",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "receptionist"
+
+
 def test_scheduling_cta_keeps_session_language_ca():
     agent = AgentState(language="ca")
     state = {
@@ -164,8 +191,21 @@ def test_explicit_pricing_routes_to_pricer():
         intent=Intent.QUOTE,
         pest_type=PestType.AMERICAN_COCKROACH,
         city="Barcelona",
+        chat_diagnostic={"where": "cocina", "quantity": "several"},
     )
     assert _route(agent, "quiero un presupuesto") == "pricer"
+
+
+def test_pricing_without_case_details_does_not_route_to_pricer():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        intent=Intent.QUOTE,
+        pest_type=PestType.GERMAN_COCKROACH,
+        city="Barcelona",
+    )
+    assert _route(agent, "presupuesto") != "pricer"
 
 
 def test_wizard_diagnostic_skips_diagnostician():
@@ -302,3 +342,106 @@ def test_intake_answer_routes_to_pricer():
     }
     state.update(apply_preprocess(state))
     assert choose_agent_route(state) == "pricer"
+
+
+def test_after_receptionist_pricer_without_pest_stays_done():
+    """El LLM del recepcionista no debe forzar pricer sin plaga (evita 250€ fantasma)."""
+    from api.agents.graph.routing import after_receptionist
+
+    agent = AgentState(language="es", intent=Intent.QUOTE)
+    state = {
+        "message": "quiero saber los precios",
+        "language": "es",
+        "agent_state": agent.model_dump(mode="json"),
+        "route": "pricer",
+    }
+    assert after_receptionist(state) == "done"
+
+
+def test_pricing_keyword_without_pest_routes_to_receptionist():
+    agent = AgentState(language="es")
+    assert _route(agent, "quiero saber los precios") == "receptionist"
+
+
+def test_find_similar_references_requires_pest():
+    from api.pricing_reference import find_similar_references
+
+    assert find_similar_references(AgentState(language="es")) == []
+
+
+def test_bare_presupuesto_resets_assumed_pest():
+    from api.agents.chat_intake import reset_assumed_pest_for_bare_pricing
+    from api.agents.models import PestType
+
+    agent = AgentState(language="es", pest_type=PestType.GERMAN_COCKROACH)
+    cleared = reset_assumed_pest_for_bare_pricing(agent, "PRESUPUESTO")
+    assert cleared.pest_type is None
+    assert cleared.pending_intake_field == "pest"
+
+    cleared_abbr = reset_assumed_pest_for_bare_pricing(
+        AgentState(language="es", pest_type=PestType.GERMAN_COCKROACH),
+        "presu",
+    )
+    assert cleared_abbr.pest_type is None
+
+    cleared_presi = reset_assumed_pest_for_bare_pricing(
+        AgentState(language="es", pest_type=PestType.GERMAN_COCKROACH),
+        "presi",
+    )
+    assert cleared_presi.pest_type is None
+    from api.agents.graph.routing import wants_pricing_message
+
+    assert wants_pricing_message("presi")
+    assert not wants_pricing_message("presidente")
+
+    kept = reset_assumed_pest_for_bare_pricing(
+        AgentState(
+            language="es",
+            pest_type=PestType.GERMAN_COCKROACH,
+            chat_diagnostic={"where": "cocina"},
+        ),
+        "PRESUPUESTO",
+    )
+    assert kept.pest_type == PestType.GERMAN_COCKROACH
+
+
+def test_bare_pricing_routes_to_receptionist_not_pricer():
+    agent = AgentState(language="es")
+    assert _route(agent, "presupuesto") == "receptionist"
+    assert _route(agent, "presu") == "receptionist"
+
+    state = {
+        "message": "presupuesto",
+        "language": "es",
+        "source": "home",
+        "agent_state": AgentState(language="es").model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "receptionist"
+
+
+def test_ready_case_pricing_routes_to_pricer():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        pest_type=PestType.GERMAN_COCKROACH,
+        chat_diagnostic={"where": "cocina", "quantity": "several"},
+    )
+    state = {
+        "message": "presupuesto",
+        "language": "es",
+        "source": "home",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "pricer"
+
+
+def test_pricing_orchestration_context_for_bare_budget():
+    from api.agents.chat_intake import pricing_orchestration_context
+
+    block = pricing_orchestration_context(AgentState(language="es"), "es", "presu")
+    assert "ORQUESTACIÓN PRESUPUESTO" in block
+    assert "FALTA AHORA: pest" in block
+    assert "euros" in block.lower() or "€" in block

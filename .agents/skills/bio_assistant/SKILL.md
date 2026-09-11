@@ -35,6 +35,7 @@ Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el
 | Merge diagnóstico | `backend/api/agents/diagnostic_merge.py` |
 | **Ficha Maestra** | `backend/api/models.py` → `FichaServicio`; motor `backend/api/ficha_engine.py` |
 | **Intake chat libre** | `backend/api/agents/chat_intake.py`; nodo `intake` en `graph/nodes.py` |
+| **Empresa / FAQ** | `CompanyProfile`, `FaqItem`; `GET /api/company/`, `GET /api/faq/` |
 
 ## Flujo del wizard modal
 
@@ -107,6 +108,14 @@ Handlers en `useAgentChat.js`: `handleBookingNameNext`, `handleBookingAddressNex
 ## AgentState como deps unificado
 
 Todos los agentes Pydantic-AI usan `deps_type=AgentState`. En tools y system prompts: `RunContext[AgentState]` y `ctx.deps` (p. ej. `ctx.deps.language`). `graph/nodes.py` pasa `agent_state` a `agent.run(deps=agent_state)`. **No reintroducir `AgentDeps`.**
+
+### Memoria compartida (obligatorio)
+
+- **Fuente de verdad**: `AgentState` en sesión Django (`pest_type`, `property_type`, `chat_diagnostic`, `technical_notes`).
+- **Contexto único**: `api/agents/case_context.py` → `build_shared_case_context(..., role=...)`.
+- Recepcionista, diagnóstico, pricer, scheduler y CRM deben usar ese bloque (MEMORIA / SIGUIENTE DATO).
+- `merge_agent_updates` **no puede borrar** plaga, inmueble, ciudad ni claves de `chat_diagnostic` ya rellenadas.
+- Anti-patrón: prompts distintos por agente que repreguntan plaga/zona ignorando el estado.
 
 ## Checklist al modificar reservas
 

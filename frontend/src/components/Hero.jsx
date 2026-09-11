@@ -4,10 +4,12 @@ import { ShieldCheck, Zap, ArrowRight, Bug } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
+import { useGetCompanyQuery } from '@/store/apis/companyApi';
 
 const Hero = ({ openAgent }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { data: company } = useGetCompanyQuery(i18n.language?.startsWith('es') ? 'es' : 'ca');
 
   const slides = [
     "/assets/tecnico-identificando-foco-cucarachas.webp",
@@ -22,6 +24,8 @@ const Hero = ({ openAgent }) => {
     return () => clearInterval(timer);
   }, []);
 
+  const heroTitle = company?.hero_title || t('hero.title');
+  const heroDesc = company?.hero_subtitle || t('hero.desc');
   return (
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
@@ -91,10 +95,10 @@ const Hero = ({ openAgent }) => {
 
             <div className="space-y-4">
               <h1 className="text-3xl md:text-4xl xl:text-6xl font-black text-white leading-[1.1] tracking-tighter">
-                {t('hero.title')}
+                {heroTitle}
               </h1>
               <p className="max-w-xl text-lg md:text-xl text-white/85 font-light leading-relaxed tracking-wide">
-                {t('hero.desc')}
+                {heroDesc}
               </p>
             </div>
 

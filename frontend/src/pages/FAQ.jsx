@@ -1,4 +1,4 @@
-import React, { Suspense, lazy, useState, useEffect } from 'react';
+import React, { Suspense, lazy, useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, ChevronDown, HelpCircle, ShieldCheck, Clock, Zap } from 'lucide-react';
@@ -10,14 +10,16 @@ const Footer = lazy(() => import('../components/Footer'));
 const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
 import SEO from '../components/SEO';
 import { SectionSkeleton } from '../components/Skeleton';
+import { useGetFaqQuery } from '@/store/apis/companyApi';
 
 const FAQ = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('all');
   const [openId, setOpenId] = useState(null);
+  const lang = i18n.language?.startsWith('es') ? 'es' : i18n.language?.startsWith('en') ? 'en' : 'ca';
+  const { data: faqData } = useGetFaqQuery({ lang });
 
-  // Scroll to top on load
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -30,9 +32,12 @@ const FAQ = () => {
     { id: 'garantia' }
   ];
 
-  const faqItems = t('faq.items', { returnObjects: true }) || [];
+  const faqItems = useMemo(() => {
+    if (faqData?.items?.length) return faqData.items;
+    const legacy = t('faq.items', { returnObjects: true });
+    return Array.isArray(legacy) ? legacy : [];
+  }, [faqData, t]);
 
-  // Map icons to categories
   const categoryIcons = {
     seguretat: <ShieldCheck size={20} />,
     tecnic: <Zap size={20} />,
@@ -42,8 +47,10 @@ const FAQ = () => {
   };
 
   const filteredFaqs = faqItems.filter(faq => {
-    const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
+    const q = (faq.question || '').toLowerCase();
+    const a = (faq.answer || '').toLowerCase();
+    const term = searchTerm.toLowerCase();
+    const matchesSearch = q.includes(term) || a.includes(term);
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
     return matchesSearch && matchesCategory;
   });
