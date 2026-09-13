@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 
 import Button from '@/components/ui/Button';
+import { useGetCompanyQuery } from '@/store/apis/companyApi';
 import { scrollToAnchor } from '@/utils/scrollToAnchor';
 
 const MobileMenu = ({ 
@@ -17,6 +18,9 @@ const MobileMenu = ({
   i18n
 }) => {
   const { t } = useTranslation();
+  const lang = i18n.language?.startsWith('es') ? 'es' : 'ca';
+  const { data: company } = useGetCompanyQuery(lang);
+  const whatsappUrl = company?.whatsapp_url || 'https://wa.me/34681033305';
 
   return (
     <div 
@@ -98,9 +102,13 @@ const MobileMenu = ({
             ES
           </button>
         </div>
-        <Button 
+        <Button
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           variant="primary"
           className="w-full py-4 rounded-xl text-lg"
+          onClick={() => setMobileMenuOpen(false)}
         >
           {t('nav.contact')}
         </Button>

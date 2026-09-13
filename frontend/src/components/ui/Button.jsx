@@ -25,7 +25,7 @@ const Button = React.forwardRef(({
     icon: 'p-3 rounded-full',
   };
 
-  const Component = motion.button;
+  const Component = props.href ? motion.a : motion.button;
 
   return (
     <Component

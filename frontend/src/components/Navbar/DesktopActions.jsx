@@ -11,6 +11,7 @@ const DesktopActions = ({ isScrolled, i18n, changeLanguage }) => {
   const { data: company } = useGetCompanyQuery(lang);
   const phoneTel = company?.phone_tel || '+34933309169';
   const phoneLabel = company?.phone || '933 309 169';
+  const whatsappUrl = company?.whatsapp_url || 'https://wa.me/34681033305';
 
   return (
     <div className="hidden xl:flex items-center space-x-6">
@@ -36,6 +37,9 @@ const DesktopActions = ({ isScrolled, i18n, changeLanguage }) => {
       </a>
 
       <Button
+        href={whatsappUrl}
+        target="_blank"
+        rel="noopener noreferrer"
         variant={isScrolled ? 'primary' : 'accent'}
         className="px-6 py-2.5"
       >
