@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
 from api.agents.company_knowledge import get_company_profile
+from api.cors_utils import apply_cors_headers
 from api.models import FaqItem
 
 
@@ -55,22 +56,25 @@ def company_public(request):
         business_hours = profile.business_hours_ca
         policies = profile.policies_ca
 
-    return Response(
-        {
-            "brand_name": profile.brand_name,
-            "legal_name": profile.legal_name,
-            "phone": profile.phone,
-            "phone_tel": _phone_tel(profile.phone),
-            "whatsapp": profile.whatsapp,
-            "whatsapp_url": _wa_me(profile.whatsapp),
-            "email": profile.email,
-            "address": profile.address,
-            "hero_title": hero_title,
-            "hero_subtitle": hero_subtitle,
-            "service_area": service_area,
-            "business_hours": business_hours,
-            "policies": policies,
-        }
+    return apply_cors_headers(
+        Response(
+            {
+                "brand_name": profile.brand_name,
+                "legal_name": profile.legal_name,
+                "phone": profile.phone,
+                "phone_tel": _phone_tel(profile.phone),
+                "whatsapp": profile.whatsapp,
+                "whatsapp_url": _wa_me(profile.whatsapp),
+                "email": profile.email,
+                "address": profile.address,
+                "hero_title": hero_title,
+                "hero_subtitle": hero_subtitle,
+                "service_area": service_area,
+                "business_hours": business_hours,
+                "policies": policies,
+            }
+        ),
+        request,
     )
 
 
@@ -84,4 +88,4 @@ def faq_list(request):
     if category and category != "all":
         qs = qs.filter(category=category)
     items = [item.as_localized(lang) for item in qs]
-    return Response({"items": items})
+    return apply_cors_headers(Response({"items": items}), request)

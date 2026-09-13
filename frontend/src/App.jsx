@@ -19,6 +19,7 @@ const ServiceDetail = lazy(() => import('@/pages/ServiceDetail'));
 const Blog = lazy(() => import('@/pages/Blog'));
 const BlogArticle = lazy(() => import('@/pages/BlogArticle'));
 const FAQ = lazy(() => import('@/pages/FAQ'));
+const FloatingCTA = lazy(() => import('@/components/FloatingCTA'));
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
@@ -205,6 +206,13 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
           />
         </Routes>
       </motion.div>
+
+      {/* Una sola instancia: la conversación no se reinicia al cambiar de ruta */}
+      {!isAdminRoute && !showAgentModal && (
+        <Suspense fallback={null}>
+          <FloatingCTA />
+        </Suspense>
+      )}
     </SmoothScroll>
   );
 }

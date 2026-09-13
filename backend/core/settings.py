@@ -187,6 +187,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
+    'EXCEPTION_HANDLER': 'api.cors_utils.cors_exception_handler',
 }
 
 # CORS settings (credentials=true → origen explícito, no wildcard)

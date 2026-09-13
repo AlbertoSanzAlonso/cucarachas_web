@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import FloatingCTA from '@/components/FloatingCTA';
 import SEO from '@/components/SEO';
 import { SectionSkeleton } from '@/components/Skeleton';
 import { scrollToAnchor } from '@/utils/scrollToAnchor';
@@ -60,7 +59,6 @@ const About = () => {
       </main>
 
       <Footer />
-      <FloatingCTA />
     </div>
   );
 };

@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { Calendar, User, ArrowLeft, Clock, X } from 'lucide-react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import FloatingCTA from '@/components/FloatingCTA';
 import SEO from '@/components/SEO';
 import MarkdownBody from '@/components/Blog/MarkdownBody';
 import { useGetBlogArticleQuery } from '@/store/apis/blogApi';
@@ -148,7 +147,6 @@ const BlogArticle = () => {
       </main>
 
       <Footer />
-      <FloatingCTA />
 
       {lightboxOpen &&
         article?.image &&

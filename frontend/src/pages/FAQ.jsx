@@ -7,7 +7,6 @@ const Navbar = lazy(() => import('../components/Navbar'));
 const StatsBar = lazy(() => import('../components/StatsBar'));
 const ContactForm = lazy(() => import('../components/ContactForm'));
 const Footer = lazy(() => import('../components/Footer'));
-const FloatingCTA = lazy(() => import('../components/FloatingCTA'));
 import SEO from '../components/SEO';
 import { SectionSkeleton } from '../components/Skeleton';
 import { useGetFaqQuery } from '@/store/apis/companyApi';
@@ -244,10 +243,6 @@ const FAQ = () => {
 
       <Suspense fallback={<footer className="h-64 bg-primary-blue" />}>
         <Footer />
-      </Suspense>
-
-      <Suspense fallback={null}>
-        <FloatingCTA />
       </Suspense>
     </div>
   );

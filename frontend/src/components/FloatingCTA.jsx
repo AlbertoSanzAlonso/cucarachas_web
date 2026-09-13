@@ -7,6 +7,11 @@ import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
 import SlotPicker from '@/components/Agent/Chat/SlotPicker';
 import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 import { useGetCompanyQuery } from '@/store/apis/companyApi';
+import {
+  homeChatHasUserTurns,
+  loadHomeChatState,
+  saveHomeChatState,
+} from '@/utils/homeChatStorage';
 
 /** Icono monochrome WhatsApp (currentColor) — misma escala que Lucide en la cabecera. */
 const WhatsAppIcon = ({ size = 22, className = '' }) => (
@@ -32,12 +37,16 @@ const FloatingCTA = () => {
   const phoneTel = company?.phone_tel || '+34933309169';
   const phoneLabel = company?.phone || '933 309 169';
   const whatsappUrl = company?.whatsapp_url || 'https://wa.me/34681033305';
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(() => Boolean(loadHomeChatState()?.isOpen));
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(() => loadHomeChatState()?.messages || []);
   /** Caja del chat anclada al visualViewport (móvil + teclado iOS/Android). */
   const [mobileViewportBox, setMobileViewportBox] = useState(null);
+
+  useEffect(() => {
+    saveHomeChatState({ messages, isOpen });
+  }, [messages, isOpen]);
 
   useEffect(() => {
     setMessages((prev) => {
@@ -225,6 +234,7 @@ const FloatingCTA = () => {
   const sendMessage = async (userMessage) => {
     if (!userMessage.trim() || isLoading) return;
 
+    const preserveCase = homeChatHasUserTurns(messages);
     setMessages(prev => [...prev, { role: 'user', content: userMessage.trim() }]);
     setIsLoading(true);
 
@@ -233,6 +243,7 @@ const FloatingCTA = () => {
         message: userMessage.trim(),
         language: i18n.language,
         source: 'home',
+        preserve_case: preserveCase,
       }, { ...chatConfig, timeout: 60000 });
 
       setMessages(prev => [...prev, { 
@@ -345,6 +356,7 @@ const FloatingCTA = () => {
           message: '',
           language: i18n.language,
           source: 'home',
+          preserve_case: true,
           booking: { slot_time: slotTime, name, email, phone, address: address || '' },
         },
         chatConfig

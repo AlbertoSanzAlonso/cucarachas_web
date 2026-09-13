@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import FloatingCTA from '@/components/FloatingCTA';
 import SEO from '@/components/SEO';
 import { SectionSkeleton } from '@/components/Skeleton';
 
@@ -112,7 +111,6 @@ const Blog = () => {
       </main>
 
       <Footer />
-      <FloatingCTA />
     </div>
   );
 };

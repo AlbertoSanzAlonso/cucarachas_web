@@ -47,9 +47,11 @@ def chat_with_agents(request):
         else:
             orchestrator.state.language = language
 
-        # Chat home: no heredar comunidad/dirección/cita de otro chat o del modal
+        # Chat home: no heredar del modal… salvo conversación home ya activa (navegación SPA)
         if request.data.get("source") == "home":
-            orchestrator.state = reset_stale_home_case(orchestrator.state, message)
+            preserve_case = bool(request.data.get("preserve_case"))
+            if not preserve_case:
+                orchestrator.state = reset_stale_home_case(orchestrator.state, message)
             if not wants_scheduling(message.lower()):
                 orchestrator.state.intent = Intent.DOUBT
 

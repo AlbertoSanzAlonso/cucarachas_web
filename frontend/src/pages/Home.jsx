@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import FloatingCTA from '@/components/FloatingCTA';
 import SEO from '@/components/SEO';
 import { SectionSkeleton } from '@/components/Skeleton';
 import { scrollToAnchor } from '@/utils/scrollToAnchor';
@@ -112,7 +111,6 @@ function Home({ openAgent, isAgentOpen = false }) {
       </main>
       
       <Footer />
-      <FloatingCTA />
     </div>
   );
 }

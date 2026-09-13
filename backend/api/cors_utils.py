@@ -25,9 +25,23 @@ def is_allowed_cors_origin(origin: str | None) -> bool:
 
 def apply_cors_headers(response, request) -> object:
     """Refuerzo puntual cuando la vista necesita cabeceras CORS explícitas."""
-    origin = request.headers.get("Origin")
+    origin = request.headers.get("Origin") or request.META.get("HTTP_ORIGIN")
     if is_allowed_cors_origin(origin):
         response["Access-Control-Allow-Origin"] = origin
         response["Access-Control-Allow-Credentials"] = "true"
-        response["Vary"] = "Origin"
+        # Evitar que proxies/caches sirvan un origen incorrecto
+        vary = response.get("Vary", "")
+        if "Origin" not in vary and "origin" not in vary.lower():
+            response["Vary"] = f"{vary}, Origin".strip(", ")
+    return response
+
+
+def cors_exception_handler(exc, context):
+    """DRF: errores 4xx/5xx de la app también llevan CORS (el navegador no enmascara el fallo)."""
+    from rest_framework.views import exception_handler
+
+    response = exception_handler(exc, context)
+    request = context.get("request")
+    if response is not None and request is not None:
+        apply_cors_headers(response, request)
     return response
