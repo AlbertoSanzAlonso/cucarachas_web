@@ -204,7 +204,7 @@ const HospitalityService = () => {
         </section>
 
         {/* Contact CTA */}
-        <section className="pb-24 md:pb-32">
+        <section className="pb-64 md:pb-80">
           <div className="max-w-4xl mx-auto px-6 space-y-8">
             <div className="space-y-4">
               <h2 className="text-3xl md:text-4xl font-black text-primary-blue tracking-tighter">
