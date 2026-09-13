@@ -192,6 +192,99 @@ def is_informational_query(msg_lower: str) -> bool:
     return bool(how_what and mentions_pest(low))
 
 
+def is_client_question_or_objection(msg_lower: str) -> bool:
+    """
+    El cliente pregunta, objeta o pide consejo (DIY, productos, «¿sirve…?»).
+    Hay que responder al contenido ANTES de seguir el embudo de datos.
+    """
+    low = (msg_lower or "").lower().strip()
+    if not low:
+        return False
+    if wants_pricing_message(low) or wants_scheduling(low):
+        return False
+    if is_informational_query(low):
+        return True
+    markers = (
+        "sirve",
+        "serveix",
+        "funciona",
+        "producto",
+        "producte",
+        "supermercado",
+        "supermercat",
+        "spray",
+        "veneno",
+        "verí",
+        "insecticida",
+        "gel del",
+        "trampa",
+        "casera",
+        "casolà",
+        "casola",
+        "yo mismo",
+        "jo mateix",
+        "por mi cuenta",
+        "pel meu compte",
+        "no me sirve",
+        "no em serveix",
+        "no funciona",
+        "bastaría",
+        "bastaria",
+        "suficiente",
+        "suficient",
+        "puedo usar",
+        "puc usar",
+        "puedo echar",
+        "puc tirar",
+        "sin llamar",
+        "sense trucar",
+        "sin técnico",
+        "sense tècnic",
+        "es necesario",
+        "cal que",
+        "hace falta profesional",
+        "cal professional",
+        "por qué no",
+        "per què no",
+        "porque no",
+        "¿y si",
+        "i si ",
+        "y si ",
+    )
+    if any(m in low for m in markers):
+        return True
+    # Pregunta directa (? o cómo/qué/por qué) sobre el caso
+    if "?" in low or "¿" in low:
+        return True
+    return any(
+        low.startswith(p)
+        for p in (
+            "pero ",
+            "però ",
+            "y ",
+            "i ",
+            "entonces ",
+            "aleshores ",
+            "o sea ",
+            "o sigui ",
+        )
+    ) and any(
+        w in low
+        for w in (
+            "producto",
+            "producte",
+            "sirve",
+            "serveix",
+            "puedo",
+            "puc",
+            "necesito",
+            "necessito",
+            "bastaría",
+            "bastaria",
+        )
+    )
+
+
 PEST_KEYWORDS = (
     "cucarach",
     "cucurach",  # typo habitual

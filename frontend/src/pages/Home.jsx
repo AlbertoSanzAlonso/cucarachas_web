@@ -15,6 +15,7 @@ const FleetSection = lazy(() => import('@/components/FleetSection'));
 const PestGrid = lazy(() => import('@/components/PestGrid'));
 const SectorGrid = lazy(() => import('@/components/SectorGrid'));
 const OrigenService = lazy(() => import('@/components/OrigenService'));
+const HospitalityCTA = lazy(() => import('@/components/HospitalityCTA'));
 const StatsBar = lazy(() => import('@/components/StatsBar'));
 const Testimonials = lazy(() => import('@/components/Testimonials'));
 const ContactForm = lazy(() => import('@/components/ContactForm'));
@@ -86,6 +87,7 @@ function Home({ openAgent, isAgentOpen = false }) {
       <main>
         <LazySection Component={Hero} openAgent={openAgent} isAgentOpen={isAgentOpen} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
         <LazySection Component={CockroachFocus} />
+        <LazySection Component={HospitalityCTA} />
         <LazySection Component={Testimonials} />
         <LazySection Component={PestGrid} />
         <LazySection Component={SectorGrid} />

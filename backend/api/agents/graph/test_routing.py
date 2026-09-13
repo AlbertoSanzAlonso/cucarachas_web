@@ -503,6 +503,16 @@ def test_bare_pricing_routes_to_receptionist_not_pricer():
     assert choose_agent_route(state) == "receptionist"
 
 
+def test_diy_product_question_is_listening_turn():
+    from api.agents.graph.routing import is_client_question_or_objection
+
+    assert is_client_question_or_objection("pero no me sirve con usar algun producto?")
+    assert is_client_question_or_objection(
+        "es en mi casa, el año pasado tenia algunas pero desaparecieron con unos productos del supermercado"
+    )
+    assert not is_client_question_or_objection("quiero presupuesto")
+
+
 def test_ready_case_pricing_routes_to_pricer():
     from api.agents.models import PestType
 

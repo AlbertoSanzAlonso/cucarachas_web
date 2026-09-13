@@ -1,34 +1,26 @@
-/** Persistencia del chat home entre rutas y recargas de pestaña. */
-const STORAGE_KEY = 'cecsa_home_chat_v1';
+/**
+ * Memoria del chat home solo en RAM (SPA).
+ * Sobrevive a cambios de ruta / remount del widget; se pierde al recargar el navegador.
+ */
 
-export function loadHomeChatState() {
-  try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed || !Array.isArray(parsed.messages)) return null;
-    return {
-      messages: parsed.messages,
-      isOpen: Boolean(parsed.isOpen),
-    };
-  } catch {
-    return null;
-  }
+try {
+  sessionStorage.removeItem('cecsa_home_chat_v1');
+} catch {
+  // ignore
 }
 
-export function saveHomeChatState({ messages, isOpen }) {
-  try {
-    sessionStorage.setItem(
-      STORAGE_KEY,
-      JSON.stringify({
-        messages: messages || [],
-        isOpen: Boolean(isOpen),
-        updatedAt: Date.now(),
-      })
-    );
-  } catch {
-    // Quota / modo privado: la UI sigue en memoria
-  }
+let memory = {
+  messages: null,
+  isOpen: false,
+};
+
+export function getHomeChatMemory() {
+  return memory;
+}
+
+export function setHomeChatMemory({ messages, isOpen }) {
+  if (messages !== undefined) memory.messages = messages;
+  if (isOpen !== undefined) memory.isOpen = Boolean(isOpen);
 }
 
 export function homeChatHasUserTurns(messages) {

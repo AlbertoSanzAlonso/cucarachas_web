@@ -159,20 +159,29 @@ def build_shared_case_context(
             else "Plaga: encara NO especificada (PROHIBIT inventar paneroles o una altra espècie)"
         )
 
-    # Saludos / info: no empujar «siguiente dato = plaga»
+    # Saludos / info / objeciones: no empujar «siguiente dato» del embudo
     defer_intake = False
     if message:
-        from api.agents.graph.routing import is_informational_query, is_simple_greeting
+        from api.agents.graph.routing import (
+            is_client_question_or_objection,
+            is_informational_query,
+            is_simple_greeting,
+        )
 
-        defer_intake = is_simple_greeting(message.lower()) or is_informational_query(
-            message.lower()
+        low = message.lower()
+        defer_intake = (
+            is_simple_greeting(low)
+            or is_informational_query(low)
+            or is_client_question_or_objection(low)
         )
 
     if defer_intake:
         missing_txt = (
-            "ninguno este turno — solo responde al mensaje (saludo/pregunta)"
+            "ninguno este turno — primero RESPONDE a lo que dice el cliente "
+            "(pregunta, duda o relato); no fuerces el siguiente dato del embudo"
             if lang == "es"
-            else "cap aquest torn — només respon al missatge (salutació/pregunta)"
+            else "cap aquest torn — primer RESPON al que diu el client "
+            "(pregunta, dubte o relat); no forcis el següent dada de l'embut"
         )
 
     lines = [
@@ -226,7 +235,12 @@ def build_shared_case_context(
             lines.append(
                 "Es COMUNIDAD: pregunta zonas comunes/bajantes/pisos, no solo cocina de un piso."
             )
-        lines.append("ESTILO: natural, 1-3 frases. Empieza por el dato nuevo; no recapitules el caso.")
+        lines.append("ESTILO: natural y humano, 2-4 frases. "
+                     "Escucha primero; demuestra que has leído el mensaje. "
+                     "PROHIBIDO abrir con 'Entiendo tu preocupación', 'Entiendo que', "
+                     "'Comprendo tu situación' o frases clonadas. "
+                     "Si pregunta por productos/DIY, responde eso antes de pedir más datos. "
+                     "No empujes cita ni presupuesto en cada turno.")
 
     elif role == "diagnostician":
         lines.append("TAREA diagnóstico: orienta con hechos de MEMORIA; no recapitules.")

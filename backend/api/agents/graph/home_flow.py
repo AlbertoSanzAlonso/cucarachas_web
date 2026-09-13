@@ -549,6 +549,7 @@ def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str
     from api.agents.case_context import build_shared_case_context
     from api.agents.company_knowledge import is_outside_service_area
     from api.agents.graph.routing import (
+        is_client_question_or_objection,
         is_informational_query,
         is_simple_greeting,
         wants_pricing_message,
@@ -575,6 +576,24 @@ def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str
             else "\nTORN ESPECIAL: el client NO està relatant un cas encara. "
             "Respon de forma natural al que pregunta (salutació, blog, FAQ, empresa…). "
             "PROHIBIT preguntar quina plaga ha vist, habitatge/negoci ni zona en aquest missatge."
+        )
+        return base + tip
+
+    if is_client_question_or_objection(msg_lower):
+        tip = (
+            "\nTURNO DE ESCUCHA: el cliente pregunta, objeta o pide consejo "
+            "(p. ej. productos del super, si sirve el DIY). "
+            "1) Responde con claridad a ESA duda (1-3 frases útiles, sin alarmismo). "
+            "2) NO abras con 'Entiendo tu preocupación' ni sinónimos. "
+            "3) NO pidas cocina/baño/cantidad en este turno salvo que sea imprescindible. "
+            "4) Solo al final, si encaja, una pregunta suave o invitación — no venta dura."
+            if lang == "es"
+            else "\nTORN D'ESCOLTA: el client pregunta, objeta o demana consell "
+            "(p. ex. productes del súper, si serveix el DIY). "
+            "1) Respon amb claredat a AQUEST dubte (1-3 frases útils, sense alarmisme). "
+            "2) NO obris amb 'Entenc la teva preocupació' ni sinònims. "
+            "3) NO demanis cuina/bany/quantitat en aquest torn tret que sigui imprescindible. "
+            "4) Només al final, si encaixa, una pregunta suau — no venda dura."
         )
         return base + tip
 

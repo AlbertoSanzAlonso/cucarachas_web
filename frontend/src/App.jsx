@@ -19,6 +19,7 @@ const ServiceDetail = lazy(() => import('@/pages/ServiceDetail'));
 const Blog = lazy(() => import('@/pages/Blog'));
 const BlogArticle = lazy(() => import('@/pages/BlogArticle'));
 const FAQ = lazy(() => import('@/pages/FAQ'));
+const HospitalityService = lazy(() => import('@/pages/HospitalityService'));
 const FloatingCTA = lazy(() => import('@/components/FloatingCTA'));
 
 const ProtectedRoute = ({ children }) => {
@@ -131,6 +132,14 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
             element={
               <Suspense fallback={<RootLoader />}>
                 <ServiceDetail />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/servei-panerola-alemana-hostaleria"
+            element={
+              <Suspense fallback={<RootLoader />}>
+                <HospitalityService />
               </Suspense>
             }
           />

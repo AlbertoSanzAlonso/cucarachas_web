@@ -8,9 +8,9 @@ import SlotPicker from '@/components/Agent/Chat/SlotPicker';
 import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
 import { useGetCompanyQuery } from '@/store/apis/companyApi';
 import {
+  getHomeChatMemory,
   homeChatHasUserTurns,
-  loadHomeChatState,
-  saveHomeChatState,
+  setHomeChatMemory,
 } from '@/utils/homeChatStorage';
 
 /** Icono monochrome WhatsApp (currentColor) — misma escala que Lucide en la cabecera. */
@@ -37,15 +37,15 @@ const FloatingCTA = () => {
   const phoneTel = company?.phone_tel || '+34933309169';
   const phoneLabel = company?.phone || '933 309 169';
   const whatsappUrl = company?.whatsapp_url || 'https://wa.me/34681033305';
-  const [isOpen, setIsOpen] = useState(() => Boolean(loadHomeChatState()?.isOpen));
+  const [isOpen, setIsOpen] = useState(() => Boolean(getHomeChatMemory().isOpen));
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHint, setShowHint] = useState(false);
-  const [messages, setMessages] = useState(() => loadHomeChatState()?.messages || []);
+  const [messages, setMessages] = useState(() => getHomeChatMemory().messages || []);
   /** Caja del chat anclada al visualViewport (móvil + teclado iOS/Android). */
   const [mobileViewportBox, setMobileViewportBox] = useState(null);
 
   useEffect(() => {
-    saveHomeChatState({ messages, isOpen });
+    setHomeChatMemory({ messages, isOpen });
   }, [messages, isOpen]);
 
   useEffect(() => {
