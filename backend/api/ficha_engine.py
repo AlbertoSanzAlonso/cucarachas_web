@@ -169,7 +169,17 @@ def find_ficha(agent: AgentState, diagnostic: dict | None = None) -> FichaServic
         if prev:
             return prev
 
-    qs = FichaServicio.objects.filter(activa=True)
+    # Hostelería grave/persistente (p. ej. otras empresas sin resultado) → servicio especial
+    if client_type == "negoci" and _wants_hospitality_severe(ctx):
+        host = FichaServicio.objects.filter(activa=True, codigo="CUC-GER-HOST").first()
+        if host and (
+            not agent.pest_type
+            or not host.pest_type
+            or host.pest_type == agent.pest_type.value
+        ):
+            return host
+
+    qs = FichaServicio.objects.filter(activa=True).exclude(codigo__in=["CUC-GER-HOST", "CUC-DDD-PREV"])
     if agent.pest_type:
         qs = qs.filter(pest_type=agent.pest_type.value)
 
@@ -178,6 +188,97 @@ def find_ficha(agent: AgentState, diagnostic: dict | None = None) -> FichaServic
         if not tipos or client_type in tipos:
             return ficha
     return None
+
+
+def _is_hospitality_context(ctx: CaseContext) -> bool:
+    blob = ctx.text_blob
+    business = str(ctx.get_field("business_type") or "").lower()
+    hospitality_business = (
+        "bar",
+        "restaurante",
+        "restaurant",
+        "cocina",
+        "cuina",
+        "hotel",
+        "cafeteria",
+        "cafetería",
+        "pastisseria",
+        "panaderia",
+    )
+    if business and any(b in business for b in hospitality_business):
+        return True
+
+    # Tokens con límite de palabra (evitar "bar" ⊂ "barcelona")
+    hospitality_patterns = (
+        r"\bbares?\b",
+        r"\brestaurants?\b",
+        r"\brestaurantes?\b",
+        r"\bhosteler\w*\b",
+        r"\bhostaler\w*\b",
+        r"\bhoreca\b",
+        r"\bcocina profesional\b",
+        r"\bcuina professional\b",
+    )
+    return any(re.search(p, blob) for p in hospitality_patterns)
+
+
+def _wants_hospitality_severe(ctx: CaseContext) -> bool:
+    """Casos graves/persistentes de panerola alemanya en hostelería (servicio especial)."""
+    if not _is_hospitality_context(ctx):
+        return False
+
+    blob = ctx.text_blob
+    severe_keys = (
+        "otras empresas",
+        "altres empreses",
+        "otra empresa",
+        "altra empresa",
+        "ya han venido",
+        "ja han vingut",
+        "siguen apareciendo",
+        "continuen apareixent",
+        "siguen saliendo",
+        "continuen sortint",
+        "persistente",
+        "persistent",
+        "no funciona",
+        "no van funcionar",
+        "no han solucionado",
+        "no han solucionat",
+        "no se van",
+        "no se'n van",
+        "reaparec",
+        "tornen a sortir",
+        "vuelven a salir",
+        "tratamiento fallido",
+        "tractament fallit",
+        "casos graves",
+        "cas greu",
+        "problema grave",
+        "problema greu",
+        "inspección sanitaria",
+        "inspeccio sanitaria",
+        "inspecció sanitària",
+        "riesgo de cierre",
+        "risc de tancament",
+        "1100",
+        "1.100",
+        "servicio especial",
+        "servei especial",
+    )
+    if any(k in blob for k in severe_keys):
+        return True
+
+    level = str(ctx.get_field("level") or "").lower()
+    sanitary = str(ctx.get_field("sanitary_risk") or "").lower()
+    quantity = str(ctx.get_field("quantity") or "").lower()
+    if level in ("grave", "greu", "critico", "crític", "critical", "alto", "alt", "many", "nests"):
+        return True
+    if sanitary in ("alto", "alt", "high", "critico", "crític", "grave", "greu"):
+        return True
+    if quantity in ("many", "nests", "muchas", "moltes"):
+        return True
+    return False
 
 
 def _wants_preventive_ddd(ctx: CaseContext) -> bool:

@@ -115,6 +115,93 @@ def test_find_ficha_active_infestation_not_preventive():
 
 
 @pytest.mark.django_db
+def test_find_ficha_hospitality_severe_host():
+    FichaServicio.objects.update_or_create(
+        codigo="CUC-GER-NEG",
+        defaults={
+            "nombre_comercial": "Eliminación negocio",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "activa": True,
+        },
+    )
+    FichaServicio.objects.update_or_create(
+        codigo="CUC-GER-HOST",
+        defaults={
+            "nombre_comercial": "Servicio especial hostelería",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "activa": True,
+            "reglas_comerciales": [{"precio_venta": 1100}],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "where", "sanitary_risk"],
+            },
+            "copy_comercial": {
+                "es": "Servicio especial 1100€ + IVA para casos graves en hostelería.",
+                "ca": "Servei especial 1100€ + IVA per a casos greus en hostaleria.",
+            },
+        },
+    )
+    agent = AgentState(
+        language="es",
+        property_type="negoci",
+        pest_type=PestType.GERMAN_COCKROACH,
+    )
+    ficha = find_ficha(
+        agent,
+        {
+            "path": "empresa",
+            "business_type": "bar",
+            "extra_info": "ya han venido otras empresas y siguen apareciendo",
+        },
+    )
+    assert ficha is not None
+    assert ficha.codigo == "CUC-GER-HOST"
+
+
+@pytest.mark.django_db
+def test_pricing_hospitality_severe_1100():
+    from api.ficha_engine import evaluate_ficha_pricing
+
+    FichaServicio.objects.update_or_create(
+        codigo="CUC-GER-HOST",
+        defaults={
+            "nombre_comercial": "Servicio especial hostelería",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "activa": True,
+            "reglas_comerciales": [{"precio_venta": 1100}],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "where", "sanitary_risk"],
+            },
+            "copy_comercial": {"es": "Servicio especial hostelería.", "ca": "Servei especial."},
+            "garantia_meses": 12,
+        },
+    )
+    agent = AgentState(
+        language="es",
+        property_type="negoci",
+        pest_type=PestType.GERMAN_COCKROACH,
+    )
+    result = evaluate_ficha_pricing(
+        agent,
+        {
+            "path": "empresa",
+            "business_type": "restaurante",
+            "where": "cocina",
+            "sanitary_risk": "alto",
+            "extra_info": "otras empresas no han solucionado el problema",
+        },
+        message="restaurante con cucarachas persistentes",
+        lang="es",
+    )
+    assert result is not None
+    assert result.ficha_codigo == "CUC-GER-HOST"
+    assert result.final_price == 1100.0
+    assert result.can_quote
+
+
+@pytest.mark.django_db
 def test_match_objection_caro():
     ficha = FichaServicio.objects.create(
         codigo="CUC-TEST-OBJ",

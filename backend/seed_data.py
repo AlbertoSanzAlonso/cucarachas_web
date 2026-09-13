@@ -274,6 +274,119 @@ def seed():
             "garantia_meses": 12,
         },
         {
+            "codigo": "CUC-GER-HOST",
+            "nombre_comercial": "Servicio especial cucaracha alemana en hostelería (casos graves)",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "lugares": ["cocina", "barra", "almacen", "banos", "camara", "clientes"],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "where", "sanitary_risk"],
+            },
+            "reglas_diagnostico": [
+                {"keywords": ["noche", "nit"], "severity": "medium"},
+                {"keywords": ["día", "dia", "clientes", "inspección", "inspeccio"], "severity": "high"},
+                {
+                    "keywords": [
+                        "otras empresas",
+                        "altres empreses",
+                        "siguen apareciendo",
+                        "continuen apareixent",
+                        "persistente",
+                        "persistent",
+                        "no funciona",
+                        "no han solucionado",
+                        "no han solucionat",
+                        "grave",
+                        "greu",
+                    ],
+                    "severity": "critical",
+                },
+            ],
+            "prioridad_default": "critica",
+            "sistema_recomendado": {
+                "recomendar": [
+                    "localización de focos",
+                    "estrategia específica",
+                    "gel",
+                    "trampas",
+                    "monitorización",
+                    "seguimiento hasta solución",
+                ],
+                "no_recomendar": [
+                    "solo venir a poner gel",
+                    "tratamiento puntual sin seguimiento",
+                    "certificado preventivo DDD con plaga activa",
+                ],
+            },
+            "tiempo_medio": {"visita_1": 90, "visita_2": 60, "seguimiento": 45},
+            "material_medio": ["monitorización intensiva", "gel alta carga", "trampas", "revisión focos"],
+            "riesgo": "critico",
+            "dificultad": 5,
+            "coste_interno": {"tiempo_tecnico": 180, "material": 70, "desplazamiento": 25},
+            "reglas_comerciales": [
+                {"precio_venta": 1100},
+            ],
+            "bloqueos_presupuesto": [],
+            "copy_comercial": {
+                "ca": (
+                    "Servei especial CECSA per a casos greus o persistents de panerola alemanya en hostaleria "
+                    "(bars, restaurants i cuines professionals), especialment quan altres tractaments no han "
+                    "funcionat. Preu orientatiu 1.100 € + IVA. No oferim simplement «venir a posar gel»: "
+                    "localitzem focus, estudiem zones crítiques i fem seguiment fins a la solució, dins de les "
+                    "condicions del servei. Abans de tancar, volem conèixer el cas (temps amb el problema i "
+                    "tractaments previs) per confirmar si som l'empresa adequada."
+                ),
+                "es": (
+                    "Servicio especial CECSA para casos graves o persistentes de cucaracha alemana en hostelería "
+                    "(bares, restaurantes y cocinas profesionales), especialmente cuando otros tratamientos no "
+                    "han funcionado. Precio orientativo 1.100 € + IVA. No ofrecemos simplemente «venir a poner gel»: "
+                    "localizamos focos, estudiamos zonas críticas y hacemos seguimiento hasta la solución, dentro "
+                    "de las condiciones del servicio. Antes de cerrar, queremos conocer el caso (tiempo con el "
+                    "problema y tratamientos previos) para confirmar si somos la empresa adecuada."
+                ),
+            },
+            "objeciones": [
+                {
+                    "trigger": "otras empresas",
+                    "respuesta_ca": (
+                        "Justament aquest servei està pensat per quan ja han vingut altres empreses i les paneroles "
+                        "continuen. Explica'ns què s'ha fet i des de quan; abans de vendre res, volem saber si "
+                        "podem solucionar-ho."
+                    ),
+                    "respuesta_es": (
+                        "Justamente este servicio está pensado para cuando ya han venido otras empresas y las "
+                        "cucarachas siguen. Cuéntanos qué se ha hecho y desde cuándo; antes de vender nada, "
+                        "queremos saber si podemos solucionarlo."
+                    ),
+                },
+                {
+                    "trigger": "solo gel",
+                    "respuesta_ca": (
+                        "No proposem només «venir a posar gel». En hostaleria greu cal localitzar focus i una "
+                        "estratègia amb seguiment; el gel és una eina, no el pla sencer."
+                    ),
+                    "respuesta_es": (
+                        "No proponemos solo «venir a poner gel». En hostelería grave hay que localizar focos y "
+                        "una estrategia con seguimiento; el gel es una herramienta, no el plan completo."
+                    ),
+                },
+                {
+                    "trigger": "caro",
+                    "respuesta_ca": (
+                        "És un servei per a establiments que necessiten una solució seriosa després de tractaments "
+                        "que no han funcionat. Si el cas no encaixa, t'ho direm amb sinceritat abans de pressupostar."
+                    ),
+                    "respuesta_es": (
+                        "Es un servicio para establecimientos que necesitan una solución seria tras tratamientos "
+                        "que no han funcionado. Si el caso no encaja, te lo diremos con sinceridad antes de presupuestar."
+                    ),
+                },
+            ],
+            "venta_cruzada": [],
+            "seguimiento": {"24h": "whatsapp", "7d": "whatsapp", "30d": "email"},
+            "garantia_meses": 12,
+        },
+        {
             "codigo": "CUC-DDD-PREV",
             "nombre_comercial": "Prevención y certificado DDD (sin infestación activa)",
             "pest_type": "",

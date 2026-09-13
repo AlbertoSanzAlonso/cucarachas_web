@@ -339,8 +339,22 @@ COMMERCIAL_KNOWLEDGE_CHUNKS = [
         "content": (
             "Bares y restauración: distinguir servicio preventivo y certificado DDD "
             "(sin infestación activa) del programa de eliminación de cucaracha germánica "
-            "(infestación activa). Nunca vender el preventivo como solución a plaga activa. "
-            "Si el precio es el problema, ofrecer visita técnica para ajustar alcance."
+            "(infestación activa, ficha CUC-GER-NEG). Nunca vender el preventivo como solución "
+            "a plaga activa. Si el precio es el problema, ofrecer visita técnica para ajustar alcance."
+        ),
+    },
+    {
+        "title": "Servicio especial hostelería cucaracha alemana graves",
+        "category": "comercial",
+        "content": (
+            "Servicio especial CECSA (ficha CUC-GER-HOST) para casos graves o persistentes de "
+            "cucaracha alemana en bares, restaurantes y cocinas profesionales, especialmente cuando "
+            "otras empresas ya han tratado y siguen apareciendo. Precio orientativo 1.100 € + IVA. "
+            "No es «venir a poner gel»: localizar focos, estrategia específica y seguimiento hasta "
+            "la solución dentro de las condiciones del servicio. Antes de vender, conocer el caso "
+            "(tiempo del problema y tratamientos previos) para confirmar si CECSA es la empresa adecuada. "
+            "Landing pública: /servei-panerola-alemana-hostaleria. "
+            "Casos de negocio estándar sin persistencia grave → CUC-GER-NEG, no este servicio."
         ),
     },
     {
