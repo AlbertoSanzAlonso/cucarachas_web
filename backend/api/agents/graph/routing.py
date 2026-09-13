@@ -194,11 +194,30 @@ def affirms_pest_presence(msg_lower: str) -> bool:
     return False
 
 
+def has_scheduling_ready_case(agent: AgentState) -> bool:
+    """Caso avanzado: un «sí» puede significar agendar, no confirmar plaga."""
+    if not agent.pest_type:
+        return False
+    chat = agent.chat_diagnostic or {}
+    if chat.get("where") and chat.get("quantity"):
+        return True
+    wizard_where = any(
+        chat.get(k) for k in ("where", "where_empresa", "where_admin", "where_comunidad")
+    )
+    wizard_level = any(
+        chat.get(k) for k in ("quantity", "level", "sanitary_risk", "urgency")
+    )
+    return bool(wizard_where and wizard_level)
+
+
 def should_offer_slots(agent: AgentState, msg_lower: str) -> bool:
-    """True quan cal mostrar horaris Cal.com (petició explícita o confirmació)."""
+    """True cuando hay petición explícita de cita, o «sí» tras un caso ya listo."""
     if wants_scheduling(msg_lower):
         return True
-    return accepts_scheduling_affirmative(msg_lower) and bool(agent.pest_type)
+    # «sí» tras «¿has visto plaga?» confirma plaga; no saltar a agenda
+    if not accepts_scheduling_affirmative(msg_lower):
+        return False
+    return has_scheduling_ready_case(agent)
 
 
 def wants_scheduling(msg_lower: str) -> bool:
@@ -542,7 +561,7 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
 
     if wants_scheduling(msg_lower):
         agent.intent = Intent.APPOINTMENT
-    elif accepts_scheduling_affirmative(msg_lower) and agent.pest_type:
+    elif accepts_scheduling_affirmative(msg_lower) and has_scheduling_ready_case(agent):
         agent.intent = Intent.APPOINTMENT
     elif agent.intent == Intent.APPOINTMENT and not should_offer_slots(agent, msg_lower):
         # Sesión anterior (p. ej. modal): no arrastrar cita a un "hola" genérico

@@ -266,6 +266,25 @@ def test_vague_problem_does_not_inherit_stale_pest():
     assert "plaga" in text or "cucarachas" in text or "roedores" in text
 
 
+def test_si_after_ask_pest_asks_property_not_slots():
+    """hola → problema → ¿plaga? → sí → pregunta inmueble (no agenda)."""
+    agent = AgentState(language="es")
+    agent, msg = _turn(agent, "hola")
+    assert "ayudar" in msg.lower()
+
+    agent, msg = _turn(agent, "tengo un problema")
+    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
+    assert agent.pending_intake_field == "pest"
+
+    agent, msg = _turn(agent, "si")
+    assert agent.pest_type == PestType.GERMAN_COCKROACH
+    assert choose_agent_route(_home_state(agent, "si")) == "receptionist"
+    low = msg.lower()
+    assert "horario" not in low
+    assert "inspección gratuita" not in low or "vivienda" in low or "negocio" in low
+    assert "vivienda" in low or "negocio" in low or "comunidad" in low
+
+
 def test_out_of_area_alicante_scripted():
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "vivo en Alicante")

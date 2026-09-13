@@ -206,8 +206,8 @@ ORCHESTRATOR_MESSAGES = {
         "confidence_yellow": "🟡 **{pct}% de precisió** — poden haver-hi petits ajustos després de la visita tècnica.",
         "confidence_red": "🔴 **Menys del {pct}% de precisió** — cal una inspecció gratuïta abans de comprometre un preu.",
         "scheduler_slots_intro": (
-            "Perfecte! Aquests són els horaris disponibles per a la teva "
-            "inspecció gratuïta a Barcelona. Tria el que et vagi millor:"
+            "D'acord. Quan et vagi bé, podem concertar una inspecció gratuïta a Barcelona. "
+            "Aquí tens alguns horaris lliures — tria el que et convingui:"
         ),
         "scheduler_collect_data": (
             "Perfecte, horari seleccionat. Indica primer el teu **nom** "
@@ -307,8 +307,8 @@ ORCHESTRATOR_MESSAGES = {
         "confidence_yellow": "🟡 **{pct}% de precisión** — puede haber pequeños ajustes tras la visita técnica.",
         "confidence_red": "🔴 **Menos del {pct}% de precisión** — hace falta una inspección gratuita antes de comprometer un precio.",
         "scheduler_slots_intro": (
-            "¡Perfecto! Estos son los horarios disponibles para tu "
-            "inspección gratuita en Barcelona. Elige el que mejor te venga:"
+            "De acuerdo. Cuando te venga bien, podemos concertar una inspección gratuita en Barcelona. "
+            "Aquí tienes algunos horarios libres — elige el que te convenga:"
         ),
         "scheduler_collect_data": (
             "Perfecto, horario seleccionado. Indica primero tu **nombre** "

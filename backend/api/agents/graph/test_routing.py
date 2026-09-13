@@ -263,7 +263,9 @@ def test_affirmative_without_case_stays_receptionist():
     assert _route(agent, "si") == "receptionist"
 
 
-def test_vale_after_quote_with_pest_routes_to_scheduler():
+def test_vale_with_pest_only_stays_receptionist():
+    """«vale» con plaga pero sin caso listo no salta a agenda (evita brusquedad)."""
+    from api.agents.graph.routing import should_offer_slots
     from api.agents.models import PestType
 
     agent = AgentState(
@@ -273,7 +275,49 @@ def test_vale_after_quote_with_pest_routes_to_scheduler():
         city="Barcelona",
         property_type="negoci",
     )
+    assert should_offer_slots(agent, "vale") is False
+    state = {
+        "message": "vale",
+        "language": "es",
+        "source": "home",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "receptionist"
+
+
+def test_vale_after_ready_case_routes_to_scheduler():
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        intent=Intent.QUOTE,
+        pest_type=PestType.GERMAN_COCKROACH,
+        city="Barcelona",
+        property_type="negoci",
+        chat_diagnostic={"where": "cocina", "quantity": "several"},
+    )
     assert _route(agent, "vale") == "scheduler"
+
+
+def test_si_after_pest_confirm_does_not_offer_slots():
+    """Tras ask_pest, «sí» confirma plaga y sigue el guion — no muestra horarios."""
+    from api.agents.chat_intake import ensure_pest_from_message
+    from api.agents.graph.routing import should_offer_slots
+    from api.agents.models import PestType
+
+    agent = AgentState(language="es", pending_intake_field="pest")
+    agent = ensure_pest_from_message(agent, "si")
+    assert agent.pest_type == PestType.GERMAN_COCKROACH
+    assert should_offer_slots(agent, "si") is False
+    state = {
+        "message": "si",
+        "language": "es",
+        "source": "home",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) == "receptionist"
 
 
 def test_wizard_diagnostic_routes_pricing_to_pricer():
