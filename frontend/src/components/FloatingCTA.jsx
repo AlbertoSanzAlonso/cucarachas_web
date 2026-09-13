@@ -136,12 +136,27 @@ const FloatingCTA = () => {
     }
   }, [isOpen]);
 
-  useEffect(() => {
+  const scrollChatToBottom = () => {
     const container = messagesContainerRef.current;
     if (container) {
       container.scrollTop = container.scrollHeight;
     }
-  }, [messages, isLoading]);
+  };
+
+  // Al abrir o al llegar mensajes nuevos: ir al final (no al saludo inicial)
+  useLayoutEffect(() => {
+    if (!isOpen) return undefined;
+    scrollChatToBottom();
+    const raf = requestAnimationFrame(scrollChatToBottom);
+    // Tras montaje AnimatePresence + animación de apertura
+    const t1 = setTimeout(scrollChatToBottom, 50);
+    const t2 = setTimeout(scrollChatToBottom, 320);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [messages, isLoading, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
