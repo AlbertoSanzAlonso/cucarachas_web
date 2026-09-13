@@ -12,6 +12,7 @@ from typing import Any, Iterable
 from knowledge.models import TechnicalKnowledge
 
 ZERO_EMBEDDING = [0.0] * 3072
+EMBEDDING_TIMEOUT_SEC = 20
 
 SOURCE_KINDS = (
     "blog",
@@ -23,17 +24,32 @@ SOURCE_KINDS = (
     "presupuesto_ref",
 )
 
+# Si True, upsert usa vector cero (más rápido; el fallback textual del retriever sigue funcionando).
+_SKIP_EMBEDDINGS = False
+
+
+def set_skip_embeddings(skip: bool) -> None:
+    global _SKIP_EMBEDDINGS
+    _SKIP_EMBEDDINGS = bool(skip)
+
 
 def _safe_embedding(text: str) -> list[float]:
-    """Genera embedding; si falla la API, vector cero (sigue sirviendo el fallback textual)."""
-    if not os.environ.get("GOOGLE_API_KEY"):
+    """Genera embedding; si falla/timeout/skip, vector cero (sigue sirviendo el fallback textual)."""
+    if _SKIP_EMBEDDINGS or not os.environ.get("GOOGLE_API_KEY"):
         return list(ZERO_EMBEDDING)
+    from concurrent.futures import ThreadPoolExecutor, TimeoutError as FuturesTimeout
+
     try:
         from knowledge.retriever import get_embedding
 
-        emb = get_embedding(text)
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            fut = pool.submit(get_embedding, text)
+            emb = fut.result(timeout=EMBEDDING_TIMEOUT_SEC)
         if emb and len(emb) == 3072:
             return list(emb)
+        print(f"WARNING: embedding size {len(emb) if emb else 0} != 3072, using zero vector")
+    except FuturesTimeout:
+        print(f"WARNING: embedding timeout after {EMBEDDING_TIMEOUT_SEC}s")
     except Exception as exc:
         print(f"WARNING: embedding failed for sync: {exc}")
     return list(ZERO_EMBEDDING)
@@ -356,7 +372,13 @@ def sync_presupuesto_referencia(ref) -> TechnicalKnowledge:
     return upsert_knowledge(**build_presupuesto_ref_chunk(ref))
 
 
-def sync_all(*, only: Iterable[str] | None = None, dry_run: bool = False) -> dict[str, int]:
+def sync_all(
+    *,
+    only: Iterable[str] | None = None,
+    dry_run: bool = False,
+    skip_embeddings: bool = False,
+    on_progress=None,
+) -> dict[str, int]:
     """Reindexa todas las fuentes (o un subconjunto)."""
     from api.models import (
         BlogArticle,
@@ -368,6 +390,7 @@ def sync_all(*, only: Iterable[str] | None = None, dry_run: bool = False) -> dic
         Tratamiento,
     )
 
+    set_skip_embeddings(skip_embeddings)
     kinds = set(only) if only else set(SOURCE_KINDS)
     counts = {k: 0 for k in SOURCE_KINDS}
 
@@ -375,6 +398,8 @@ def sync_all(*, only: Iterable[str] | None = None, dry_run: bool = False) -> dic
         if not chunk:
             return
         counts[kind] += 1
+        if on_progress:
+            on_progress(kind, chunk.get("source_key") or chunk.get("title") or "")
         if not dry_run:
             upsert_knowledge(**chunk)
 

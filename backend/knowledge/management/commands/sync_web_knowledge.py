@@ -25,11 +25,34 @@ class Command(BaseCommand):
             choices=list(SOURCE_KINDS),
             help="Limita a una o más fuentes (ej. --only blog faq).",
         )
+        parser.add_argument(
+            "--skip-embeddings",
+            action="store_true",
+            help=(
+                "No llama a Gemini: guarda vector cero. Más rápido; "
+                "el retriever sigue funcionando por búsqueda textual."
+            ),
+        )
 
     def handle(self, *args, **options):
         dry_run = options["dry_run"]
         only = options.get("only")
-        counts = sync_all(only=only, dry_run=dry_run)
+        skip_embeddings = options["skip_embeddings"]
+        if skip_embeddings:
+            self.stdout.write(self.style.WARNING("Embeddings desactivados (--skip-embeddings)."))
+
+        def on_progress(kind: str, key: str) -> None:
+            self.stdout.write(f"  → {kind}: {key}")
+            self.stdout.flush()
+
+        self.stdout.write("Iniciando sync_web_knowledge…")
+        self.stdout.flush()
+        counts = sync_all(
+            only=only,
+            dry_run=dry_run,
+            skip_embeddings=skip_embeddings,
+            on_progress=None if dry_run else on_progress,
+        )
         total = sum(counts.values())
         prefix = "[dry-run] " if dry_run else ""
         for kind, n in counts.items():
