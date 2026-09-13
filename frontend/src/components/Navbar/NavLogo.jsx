@@ -18,10 +18,16 @@ const NavLogo = ({ isScrolled }) => {
         }}
       />
       <div className="flex flex-col leading-none">
-        <span className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 ${isScrolled ? 'text-primary-blue' : 'text-white'} [@media(max-height:600px)_and_(orientation:landscape)]:!text-lg`}>
-          CEC<span className="text-accent-green">SA</span>
+        <span
+          className={`text-xl md:text-2xl font-black tracking-tighter transition-colors duration-500 [@media(max-height:600px)_and_(orientation:landscape)]:!text-lg`}
+          style={{ color: isScrolled ? 'var(--primary-blue)' : 'white' }}
+        >
+          CECSA
         </span>
-        <span className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 ${isScrolled ? 'text-secondary-gray/70' : 'text-white/70'} [@media(max-height:600px)_and_(orientation:landscape)]:hidden`}>
+        <span
+          className={`text-[10px] uppercase tracking-[0.3em] font-medium transition-colors duration-500 [@media(max-height:600px)_and_(orientation:landscape)]:hidden`}
+          style={{ color: isScrolled ? 'var(--accent-green)' : 'rgba(255,255,255,0.7)' }}
+        >
           {t('common.pest_control')}
         </span>
       </div>
