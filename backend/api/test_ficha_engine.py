@@ -41,7 +41,7 @@ CUC_GER_PISO = {
     "dificultad": 3,
     "coste_interno": {"tiempo_tecnico": 52, "material": 18, "desplazamiento": 12},
     "reglas_comerciales": [
-        {"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 220},
+        {"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 240},
         {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 120}, "precio_venta": 250},
         {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 200}, "action": "visita_tecnica"},
     ],
@@ -115,7 +115,7 @@ class FichaEngineTests(TestCase):
         self.assertIsNotNone(result)
         assert result is not None
         self.assertTrue(result.can_quote)
-        self.assertEqual(result.final_price, 220.0)
+        self.assertEqual(result.final_price, 240.0)
         self.assertGreaterEqual(result.confidence, 70)
 
     def test_pricing_m2_mayor_200_visita(self):
@@ -149,7 +149,7 @@ class FichaEngineTests(TestCase):
         assert result is not None
         # Sin m²: rango orientativo de la ficha (no inventar visita ni histórico plano)
         self.assertTrue(result.can_quote)
-        self.assertEqual(result.price_range_min, 220.0)
+        self.assertEqual(result.price_range_min, 240.0)
         self.assertEqual(result.price_range_max, 250.0)
         self.assertLess(result.confidence, 70)
         self.assertFalse(result.use_llm)
@@ -161,7 +161,7 @@ class FichaEngineTests(TestCase):
         self.assertIsNotNone(result)
         assert result is not None
         self.assertTrue(result.can_quote)
-        self.assertEqual(result.price_range_min, 220.0)
+        self.assertEqual(result.price_range_min, 240.0)
         self.assertEqual(result.price_range_max, 250.0)
         self.assertTrue(any("orientativo" in b.lower() for b in result.breakdown))
 

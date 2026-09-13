@@ -27,8 +27,9 @@ class Command(BaseCommand):
                 emb = zero
 
             obj, created = TechnicalKnowledge.objects.update_or_create(
-                title=chunk["title"],
+                source_key=f"comercial:{chunk['title'][:120]}",
                 defaults={
+                    "title": chunk["title"],
                     "content": chunk["content"],
                     "source": "CECSA política comercial",
                     "category": chunk.get("category") or "comercial",

@@ -89,7 +89,7 @@ class FichaServicio(models.Model):
     )
     reglas_comerciales = models.JSONField(
         default=list,
-        help_text='[{"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 220}, …]',
+        help_text='[{"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 240}, …]',
     )
     bloqueos_presupuesto = models.JSONField(default=list)
     copy_comercial = models.JSONField(default=dict, help_text='{"ca": "…", "es": "…"}')

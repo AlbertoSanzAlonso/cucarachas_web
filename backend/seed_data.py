@@ -127,7 +127,7 @@ def seed():
             "dificultad": 3,
             "coste_interno": {"tiempo_tecnico": 52, "material": 18, "desplazamiento": 12},
             "reglas_comerciales": [
-                {"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 220},
+                {"condition": {"field": "metros_cuadrados", "op": "lt", "value": 80}, "precio_venta": 240},
                 {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 120}, "precio_venta": 250},
                 {"condition": {"field": "metros_cuadrados", "op": "gt", "value": 200}, "action": "visita_tecnica"},
             ],
