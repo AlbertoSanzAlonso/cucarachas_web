@@ -89,8 +89,8 @@ function Home({ openAgent, isAgentOpen = false }) {
         <LazySection Component={CockroachFocus} />
         <LazySection Component={HospitalityCTA} />
         <LazySection Component={Testimonials} />
-        <LazySection Component={PestGrid} />
-        <LazySection Component={SectorGrid} />
+        <LazySection Component={PestGrid} openAgent={openAgent} />
+        <LazySection Component={SectorGrid} openAgent={openAgent} />
         <LazySection Component={OrigenService} />
         <LazySection Component={FleetSection} />
         {/* Unified Authority Section (Stats + Contact) with Skewed Top */}

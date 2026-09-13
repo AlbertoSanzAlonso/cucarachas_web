@@ -71,7 +71,7 @@ function App() {
 function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
-  const showAgentModal = isAgentOpen && location.pathname === '/' && !isAdminRoute;
+  const showAgentModal = isAgentOpen && !isAdminRoute;
 
   // Lenis no respeta window.scrollTo; al cambiar de ruta hay que ir al top vía su API.
   React.useEffect(() => {
@@ -131,7 +131,7 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
             path="/serveis/:id"
             element={
               <Suspense fallback={<RootLoader />}>
-                <ServiceDetail />
+                <ServiceDetail openAgent={handleOpenAgent} />
               </Suspense>
             }
           />

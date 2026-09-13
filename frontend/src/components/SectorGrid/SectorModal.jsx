@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Button from '@/components/ui/Button';
 
-const SectorModal = ({ sector, isOpen, onClose, setImageLoaded }) => {
+const SectorModal = ({ sector, isOpen, onClose, openAgent, setImageLoaded }) => {
   const { t } = useTranslation();
   
   if (!sector) return null;
@@ -95,6 +95,10 @@ const SectorModal = ({ sector, isOpen, onClose, setImageLoaded }) => {
                   <Button 
                     variant="primary"
                     className="flex-[1.5] py-3 md:py-4 text-sm md:text-xl rounded-xl md:rounded-2xl shadow-xl group px-4 text-center leading-tight"
+                    onClick={() => {
+                      onClose();
+                      openAgent?.();
+                    }}
                   >
                     <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-5 h-5 md:w-6 md:h-6" />
                     <span>{t('common.cta_free')}</span>

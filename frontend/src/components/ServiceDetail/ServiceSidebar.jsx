@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, Users } from 'lucide-react';
 
-const ServiceSidebar = ({ id, sectorData, sectorIcons, t }) => {
+const ServiceSidebar = ({ id, sectorData, sectorIcons, openAgent, t }) => {
   return (
     <div className="space-y-8">
       <div className="sticky top-40 space-y-8">
@@ -22,7 +22,7 @@ const ServiceSidebar = ({ id, sectorData, sectorIcons, t }) => {
             
             <div className="space-y-4 relative z-10">
                <button 
-                  onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                  onClick={() => openAgent?.()}
                   className="w-full py-5 px-4 bg-primary-blue text-white font-black text-lg md:text-xl rounded-2xl shadow-xl flex items-center justify-center group/btn leading-tight text-center"
                >
                   <Zap className="mr-2 text-accent-green fill-accent-green/20 group-hover:rotate-12 transition-transform shrink-0 w-6 h-6" />

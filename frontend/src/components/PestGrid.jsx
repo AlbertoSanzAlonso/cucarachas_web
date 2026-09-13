@@ -4,7 +4,7 @@ import { getPestSpecies } from '@/components/PestGrid/pestData';
 import PestCard from '@/components/PestGrid/PestCard';
 import PestModal from '@/components/PestGrid/PestModal';
 
-const PestGrid = () => {
+const PestGrid = ({ openAgent }) => {
   const { t } = useTranslation();
   const [selectedPest, setSelectedPest] = useState(null);
   const [isOpening, setIsOpening] = useState(false);
@@ -74,6 +74,7 @@ const PestGrid = () => {
       <PestModal 
         pest={selectedPest}
         onClose={() => setSelectedPest(null)}
+        openAgent={openAgent}
         t={t}
       />
     </section>

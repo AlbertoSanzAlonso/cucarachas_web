@@ -12,7 +12,7 @@ import ServiceHero from '@/components/ServiceDetail/ServiceHero';
 import ServiceContent from '@/components/ServiceDetail/ServiceContent';
 import ServiceSidebar from '@/components/ServiceDetail/ServiceSidebar';
 
-const ServiceDetail = () => {
+const ServiceDetail = ({ openAgent }) => {
   const { id } = useParams();
   const { t } = useTranslation();
 
@@ -106,6 +106,7 @@ const ServiceDetail = () => {
             id={id} 
             sectorData={sectorData} 
             sectorIcons={sectorIcons} 
+            openAgent={openAgent}
             t={t} 
           />
         </section>

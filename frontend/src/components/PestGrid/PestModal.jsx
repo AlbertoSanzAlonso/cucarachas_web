@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ShieldCheck, Zap, Eye, ZoomIn, ZoomOut } from 'lucide-react';
 
-const PestModal = ({ pest, onClose, t }) => {
+const PestModal = ({ pest, onClose, openAgent, t }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isRevealed, setIsRevealed] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -165,7 +165,7 @@ const PestModal = ({ pest, onClose, t }) => {
                   <button
                     onClick={() => {
                       onClose();
-                      setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 300);
+                      openAgent?.();
                     }}
                     className={`w-full py-4 px-6 md:px-8 rounded-xl md:rounded-2xl text-white font-black text-xs md:text-lg shadow-[0_20px_50px_rgba(0,128,187,0.3)] transition-all duration-300 hover:scale-[1.02] active:scale-[0.98] uppercase tracking-tighter flex items-center justify-center space-x-3 md:space-x-4 group ${pest.scientific ? '[@media(max-height:600px)_and_(orientation:landscape)]:py-2 [@media(max-height:600px)_and_(orientation:landscape)]:mt-2' : ''}`}
                     style={{ background: 'var(--color-primary-blue)' }}

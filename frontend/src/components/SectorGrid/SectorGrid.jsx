@@ -5,7 +5,7 @@ import { Utensils, Hotel, Users, Factory } from 'lucide-react';
 import SectorCard from '@/components/SectorGrid/SectorCard';
 import SectorModal from '@/components/SectorGrid/SectorModal';
 
-const SectorGrid = () => {
+const SectorGrid = ({ openAgent }) => {
   const { t } = useTranslation();
   const [selectedSector, setSelectedSector] = useState(null);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -111,6 +111,7 @@ const SectorGrid = () => {
         sector={selectedSector}
         isOpen={!!selectedSector}
         onClose={() => setSelectedSector(null)}
+        openAgent={openAgent}
         setImageLoaded={setImageLoaded}
       />
     </section>
