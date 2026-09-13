@@ -30,6 +30,7 @@ _INTAKE_QUESTIONS = {
         "mascotas": "Hi ha mascotes a casa?",
         "ninos": "Hi ha nens a casa?",
         "business_type": "Quin tipus de negoci és? (restaurant, hotel, oficina…)",
+        "sanitary_risk": "Quin risc sanitari o gravetat diries que té el cas? (baix, mitjà, alt/greu)",
     },
     "es": {
         "property_type": (
@@ -47,6 +48,7 @@ _INTAKE_QUESTIONS = {
         "mascotas": "¿Hay mascotas en casa?",
         "ninos": "¿Hay niños en casa?",
         "business_type": "¿Qué tipo de negocio es? (restaurante, hotel, oficina…)",
+        "sanitary_risk": "¿Qué riesgo sanitario o gravedad dirías que tiene el caso? (bajo, medio, alto/grave)",
     },
 }
 

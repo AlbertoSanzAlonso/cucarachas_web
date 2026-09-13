@@ -158,9 +158,14 @@ def _eval_condition(condition: dict, ctx: CaseContext) -> bool:
     return _compare(op, actual, value)
 
 
-def find_ficha(agent: AgentState, diagnostic: dict | None = None) -> FichaServicio | None:
+def find_ficha(
+    agent: AgentState,
+    diagnostic: dict | None = None,
+    *,
+    message: str = "",
+) -> FichaServicio | None:
     diagnostic = diagnostic or {}
-    ctx = CaseContext(agent, diagnostic)
+    ctx = CaseContext(agent, diagnostic, message=message)
     client_type = ctx.client_type
 
     # Bars/locales: preventivo+certificado DDD vs eliminación con infestación
@@ -461,7 +466,7 @@ def evaluate_ficha_pricing(
     from api.agents.chat_intake import build_unified_diagnostic
 
     diagnostic = build_unified_diagnostic(agent, diagnostic)
-    ficha = find_ficha(agent, diagnostic)
+    ficha = find_ficha(agent, diagnostic, message=message)
     if not ficha:
         return None
 
