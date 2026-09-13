@@ -27,7 +27,7 @@ const LazySection = ({ Component, fallback = <SectionSkeleton />, ...props }) =>
   </Suspense>
 );
 
-function Home({ openAgent }) {
+function Home({ openAgent, isAgentOpen = false }) {
   const { t } = useTranslation();
   const location = useLocation();
 
@@ -85,7 +85,7 @@ function Home({ openAgent }) {
       <Navbar />
       
       <main>
-        <LazySection Component={Hero} openAgent={openAgent} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
+        <LazySection Component={Hero} openAgent={openAgent} isAgentOpen={isAgentOpen} fallback={<div className="h-[80vh] bg-gray-100 animate-pulse" />} />
         <LazySection Component={CockroachFocus} />
         <LazySection Component={Testimonials} />
         <LazySection Component={PestGrid} />

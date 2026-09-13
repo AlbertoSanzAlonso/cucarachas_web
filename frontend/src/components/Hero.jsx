@@ -6,9 +6,10 @@ import Button from '@/components/ui/Button';
 import Badge from '@/components/ui/Badge';
 import { useGetCompanyQuery } from '@/store/apis/companyApi';
 
-const Hero = ({ openAgent }) => {
+const Hero = ({ openAgent, isAgentOpen = false }) => {
   const { t, i18n } = useTranslation();
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768);
   const { data: company } = useGetCompanyQuery(i18n.language?.startsWith('es') ? 'es' : 'ca');
 
   const slides = [
@@ -24,18 +25,29 @@ const Hero = ({ openAgent }) => {
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // Evitar layoutId compartido con AgentHeroModal mientras el cuestionario está
+  // abierto: Framer Motion sincroniza opacity y deja la página en blanco.
+  const sharedLayoutId = !isAgentOpen && isDesktop ? 'hero-box' : undefined;
+
   const heroTitle = company?.hero_title || t('hero.title');
   const heroDesc = company?.hero_subtitle || t('hero.desc');
   return (
     <section className="relative w-full pt-28 md:pt-32 pb-12 overflow-hidden flex justify-center">
       {/* Contained Floating Hero Box - No touching edges */}
       <motion.div 
-        layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
+        layoutId={sharedLayoutId}
         className="relative min-h-[550px] md:min-h-[650px] xl:min-h-[80vh] w-[92%] md:w-[94%] max-w-[1700px] flex items-center rounded-[2.5rem] md:rounded-[5rem] shadow-xl md:shadow-2xl overflow-hidden group"
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
           willChange: 'transform, opacity',
-          borderRadius: window.innerWidth < 768 ? '2.5rem' : undefined
+          borderRadius: isDesktop ? undefined : '2.5rem'
         }}
         transition={{ 
           duration: 0.4,

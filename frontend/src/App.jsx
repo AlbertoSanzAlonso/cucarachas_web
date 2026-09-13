@@ -97,7 +97,7 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
             path="/"
             element={
               <Suspense fallback={<RootLoader />}>
-                <Home openAgent={handleOpenAgent} />
+                <Home openAgent={handleOpenAgent} isAgentOpen={isAgentOpen} />
               </Suspense>
             }
           />

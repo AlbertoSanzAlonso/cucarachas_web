@@ -20,6 +20,14 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
   const [answers, setAnswers] = useState({});
   const [fichaQuestions, setFichaQuestions] = useState([]);
   const [isFinished, setIsFinished] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 768);
+
+  useEffect(() => {
+    const onResize = () => setIsDesktop(window.innerWidth >= 768);
+    onResize();
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   const {
     messages,
@@ -151,13 +159,13 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
-        layoutId={window.innerWidth < 768 ? undefined : "hero-box"}
+        layoutId={isDesktop ? 'hero-box' : undefined}
         className="relative w-[96%] md:w-[94%] max-w-[1700px] h-[85vh] md:h-[85vh] rounded-[2.5rem] md:rounded-[5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col items-center overflow-hidden" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',
           zIndex: 201,
           willChange: 'transform, opacity',
-          borderRadius: window.innerWidth < 768 ? '2.5rem' : undefined
+          borderRadius: isDesktop ? undefined : '2.5rem'
         }}
         transition={{ 
           duration: 0.4,
