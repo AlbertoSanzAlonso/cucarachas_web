@@ -22,8 +22,12 @@ def get_diagnostician_prompt(ctx: RunContext[AgentState]) -> str:
 
 @diagnostician_agent.tool
 def search_technical_knowledge(ctx: RunContext[AgentState], query: str) -> str:
-    """Searches technical protocols and scientific information in the CECSA RAG database."""
-    return retrieve_relevant_knowledge(query)
+    """Busca en la base RAG CECSA: protocolos, blog, FAQ, especies y fichas técnicas."""
+    return retrieve_relevant_knowledge(
+        query,
+        limit=4,
+        category=["general", "blog", "faq", "species", "ficha"],
+    )
 
 @diagnostician_agent.tool
 def get_bio_prevention_tips(ctx: RunContext[AgentState], pest_type: str) -> str:

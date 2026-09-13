@@ -27,16 +27,29 @@ def _format_rows(results) -> str:
         formatted_results.append(f"--- {res.title} ---\n{res.content}")
     return "\n\n".join(formatted_results)
 
-def retrieve_relevant_knowledge(query: str, limit=3, category: str | None = None):
+def _apply_category_filter(qs, category: str | list[str] | tuple[str, ...] | None):
+    if not category:
+        return qs
+    if isinstance(category, (list, tuple, set)):
+        cats = [c for c in category if c]
+        if cats:
+            return qs.filter(category__in=cats)
+        return qs
+    return qs.filter(category=category)
+
+def retrieve_relevant_knowledge(
+    query: str,
+    limit=3,
+    category: str | list[str] | tuple[str, ...] | None = None,
+):
     """
     Busca los fragmentos más cercanos en la DB usando distancia de coseno.
     Nunca lanza excepción: un fallo en RAG no debe tumbar el chat de diagnóstico.
-    Si category está definida, filtra (p. ej. comercial). Fallback por texto si no hay embeddings.
+    Si category está definida (str o lista), filtra. Fallback por texto si no hay embeddings.
     """
     try:
         qs = TechnicalKnowledge.objects.all()
-        if category:
-            qs = qs.filter(category=category)
+        qs = _apply_category_filter(qs, category)
 
         if os.environ.get('GOOGLE_API_KEY'):
             try:

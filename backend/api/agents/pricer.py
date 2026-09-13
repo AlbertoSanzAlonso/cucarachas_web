@@ -60,7 +60,7 @@ async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
 
 @pricer_agent.tool
 async def search_commercial_policy(ctx: RunContext[AgentState]) -> str:
-    """Política comercial CECSA desde BD (perfil + RAG categoría comercial). Sin costes internos."""
+    """Política comercial + fichas/refs anonimizadas (RAG). Sin costes internos ni PII."""
     from api.agents.company_knowledge import format_commercial_policy
     from knowledge.retriever import retrieve_relevant_knowledge
 
@@ -71,7 +71,11 @@ async def search_commercial_policy(ctx: RunContext[AgentState]) -> str:
 
     def _load() -> str:
         from_db = format_commercial_policy(lang)
-        rag = retrieve_relevant_knowledge(query, limit=3, category="comercial")
+        rag = retrieve_relevant_knowledge(
+            query,
+            limit=5,
+            category=["comercial", "company", "ficha", "presupuesto_ref", "tratamiento"],
+        )
         parts = []
         if from_db:
             parts.append(f"--- Política CompanyProfile ---\n{from_db}")

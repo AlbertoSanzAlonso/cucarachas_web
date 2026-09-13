@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     
     # Local
     'api',
-    'knowledge',
+    'knowledge.apps.KnowledgeConfig',
     'pgvector.django',
 ]
 
