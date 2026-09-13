@@ -715,7 +715,7 @@ def _pricing_flow_route(
     msg_lower: str = "",
 ) -> str | None:
     """Intake → pricer cuando pide precio, o tras completar intake de presupuesto."""
-    from api.agents.chat_intake import has_pricing_case_details
+    from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
 
     if not agent.pest_type:
         return None
@@ -723,12 +723,10 @@ def _pricing_flow_route(
         return "intake"
 
     asking_price = wants_pricing_message(msg_lower or "")
-    fields_missing = missing
-    if asking_price and fields_missing is None:
-        fields_missing = get_missing_mandatory_fields(agent, diagnostic)
 
     if asking_price:
-        if fields_missing:
+        needed = next_pricing_intake_field(agent, diagnostic)
+        if needed:
             return "intake"
         if not has_pricing_case_details(agent, diagnostic):
             return "intake"
@@ -741,6 +739,7 @@ def _pricing_flow_route(
         and agent.intent in (Intent.QUOTE, Intent.URGENCY)
         and not is_simple_greeting(msg_lower)
         and has_pricing_case_details(agent, diagnostic)
+        and not next_pricing_intake_field(agent, diagnostic)
     ):
         return "pricer"
 

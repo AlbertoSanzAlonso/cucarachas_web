@@ -103,6 +103,7 @@ def test_home_free_question_routes_to_diagnostician():
     agent = AgentState(
         language="es",
         pest_type=PestType.GERMAN_COCKROACH,
+        property_type="particular",
         intent=Intent.DOUBT,
         chat_diagnostic={"where": "bano", "quantity": "several"},
     )
@@ -166,6 +167,7 @@ def test_home_quantity_routes_to_diagnostician():
     agent = AgentState(
         language="es",
         pest_type=PestType.GERMAN_COCKROACH,
+        property_type="particular",
         intent=Intent.DOUBT,
         chat_diagnostic={"where": "bano"},
     )

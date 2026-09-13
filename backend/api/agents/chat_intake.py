@@ -15,6 +15,10 @@ _PROPERTY_TO_PATH = {
 
 _INTAKE_QUESTIONS = {
     "ca": {
+        "property_type": (
+            "Per donar-te un pressupost realista, el tractament és per a una **vivenda**, "
+            "un **negoci** o una **comunitat de veïns**?"
+        ),
         "codigo_postal": "Per preparar-te un pressupost precís, em pots dir el **codi postal** de l'immoble?",
         "metros_cuadrados": "Quants **metres quadrats** té el pis o local?",
         "where": "On has vist la plaga? (cuina, bany, garatge…)",
@@ -28,6 +32,10 @@ _INTAKE_QUESTIONS = {
         "business_type": "Quin tipus de negoci és? (restaurant, hotel, oficina…)",
     },
     "es": {
+        "property_type": (
+            "Para darte un presupuesto realista, ¿el tratamiento es para una **vivienda**, "
+            "un **negocio** o una **comunidad de vecinos**?"
+        ),
         "codigo_postal": "Para prepararte un presupuesto preciso, ¿me puedes decir el **código postal** del inmueble?",
         "metros_cuadrados": "¿Cuántos **metros cuadrados** tiene el piso o local?",
         "where": "¿Dónde has visto la plaga? (cocina, baño, garaje…)",
@@ -139,17 +147,23 @@ def _filled(value: Any) -> bool:
 
 
 def has_pricing_case_details(agent: AgentState, diagnostic: dict | None = None) -> bool:
-    """True solo si hay plaga + algún detalle del caso (ubicación, cantidad, etc.)."""
-    if not agent.pest_type:
+    """True solo con plaga + tipo de inmueble + ubicación + cantidad (mínimo para cotizar)."""
+    if not agent.pest_type or not agent.property_type:
         return False
     unified = build_unified_diagnostic(agent, diagnostic)
-    return any(_filled(unified.get(key)) for key in _PRICING_DETAIL_KEYS)
+    where_keys = ("where", "where_empresa", "where_admin", "where_comunidad")
+    qty_keys = ("quantity", "level")
+    has_where = any(_filled(unified.get(k)) for k in where_keys)
+    has_qty = any(_filled(unified.get(k)) for k in qty_keys)
+    return has_where and has_qty
 
 
 def next_pricing_intake_field(agent: AgentState, diagnostic: dict | None = None) -> str | None:
     """Siguiente dato a pedir antes de cotizar, o None si ya se puede presupuestar."""
     if not agent.pest_type:
         return "pest"
+    if not agent.property_type:
+        return "property_type"
     unified = build_unified_diagnostic(agent, diagnostic)
     where_keys = ("where", "where_empresa", "where_admin", "where_comunidad")
     if not any(_filled(unified.get(k)) for k in where_keys):
@@ -157,6 +171,10 @@ def next_pricing_intake_field(agent: AgentState, diagnostic: dict | None = None)
     qty_keys = ("quantity", "level")
     if not any(_filled(unified.get(k)) for k in qty_keys):
         return "quantity"
+    # Campos de ficha (m², CP…) antes de soltar cifras
+    missing = get_missing_mandatory_fields(agent, diagnostic)
+    if missing:
+        return missing[0]
     return None
 
 
@@ -267,6 +285,11 @@ def pricing_orchestration_context(
                 "Pregunta qué plaga tiene. "
                 "PROHIBIDO decir cucarachas/alemanas/paneroles o preguntar cocina/baño como si ya hubiera plaga."
             )
+        elif needed == "property_type":
+            ask_hint = (
+                "Pregunta si es vivienda, negocio o comunidad de vecinos. "
+                "NO des euros ni rangos. Una sola pregunta."
+            )
         elif needed == "where":
             ask_hint = (
                 "Pregunta dónde ha visto las cucarachas. "
@@ -276,6 +299,11 @@ def pricing_orchestration_context(
             ask_hint = (
                 "Pregunta cuántas cucarachas ha visto (pocas, varias, muchas). "
                 "PROHIBIDO añadir 'alemanas' u otra especie."
+            )
+        elif needed in ("metros_cuadrados", "codigo_postal", "business_type"):
+            ask_hint = (
+                f"Falta el dato '{needed}' para un presupuesto fiable. "
+                "Pregúntalo en una frase natural. PROHIBIDO inventar euros."
             )
         else:
             ask_hint = "Caso listo: puedes indicar next_agent=pricer (tú NO digas euros)."
@@ -297,6 +325,11 @@ def pricing_orchestration_context(
             "Pregunta quina plaga té. "
             "PROHIBIT dir paneroles/cucarachas o preguntar cuina/bany com si ja hi hagués plaga."
         )
+    elif needed == "property_type":
+        ask_hint = (
+            "Pregunta si és habitatge, negoci o comunitat de veïns. "
+            "NO donis euros ni rangs. Una sola pregunta."
+        )
     elif needed == "where":
         ask_hint = (
             "Pregunta on ha vist les paneroles. "
@@ -306,6 +339,11 @@ def pricing_orchestration_context(
         ask_hint = (
             "Pregunta quantes paneroles ha vist (poques, diverses, moltes). "
             "PROHIBIT afegir 'alemanyes' o una altra espècie."
+        )
+    elif needed in ("metros_cuadrados", "codigo_postal", "business_type"):
+        ask_hint = (
+            f"Falta el dada '{needed}' per un pressupost fiable. "
+            "Pregunta-ho en una frase natural. PROHIBIT inventar euros."
         )
     else:
         ask_hint = "Cas llest: pots indicar next_agent=pricer (tu NO diguis euros)."
@@ -348,6 +386,57 @@ def parse_field_value(field: str, message: str) -> Any:
     if field == "codigo_postal":
         match = _CP_RE.search(text)
         return match.group(1) if match else None
+
+    if field == "property_type":
+        low = text.lower()
+        if any(
+            k in low
+            for k in (
+                "comunitat",
+                "comunidad",
+                "vecinos",
+                "veïns",
+                "finca",
+                "escalera",
+                "escala",
+            )
+        ):
+            return "comunitat"
+        if any(
+            k in low
+            for k in (
+                "negoci",
+                "negocio",
+                "empresa",
+                "local",
+                "restaurant",
+                "restaurante",
+                "hotel",
+                "oficina",
+                "bar ",
+                "hosteler",
+                "comerç",
+                "comercio",
+            )
+        ):
+            return "negoci"
+        if any(
+            k in low
+            for k in (
+                "particular",
+                "vivienda",
+                "vivenda",
+                "habitatge",
+                "piso",
+                "pis ",
+                "casa",
+                "hogar",
+                "domicilio",
+                "apartament",
+            )
+        ):
+            return "particular"
+        return None
 
     if field == "metros_cuadrados":
         match = _M2_RE.search(text) or _M2_BARE_RE.match(text)
@@ -477,12 +566,21 @@ def apply_chat_intake_from_message(agent: AgentState, message: str) -> AgentStat
     if updated.pending_intake_field:
         parsed = parse_field_value(updated.pending_intake_field, message)
         if parsed is not None:
-            chat[updated.pending_intake_field] = parsed
+            if updated.pending_intake_field == "property_type":
+                updated.property_type = parsed
+            else:
+                chat[updated.pending_intake_field] = parsed
             updated.pending_intake_field = None
 
     for key, val in extract_fields_from_message(message).items():
         if key not in chat or not chat.get(key):
             chat[key] = val
+
+    # Tipo de inmueble también desde texto libre
+    if not updated.property_type:
+        prop = parse_field_value("property_type", message)
+        if prop:
+            updated.property_type = prop
 
     updated.chat_diagnostic = chat
     return updated

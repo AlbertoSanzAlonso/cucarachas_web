@@ -421,11 +421,11 @@ def evaluate_ficha_pricing(
             guarantee_months=guarantee,
         )
 
-    # Hay precio/rango de ficha: cotizar siempre (el badge refleja la confianza real)
+    # Hay precio/rango de ficha: solo cotizar con confianza amarilla/verde
     if final_price is not None:
         return FichaPricingResult(
             ficha_codigo=ficha.codigo,
-            can_quote=True,
+            can_quote=tier != "red",
             confidence=confidence,
             use_llm=False,
             final_price=final_price,
@@ -440,7 +440,7 @@ def evaluate_ficha_pricing(
 
     return FichaPricingResult(
         ficha_codigo=ficha.codigo,
-        can_quote=True,
+        can_quote=tier != "red",
         confidence=confidence,
         use_llm=False,
         price_range_min=price_min,

@@ -435,10 +435,10 @@ async def pricer_node(state: CECSAGraphState) -> dict:
 
     def _confidence_badge(confidence: float) -> str:
         if confidence >= 95:
-            return msgs["confidence_green"].format(pct=int(confidence))
+            return msgs["confidence_green"]
         if confidence >= 70:
-            return msgs["confidence_yellow"].format(pct=int(confidence))
-        return msgs["confidence_red"].format(pct=int(confidence))
+            return msgs["confidence_yellow"]
+        return msgs["confidence_red"]
 
     try:
         from api.ficha_engine import evaluate_ficha_pricing, find_ficha, match_objection, severity_to_agent
@@ -463,17 +463,65 @@ async def pricer_node(state: CECSAGraphState) -> dict:
             lang=lang,
         )
 
-        # Ficha con precio, bloqueo o visita: no saltar al histórico genérico por use_llm
-        if ficha_result and (ficha_result.can_quote or ficha_result.schedule_inspection):
+        # Ficha con precio fiable: cotizar. Si falta confianza o datos → pedir info, no inventar €
+        if ficha_result:
             if ficha_result.severity:
                 sev = severity_to_agent(ficha_result.severity)
                 if sev:
                     agent.severity = sev
 
-            breakdown_text = ", ".join(ficha_result.breakdown) if ficha_result.breakdown else ""
-            badge = _confidence_badge(ficha_result.confidence)
+            if (
+                ficha_result.can_quote
+                and not ficha_result.schedule_inspection
+                and ficha_result.confidence >= 70
+            ):
+                breakdown_text = ", ".join(ficha_result.breakdown) if ficha_result.breakdown else ""
+                badge = _confidence_badge(ficha_result.confidence)
 
-            if not ficha_result.can_quote or ficha_result.schedule_inspection:
+                if ficha_result.final_price and ficha_result.confidence >= 95:
+                    msg = msgs["pricing_closed_template"].format(
+                        confidence_badge=badge,
+                        price=f"{ficha_result.final_price:.0f}",
+                        breakdown=breakdown_text,
+                        months=ficha_result.guarantee_months,
+                        commercial_copy=ficha_result.commercial_copy or "",
+                    )
+                else:
+                    pmin = ficha_result.price_range_min or ficha_result.final_price or 0
+                    pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
+                    msg = msgs["pricing_template"].format(
+                        confidence_badge=badge,
+                        min=f"{pmin:.0f}",
+                        max=f"{pmax:.0f}",
+                        breakdown=breakdown_text,
+                        months=ficha_result.guarantee_months,
+                        commercial_copy=ficha_result.commercial_copy or "",
+                    )
+
+                agent.estimated_price = ficha_result.final_price or ficha_result.price_range_max
+                pmin = ficha_result.price_range_min or ficha_result.final_price or 0
+                pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
+                await sync_to_async(_persist_pricing_to_crm)(
+                    agent,
+                    state.get("diagnostic"),
+                    price_min=pmin,
+                    price_max=pmax,
+                    final_price=ficha_result.final_price,
+                    breakdown=list(ficha_result.breakdown or []),
+                    guarantee_months=ficha_result.guarantee_months,
+                    ficha_codigo=ficha_result.ficha_codigo or "",
+                )
+                return {
+                    "agent_state": agent.model_dump(mode="json"),
+                    "result": {"message": msg},
+                }
+
+            # Visita técnica obligatoria (bloqueo / m² extremos): sin cifras inventadas
+            if ficha_result.schedule_inspection and ficha_result.block_reason in (
+                "visita_tecnica",
+                "metros_excesivos",
+            ):
+                badge = _confidence_badge(ficha_result.confidence)
                 msg = msgs["pricing_inspection_only"].format(
                     confidence_badge=badge,
                     commercial_copy=ficha_result.commercial_copy or "",
@@ -484,61 +532,23 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                     "route": "scheduler",
                 }
 
-            if ficha_result.final_price and ficha_result.confidence >= 95:
-                msg = msgs["pricing_closed_template"].format(
-                    confidence_badge=badge,
-                    price=f"{ficha_result.final_price:.0f}",
-                    breakdown=breakdown_text,
-                    months=ficha_result.guarantee_months,
-                    commercial_copy=ficha_result.commercial_copy or "",
+            # Baja confianza: pedir el siguiente dato (m², CP…) vía recepcionista
+            from api.agents.chat_intake import get_missing_mandatory_fields
+
+            needed = next_pricing_intake_field(agent, state.get("diagnostic"))
+            if not needed:
+                missing_mandatory = await sync_to_async(get_missing_mandatory_fields)(
+                    agent, state.get("diagnostic")
                 )
-            else:
-                pmin = ficha_result.price_range_min or ficha_result.final_price or 0
-                pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
-                msg = msgs["pricing_template"].format(
-                    confidence_badge=badge,
-                    min=f"{pmin:.0f}",
-                    max=f"{pmax:.0f}",
-                    breakdown=breakdown_text,
-                    months=ficha_result.guarantee_months,
-                    commercial_copy=ficha_result.commercial_copy or "",
-                )
-
-            agent.estimated_price = ficha_result.final_price or ficha_result.price_range_max
-            pmin = ficha_result.price_range_min or ficha_result.final_price or 0
-            pmax = ficha_result.price_range_max or ficha_result.final_price or pmin
-            await sync_to_async(_persist_pricing_to_crm)(
-                agent,
-                state.get("diagnostic"),
-                price_min=pmin,
-                price_max=pmax,
-                final_price=ficha_result.final_price,
-                breakdown=list(ficha_result.breakdown or []),
-                guarantee_months=ficha_result.guarantee_months,
-                ficha_codigo=ficha_result.ficha_codigo or "",
-            )
-            return {
-                "agent_state": agent.model_dump(mode="json"),
-                "result": {"message": msg},
-            }
-
-        from api.agents.case_context import build_shared_case_context
-
-        context = build_shared_case_context(
-            agent, lang, state.get("message") or "", role="pricer"
-        )
-        if ficha_result:
-            from api.ficha_engine import find_ficha, format_ficha_context
-
-            ficha = await sync_to_async(find_ficha)(agent, diagnostic)
-            if ficha:
-                context += f"\n\n{format_ficha_context(ficha, lang)}"
-                context += f"\nConfianza ficha: {ficha_result.confidence}%"
+                needed = missing_mandatory[0] if missing_mandatory else "metros_cuadrados"
+            agent.pending_intake_field = needed if needed != "pest" else "pest"
+            agent.intent = Intent.QUOTE
+            return await receptionist_node({**state, "agent_state": agent.model_dump(mode="json")})
 
         from api.pricing_fallback import estimate_price_deterministic
 
         estimate = await sync_to_async(estimate_price_deterministic)(agent, lang)
-        if estimate:
+        if estimate and estimate.get("confidence", 0) >= 70:
             badge = _confidence_badge(estimate["confidence"])
             msg = msgs["pricing_template"].format(
                 confidence_badge=badge,
@@ -563,35 +573,11 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 "result": {"message": msg},
             }
 
-        agent, output = await _run_agent(
-            pricer_agent,
-            f"Context: {context}",
-            state,
-            timeout_key="pricer",
-            use_full_history=False,
-        )
-        msg = msgs["pricing_template"].format(
-            confidence_badge=msgs["confidence_yellow"].format(pct=80),
-            min=output.price_range_min,
-            max=output.price_range_max,
-            breakdown=", ".join(output.breakdown),
-            months=output.guarantee_months,
-            commercial_copy="",
-        )
-        agent.estimated_price = output.price_range_max
-        await sync_to_async(_persist_pricing_to_crm)(
-            agent,
-            state.get("diagnostic"),
-            price_min=float(output.price_range_min),
-            price_max=float(output.price_range_max),
-            final_price=float(output.final_price) if output.final_price else None,
-            breakdown=list(output.breakdown or []),
-            guarantee_months=output.guarantee_months,
-        )
-        return {
-            "agent_state": agent.model_dump(mode="json"),
-            "result": {"message": msg},
-        }
+        # Sin ficha ni histórico fiable: recopilar datos, no soltar plantilla
+        needed = next_pricing_intake_field(agent, state.get("diagnostic")) or "metros_cuadrados"
+        agent.pending_intake_field = needed if needed != "pest" else "pest"
+        agent.intent = Intent.QUOTE
+        return await receptionist_node({**state, "agent_state": agent.model_dump(mode="json")})
     except Exception as e:
         import traceback
 
@@ -599,7 +585,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
         from api.pricing_fallback import estimate_price_deterministic
 
         estimate = await sync_to_async(estimate_price_deterministic)(agent, lang)
-        if estimate:
+        if estimate and estimate.get("confidence", 0) >= 70:
             badge = _confidence_badge(estimate["confidence"])
             msg = msgs["pricing_template"].format(
                 confidence_badge=badge,
@@ -623,10 +609,10 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 "agent_state": agent.model_dump(mode="json"),
                 "result": {"message": msg},
             }
-        return {"result": {"message": msgs["pricing_inspection_only"].format(
-            confidence_badge=msgs["confidence_red"].format(pct=50),
-            commercial_copy="",
-        )}}
+        needed = next_pricing_intake_field(agent, state.get("diagnostic")) or "metros_cuadrados"
+        agent.pending_intake_field = needed if needed != "pest" else "pest"
+        agent.intent = Intent.QUOTE
+        return await receptionist_node({**state, "agent_state": agent.model_dump(mode="json")})
 
 
 def _format_diagnosis_message(output: DiagnosisOutput, *, home: bool = False, lang: str = "ca") -> str:

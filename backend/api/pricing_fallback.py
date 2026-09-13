@@ -71,19 +71,22 @@ def estimate_price_deterministic(agent: AgentState, lang: str = "ca") -> dict | 
     Estima rango de precio sin LLM.
     Returns dict con min, max, breakdown, months, confidence o None.
     """
-    if not agent.pest_type:
+    if not agent.pest_type or not agent.property_type:
         return None
 
     cases = find_similar_references(agent)
     if cases:
         amounts = [float(c.total_monto) for c in cases]
         pmin, pmax = _spread_range(amounts, agent)
+        confidence = _confidence_from_sample(len(cases), agent)
+        if confidence < 70:
+            return None
         return {
             "min": pmin,
             "max": pmax,
             "breakdown": _breakdown_from_cases(cases, lang),
             "months": cases[0].garantia_meses or 12,
-            "confidence": _confidence_from_sample(len(cases), agent),
+            "confidence": confidence,
         }
 
     prices = [float(t.precio_base) for t in Tratamiento.objects.all() if t.precio_base]

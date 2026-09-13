@@ -147,10 +147,8 @@ class FichaEngineTests(TestCase):
         result = evaluate_ficha_pricing(agent, diagnostic, lang="es")
         self.assertIsNotNone(result)
         assert result is not None
-        # Sin m²: rango orientativo de la ficha (no inventar visita ni histórico plano)
-        self.assertTrue(result.can_quote)
-        self.assertEqual(result.price_range_min, 240.0)
-        self.assertEqual(result.price_range_max, 250.0)
+        # Sin m²/CP: no soltar precio automático; hay que recopilar datos
+        self.assertFalse(result.can_quote)
         self.assertLess(result.confidence, 70)
         self.assertFalse(result.use_llm)
 
@@ -160,10 +158,12 @@ class FichaEngineTests(TestCase):
         result = evaluate_ficha_pricing(agent, diagnostic, lang="es")
         self.assertIsNotNone(result)
         assert result is not None
-        self.assertTrue(result.can_quote)
-        self.assertEqual(result.price_range_min, 240.0)
-        self.assertEqual(result.price_range_max, 250.0)
-        self.assertTrue(any("orientativo" in b.lower() for b in result.breakdown))
+        # Con zona pero sin m²: rango interno posible, sin cotizar al cliente
+        self.assertFalse(result.can_quote)
+        self.assertLess(result.confidence, 95)
+        if result.price_range_min is not None:
+            self.assertEqual(result.price_range_min, 240.0)
+            self.assertEqual(result.price_range_max, 250.0)
 
     def test_severity_mapping(self):
         self.assertEqual(severity_to_agent("high"), Severity.HIGH)

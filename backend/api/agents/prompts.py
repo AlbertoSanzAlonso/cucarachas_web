@@ -216,9 +216,9 @@ ORCHESTRATOR_MESSAGES = {
             "Recomanem una **inspecció gratuïta** per valorar el cas amb precisió. "
             "Si vols agendar, digue'm el teu **telèfon** i et mostro els horaris."
         ),
-        "confidence_green": "🟢 **{pct}% de precisió** — pressupost tancat.",
-        "confidence_yellow": "🟡 **{pct}% de precisió** — poden haver-hi petits ajustos després de la visita tècnica.",
-        "confidence_red": "🔴 **Menys del {pct}% de precisió** — cal una inspecció gratuïta abans de comprometre un preu.",
+        "confidence_green": "Amb les dades que m'has donat, el pressupost queda **tancat** amb força seguretat.",
+        "confidence_yellow": "És una estimació **sòlida**; després de la visita tècnica pot haver-hi algun ajust menor.",
+        "confidence_red": "Encara ens falten detalls per comprometre un preu; el més fiable és una **inspecció gratuïta**.",
         "scheduler_slots_intro": (
             "D'acord. Quan et vagi bé, podem concertar una inspecció gratuïta a Barcelona. "
             "Aquí tens alguns horaris lliures — tria el que et convingui:"
@@ -326,9 +326,9 @@ ORCHESTRATOR_MESSAGES = {
             "Recomendamos una **inspección gratuita** para valorar el caso con precisión. "
             "Si quieres agendar, dime tu **teléfono** y te muestro los horarios."
         ),
-        "confidence_green": "🟢 **{pct}% de precisión** — presupuesto cerrado.",
-        "confidence_yellow": "🟡 **{pct}% de precisión** — puede haber pequeños ajustes tras la visita técnica.",
-        "confidence_red": "🔴 **Menos del {pct}% de precisión** — hace falta una inspección gratuita antes de comprometer un precio.",
+        "confidence_green": "Con los datos que me has dado, el presupuesto queda **cerrado** con bastante seguridad.",
+        "confidence_yellow": "Es una estimación **sólida**; tras la visita técnica puede haber algún ajuste menor.",
+        "confidence_red": "Aún nos faltan detalles para comprometer un precio; lo más fiable es una **inspección gratuita**.",
         "scheduler_slots_intro": (
             "De acuerdo. Cuando te venga bien, podemos concertar una inspección gratuita en Barcelona. "
             "Aquí tienes algunos horarios libres — elige el que te convenga:"

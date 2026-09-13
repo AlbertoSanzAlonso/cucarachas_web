@@ -170,7 +170,12 @@ def _looks_like_quantity(message: str) -> bool:
 
 
 def home_case_ready(agent: AgentState) -> bool:
-    return bool(agent.pest_type) and _has_where(agent) and _has_quantity(agent)
+    return (
+        bool(agent.pest_type)
+        and bool(agent.property_type)
+        and _has_where(agent)
+        and _has_quantity(agent)
+    )
 
 
 def home_next_action(agent: AgentState, message: str) -> HomeAction:

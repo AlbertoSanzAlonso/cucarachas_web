@@ -88,21 +88,21 @@ def find_similar_references(agent: AgentState, limit: int = 8) -> list[Presupues
     if not agent.pest_type:
         # Sin plaga, cualquier histórico sería un falso "caso similar"
         return []
+    if not agent.property_type:
+        # Sin tipo de inmueble no mezclar hostelería con vivienda
+        return []
 
-    qs = PresupuestoReferencia.objects.all()
+    qs = PresupuestoReferencia.objects.filter(
+        pest_type=agent.pest_type.value,
+        property_type=agent.property_type,
+    )
     if not qs.exists():
         return []
 
-    pest = agent.pest_type.value
     severity = agent.severity.value if agent.severity else ""
     city = (agent.city or "").split(",")[0].strip()
 
-    filtered = _apply_filters(
-        qs,
-        pest_type=pest,
-        property_type=agent.property_type or "",
-        severity=severity,
-    )
+    filtered = _apply_filters(qs, severity=severity)
     if city:
         city_qs = filtered.filter(city__icontains=city)
         if city_qs.exists():

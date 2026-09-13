@@ -194,8 +194,14 @@ def test_explicit_pricing_routes_to_pricer():
         language="es",
         intent=Intent.QUOTE,
         pest_type=PestType.AMERICAN_COCKROACH,
+        property_type="particular",
         city="Barcelona",
-        chat_diagnostic={"where": "cocina", "quantity": "several"},
+        chat_diagnostic={
+            "where": "cocina",
+            "quantity": "several",
+            "metros_cuadrados": 70,
+            "codigo_postal": "08001",
+        },
     )
     assert _route(agent, "quiero un presupuesto") == "pricer"
 
@@ -210,6 +216,26 @@ def test_pricing_without_case_details_does_not_route_to_pricer():
         city="Barcelona",
     )
     assert _route(agent, "presupuesto") != "pricer"
+
+
+def test_pricing_with_where_but_no_property_asks_intake():
+    """Baño diagnosticado sin tipo de inmueble → no soltar tarifas automáticas."""
+    from api.agents.models import PestType
+
+    agent = AgentState(
+        language="es",
+        pest_type=PestType.GERMAN_COCKROACH,
+        chat_diagnostic={"where": "bano", "quantity": "several"},
+    )
+    state = {
+        "message": "y en cuanto a tarifas?",
+        "language": "es",
+        "source": "home",
+        "agent_state": agent.model_dump(mode="json"),
+    }
+    state.update(apply_preprocess(state))
+    assert choose_agent_route(state) in ("receptionist", "intake")
+    assert choose_agent_route(state) != "pricer"
 
 
 def test_wizard_diagnostic_skips_diagnostician():
@@ -328,7 +354,16 @@ def test_wizard_diagnostic_routes_pricing_to_pricer():
     from api.agents.diagnostic_merge import merge_diagnostic_into_state
 
     agent = AgentState(language="es")
-    diagnostic = {"path": "empresa", "who": "empresa", "level": "frequent", "sanitary_risk": "soon"}
+    diagnostic = {
+        "path": "empresa",
+        "who": "empresa",
+        "where_empresa": "cocina",
+        "level": "frequent",
+        "sanitary_risk": "soon",
+        "business_type": "restaurant",
+        "metros_cuadrados": 120,
+        "codigo_postal": "08001",
+    }
     agent = merge_diagnostic_into_state(agent, diagnostic)
     state = {
         "message": "Quiero un presupuesto",
@@ -474,7 +509,13 @@ def test_ready_case_pricing_routes_to_pricer():
     agent = AgentState(
         language="es",
         pest_type=PestType.GERMAN_COCKROACH,
-        chat_diagnostic={"where": "cocina", "quantity": "several"},
+        property_type="particular",
+        chat_diagnostic={
+            "where": "cocina",
+            "quantity": "several",
+            "metros_cuadrados": 65,
+            "codigo_postal": "08001",
+        },
     )
     state = {
         "message": "presupuesto",
