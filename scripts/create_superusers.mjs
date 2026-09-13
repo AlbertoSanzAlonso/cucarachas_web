@@ -18,7 +18,7 @@ const insforge = createClient({
 });
 
 const users = [
-  { email: 'info@cucarachasbarcelona.cat', password: 'Cucarachas_2026' },
+  { email: 'info@cecsaddd.com', password: 'Cucarachas_2026' },
   { email: 'albertosanzdev@gmail.com', password: 'Albertito_23' },
 ];
 

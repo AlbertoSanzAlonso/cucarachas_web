@@ -28,8 +28,8 @@ def _apt(**kwargs):
 
 @override_settings(
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-    DEFAULT_FROM_EMAIL="info@cucarachasbarcelona.cat",
-    BOOKING_NOTIFY_EMAIL="info@cucarachasbarcelona.cat",
+    DEFAULT_FROM_EMAIL="info@cecsaddd.com",
+    BOOKING_NOTIFY_EMAIL="info@cecsaddd.com",
 )
 class BookingEmailTests(TestCase):
     def test_sends_client_and_internal(self):
@@ -38,7 +38,7 @@ class BookingEmailTests(TestCase):
         self.assertEqual(len(mail.outbox), 2)
         self.assertEqual(mail.outbox[0].to, ["anna@test.cat"])
         self.assertIn("confirmada", mail.outbox[0].body.lower())
-        self.assertEqual(mail.outbox[1].to, ["info@cucarachasbarcelona.cat"])
+        self.assertEqual(mail.outbox[1].to, ["info@cecsaddd.com"])
         self.assertIn("Nova cita", mail.outbox[1].subject)
 
     def test_spanish_locale(self):

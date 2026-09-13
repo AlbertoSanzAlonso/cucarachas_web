@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MessageSquare, X, Send, Bot, Sparkles, Maximize2, Minimize2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -21,6 +21,8 @@ const FloatingCTA = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const [messages, setMessages] = useState([]);
+  /** Caja del chat anclada al visualViewport (móvil + teclado iOS/Android). */
+  const [mobileViewportBox, setMobileViewportBox] = useState(null);
 
   useEffect(() => {
     setMessages((prev) => {
@@ -152,10 +154,57 @@ const FloatingCTA = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [isExpanded]);
 
+  // Móvil: el chat debe vivir dentro del visualViewport (no 80vh del layout viewport).
+  // En iOS Safari el teclado reduce visualViewport sin actualizar vh correctamente.
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setMobileViewportBox(null);
+      return undefined;
+    }
+
+    const syncMobileViewport = () => {
+      const isMobile = window.matchMedia('(max-width: 767px)').matches;
+      const vv = window.visualViewport;
+      if (!isMobile || !vv) {
+        setMobileViewportBox(null);
+        return;
+      }
+
+      const inset = 8;
+      setMobileViewportBox({
+        top: Math.round(vv.offsetTop + inset),
+        left: Math.round(inset),
+        width: Math.round(Math.max(0, vv.width - inset * 2)),
+        height: Math.round(Math.max(240, vv.height - inset * 2)),
+      });
+    };
+
+    syncMobileViewport();
+    const vv = window.visualViewport;
+    vv?.addEventListener('resize', syncMobileViewport);
+    vv?.addEventListener('scroll', syncMobileViewport);
+    window.addEventListener('resize', syncMobileViewport);
+    window.addEventListener('orientationchange', syncMobileViewport);
+
+    const previousOverflow = document.body.style.overflow;
+    if (window.matchMedia('(max-width: 767px)').matches) {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      vv?.removeEventListener('resize', syncMobileViewport);
+      vv?.removeEventListener('scroll', syncMobileViewport);
+      window.removeEventListener('resize', syncMobileViewport);
+      window.removeEventListener('orientationchange', syncMobileViewport);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isOpen]);
+
   const closeChat = () => {
     setIsOpen(false);
     setIsExpanded(false);
     setShowHint(false);
+    setMobileViewportBox(null);
   };
 
   const sendMessage = async (userMessage) => {
@@ -337,37 +386,55 @@ const FloatingCTA = () => {
              <AnimatePresence>
                {isOpen && (
                  <motion.div
-                   layout
+                   layout={!mobileViewportBox}
                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
                    animate={{ opacity: 1, y: 0, scale: 1 }}
                    exit={{ opacity: 0, y: 20, scale: 0.95 }}
                    transition={{ layout: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } }}
                    onMouseDown={handleChatMouseDown}
                    onMouseUp={handleChatMouseUp}
+                   style={
+                     mobileViewportBox
+                       ? {
+                           position: 'fixed',
+                           top: mobileViewportBox.top,
+                           left: mobileViewportBox.left,
+                           width: mobileViewportBox.width,
+                           height: mobileViewportBox.height,
+                           bottom: 'auto',
+                           right: 'auto',
+                           maxWidth: 'none',
+                           maxHeight: 'none',
+                           zIndex: 120,
+                         }
+                       : undefined
+                   }
                    className={`bg-white shadow-3xl overflow-hidden border border-gray-100 flex flex-col origin-bottom-right ${
                      isExpanded
                        ? 'fixed inset-4 md:inset-6 w-auto h-auto max-w-none max-h-none rounded-[2rem] z-[130]'
-                       : 'fixed md:relative bottom-28 md:bottom-auto left-4 right-4 md:left-auto md:right-auto md:mb-4 w-auto md:w-[550px] max-w-[calc(100vw-2rem)] md:max-w-[min(550px,calc(100vw-3rem))] h-[80vh] md:h-[750px] md:max-h-[calc(100vh-10rem)] rounded-[3rem] z-[120]'
+                       : mobileViewportBox
+                         ? 'rounded-2xl z-[120]'
+                         : 'fixed md:relative bottom-28 md:bottom-auto left-4 right-4 md:left-auto md:right-auto md:mb-4 w-auto md:w-[550px] max-w-[calc(100vw-2rem)] md:max-w-[min(550px,calc(100vw-3rem))] h-[min(80dvh,80vh)] md:h-[750px] md:max-h-[calc(100vh-10rem)] rounded-[3rem] z-[120]'
                    }`}
                  >
                    {/* Header */}
                    <div
-                     className="p-8 text-white relative overflow-hidden flex items-center justify-between"
+                     className="p-4 md:p-8 text-white relative overflow-hidden flex items-center justify-between shrink-0"
                      style={{ background: 'var(--primary-blue)' }}
                    >
-                      <div className="relative z-10 flex items-center space-x-4">
+                      <div className="relative z-10 flex items-center space-x-3 md:space-x-4 min-w-0">
                          <div
-                           className="p-3 rounded-2xl shadow-lg"
+                           className="p-2.5 md:p-3 rounded-2xl shadow-lg shrink-0"
                            style={{ background: 'var(--accent-green)' }}
                          >
-                           <Bot size={28} style={{ color: 'var(--primary-blue)' }} />
+                           <Bot size={24} className="md:w-7 md:h-7" style={{ color: 'var(--primary-blue)' }} />
                          </div>
-                         <div>
-                            <h3 className="font-black text-base uppercase tracking-widest">{t('agent.home.title')}</h3>
+                         <div className="min-w-0">
+                            <h3 className="font-black text-sm md:text-base uppercase tracking-widest truncate">{t('agent.home.title')}</h3>
                             <p className="text-[10px] opacity-60 font-bold uppercase tracking-tighter">{t('agent.home.subtitle')}</p>
                          </div>
                       </div>
-                      <div className="flex items-center space-x-1 md:space-x-2">
+                      <div className="flex items-center space-x-1 md:space-x-2 shrink-0">
                         <button
                           type="button"
                           onClick={() => setIsExpanded((prev) => !prev)}
@@ -377,16 +444,16 @@ const FloatingCTA = () => {
                         >
                           {isExpanded ? <Minimize2 size={22} /> : <Maximize2 size={22} />}
                         </button>
-                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white" title="WhatsApp">
-                          <MessageSquare size={24} />
+                        <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="p-2.5 md:p-3 hover:bg-white/10 rounded-2xl transition-all text-white/80 hover:text-white" title="WhatsApp">
+                          <MessageSquare size={22} className="md:w-6 md:h-6" />
                         </a>
                         <button
                           type="button"
                           onClick={closeChat}
-                          className="p-3 hover:bg-white/10 rounded-2xl transition-all"
+                          className="p-2.5 md:p-3 hover:bg-white/10 rounded-2xl transition-all"
                           aria-label={t('agent.home.close_chat')}
                         >
-                          <X size={24} />
+                          <X size={22} className="md:w-6 md:h-6" />
                         </button>
                       </div>
                    </div>
@@ -395,13 +462,13 @@ const FloatingCTA = () => {
                    <div
                      ref={messagesContainerRef}
                      data-lenis-prevent
-                     className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-6 space-y-6 bg-gray-50/50 custom-scrollbar"
+                     className="flex-1 min-h-0 overflow-y-auto overscroll-contain p-4 md:p-6 space-y-4 md:space-y-6 bg-gray-50/50 custom-scrollbar"
                    >
                      {messages.map((msg, i) => (
                        <div key={i} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                            <div
                            data-chat-message
-                           className={`max-w-[92%] p-6 rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed select-text ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
+                           className={`max-w-[92%] p-4 md:p-6 rounded-[1.5rem] md:rounded-[2rem] text-base md:text-xl font-medium shadow-md leading-relaxed select-text ${msg.role === 'user' ? 'bg-primary-blue text-white rounded-tr-none' : 'bg-white text-secondary-gray border border-gray-100 rounded-tl-none'}`}
                            dangerouslySetInnerHTML={{ __html: (msg.content || '').replace(/\*\*(.*?)\*\*/g, '<span class="font-black text-primary-blue">$1</span>') }}
                          />
                          {msg.isInitial && (
@@ -487,20 +554,20 @@ const FloatingCTA = () => {
                    </div>
 
                    {/* Input */}
-                   <form onSubmit={handleSend} className="p-6 border-t border-gray-100 bg-white">
-                     <div className="flex items-center bg-gray-50 rounded-3xl px-6 py-2 border border-gray-200 focus-within:border-primary-blue/30 transition-all shadow-inner">
+                   <form onSubmit={handleSend} className="p-3 md:p-6 border-t border-gray-100 bg-white shrink-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] md:pb-6">
+                     <div className="flex items-center bg-gray-50 rounded-2xl md:rounded-3xl px-4 md:px-6 py-1.5 md:py-2 border border-gray-200 focus-within:border-primary-blue/30 transition-all shadow-inner">
                        <input
                          ref={inputRef}
                          type="text"
                          value={input}
                          onChange={(e) => setInput(e.target.value)}
                          placeholder={t('agent.home.placeholder')}
-                         className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-4 px-1 text-base md:text-lg"
+                         className="flex-1 bg-transparent border-none focus:ring-0 focus:outline-none text-secondary-gray py-3 md:py-4 px-1 text-base md:text-lg"
                        />
                        <button 
                          type="submit"
                          disabled={isLoading || !input.trim()}
-                         className="ml-4 p-4 bg-primary-blue text-white rounded-2xl hover:scale-110 active:scale-95 disabled:bg-gray-200 disabled:scale-100 transition-all shadow-lg"
+                         className="ml-3 md:ml-4 p-3 md:p-4 bg-primary-blue text-white rounded-xl md:rounded-2xl hover:scale-110 active:scale-95 disabled:bg-gray-200 disabled:scale-100 transition-all shadow-lg"
                        >
                          <Send size={20} />
                        </button>
@@ -510,7 +577,7 @@ const FloatingCTA = () => {
                )}
              </AnimatePresence>
 
-             {/* Chat Trigger Button (PRO) — oculto en desktop cuando está a pantalla completa */}
+             {/* Chat Trigger Button (PRO) — en móvil con chat abierto se oculta (cierre en header) */}
              {!(isOpen && isExpanded) && (
              <motion.button
                whileHover={{ scale: 1.05 }}
@@ -523,7 +590,9 @@ const FloatingCTA = () => {
                    setShowHint(false);
                  }
                }}
-               className="flex items-center shadow-[0_15px_40px_rgba(52,211,153,0.3)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 border border-white/20 transition-all group"
+               className={`items-center shadow-[0_15px_40px_rgba(52,211,153,0.3)] rounded-2xl md:rounded-[2rem] p-3 md:p-4 border border-white/20 transition-all group ${
+                 isOpen ? 'hidden md:flex' : 'flex'
+               }`}
                style={{ background: 'var(--accent-green)', color: 'var(--secondary-gray)' }}
              >
                 <div className="p-2 md:p-3 rounded-xl bg-primary-blue/10 group-hover:bg-primary-blue group-hover:text-white transition-colors">

@@ -65,7 +65,7 @@ const ContactForm = () => {
                 { icon: <Phone />, title: t('contact.phone_label'), value: '933 309 169' },
                 { icon: <Clock />, title: t('contact.schedule_label'), value: t('contact.schedule_value') },
                 { icon: <MapPin />, title: t('contact.sede_label'), value: 'Barcelona' },
-                { icon: <Mail />, title: t('contact.email_label'), value: 'info@cucarachasbarcelona.cat' }
+                { icon: <Mail />, title: t('contact.email_label'), value: 'info@cecsaddd.com' }
               ].map((item, i) => (
                 <div key={i} className="flex items-start space-x-4 group">
                    <div className="p-3 bg-white/10 rounded-xl text-accent-green group-hover:bg-white/20 transition-all border border-white/5">

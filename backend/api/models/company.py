@@ -21,7 +21,7 @@ class CompanyProfile(models.Model):
     )
     phone = models.CharField(max_length=40, default="933 309 169")
     whatsapp = models.CharField(max_length=40, blank=True, default="681 033 305")
-    email = models.EmailField(blank=True, default="info@cucarachasbarcelona.cat")
+    email = models.EmailField(blank=True, default="info@cecsaddd.com")
     address = models.CharField(
         max_length=240,
         blank=True,

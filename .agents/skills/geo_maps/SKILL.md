@@ -19,7 +19,7 @@ description: >-
 | `GET /api/geo/reverse/` | `lat`, `lng` | `{ label, lat, lng }` |
 
 - Proxy: `nominatim.openstreetmap.org`
-- `User-Agent`: `CECSA-CucarachasBarcelona/1.0 (info@cucarachasbarcelona.cat)`
+- `User-Agent`: `CECSA-CucarachasBarcelona/1.0 (info@cecsaddd.com)`
 - Búsqueda prioriza Catalunya (`countrycodes=es`, viewbox Barcelona)
 - Público (`AllowAny`) — sin token
 

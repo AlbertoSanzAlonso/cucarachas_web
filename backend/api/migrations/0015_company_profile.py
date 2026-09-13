@@ -11,7 +11,7 @@ def seed_company_profile(apps, schema_editor):
             "brand_name": "CECSA Control de Plagas",
             "legal_name": "Desinfecciones CECSA, S.L.",
             "phone": "933 309 169",
-            "email": "info@cucarachasbarcelona.cat",
+            "email": "info@cecsaddd.com",
             "address": "C/ Dels Rajolers, 16, 08028 Barcelona",
             "service_area_es": (
                 "Servicio solo en Barcelona y toda Catalunya "
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                     models.CharField(blank=True, default="Desinfecciones CECSA, S.L.", max_length=200),
                 ),
                 ("phone", models.CharField(default="933 309 169", max_length=40)),
-                ("email", models.EmailField(blank=True, default="info@cucarachasbarcelona.cat", max_length=254)),
+                ("email", models.EmailField(blank=True, default="info@cecsaddd.com", max_length=254)),
                 (
                     "address",
                     models.CharField(blank=True, default="C/ Dels Rajolers, 16, 08028 Barcelona", max_length=240),

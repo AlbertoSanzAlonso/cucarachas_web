@@ -119,7 +119,7 @@ const Footer = ({ className = "" }) => {
              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-8 w-full">
                 {[
                   { icon: <Phone />, title: t('contact.phone_label'), value: '933 309 169' },
-                  { icon: <Mail />, title: t('contact.email_label'), value: 'info@cucarachasbarcelona.cat' },
+                  { icon: <Mail />, title: t('contact.email_label'), value: 'info@cecsaddd.com' },
                   { icon: <MapPin />, title: t('contact.sede_label'), value: 'C/ Rajolers 16, Local 1, 08028 BCN' },
                   { icon: <Calendar />, title: t('contact.schedule_label'), value: t('contact.schedule_value') }
                 ].map((item, i) => (

@@ -52,7 +52,7 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:
 ```bash
-python manage.py createsuperuser --email info@cucarachasbarcelona.cat
+python manage.py createsuperuser --email info@cecsaddd.com
 python manage.py migrate  # necesario tras nuevos modelos
 ```
 

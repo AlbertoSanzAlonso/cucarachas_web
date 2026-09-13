@@ -59,7 +59,7 @@ def _client_body(apt: Any, lang: str) -> str:
             f"llámanos al 933 309 169.\n\n"
             f"CECSA Control de Plagas\n"
             f"Ético y Consciente\n"
-            f"info@cucarachasbarcelona.cat · 933 309 169\n"
+            f"info@cecsaddd.com · 933 309 169\n"
             f"https://cucarachasbarcelona.cat"
         )
 
@@ -73,7 +73,7 @@ def _client_body(apt: Any, lang: str) -> str:
         f"truca'ns al 933 309 169.\n\n"
         f"CECSA Control de Plagues\n"
         f"Ètic i Conscient\n"
-        f"info@cucarachasbarcelona.cat · 933 309 169\n"
+        f"info@cecsaddd.com · 933 309 169\n"
         f"https://cucarachasbarcelona.cat"
     )
 
@@ -82,12 +82,12 @@ def _notify_email() -> str:
     return (
         getattr(settings, "BOOKING_NOTIFY_EMAIL", None)
         or getattr(settings, "DEFAULT_FROM_EMAIL", "")
-        or "info@cucarachasbarcelona.cat"
+        or "info@cecsaddd.com"
     ).strip()
 
 
 def _from_email() -> str:
-    return getattr(settings, "DEFAULT_FROM_EMAIL", "info@cucarachasbarcelona.cat")
+    return getattr(settings, "DEFAULT_FROM_EMAIL", "info@cecsaddd.com")
 
 
 def send_booking_confirmation_email(apt: Any) -> bool:
