@@ -443,7 +443,9 @@ async def pricer_node(state: CECSAGraphState) -> dict:
     try:
         from api.ficha_engine import evaluate_ficha_pricing, find_ficha, match_objection, severity_to_agent
 
-        ficha_for_obj = await sync_to_async(find_ficha)(agent, diagnostic)
+        ficha_for_obj = await sync_to_async(find_ficha)(
+            agent, diagnostic, message=state.get("message", "")
+        )
         if ficha_for_obj:
             objection = await sync_to_async(match_objection)(
                 ficha_for_obj,

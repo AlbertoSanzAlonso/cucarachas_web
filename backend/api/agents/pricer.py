@@ -39,12 +39,13 @@ async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
 
     lang = ctx.deps.language if ctx.deps else "ca"
     diagnostic = build_unified_diagnostic(ctx.deps, {})
+    message = " ".join(str(n) for n in (ctx.deps.technical_notes or [])[-8:])
 
     def _load() -> str:
-        ficha = find_ficha(ctx.deps, diagnostic)
+        ficha = find_ficha(ctx.deps, diagnostic, message=message)
         if not ficha:
             return "No hay ficha maestra para este caso."
-        result = evaluate_ficha_pricing(ctx.deps, diagnostic, lang=lang)
+        result = evaluate_ficha_pricing(ctx.deps, diagnostic, message=message, lang=lang)
         lines = [format_ficha_context(ficha, lang)]
         if result:
             lines.append(f"Confianza: {result.confidence}%")
@@ -67,7 +68,7 @@ async def search_commercial_policy(ctx: RunContext[AgentState]) -> str:
     lang = ctx.deps.language if ctx.deps else "ca"
     pest = ctx.deps.pest_type.value if ctx.deps and ctx.deps.pest_type else ""
     prop = ctx.deps.property_type or ""
-    query = f"presupuesto {pest} {prop} bar preventivo certificado DDD garantia"
+    query = f"presupuesto {pest} {prop} hostelería bar restaurante servicio especial 1100 CUC-GER-HOST"
 
     def _load() -> str:
         from_db = format_commercial_policy(lang)

@@ -35,14 +35,48 @@ def get_company_info(ctx: RunContext[AgentState]) -> str:
 
 @receptionist_agent.tool
 def search_web_knowledge(ctx: RunContext[AgentState], query: str) -> str:
-    """Busca en blog, FAQ y guías CECSA (cómo identificar, prevención, consejos)."""
+    """Busca en blog, FAQ, fichas comerciales, especies y guías CECSA."""
     from knowledge.retriever import retrieve_relevant_knowledge
 
     return retrieve_relevant_knowledge(
         query,
-        limit=3,
-        category=["blog", "faq", "species", "company", "general"],
+        limit=4,
+        category=["blog", "faq", "species", "company", "general", "ficha", "comercial"],
     )
+
+
+@receptionist_agent.tool
+def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
+    """Ficha maestra del caso (hostelería grave, negocio, vivienda…). Incluye servicio especial."""
+    from api.agents.chat_intake import build_unified_diagnostic
+    from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
+
+    lang = ctx.deps.language if ctx.deps else "ca"
+    diagnostic = build_unified_diagnostic(ctx.deps, {})
+    message = " ".join(str(n) for n in (ctx.deps.technical_notes or [])[-8:])
+    ficha = find_ficha(ctx.deps, diagnostic, message=message)
+    if not ficha:
+        # Fallback: servicio especial hostelería si preguntan por él
+        from api.models import FichaServicio
+
+        host = FichaServicio.objects.filter(activa=True, codigo="CUC-GER-HOST").first()
+        if host and any(
+            k in message.lower()
+            for k in ("hosteler", "hostaler", "bar", "restaurant", "especial", "1100", "1.100")
+        ):
+            ficha = host
+        else:
+            return "No hay ficha maestra clara aún; pide plaga y tipo de local si falta."
+    result = evaluate_ficha_pricing(ctx.deps, diagnostic, message=message, lang=lang)
+    lines = [format_ficha_context(ficha, lang)]
+    if result:
+        lines.append(f"Confianza: {result.confidence}%")
+        lines.append(f"Puede presupuestar: {result.can_quote}")
+        if result.final_price:
+            lines.append(f"Precio regla: {result.final_price}€ + IVA (orientativo)")
+        if result.commercial_copy:
+            lines.append(result.commercial_copy)
+    return "\n".join(lines)
 
 
 @receptionist_agent.tool

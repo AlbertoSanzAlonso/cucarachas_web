@@ -228,6 +228,23 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
             state.pest_type = PestType.GERMAN_COCKROACH
         if not state.intent:
             state.intent = Intent.QUOTE
+    elif any(
+        k in low
+        for k in (
+            "alemana",
+            "alemanas",
+            "alemanya",
+            "alemanyes",
+            "germánic",
+            "germanic",
+            "germánica",
+            "germanica",
+        )
+    ):
+        _append_note(state, "Plaga: panerola alemanya (indicada pel client)")
+        state.pest_type = PestType.GERMAN_COCKROACH
+        if not state.intent:
+            state.intent = Intent.QUOTE
 
     location_map = (
         ("baño", "bany"),
@@ -377,6 +394,55 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
 
     if "barcelona" in low and not state.city:
         state.city = "Barcelona"
+
+    # Hostelería: tipo de local, gravedad y fallos previos → chat_diagnostic
+    chat = dict(state.chat_diagnostic or {})
+    hospitality_bits = False
+    if re.search(r"\brestaurants?\b|\brestaurantes?\b", low):
+        chat.setdefault("business_type", "restaurante")
+        hospitality_bits = True
+    elif re.search(r"\bbar(?:es)?\b", low):
+        chat.setdefault("business_type", "bar")
+        hospitality_bits = True
+    elif "hotel" in low:
+        chat.setdefault("business_type", "hotel")
+        hospitality_bits = True
+    if hospitality_bits and not state.property_type:
+        state.property_type = "negoci"
+    if any(
+        k in low
+        for k in (
+            "grave",
+            "greu",
+            "persistente",
+            "persistent",
+            "otras empresas",
+            "altres empreses",
+            "otra empresa",
+            "siguen apareciendo",
+            "continuen apareixent",
+            "servicio especial",
+            "servei especial",
+        )
+    ):
+        chat.setdefault("sanitary_risk", "alto")
+        chat.setdefault("level", "grave")
+        if any(
+            k in low
+            for k in (
+                "otras empresas",
+                "altres empreses",
+                "otra empresa",
+                "siguen apareciendo",
+                "continuen apareixent",
+            )
+        ):
+            chat["failed_prior_treatment"] = "yes"
+            _append_note(state, "Tratamientos previos de otras empresas sin resultado")
+    if chat.get("business_type") in ("bar", "restaurante", "hotel") and not chat.get("where"):
+        chat["where"] = "cocina"
+    if chat != dict(state.chat_diagnostic or {}):
+        state.chat_diagnostic = chat
 
     try:
         from api.agents.company_knowledge import find_coverage_place, find_outside_place

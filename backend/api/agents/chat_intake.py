@@ -149,14 +149,24 @@ def _filled(value: Any) -> bool:
 
 
 def has_pricing_case_details(agent: AgentState, diagnostic: dict | None = None) -> bool:
-    """True solo con plaga + tipo de inmueble + ubicación + cantidad (mínimo para cotizar)."""
+    """True con plaga + inmueble + datos mínimos (ficha HOST no exige cantidad)."""
     if not agent.pest_type or not agent.property_type:
         return False
     unified = build_unified_diagnostic(agent, diagnostic)
+    message = " ".join(str(n) for n in (agent.technical_notes or [])[-6:])
+    ficha = find_ficha(agent, unified, message=message)
+
     where_keys = ("where", "where_empresa", "where_admin", "where_comunidad")
     qty_keys = ("quantity", "level")
     has_where = any(_filled(unified.get(k)) for k in where_keys)
     has_qty = any(_filled(unified.get(k)) for k in qty_keys)
+
+    if ficha and ficha.codigo == "CUC-GER-HOST":
+        has_business = _filled(unified.get("business_type"))
+        has_risk = _filled(unified.get("sanitary_risk")) or has_qty
+        # Hostelería grave: negocio + (zona o tipo bar/rest) + señal de gravedad
+        return (has_where or has_business) and (has_risk or has_business)
+
     return has_where and has_qty
 
 
@@ -167,13 +177,34 @@ def next_pricing_intake_field(agent: AgentState, diagnostic: dict | None = None)
     if not agent.property_type:
         return "property_type"
     unified = build_unified_diagnostic(agent, diagnostic)
+    message = " ".join(str(n) for n in (agent.technical_notes or [])[-6:])
+    ficha = find_ficha(agent, unified, message=message)
+
     where_keys = ("where", "where_empresa", "where_admin", "where_comunidad")
     if not any(_filled(unified.get(k)) for k in where_keys):
-        return "where"
+        # En hostelería, cocina es zona por defecto razonable si ya hay tipo de local
+        if ficha and ficha.codigo == "CUC-GER-HOST" and _filled(unified.get("business_type")):
+            pass  # donde lo pedirá la ficha si está en mandatory
+        else:
+            return "where"
+
+    if ficha:
+        ctx = CaseContext(agent=agent, diagnostic=unified, message=message)
+        mandatory = (ficha.preguntas_obligatorias or {}).get(ctx.client_type, [])
+        for field in mandatory:
+            if field in ("where", "where_empresa", "where_admin", "where_comunidad"):
+                if any(_filled(unified.get(k)) for k in where_keys):
+                    continue
+                return "where"
+            if ctx.get_field(field) is None:
+                return field
+        # Ficha sin quantity en mandatory (p. ej. HOST): no insistir en cuántas
+        if "quantity" not in mandatory and "level" not in mandatory:
+            return None
+
     qty_keys = ("quantity", "level")
     if not any(_filled(unified.get(k)) for k in qty_keys):
         return "quantity"
-    # Campos de ficha (m², CP…) antes de soltar cifras
     missing = get_missing_mandatory_fields(agent, diagnostic)
     if missing:
         return missing[0]
@@ -302,7 +333,7 @@ def pricing_orchestration_context(
                 "Pregunta cuántas cucarachas ha visto (pocas, varias, muchas). "
                 "PROHIBIDO añadir 'alemanas' u otra especie."
             )
-        elif needed in ("metros_cuadrados", "codigo_postal", "business_type"):
+        elif needed in ("metros_cuadrados", "codigo_postal", "business_type", "sanitary_risk"):
             ask_hint = (
                 f"Falta el dato '{needed}' para un presupuesto fiable. "
                 "Pregúntalo en una frase natural. PROHIBIDO inventar euros."
@@ -342,7 +373,7 @@ def pricing_orchestration_context(
             "Pregunta quantes paneroles ha vist (poques, diverses, moltes). "
             "PROHIBIT afegir 'alemanyes' o una altra espècie."
         )
-    elif needed in ("metros_cuadrados", "codigo_postal", "business_type"):
+    elif needed in ("metros_cuadrados", "codigo_postal", "business_type", "sanitary_risk"):
         ask_hint = (
             f"Falta el dada '{needed}' per un pressupost fiable. "
             "Pregunta-ho en una frase natural. PROHIBIT inventar euros."
@@ -366,11 +397,12 @@ def pricing_orchestration_context(
 def get_missing_mandatory_fields(agent: AgentState, diagnostic: dict | None = None) -> list[str]:
     """Campos obligatorios de la ficha activa que aún faltan."""
     unified = build_unified_diagnostic(agent, diagnostic)
-    ficha = find_ficha(agent, unified)
+    message = " ".join(str(n) for n in (agent.technical_notes or [])[-6:])
+    ficha = find_ficha(agent, unified, message=message)
     if not ficha:
         return []
 
-    ctx = CaseContext(agent=agent, diagnostic=unified)
+    ctx = CaseContext(agent=agent, diagnostic=unified, message=message)
     mandatory = (ficha.preguntas_obligatorias or {}).get(ctx.client_type, [])
     return [field for field in mandatory if ctx.get_field(field) is None]
 
@@ -557,6 +589,64 @@ def extract_fields_from_message(message: str) -> dict[str, Any]:
     if qty:
         found["quantity"] = qty
 
+    # Hostelería / negocio
+    if re.search(r"\brestaurants?\b|\brestaurantes?\b", low):
+        found["business_type"] = "restaurante"
+    elif re.search(r"\bbar(?:es)?\b|\bcafeter[ií]a\b|\bhotel\b", low):
+        if "hotel" in low:
+            found["business_type"] = "hotel"
+        elif "cafeter" in low:
+            found["business_type"] = "cafeteria"
+        else:
+            found["business_type"] = "bar"
+    elif any(k in low for k in ("hosteler", "hostaler", "horeca", "cocina profesional", "cuina professional")):
+        found["business_type"] = "restaurante"
+
+    if any(
+        k in low
+        for k in (
+            "grave",
+            "greu",
+            "crític",
+            "critico",
+            "crítico",
+            "persistente",
+            "persistent",
+            "riesgo alto",
+            "risc alt",
+            "inspección sanitaria",
+            "inspeccio sanitaria",
+            "inspecció sanitària",
+        )
+    ):
+        found["sanitary_risk"] = "alto"
+        found["level"] = "grave"
+
+    if any(
+        k in low
+        for k in (
+            "otras empresas",
+            "altres empreses",
+            "otra empresa",
+            "altra empresa",
+            "ya han venido",
+            "ja han vingut",
+            "siguen apareciendo",
+            "continuen apareixent",
+            "no han solucionado",
+            "no han solucionat",
+            "servicio especial",
+            "servei especial",
+        )
+    ):
+        found["failed_prior_treatment"] = "yes"
+        if not found.get("sanitary_risk"):
+            found["sanitary_risk"] = "alto"
+
+    # Si es bar/restaurante y aún no hay zona, cocina es el foco habitual
+    if found.get("business_type") in ("bar", "restaurante", "hotel", "cafeteria") and not found.get("where"):
+        found["where"] = "cocina"
+
     return found
 
 
@@ -616,6 +706,20 @@ def ensure_pest_from_message(agent: AgentState, message: str) -> AgentState:
 
     confirmed = False
     if any(k in low for k in pest_words) or re.search(r"\bcuca\b", low):
+        confirmed = True
+    elif any(
+        k in low
+        for k in (
+            "alemana",
+            "alemanas",
+            "alemanya",
+            "alemanyes",
+            "germánic",
+            "germanic",
+            "germánica",
+            "germanica",
+        )
+    ):
         confirmed = True
     elif agent.pending_intake_field == "pest" and affirms:
         confirmed = True

@@ -202,6 +202,74 @@ def test_pricing_hospitality_severe_1100():
 
 
 @pytest.mark.django_db
+def test_host_intake_skips_quantity_and_quotes():
+    """Bar + alemanas + otras empresas → HOST; no exige 'cuántas'."""
+    from api.agents.chat_intake import (
+        apply_chat_intake_from_message,
+        has_pricing_case_details,
+        next_pricing_intake_field,
+    )
+    from api.agents.diagnostic_merge import apply_facts_from_message
+    from api.ficha_engine import evaluate_ficha_pricing, find_ficha
+
+    FichaServicio.objects.update_or_create(
+        codigo="CUC-GER-NEG",
+        defaults={
+            "nombre_comercial": "Negocio estándar",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "activa": True,
+            "reglas_comerciales": [{"precio_venta": 380}],
+            "preguntas_obligatorias": {"negoci": ["business_type", "metros_cuadrados", "where"]},
+        },
+    )
+    FichaServicio.objects.update_or_create(
+        codigo="CUC-GER-HOST",
+        defaults={
+            "nombre_comercial": "Servicio especial hostelería",
+            "pest_type": "german_cockroach",
+            "tipos_cliente": ["negoci"],
+            "activa": True,
+            "reglas_comerciales": [{"precio_venta": 1100}],
+            "preguntas_obligatorias": {
+                "negoci": ["business_type", "where", "sanitary_risk"],
+            },
+            "copy_comercial": {"es": "Servicio especial 1100€ + IVA.", "ca": "Servei especial."},
+            "garantia_meses": 12,
+        },
+    )
+
+    agent = AgentState(language="es")
+    agent = apply_facts_from_message(agent, "tengo problemas en mi bar")
+    agent = apply_chat_intake_from_message(agent, "tengo problemas en mi bar")
+    assert agent.property_type == "negoci"
+    assert (agent.chat_diagnostic or {}).get("business_type") == "bar"
+
+    agent = apply_facts_from_message(agent, "creo que son alemanas, pero ya he intentado con otras empresas")
+    agent = apply_chat_intake_from_message(
+        agent, "creo que son alemanas, pero ya he intentado con otras empresas"
+    )
+    assert agent.pest_type == PestType.GERMAN_COCKROACH
+    assert (agent.chat_diagnostic or {}).get("failed_prior_treatment") == "yes"
+
+    ficha = find_ficha(agent, {}, message="otras empresas")
+    assert ficha is not None
+    assert ficha.codigo == "CUC-GER-HOST"
+    assert next_pricing_intake_field(agent) is None
+    assert has_pricing_case_details(agent)
+
+    result = evaluate_ficha_pricing(
+        agent,
+        {},
+        message="cuanto sale tratar las cucarachas alemanas en el bar",
+        lang="es",
+    )
+    assert result is not None
+    assert result.ficha_codigo == "CUC-GER-HOST"
+    assert result.final_price == 1100.0
+
+
+@pytest.mark.django_db
 def test_match_objection_caro():
     ficha = FichaServicio.objects.create(
         codigo="CUC-TEST-OBJ",

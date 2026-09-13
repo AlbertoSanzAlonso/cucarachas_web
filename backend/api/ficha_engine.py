@@ -215,7 +215,7 @@ def _is_hospitality_context(ctx: CaseContext) -> bool:
 
     # Tokens con límite de palabra (evitar "bar" ⊂ "barcelona")
     hospitality_patterns = (
-        r"\bbares?\b",
+        r"\bbar(?:es)?\b",
         r"\brestaurants?\b",
         r"\brestaurantes?\b",
         r"\bhosteler\w*\b",
@@ -231,6 +231,15 @@ def _wants_hospitality_severe(ctx: CaseContext) -> bool:
     """Casos graves/persistentes de panerola alemanya en hostelería (servicio especial)."""
     if not _is_hospitality_context(ctx):
         return False
+
+    if str(ctx.get_field("failed_prior_treatment") or "").lower() in (
+        "yes",
+        "si",
+        "sí",
+        "true",
+        "1",
+    ):
+        return True
 
     blob = ctx.text_blob
     severe_keys = (

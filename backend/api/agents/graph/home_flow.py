@@ -482,7 +482,7 @@ def collect_home_case_facts(agent: AgentState, lang: str, message: str = "") -> 
     unified = build_unified_diagnostic(agent)
     if not unified.get("path"):
         unified["path"] = "particular"
-    ficha = find_ficha(agent, unified)
+    ficha = find_ficha(agent, unified, message=message)
     if ficha:
         ctx = CaseContext(agent=agent, diagnostic=unified, message=message)
         facts["severity"] = evaluate_diagnosis_rules(ficha, ctx) or "medium"
