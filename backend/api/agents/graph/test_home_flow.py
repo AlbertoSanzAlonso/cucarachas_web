@@ -554,3 +554,22 @@ def test_company_knowledge_mentions_catalunya():
     assert outside and place == "madrid"
     ok, _ = is_outside_service_area(message="estoy en badalona", city=None)
     assert not ok
+
+
+def test_informational_identify_does_not_ask_property():
+    """«cómo identifico cucarachas…» → guía/blog, no embudo vivienda/negocio."""
+    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.graph.routing import is_informational_query
+
+    msg = "como identifico cucarachas en la cocina?"
+    assert is_informational_query(msg)
+    agent = AgentState(language="es", intent=Intent.DOUBT)
+    assert home_next_action(agent, msg) == "knowledge"
+    state = _home_state(agent, msg)
+    reply = home_scripted_reply(state, agent, "es")
+    assert reply is not None
+    text = reply["result"]["message"].lower()
+    assert "vivienda" not in text
+    assert "negocio" not in text
+    assert "comunidad" not in text
+    assert "guía" in text or "guia" in text or "blog" in text or "consejo" in text

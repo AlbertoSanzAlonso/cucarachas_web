@@ -13,7 +13,7 @@ from .routing import (
 )
 from .state import CECSAGraphState
 
-HomeAction = str  # greet | ask_pest | ask_property | ask_where | ask_qty | company_info | out_of_area | in_area | verdict | llm
+HomeAction = str  # greet | ask_pest | ask_property | ask_where | ask_qty | company_info | out_of_area | in_area | knowledge | verdict | llm
 
 _WHERE_LABEL = {
     "bano": {"es": "baño", "ca": "bany"},
@@ -218,6 +218,12 @@ def home_next_action(agent: AgentState, message: str) -> HomeAction:
     if is_company_info_query(msg_lower):
         return "company_info"
 
+    from api.agents.graph.routing import is_informational_query
+
+    # Preguntas de blog/FAQ (identificar, signos, prevención): no embudo de intake
+    if is_informational_query(msg_lower):
+        return "knowledge"
+
     if is_simple_greeting(msg_lower):
         return "greet"
     if _is_vague_problem_opener(msg_lower) and not agent.pest_type:
@@ -335,6 +341,68 @@ def _reply(agent: AgentState, message: str) -> dict:
     }
 
 
+def _strip_rag_noise(text: str) -> str:
+    """Limpia cabeceras RAG y deja un extracto legible."""
+    lines = []
+    for raw in (text or "").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("---"):
+            continue
+        if line.lower().startswith(("título:", "titulo:", "categoría", "categoria", "meta:", "contenido:", "resumen:")):
+            # Mantener el valor tras el prefijo cuando aporta
+            if ":" in line:
+                _, _, rest = line.partition(":")
+                rest = rest.strip()
+                if rest and not rest.lower().startswith("blog"):
+                    lines.append(rest)
+            continue
+        lines.append(line)
+    body = "\n".join(lines).strip()
+    if len(body) > 900:
+        body = body[:880].rsplit(" ", 1)[0] + "…"
+    return body
+
+
+def build_knowledge_reply(message: str, lang: str) -> str:
+    """Respuesta educativa desde RAG (blog/FAQ/especies), sin pedir tipo de inmueble."""
+    from knowledge.retriever import retrieve_relevant_knowledge
+
+    lang = lang if lang in ("ca", "es") else "ca"
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+
+    def _empty(rag: str) -> bool:
+        return (
+            "No s'han trobat" in (rag or "")
+            or "No s'ha pogut" in (rag or "")
+            or not (rag or "").strip()
+        )
+
+    # Priorizar blog; si no hay hit, FAQ/especies
+    rag = retrieve_relevant_knowledge(message, limit=2, category="blog")
+    if _empty(rag):
+        rag = retrieve_relevant_knowledge(
+            message,
+            limit=2,
+            category=["faq", "species", "general"],
+        )
+
+    cta = msgs.get("home_knowledge_cta") or ""
+    if _empty(rag):
+        fallback = msgs.get("home_knowledge_fallback") or (
+            "Puedo orientarte con consejos prácticos del blog CECSA."
+            if lang == "es"
+            else "Et puc orientar amb consells pràctics del blog CECSA."
+        )
+        return f"{fallback}\n\n{cta}".strip()
+    body = _strip_rag_noise(rag)
+    if not body:
+        body = rag.strip()[:900]
+    intro = msgs.get("home_knowledge_intro") or (
+        "Según nuestra guía técnica:" if lang == "es" else "Segons la nostra guia tècnica:"
+    )
+    return f"{intro}\n\n{body}\n\n{cta}".strip()
+
+
 def _scripted_message(agent: AgentState, action: str, msgs: dict, lang: str, message: str) -> str:
     if action == "greet":
         if is_greeting_followup(message.lower()):
@@ -387,6 +455,8 @@ def home_scripted_reply(state: CECSAGraphState, agent: AgentState, lang: str) ->
         return _reply(agent, in_area_message(lang, place))
     if action == "company_info":
         return _reply(agent, company_info_reply(lang))
+    if action == "knowledge":
+        return _reply(agent, build_knowledge_reply(message, lang))
     if action in ("verdict", "llm"):
         return None
     # Presupuesto incompleto o precio de la cita: criterio del LLM (no plantilla)

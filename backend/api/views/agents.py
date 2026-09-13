@@ -57,15 +57,22 @@ def chat_with_agents(request):
         if isinstance(diagnostic, dict) and diagnostic:
             orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
         orchestrator.state = apply_diagnostic_from_message(orchestrator.state, message)
-        orchestrator.state = apply_facts_from_message(orchestrator.state, message)
-        orchestrator.state = ensure_pest_from_message(orchestrator.state, message)
-        orchestrator.state = apply_chat_intake_from_message(orchestrator.state, message)
-        # «PRESUPUESTO» solo → preguntar plaga; no asumir cucarachas de sesión/wizard
-        orchestrator.state = reset_assumed_pest_for_bare_pricing(
-            orchestrator.state,
-            message,
-            diagnostic if isinstance(diagnostic, dict) else None,
-        )
+
+        from ..agents.graph.routing import is_informational_query
+
+        # Preguntas de blog/guía: no capturar plaga/zona como si fuera un caso de servicio
+        if is_informational_query(message.lower()):
+            orchestrator.state.intent = Intent.DOUBT
+        else:
+            orchestrator.state = apply_facts_from_message(orchestrator.state, message)
+            orchestrator.state = ensure_pest_from_message(orchestrator.state, message)
+            orchestrator.state = apply_chat_intake_from_message(orchestrator.state, message)
+            # «PRESUPUESTO» solo → preguntar plaga; no asumir cucarachas de sesión/wizard
+            orchestrator.state = reset_assumed_pest_for_bare_pricing(
+                orchestrator.state,
+                message,
+                diagnostic if isinstance(diagnostic, dict) else None,
+            )
 
         if isinstance(booking, dict) and booking.get('slot_time') and booking.get('name') and booking.get('phone') and booking.get('email'):
             result = confirm_booking_from_chat(

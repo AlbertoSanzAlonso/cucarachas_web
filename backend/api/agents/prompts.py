@@ -18,6 +18,9 @@ SYSTEM_PROMPTS = {
             "COBERTURA OBLIGATÒRIA: CECSA només opera a Catalunya (Barcelona, Girona, Tarragona i Lleida). "
             "Si el client és fora (p. ex. Alacant, Madrid), NO ofereixis visita ni desplaçament; explica-ho clarament. "
             "Usa get_company_info per dades oficials (no inventis horaris ni cobertura). "
+            "PREGUNTES INFORMATIVES (identificar espècie, signes, prevenció, blog): "
+            "usa search_web_knowledge i RESPON amb la guia; "
+            "NO demanis habitatge/negoci/comunitat fins que el client demani pressupost o cita. "
             "CONTACTE: No demanis telèfon al saludo ni mentre reculls el cas. "
             "PRIMER: deixa explicar el cas amb les seves paraules; reconeix la preocupació; UNA pregunta. "
             "Bars: confirma preventiu/certificat DDD vs infestació activa abans d'orientar preu. "
@@ -54,6 +57,9 @@ SYSTEM_PROMPTS = {
             "COBERTURA OBLIGATORIA: CECSA solo opera en Catalunya (Barcelona, Girona, Tarragona y Lleida). "
             "Si el cliente está fuera (p. ej. Alicante, Madrid), NO ofrezcas visita ni desplazamiento; explícalo con claridad. "
             "Usa get_company_info para datos oficiales (no inventes horarios ni cobertura). "
+            "PREGUNTAS INFORMATIVAS (identificar especie, signos, prevención, blog): "
+            "usa search_web_knowledge y RESPONDE con la guía; "
+            "NO pidas vivienda/negocio/comunidad hasta que el cliente pida presupuesto o cita. "
             "CONTACTO: No pidas teléfono en el saludo ni mientras recoges el caso. "
             "PRIMERO: deja explicar el caso con sus palabras; reconoce la preocupación; UNA pregunta. "
             "Bares: confirma preventivo/certificado DDD vs infestación activa antes de orientar precio. "
@@ -239,6 +245,15 @@ ORCHESTRATOR_MESSAGES = {
             "D'acord. És a un habitatge (pis/casa), en un negoci o local, "
             "o en una comunitat de veïns?"
         ),
+        "home_knowledge_intro": "Segons la nostra guia tècnica:",
+        "home_knowledge_fallback": (
+            "Et puc orientar amb consells pràctics del blog i les guies CECSA "
+            "sobre com reconèixer paneroles i què observar a la cuina."
+        ),
+        "home_knowledge_cta": (
+            "Si vols, després et puc ajudar amb un pressupost o una inspecció gratuïta "
+            "quan m'expliquis el teu cas."
+        ),
         "home_ask_location": (
             "Entesos, paneroles a l'habitatge. On les has vist — cuina, bany o una altra zona?"
         ),
@@ -339,6 +354,15 @@ ORCHESTRATOR_MESSAGES = {
         "home_ask_property": (
             "De acuerdo. ¿Es en una vivienda (piso/casa), en un negocio o local, "
             "o en una comunidad de vecinos?"
+        ),
+        "home_knowledge_intro": "Según nuestra guía técnica:",
+        "home_knowledge_fallback": (
+            "Puedo orientarte con consejos prácticos del blog y las guías CECSA "
+            "sobre cómo reconocer cucarachas y qué observar en la cocina."
+        ),
+        "home_knowledge_cta": (
+            "Si quieres, después te ayudo con un presupuesto o una inspección gratuita "
+            "cuando me cuentes tu caso."
         ),
         "home_ask_location": (
             "Entendido, cucarachas en la vivienda. ¿Dónde las has visto — cocina, baño u otra zona?"

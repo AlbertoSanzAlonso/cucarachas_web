@@ -31,3 +31,15 @@ def get_company_info(ctx: RunContext[AgentState]) -> str:
     """Datos oficiales de CECSA: cobertura, sede, teléfono, horario y políticas."""
     lang = ctx.deps.language if ctx.deps and ctx.deps.language in ("ca", "es") else "ca"
     return format_company_knowledge_for_agent(lang)
+
+
+@receptionist_agent.tool
+def search_web_knowledge(ctx: RunContext[AgentState], query: str) -> str:
+    """Busca en blog, FAQ y guías CECSA (cómo identificar, prevención, consejos)."""
+    from knowledge.retriever import retrieve_relevant_knowledge
+
+    return retrieve_relevant_knowledge(
+        query,
+        limit=3,
+        category=["blog", "faq", "species", "company", "general"],
+    )

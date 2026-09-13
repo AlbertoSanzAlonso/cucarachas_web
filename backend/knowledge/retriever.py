@@ -65,16 +65,46 @@ def retrieve_relevant_knowledge(
                 print(f"WARNING: embedding search failed, text fallback: {emb_err}")
 
         # Fallback textual (sin API o embedding fallido)
-        tokens = [t for t in (query or "").lower().split() if len(t) > 3][:6]
+        tokens = [t for t in (query or "").lower().split() if len(t) > 3][:8]
         text_qs = qs
         if tokens:
             q_filter = Q()
+            stems = []
             for tok in tokens:
                 q_filter |= Q(title__icontains=tok) | Q(content__icontains=tok)
+                if len(tok) >= 6:
+                    stem = tok[:6]
+                    stems.append(stem)
+                    q_filter |= Q(title__icontains=stem) | Q(content__icontains=stem)
             text_qs = qs.filter(q_filter)
-        results = list(text_qs.order_by('-updated_at')[:limit])
+            candidates = list(text_qs.order_by("-updated_at")[:24])
+
+            def _score(row) -> int:
+                title = (row.title or "").lower()
+                content = (row.content or "").lower()
+                blob = f"{title}\n{content}"
+                score = 0
+                for tok in tokens:
+                    if tok in title:
+                        score += 6
+                    elif tok in content:
+                        score += 2
+                for stem in stems:
+                    if stem in title:
+                        score += 5
+                    elif stem in content:
+                        score += 1
+                # Preferir blog frente a FAQ genérica cuando empatan
+                if getattr(row, "category", "") == "blog":
+                    score += 1
+                return score
+
+            candidates.sort(key=lambda r: (_score(r), r.updated_at), reverse=True)
+            results = candidates[:limit]
+        else:
+            results = list(text_qs.order_by("-updated_at")[:limit])
         if not results and category:
-            results = list(qs.order_by('-updated_at')[:limit])
+            results = list(qs.order_by("-updated_at")[:limit])
         if not results:
             return "No s'han trobat protocols específics per a aquesta consulta."
         return _format_rows(results)

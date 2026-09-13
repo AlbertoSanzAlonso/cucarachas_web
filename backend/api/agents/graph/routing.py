@@ -85,6 +85,103 @@ def asks_price_of_appointment(msg_lower: str) -> bool:
             "desplaçament",
         )
     )
+
+
+def is_informational_query(msg_lower: str) -> bool:
+    """
+    Pregunta educativa (blog/FAQ): cómo identificar, signos, prevención…
+    No debe lanzar el embudo vivienda/negocio/comunidad.
+    """
+    low = (msg_lower or "").lower()
+    if not low.strip():
+        return False
+    if wants_pricing_message(low) or wants_scheduling(low):
+        return False
+    # Caso propio activo («tengo cucarachas») → intake, salvo si pregunta explícitamente por identificar
+    ownership = any(
+        o in low
+        for o in (
+            "tengo cucarach",
+            "tenemos cucarach",
+            "tinc panerol",
+            "tenim panerol",
+            "tengo panerol",
+            "he visto cucarach",
+            "he vist panerol",
+            "hay cucarachas en mi",
+            "hi ha paneroles a casa",
+        )
+    )
+    info_markers = (
+        "identific",
+        "reconoce",
+        "reconèixer",
+        "reconeixer",
+        "distingu",
+        "detectar",
+        "cómo sé",
+        "como se si",
+        "cómo se si",
+        "como sé",
+        "com sé",
+        "com se si",
+        "qué aspecto",
+        "quin aspecte",
+        "cómo son",
+        "como son",
+        "com són",
+        "com son",
+        "signos de",
+        "signes de",
+        "indicios",
+        "indicis",
+        "consejo",
+        "consell",
+        "artículo",
+        "article",
+        "del blog",
+        "en el blog",
+        "prevención de",
+        "prevenció de",
+        "cómo evitar",
+        "como evitar",
+        "com evitar",
+        "cómo saber",
+        "como saber",
+        "com saber",
+        "nidos de cucarach",
+        "nius de panerol",
+        "diferencia entre",
+        "diferència entre",
+        "cómo reconocer",
+        "como reconocer",
+        "com reconèixer",
+        "com reconeixer",
+    )
+    if any(m in low for m in info_markers):
+        # «tengo cucarachas, cómo las identifico» sigue siendo informativa
+        return True
+    if ownership:
+        return False
+    # «¿cómo… cucarachas…?» sin reportar infestación propia
+    how_what = any(
+        h in low
+        for h in (
+            "cómo ",
+            "como ",
+            "com ",
+            "qué hacer",
+            "que hacer",
+            "què fer",
+            "que fer",
+            "qué son",
+            "que son",
+            "què són",
+        )
+    )
+    return bool(how_what and mentions_pest(low))
+
+
 PEST_KEYWORDS = (
     "cucarach",
     "cucurach",  # typo habitual
@@ -341,6 +438,8 @@ def is_clear_own_pest_report(msg_lower: str) -> bool:
     """El cliente habla de plaga en SU vivienda/local (plantilla ask_where de habitación)."""
     if not mentions_pest(msg_lower):
         return False
+    if is_informational_query(msg_lower):
+        return False
     if is_third_party_pest_mention(msg_lower):
         return False
     # Edificio/comunidad → lo juzga el agente, no la plantilla de cocina/baño
@@ -381,6 +480,8 @@ def is_case_follow_up(msg_lower: str) -> bool:
 
 def is_location_answer(msg_lower: str) -> bool:
     """El mensaje indica una zona del inmueble (no color/tamaño)."""
+    if is_informational_query(msg_lower):
+        return False
     location_hints = (
         "baño",
         "bano",
@@ -479,6 +580,8 @@ def is_quantity_hint(msg_lower: str) -> bool:
 
 def is_rich_pest_report(msg_lower: str) -> bool:
     """Mención de plaga con ubicación o detalles (p. ej. «cucarachas en el baño»)."""
+    if is_informational_query(msg_lower):
+        return False
     return mentions_pest(msg_lower) and is_case_follow_up(msg_lower)
 
 
@@ -611,7 +714,7 @@ def _pricing_flow_route(
 
     asking_price = wants_pricing_message(msg_lower or "")
     fields_missing = missing
-    if fields_missing is None:
+    if asking_price and fields_missing is None:
         fields_missing = get_missing_mandatory_fields(agent, diagnostic)
 
     if asking_price:
@@ -624,7 +727,7 @@ def _pricing_flow_route(
     # Turno de respuesta a intake (el grafo ya pasó missing_intake_fields)
     if (
         missing is not None
-        and not fields_missing
+        and not missing
         and agent.intent in (Intent.QUOTE, Intent.URGENCY)
         and not is_simple_greeting(msg_lower)
         and has_pricing_case_details(agent, diagnostic)
@@ -665,11 +768,12 @@ def choose_agent_route(state: CECSAGraphState) -> str:
     if _wants_pricing(agent, diagnostic, msg_lower):
         return "pricer"
 
-    if should_run_intake(agent, diagnostic, msg_lower, missing):
-        return "intake"
-
+    # Diagnóstico de seguimiento (ubicación/descripción) antes que intake de ficha
     if should_diagnose(agent, msg_lower):
         return "diagnostician"
+
+    if should_run_intake(agent, diagnostic, msg_lower, missing):
+        return "intake"
 
     # Mensajes sin plaga concreta (p. ej. "tengo un problema") → recepcionista, no fallback
     if not mentions_pest(msg_lower):

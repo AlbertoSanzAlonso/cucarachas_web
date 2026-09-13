@@ -1,6 +1,10 @@
 from api.agents.graph.routing import apply_preprocess, choose_agent_route, should_diagnose
 from api.agents.models import AgentState, Intent
 
+import pytest
+
+pytestmark = pytest.mark.django_db
+
 
 def _route(agent: AgentState, message: str) -> str:
     state = {
