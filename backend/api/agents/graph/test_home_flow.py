@@ -60,6 +60,7 @@ def test_parse_quantity_range():
 
 
 def test_home_flow_es_does_not_leak_community():
+    """Saludo limpia sesión ajena; el chat libre ya no usa plantillas (solo LLM)."""
     agent = AgentState(
         language="ca",
         city="Carrer de la Costa Brava",
@@ -70,32 +71,32 @@ def test_home_flow_es_does_not_leak_community():
         intent=Intent.QUOTE,
     )
     agent, msg = _turn(agent, "hola")
-    assert "Cuéntame" in msg
+    assert msg == ""  # sin plantilla: LLM
     assert agent.property_type is None
     assert agent.city is None
     assert not agent.chat_diagnostic
+    state = _home_state(agent, "hola")
+    assert home_scripted_reply(state, agent, "es") is None
+    assert choose_agent_route(state) == "receptionist"
 
     agent, msg = _turn(agent, "tengo un problema de cucarachas")
-    assert "vivienda" in msg.lower() or "negocio" in msg.lower() or "comunidad" in msg.lower()
-    assert "cocina" not in msg.lower() and "baño" not in msg.lower()
+    assert msg == ""
     assert agent.property_type is None
     assert "Costa Brava" not in (agent.city or "")
+    state = _home_state(agent, "tengo un problema de cucarachas")
+    assert home_scripted_reply(state, agent, "es") is None
 
     agent, msg = _turn(agent, "piso")
-    assert "Dónde" in msg or "dónde" in msg.lower()
     assert agent.property_type == "particular"
+    assert home_scripted_reply(_home_state(agent, "piso"), agent, "es") is None
 
     agent, msg = _turn(agent, "en el baño")
-    assert "Cuántas" in msg
     assert (agent.chat_diagnostic or {}).get("where") == "bano"
 
     agent, msg = _turn(agent, "3 o 4")
-    assert "inspección gratuita" in msg.lower() or "presupuesto" in msg.lower()
-    assert "cucaracha alemana" in msg.lower() or "nivel" in msg.lower()
-    assert "Costa Brava" not in msg
-    assert "comunitat" not in msg.lower()
-    assert "llagost" not in msg.lower()
     assert (agent.chat_diagnostic or {}).get("quantity") == "several"
+    # Caso listo puede ir a diagnostician/veredicto ficha, pero nunca plantilla ask_*
+    assert home_scripted_reply(_home_state(agent, "3 o 4"), agent, "es") is None
 
 
 def test_home_free_question_routes_to_diagnostician():
@@ -110,34 +111,31 @@ def test_home_free_question_routes_to_diagnostician():
 
 
 def test_vague_plaga_asks_pest_not_kitchen_zones():
-    """«ayuda para una plaga» no asume cucarachas ni cocina/baño."""
-    from api.agents.chat_intake import ensure_pest_from_message
+    """«ayuda para una plaga» no asume cucarachas; sin plantilla en chat libre."""
     from api.agents.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
     agent, msg = _turn(agent, "quisiera ayuda para una plaga")
     assert agent.pest_type is None
-    assert "cucarachas" not in msg.lower() or "roedores" in msg.lower() or "otra plaga" in msg.lower()
-    assert "cocina" not in msg.lower()
-    assert "baño" not in msg.lower()
+    assert msg == ""
+    assert home_scripted_reply(_home_state(agent, "quisiera ayuda para una plaga"), agent, "es") is None
     assert home_next_action(agent, "quisiera ayuda para una plaga") == "ask_pest"
 
 
 def test_cucarachas_asks_property_before_rooms():
-    """Tras nombrar cucarachas, preguntar vivienda/negocio/comunidad antes que cocina."""
+    """Tras nombrar cucarachas se guarda plaga; chat libre sin plantilla ask_property."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
     agent, msg = _turn(agent, "tengo cucarachas")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert agent.property_type is None
-    low = msg.lower()
-    assert "vivienda" in low or "negocio" in low or "comunidad" in low
-    assert "cocina" not in low and "baño" not in low
+    assert msg == ""
+    assert home_scripted_reply(_home_state(agent, "tengo cucarachas"), agent, "es") is None
 
     agent, msg = _turn(agent, "en un bar")
     assert agent.property_type == "negoci"
-    assert "local" in msg.lower() or "almacén" in msg.lower() or "cocina" in msg.lower()
+    assert home_scripted_reply(_home_state(agent, "en un bar"), agent, "es") is None
 
 
 def test_hola_que_tal_does_not_assume_cockroaches():
@@ -155,10 +153,10 @@ def test_hola_que_tal_does_not_assume_cockroaches():
         intent=Intent.DOUBT,
     )
     agent, msg = _turn(agent, "hola que tal")
-    assert "Cuéntame" in msg or "puedo ayudar" in msg.lower()
-    assert "cucarachas" not in msg.lower()
+    assert msg == ""
     assert agent.pest_type is None
     assert home_next_action(agent, "hola que tal") == "greet"
+    assert home_scripted_reply(_home_state(agent, "hola que tal"), agent, "es") is None
 
 
 def test_home_quantity_routes_to_diagnostician():
@@ -176,11 +174,10 @@ def test_home_quantity_routes_to_diagnostician():
 def test_natural_hola_then_que_tal_then_empresa():
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
-    assert "Cuéntame" in msg
+    assert msg == ""
+    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is None
 
     agent, msg = _turn(agent, "que tal")
-    assert "Bien" in msg or "Dime" in msg
-    assert msg != "¡Hola! Cuéntame, ¿en qué te puedo ayudar?"
     assert agent.pest_type is None
 
     agent, msg = _turn(agent, "tengo una empresa")
@@ -188,26 +185,23 @@ def test_natural_hola_then_que_tal_then_empresa():
     from api.agents.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "tengo una empresa") == "ask_pest"
-    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
+    assert home_scripted_reply(_home_state(agent, "tengo una empresa"), agent, "es") is None
 
 
 def test_plaga_then_negocio_stays_on_script_not_llm():
-    """Tras «ayuda para una plaga» + «es un negocio», plantilla negocio (no LLM inventando)."""
+    """Tras plaga + negocio: hechos en estado; sin plantilla (LLM libre)."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
     agent, msg = _turn(agent, "quisiera ayuda para una plaga")
     assert agent.pest_type is None
-    assert "otra plaga" in msg.lower() or "roedores" in msg.lower()
 
     agent, msg = _turn(agent, "es un negocio")
     assert agent.property_type == "negoci"
     assert agent.pest_type is None
-    low = msg.lower()
-    assert "empresa" in low or "local" in low or "plaga" in low
-    assert "cocina" not in low
     from api.agents.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "es un negocio") == "ask_pest"
+    assert home_scripted_reply(_home_state(agent, "es un negocio"), agent, "es") is None
 
 
 def test_eres_un_robot_goes_to_agent_not_pest_script():
@@ -227,7 +221,7 @@ def test_neighbor_cockroaches_goes_to_receptionist_agent():
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
-    assert "Cuéntame" in msg
+    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is None
 
     agent, msg = _turn(agent, "tengo un negocio")
     assert agent.property_type == "negoci"
@@ -236,9 +230,7 @@ def test_neighbor_cockroaches_goes_to_receptionist_agent():
     assert home_next_action(agent, neighbor) == "llm"
     state = _home_state(agent, neighbor)
     assert choose_agent_route(state) == "receptionist"
-    # Sin plantilla: el nodo usará el LLM del recepcionista
     assert home_scripted_reply(state, agent, "es") is None
-    assert "en el local" not in (msg or "").lower()
 
 
 def test_vague_problem_does_not_inherit_stale_pest():
@@ -258,50 +250,41 @@ def test_vague_problem_does_not_inherit_stale_pest():
     assert home_next_action(agent, "hola tengo un problema") == "ask_pest"
 
     state = _home_state(agent, "hola tengo un problema")
-    reply = home_scripted_reply(state, agent, "es")
-    assert reply is not None
-    text = reply["result"]["message"].lower()
-    assert "cucarachas alemanas" not in text
-    assert "vecino" not in text
-    assert "plaga" in text or "cucarachas" in text or "roedores" in text
+    assert home_scripted_reply(state, agent, "es") is None
 
 
 def test_si_after_ask_pest_asks_property_not_slots():
-    """hola → problema → ¿plaga? → sí → pregunta inmueble (no agenda)."""
+    """hola → problema → sí confirma plaga; sin plantilla ni slots."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
-    assert "ayudar" in msg.lower()
-
     agent, msg = _turn(agent, "tengo un problema")
-    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
-    assert agent.pending_intake_field == "pest"
-
+    # Sin plantilla ya no fuerza pending_intake_field=pest
     agent, msg = _turn(agent, "si")
-    assert agent.pest_type == PestType.GERMAN_COCKROACH
+    # «sí» solo no confirma plaga sin contexto de ask_pest pendiente
     assert choose_agent_route(_home_state(agent, "si")) == "receptionist"
-    low = msg.lower()
-    assert "horario" not in low
-    assert "inspección gratuita" not in low or "vivienda" in low or "negocio" in low
-    assert "vivienda" in low or "negocio" in low or "comunidad" in low
+    assert home_scripted_reply(_home_state(agent, "si"), agent, "es") is None
 
 
 def test_out_of_area_alicante_scripted():
+    """Fuera de zona: hechos en estado; respuesta via LLM (sin plantilla)."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "vivo en Alicante")
     assert agent.city and "alicante" in agent.city.lower()
-    low = msg.lower()
-    assert "catalunya" in low
-    assert "desplaz" in low or "visita" in low or "fuera" in low
-    assert "inspección gratuita" not in low
+    assert msg == ""
+    from api.agents.graph.home_flow import home_next_action
+
+    assert home_next_action(agent, "vivo en Alicante") == "out_of_area"
+    assert home_scripted_reply(_home_state(agent, "vivo en Alicante"), agent, "es") is None
 
 
 def test_out_of_area_visit_with_stored_city():
     agent = AgentState(language="es", city="Alicante")
+    from api.agents.graph.home_flow import home_next_action
+
+    assert home_next_action(agent, "¿podéis venir a mi local?") == "out_of_area"
     agent, msg = _turn(agent, "¿podéis venir a mi local?")
-    low = msg.lower()
-    assert "catalunya" in low
-    assert "alicante" in low
-    assert "inspección gratuita" not in low
+    assert msg == ""
+    assert home_scripted_reply(_home_state(agent, "¿podéis venir a mi local?"), agent, "es") is None
 
 
 def test_cornella_after_valencia_is_in_coverage():
@@ -313,11 +296,7 @@ def test_cornella_after_valencia_is_in_coverage():
     agent = apply_facts_from_message(agent, "estoy en Cornella")
     assert agent.city and "cornell" in agent.city.lower()
     assert home_next_action(agent, "estoy en Cornella") == "in_area"
-    agent, msg = _turn(AgentState(language="es", city="Valencia"), "estoy en Cornella")
-    low = msg.lower()
-    assert "servicio" in low or "servei" in low or "catalunya" in low
-    assert "no podemos" not in low
-    assert "no ens podem" not in low
+    assert home_scripted_reply(_home_state(agent, "estoy en Cornella"), agent, "es") is None
 
 
 def test_company_info_not_marked_as_business():
@@ -329,21 +308,16 @@ def test_company_info_not_marked_as_business():
     assert agent.property_type is None
     assert home_next_action(agent, "quiero informacion de la empresa") == "company_info"
     state = _home_state(agent, "quiero informacion de la empresa")
-    reply = home_scripted_reply(state, agent, "es")
-    assert reply is not None
-    text = reply["result"]["message"].lower()
-    assert "catalunya" in text
-    assert "negocio" not in text
-    assert "933" in text
+    assert home_scripted_reply(state, agent, "es") is None
+    assert choose_agent_route(state) == "receptionist"
 
 
 def test_cucurachas_typo_asks_where():
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "cucurachas")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
-    low = msg.lower()
-    assert "vivienda" in low or "negocio" in low or "comunidad" in low
-    assert "especificar" not in low
+    assert msg == ""
+    assert home_scripted_reply(_home_state(agent, "cucurachas"), agent, "es") is None
 
 
 def test_presupuesto_without_case_asks_pest():
@@ -353,7 +327,6 @@ def test_presupuesto_without_case_asks_pest():
     assert home_next_action(agent, "para el presupuesto?") == "ask_pest"
     state = _home_state(agent, "para el presupuesto?")
     assert choose_agent_route(state) == "receptionist"
-    # Sin plantilla: el recepcionista LLM orquesta
     assert home_scripted_reply(state, agent, "es") is None
 
     agent2 = AgentState(language="es")
@@ -363,68 +336,57 @@ def test_presupuesto_without_case_asks_pest():
 
 
 def test_si_quiero_presupuesto_advances_to_where():
-    """Tras ask_pest, «sí pero quiero presupuesto» confirma plaga; no cotiza aún."""
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    """Con keyword presupuesto el LLM orquesta; sin plantilla ni precio inventado."""
+    from api.agents.graph.home_flow import home_next_action
     from api.agents.graph.routing import wants_pricing_message
 
     agent = AgentState(language="es")
     agent, msg1 = _turn(agent, "para un presupuesto?")
-    assert agent.pending_intake_field == "pest"
     assert "€" not in (msg1 or "")
+    assert home_scripted_reply(_home_state(agent, "para un presupuesto?"), agent, "es") is None
 
+    agent = ensure_pest_from_message(agent, "si pero quiero presupuesto")
     agent, msg2 = _turn(agent, "si pero quiero presupuesto")
-    assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert wants_pricing_message("si pero quiero presupuesto")
     assert "€" not in (msg2 or "")
-    # Con plaga + keyword presupuesto → pedir inmueble/zona (no precio inventado)
     state = _home_state(agent, "si pero quiero presupuesto")
     assert choose_agent_route(state) == "receptionist"
     action = home_next_action(agent, "si pero quiero presupuesto")
-    assert action in ("ask_property", "ask_where", "llm", "ask_pest")
-    if action in ("ask_pest", "ask_where", "ask_property"):
-        # Puede ser plantilla o LLM según acción
-        pass
+    assert action in ("ask_property", "ask_where", "llm", "ask_pest", "ask_qty", "verdict")
 
 
 def test_description_without_where_goes_to_llm_not_fake_location():
-    """Sin zona aún, «son marrones» no inventa ubicación ni salta a cantidad falsa."""
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    """Sin zona aún, hechos en estado; sin plantilla de vivienda."""
+    from api.agents.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "tengo cucarachas pequeñas")
-    low = msg.lower()
-    assert "vivienda" in low or "negocio" in low or "comunidad" in low
     assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert not (agent.chat_diagnostic or {}).get("where")
+    assert home_scripted_reply(_home_state(agent, "tengo cucarachas pequeñas"), agent, "es") is None
 
     agent, msg = _turn(agent, "piso")
     assert agent.property_type == "particular"
-    assert "dónde" in msg.lower() or "donde" in msg.lower()
 
     assert home_next_action(agent, "son marrones") == "ask_where"
-    state = _home_state(agent, "son marrones")
-    # Plantilla de zona o LLM; no inventar ubicación en chat_diagnostic
     assert not (agent.chat_diagnostic or {}).get("where")
-    assert choose_agent_route(state) == "receptionist"
+    assert choose_agent_route(_home_state(agent, "son marrones")) == "receptionist"
 
 
 def test_description_after_where_asks_quantity_not_verdict():
-    """Con cocina ya dicha, «son marrones» debe pedir cantidad — no veredicto de alemanas."""
+    """Con cocina ya dicha, «son marrones» → ask_qty en lógica; sin plantilla."""
     from api.agents.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, _ = _turn(agent, "cucarachas")
     agent, _ = _turn(agent, "piso")
     agent, msg = _turn(agent, "en la cocina")
-    assert "cuántas" in msg.lower() or "cuantas" in msg.lower()
     assert (agent.chat_diagnostic or {}).get("where") == "cocina"
+    assert home_scripted_reply(_home_state(agent, "en la cocina"), agent, "es") is None
 
     assert home_next_action(agent, "son marrones") == "ask_qty"
     agent, msg2 = _turn(agent, "son marrones")
-    low = msg2.lower()
-    assert "cuántas" in low or "cuantas" in low or "pocas" in low
-    assert "alemana" not in low
-    assert "nevera" not in low
+    assert msg2 == ""
 
 
 def test_facts_capture_size_and_white_color():
@@ -481,62 +443,48 @@ def test_entrada_sets_where_and_context_keeps_pest_memory():
 
 
 def test_cucas_then_salon_then_vivienda_never_reasks_pest():
-    """«cucas» cuenta como plaga; no repreguntar tras vivienda; conservar salón."""
+    """«cucas» cuenta como plaga; hechos en estado; sin plantillas."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
     agent, msg = _turn(agent, "tengo un problema")
-    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
+    assert home_scripted_reply(_home_state(agent, "tengo un problema"), agent, "es") is None
 
     agent, msg = _turn(agent, "cucas")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
-    assert "vivienda" in msg.lower() or "negocio" in msg.lower() or "comunidad" in msg.lower()
-    assert "qué plaga" not in msg.lower()
 
     agent, msg = _turn(agent, "en un salon")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert (agent.chat_diagnostic or {}).get("where") == "salon"
-    # Puede pedir inmueble o cantidad; NUNCA de nuevo la plaga
-    assert "has visto cucarachas, roedores" not in msg.lower()
-    assert "qué plaga" not in msg.lower()
 
     agent, msg = _turn(agent, "en una vivienda")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert agent.property_type == "particular"
     assert (agent.chat_diagnostic or {}).get("where") == "salon"
-    low = msg.lower()
-    assert "has visto cucarachas, roedores" not in low
-    assert "qué plaga" not in low
-    assert "cuánt" in low or "pocas" in low or "varias" in low
+    assert home_scripted_reply(_home_state(agent, "en una vivienda"), agent, "es") is None
 
 
 def test_street_after_cucarachas_keeps_pest_and_asks_qty():
-    """«en la calle» no borra plaga ni repregunta especie; asume vivienda + exterior."""
+    """«en la calle» no borra plaga; hechos en estado; sin plantilla."""
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
     agent, msg = _turn(agent, "tyengo problemas")
     assert agent.pest_type is None
-    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
 
     agent, msg = _turn(agent, "he visto una pequeña")
     assert agent.pest_type is None
-    assert "plaga" in msg.lower() or "cucarach" in msg.lower()
 
     agent, msg = _turn(agent, "una de cucarachas")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
-    assert "vivienda" in msg.lower() or "negocio" in msg.lower()
 
     agent, msg = _turn(agent, "en la calle")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
     assert agent.property_type == "particular"
     assert (agent.chat_diagnostic or {}).get("where") == "entrada"
-    low = msg.lower()
-    assert "qué plaga" not in low
-    assert "cuánt" in low or "pocas" in low or "varias" in low
+    assert home_scripted_reply(_home_state(agent, "en la calle"), agent, "es") is None
 
     agent, msg = _turn(agent, "marrones")
     assert agent.pest_type == PestType.GERMAN_COCKROACH
-    assert "qué plaga" not in msg.lower()
-    assert "cuánt" in msg.lower() or "pocas" in msg.lower() or "anoto" in msg.lower()
+    assert msg == ""
 
 
 def test_company_knowledge_mentions_catalunya():
@@ -557,7 +505,7 @@ def test_company_knowledge_mentions_catalunya():
 
 
 def test_informational_identify_does_not_ask_property():
-    """«cómo identifico cucarachas…» → guía/blog, no embudo vivienda/negocio."""
+    """«cómo identifico…» / blog: sin plantilla; el LLM + RAG responden."""
     from api.agents.graph.home_flow import home_next_action, home_scripted_reply
     from api.agents.graph.routing import is_informational_query
 
@@ -566,10 +514,16 @@ def test_informational_identify_does_not_ask_property():
     agent = AgentState(language="es", intent=Intent.DOUBT)
     assert home_next_action(agent, msg) == "knowledge"
     state = _home_state(agent, msg)
-    reply = home_scripted_reply(state, agent, "es")
-    assert reply is not None
-    text = reply["result"]["message"].lower()
-    assert "vivienda" not in text
-    assert "negocio" not in text
-    assert "comunidad" not in text
-    assert "guía" in text or "guia" in text or "blog" in text or "consejo" in text
+    assert home_scripted_reply(state, agent, "es") is None
+    assert choose_agent_route(state) == "receptionist"
+
+    blog_msg = "cuantos articulos hay en el blog?"
+    assert is_informational_query(blog_msg)
+    agent2 = AgentState(
+        language="es",
+        pest_type=PestType.GERMAN_COCKROACH,
+        intent=Intent.DOUBT,
+    )
+    state2 = _home_state(agent2, blog_msg)
+    assert home_scripted_reply(state2, agent2, "es") is None
+    assert choose_agent_route(state2) == "receptionist"

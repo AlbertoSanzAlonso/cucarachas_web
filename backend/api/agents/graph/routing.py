@@ -29,11 +29,10 @@ PRICING_KEYWORDS = (
     "presu",  # abrev. «presupuesto»
     "presup",
     "pressu",
-    "cuánto",
-    "cuanto",
-    "quanto",
     "cuesta",
 )
+# «cuánto/cuanto» solo como token exacto (no «cuántos artículos»)
+_PRICING_HOW_MUCH = frozenset({"cuanto", "cuánto", "quanto"})
 
 # Tokens cortos: solo coincidencia exacta (evitar «presidente» ⊃ «presi»)
 _PRICING_EXACT_TOKENS = frozenset({"presi", "presu", "presup", "pressu", "preu", "preus"})
@@ -61,6 +60,8 @@ def wants_pricing_message(message: str) -> bool:
     low = (message or "").lower()
     tokens = re.findall(r"[a-záéíóúüñ]+", low)
     if any(t in _PRICING_EXACT_TOKENS for t in tokens):
+        return True
+    if any(t in _PRICING_HOW_MUCH for t in tokens):
         return True
     if any(kw in low for kw in PRICING_KEYWORDS):
         return True
@@ -138,9 +139,18 @@ def is_informational_query(msg_lower: str) -> bool:
         "consejo",
         "consell",
         "artículo",
+        "articulo",
+        "artículos",
+        "articulos",
         "article",
+        "articles",
         "del blog",
         "en el blog",
+        "el blog",
+        "al blog",
+        "cuántos artículo",
+        "cuantos articulo",
+        "quants article",
         "prevención de",
         "prevenció de",
         "cómo evitar",

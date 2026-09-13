@@ -432,49 +432,14 @@ def _scripted_message(agent: AgentState, action: str, msgs: dict, lang: str, mes
 
 
 def home_scripted_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
-    """Plantillas de intake. None = veredicto ficha o LLM (lo decide el nodo)."""
-    from api.agents.company_knowledge import (
-        company_info_reply,
-        find_coverage_place,
-        find_outside_place,
-        in_area_message,
-        out_of_area_message,
-    )
-    from api.agents.serialization import normalize_language
+    """
+    Plantillas del chat home: DESACTIVADAS.
 
-    lang = normalize_language(lang)
-    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
-    agent.language = lang
-    message = state.get("message") or ""
-    action = home_next_action(agent, message)
-    if action == "out_of_area":
-        place = find_outside_place(message) or find_outside_place(agent.city or "")
-        return _reply(agent, out_of_area_message(lang, place))
-    if action == "in_area":
-        place = find_coverage_place(message) or agent.city
-        return _reply(agent, in_area_message(lang, place))
-    if action == "company_info":
-        return _reply(agent, company_info_reply(lang))
-    if action == "knowledge":
-        return _reply(agent, build_knowledge_reply(message, lang))
-    if action in ("verdict", "llm"):
-        return None
-    # Presupuesto incompleto o precio de la cita: criterio del LLM (no plantilla)
-    from api.agents.graph.routing import asks_price_of_appointment, wants_pricing_message
-
-    if asks_price_of_appointment(message.lower()):
-        return None
-    if action in ("ask_pest", "ask_where", "ask_qty") and wants_pricing_message(message):
-        if action == "ask_pest":
-            agent.pending_intake_field = "pest"
-        return None
-    if action == "ask_pest":
-        agent.pending_intake_field = "pest"
-        text = _scripted_message(agent, action, msgs, lang, message)
-        return _reply(agent, text)
-    if action == "ask_where" and agent.pending_intake_field == "pest":
-        agent.pending_intake_field = None
-    return _reply(agent, _scripted_message(agent, action, msgs, lang, message))
+    Las respuestas automáticas solo viven en el cuestionario del modal
+    (DiagnosticFlow / opciones). Si el usuario escribe en el chat libre,
+    siempre responde el LLM (recepcionista/diagnosticador) con herramientas.
+    """
+    return None
 
 
 def collect_home_case_facts(agent: AgentState, lang: str, message: str = "") -> dict:

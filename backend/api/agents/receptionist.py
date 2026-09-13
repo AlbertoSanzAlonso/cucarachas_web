@@ -43,3 +43,19 @@ def search_web_knowledge(ctx: RunContext[AgentState], query: str) -> str:
         limit=3,
         category=["blog", "faq", "species", "company", "general"],
     )
+
+
+@receptionist_agent.tool
+def get_blog_info(ctx: RunContext[AgentState]) -> str:
+    """Cuántos artículos hay en el blog y listado de títulos publicados."""
+    from api.models import BlogArticle
+
+    articles = list(
+        BlogArticle.objects.filter(is_published=True).order_by("-published_at", "-id")
+    )
+    if not articles:
+        return "Blog: 0 artículos publicados."
+    lines = [f"Blog CECSA: {len(articles)} artículo(s) publicado(s)."]
+    for art in articles:
+        lines.append(f"- {art.title} (/{art.slug})")
+    return "\n".join(lines)
