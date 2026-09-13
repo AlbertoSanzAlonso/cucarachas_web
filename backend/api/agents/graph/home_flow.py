@@ -433,12 +433,20 @@ def _scripted_message(agent: AgentState, action: str, msgs: dict, lang: str, mes
 
 def home_scripted_reply(state: CECSAGraphState, agent: AgentState, lang: str) -> dict | None:
     """
-    Plantillas del chat home: DESACTIVADAS.
+    Chat libre: sin embudo de intake (vivienda/negocio/zona).
 
-    Las respuestas automáticas solo viven en el cuestionario del modal
-    (DiagnosticFlow / opciones). Si el usuario escribe en el chat libre,
-    siempre responde el LLM (recepcionista/diagnosticador) con herramientas.
+    Solo plantilla de saludo corto («hola», «qué tal») para no lanzar
+    al LLM a preguntar la plaga. El resto → LLM + tools.
     """
+    from api.agents.serialization import normalize_language
+
+    lang = normalize_language(lang)
+    msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
+    agent.language = lang
+    message = state.get("message") or ""
+    action = home_next_action(agent, message)
+    if action == "greet":
+        return _reply(agent, _scripted_message(agent, "greet", msgs, lang, message))
     return None
 
 
@@ -535,8 +543,15 @@ def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str
     """Contexto recepcionista home: memoria compartida + reglas de cobertura."""
     from api.agents.case_context import build_shared_case_context
     from api.agents.company_knowledge import is_outside_service_area
+    from api.agents.graph.routing import (
+        is_informational_query,
+        is_simple_greeting,
+        wants_pricing_message,
+        wants_scheduling,
+    )
 
     base = build_shared_case_context(agent, lang, message, role="receptionist")
+    msg_lower = (message or "").lower()
     outside, place = is_outside_service_area(message=message, city=agent.city)
     if outside:
         rule = (
@@ -545,6 +560,32 @@ def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str
             else f"\nCOBERTURA: fora de zona ({place or agent.city}). NO ofereixis visita."
         )
         return base + rule
+
+    if is_simple_greeting(msg_lower) or is_informational_query(msg_lower):
+        tip = (
+            "\nTURNO ESPECIAL: el cliente NO está relatando un caso todavía. "
+            "Responde de forma natural a lo que pregunta (saludo, blog, FAQ, empresa…). "
+            "PROHIBIDO preguntar qué plaga ha visto, vivienda/negocio ni zona en este mensaje."
+            if lang == "es"
+            else "\nTORN ESPECIAL: el client NO està relatant un cas encara. "
+            "Respon de forma natural al que pregunta (salutació, blog, FAQ, empresa…). "
+            "PROHIBIT preguntar quina plaga ha vist, habitatge/negoci ni zona en aquest missatge."
+        )
+        return base + tip
+
+    if not wants_pricing_message(msg_lower) and not wants_scheduling(msg_lower):
+        if not any(
+            k in msg_lower
+            for k in ("cucarach", "panerol", "plaga", "problema", "infest")
+        ):
+            tip = (
+                "\nCHAT LIBRE: responde a la pregunta del cliente. "
+                "No inicies el embudo de plaga/inmueble salvo que el mensaje trate de una plaga o servicio."
+                if lang == "es"
+                else "\nXAT LLIURE: respon a la pregunta del client. "
+                "No iniciïs l'embut de plaga/immoble tret que el missatge parli d'una plaga o servei."
+            )
+            return base + tip
     return base
 
 

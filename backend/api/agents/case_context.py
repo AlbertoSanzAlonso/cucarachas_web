@@ -159,6 +159,22 @@ def build_shared_case_context(
             else "Plaga: encara NO especificada (PROHIBIT inventar paneroles o una altra espècie)"
         )
 
+    # Saludos / info: no empujar «siguiente dato = plaga»
+    defer_intake = False
+    if message:
+        from api.agents.graph.routing import is_informational_query, is_simple_greeting
+
+        defer_intake = is_simple_greeting(message.lower()) or is_informational_query(
+            message.lower()
+        )
+
+    if defer_intake:
+        missing_txt = (
+            "ninguno este turno — solo responde al mensaje (saludo/pregunta)"
+            if lang == "es"
+            else "cap aquest torn — només respon al missatge (salutació/pregunta)"
+        )
+
     lines = [
         f"Idioma: {lang}",
         f"Rol agente: {role}",

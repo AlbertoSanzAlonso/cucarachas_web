@@ -71,12 +71,12 @@ def test_home_flow_es_does_not_leak_community():
         intent=Intent.QUOTE,
     )
     agent, msg = _turn(agent, "hola")
-    assert msg == ""  # sin plantilla: LLM
+    assert "Cuéntame" in msg or "puedo ayudar" in msg.lower() or "Explica" in msg
     assert agent.property_type is None
     assert agent.city is None
     assert not agent.chat_diagnostic
     state = _home_state(agent, "hola")
-    assert home_scripted_reply(state, agent, "es") is None
+    assert home_scripted_reply(state, agent, "es") is not None
     assert choose_agent_route(state) == "receptionist"
 
     agent, msg = _turn(agent, "tengo un problema de cucarachas")
@@ -153,10 +153,13 @@ def test_hola_que_tal_does_not_assume_cockroaches():
         intent=Intent.DOUBT,
     )
     agent, msg = _turn(agent, "hola que tal")
-    assert msg == ""
+    assert "Cuéntame" in msg or "puedo ayudar" in msg.lower() or "en què" in msg.lower()
+    assert "plaga" not in msg.lower()
     assert agent.pest_type is None
     assert home_next_action(agent, "hola que tal") == "greet"
-    assert home_scripted_reply(_home_state(agent, "hola que tal"), agent, "es") is None
+    reply = home_scripted_reply(_home_state(agent, "hola que tal"), agent, "es")
+    assert reply is not None
+    assert "plaga" not in reply["result"]["message"].lower()
 
 
 def test_home_quantity_routes_to_diagnostician():
@@ -174,11 +177,12 @@ def test_home_quantity_routes_to_diagnostician():
 def test_natural_hola_then_que_tal_then_empresa():
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
-    assert msg == ""
-    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is None
+    assert "Cuéntame" in msg or "ayudar" in msg.lower()
+    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is not None
 
     agent, msg = _turn(agent, "que tal")
     assert agent.pest_type is None
+    assert "plaga" not in msg.lower()
 
     agent, msg = _turn(agent, "tengo una empresa")
     assert agent.property_type == "negoci"
@@ -221,7 +225,8 @@ def test_neighbor_cockroaches_goes_to_receptionist_agent():
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
-    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is None
+    assert "ayudar" in msg.lower() or "Cuéntame" in msg
+    assert home_scripted_reply(_home_state(agent, "hola"), agent, "es") is not None
 
     agent, msg = _turn(agent, "tengo un negocio")
     assert agent.property_type == "negoci"
