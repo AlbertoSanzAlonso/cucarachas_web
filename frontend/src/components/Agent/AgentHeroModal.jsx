@@ -278,14 +278,14 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
                   handleBack={handleBack}
                 />
 
-                <div className="mt-10 md:mt-16 pt-6 md:pt-10 border-t border-white/15 flex justify-center w-full flex-shrink-0">
+                <div className="mt-20 md:mt-20 pt-10 md:pt-12 border-t border-white/15 flex justify-center w-full max-w-3xl mx-auto px-4 md:px-8 flex-shrink-0">
                   <motion.button 
                     onClick={onClose} 
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.98 }}
-                    className="group flex items-center justify-center space-x-3 md:space-x-4 bg-white hover:bg-white/95 w-full max-w-md sm:w-auto px-8 py-4 md:px-12 md:py-5 rounded-2xl transition-colors border border-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] md:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
+                    className="group flex items-center justify-center space-x-3 md:space-x-4 bg-white hover:bg-white/95 w-full sm:w-auto sm:min-w-[260px] px-8 py-4 md:px-12 md:py-5 rounded-2xl transition-colors border border-white shadow-[0_4px_20px_rgba(0,0,0,0.12)] md:shadow-[0_8px_32px_rgba(0,0,0,0.18)]"
                   >
-                    <span className="text-primary-blue text-sm md:text-base font-black tracking-[0.18em] uppercase">{t('agent.skip')}</span>
+                    <span className="text-primary-blue text-base md:text-base font-black tracking-[0.18em] uppercase">{t('agent.skip')}</span>
                     <ArrowRight size={18} className="text-primary-blue md:w-5 md:h-5 transition-all transform group-hover:translate-x-1.5" />
                   </motion.button>
                 </div>
