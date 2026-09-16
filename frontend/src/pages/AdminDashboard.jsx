@@ -24,8 +24,25 @@ const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem('cecsa_admin_sidebar_collapsed') === '1';
+    } catch {
+      return false;
+    }
+  });
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  const handleSidebarCollapsed = (next) => {
+    const value = typeof next === 'function' ? next(sidebarCollapsed) : next;
+    setSidebarCollapsed(value);
+    try {
+      localStorage.setItem('cecsa_admin_sidebar_collapsed', value ? '1' : '0');
+    } catch {
+      /* ignore */
+    }
+  };
   
   const navigate = useNavigate();
   const location = useLocation();
@@ -86,6 +103,8 @@ const AdminDashboard = () => {
       <Sidebar 
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        collapsed={sidebarCollapsed}
+        setCollapsed={handleSidebarCollapsed}
         activeTab={activeTab}
         setActiveTab={handleSetActiveTab}
         handleLogout={handleLogout}
