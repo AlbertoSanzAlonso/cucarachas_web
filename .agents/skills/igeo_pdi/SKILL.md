@@ -85,7 +85,8 @@ L’assistent d’oficina busca dades vives amb `search_igeo_espejo` / CRM. Quan
 
 - Corpus: `backend/knowledge/ops_corpus/*.md` + skill iGEO + PDF PDI (raíz del repo).
 - Vectores: `TechnicalKnowledge` con `audience=ops` (el chat público **no** los ve).
-- Sync: `python manage.py sync_ops_knowledge --skip-embeddings` (CI/local) o con `GOOGLE_API_KEY` para embeddings reales.
+- Sync ficheros: `python manage.py sync_ops_knowledge [--skip-embeddings] [--skip-pdf]`.
+- **Notas globales del admin**: pinneadas y sin conversación → upsert automático `ops:note:{id}` (señal Django). Notas de hilo solo van al prompt.
 - El agente ops inyecta top-k automáticamente y tiene la tool `search_ops_knowledge`.
 - **No** vectorizar el espejo: clientes/OT = SQL; cómo proceder = RAG.
 ## Flujo v1

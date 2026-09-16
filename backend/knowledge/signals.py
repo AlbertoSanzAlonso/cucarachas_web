@@ -6,6 +6,7 @@ from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from api.models import (
+    AdminMemoryNote,
     BlogArticle,
     CompanyProfile,
     FaqItem,
@@ -113,3 +114,17 @@ def sync_presupuesto_ref_on_delete(sender, instance: PresupuestoReferencia, **kw
     from knowledge.sync import delete_knowledge, presupuesto_ref_source_key
 
     _safe_sync(delete_knowledge, presupuesto_ref_source_key(instance.pk))
+
+
+@receiver(post_save, sender=AdminMemoryNote)
+def sync_admin_note_on_save(sender, instance: AdminMemoryNote, **kwargs):
+    from knowledge.ops_notes_rag import sync_admin_note_to_rag
+
+    _safe_sync(sync_admin_note_to_rag, instance)
+
+
+@receiver(post_delete, sender=AdminMemoryNote)
+def sync_admin_note_on_delete(sender, instance: AdminMemoryNote, **kwargs):
+    from knowledge.ops_notes_rag import delete_admin_note_from_rag
+
+    _safe_sync(delete_admin_note_from_rag, instance.pk)

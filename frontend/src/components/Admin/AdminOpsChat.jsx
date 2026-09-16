@@ -23,6 +23,7 @@ import {
   useGetOpsConversationQuery,
   useGetOpsConversationsQuery,
   useGetOpsModelsQuery,
+  useGetOpsNotesQuery,
   useSendOpsMessageMutation,
   useSendOpsVoiceMutation,
 } from '@/store/apis/opsChatApi';
@@ -77,12 +78,15 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     }
   });
   const [noteDraft, setNoteDraft] = useState('');
+  const [noteGlobal, setNoteGlobal] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState(null);
   const [deleteNoteTarget, setDeleteNoteTarget] = useState(null);
   const [isDeletingNote, setIsDeletingNote] = useState(false);
   const [deleteNoteError, setDeleteNoteError] = useState(null);
+  /** Mensaje del usuario mostrado al instante mientras el API responde. */
+  const [pendingUser, setPendingUser] = useState(null);
   const listRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -93,6 +97,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const { data: thread, isFetching: threadLoading } = useGetOpsConversationQuery(activeId, {
     skip: !activeId,
   });
+  const { data: globalNotes = [] } = useGetOpsNotesQuery({ scope: 'global' });
   const [createConv, { isLoading: creating }] = useCreateOpsConversationMutation();
   const [sendMessage, { isLoading: sending }] = useSendOpsMessageMutation();
   const [sendVoice, { isLoading: sendingVoice }] = useSendOpsVoiceMutation();
@@ -104,6 +109,13 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const notes = thread?.notes || [];
   const busy = sending || sendingVoice || creating;
   const voice = useVoiceRecorder();
+
+  const showPendingUser =
+    Boolean(pendingUser) &&
+    !(
+      pendingUser.source !== 'voice' &&
+      messages.some((m) => m.role === 'user' && m.content === pendingUser.content)
+    );
 
   const modelOptions = modelCatalog?.models || [];
   const allowedIds = modelOptions.map((m) => m.id);
@@ -150,14 +162,34 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   useEffect(() => {
     if (!listRef.current) return;
     listRef.current.scrollTop = listRef.current.scrollHeight;
-  }, [messages.length, busy]);
+  }, [messages.length, busy, pendingUser]);
+
+  // Quitar el optimista cuando el fil del servidor ya incluye la pregunta.
+  useEffect(() => {
+    if (!pendingUser || !messages.length) return;
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    if (!lastUser) return;
+    if (pendingUser.source === 'voice') {
+      setPendingUser(null);
+      return;
+    }
+    if (lastUser.content === pendingUser.content) {
+      setPendingUser(null);
+    }
+  }, [messages, pendingUser]);
 
   const submit = async (raw) => {
     const text = (raw ?? draft).trim();
     if (!text || busy) return;
     setDraft('');
-    const convId = await ensureConversation();
-    await sendMessage({ id: convId, content: text, language: 'ca', model: selectedModel }).unwrap();
+    setPendingUser({ content: text, source: 'text' });
+    try {
+      const convId = await ensureConversation();
+      await sendMessage({ id: convId, content: text, language: 'ca', model: selectedModel }).unwrap();
+    } catch {
+      setDraft(text);
+      setPendingUser(null);
+    }
   };
 
   const toggleVoice = async () => {
@@ -165,16 +197,21 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     if (voice.recording) {
       const blob = await voice.stop();
       if (!blob || blob.size < 800) return;
-      const convId = await ensureConversation();
-      const file = new File([blob], 'nota.webm', { type: blob.type || 'audio/webm' });
-      const result = await sendVoice({
-        id: convId,
-        audio: file,
-        language: 'ca',
-        speak: ttsEnabled,
-        model: selectedModel,
-      }).unwrap();
-      if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
+      setPendingUser({ content: 'Missatge de veu…', source: 'voice' });
+      try {
+        const convId = await ensureConversation();
+        const file = new File([blob], 'nota.webm', { type: blob.type || 'audio/webm' });
+        const result = await sendVoice({
+          id: convId,
+          audio: file,
+          language: 'ca',
+          speak: ttsEnabled,
+          model: selectedModel,
+        }).unwrap();
+        if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
+      } catch {
+        setPendingUser(null);
+      }
       return;
     }
     if (!voice.supported) {
@@ -191,6 +228,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const handleNewChat = () => {
     setActiveId(null);
     setDraft('');
+    setPendingUser(null);
     inputRef.current?.focus();
   };
 
@@ -239,7 +277,10 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     setIsDeletingNote(true);
     setDeleteNoteError(null);
     try {
-      await deleteNote({ id: deleteNoteTarget.id, conversation: activeId }).unwrap();
+      await deleteNote({
+        id: deleteNoteTarget.id,
+        conversation: deleteNoteTarget.conversation ?? null,
+      }).unwrap();
       setDeleteNoteTarget(null);
     } catch (err) {
       setDeleteNoteError(
@@ -264,13 +305,15 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const saveManualNote = async () => {
     const content = noteDraft.trim();
     if (!content) return;
+    const asGlobal = noteGlobal || !activeId;
     await createNote({
-      conversation: activeId || null,
+      conversation: asGlobal ? null : activeId,
       title: content.split('\n')[0].slice(0, 80),
       content,
       pinned: true,
     });
     setNoteDraft('');
+    setNoteGlobal(false);
   };
 
   const handleNoteKeyDown = (e) => {
@@ -338,7 +381,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     </div>
   );
 
-  const empty = !activeId;
+  const empty = !activeId && !pendingUser;
 
   return (
     <div className="flex h-full min-h-0 bg-[#f7f8fb]" data-lenis-prevent>
@@ -547,6 +590,18 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                   </div>
                 </div>
               ))}
+              {pendingUser ? (
+                <div className="flex justify-end">
+                  <div className="max-w-[85%] rounded-2xl bg-[var(--primary-blue)] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-white opacity-90">
+                    {pendingUser.content}
+                    {pendingUser.source === 'voice' ? (
+                      <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide opacity-70">
+                        <Mic size={12} /> Veu
+                      </span>
+                    ) : null}
+                  </div>
+                </div>
+              ) : null}
               {busy ? (
                 <div className="flex justify-start">
                   <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 text-sm text-primary-gray/50">
@@ -571,31 +626,64 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
               <X size={16} />
             </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto p-3 space-y-2">
-            {!activeId ? (
-              <p className="text-sm text-primary-gray/40">
-                Obre una conversa per veure i desar informació important d’aquest fil.
+          <div className="min-h-0 flex-1 overflow-y-auto p-3 space-y-3">
+            <div className="space-y-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+                Instruccions globals (RAG)
               </p>
-            ) : notes.length === 0 ? (
-              <p className="text-sm text-primary-gray/40">Cap nota encara. Desa un missatge o n’afegeix una.</p>
-            ) : (
-              notes.map((n) => (
-                <div key={n.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteNote(n)}
-                      className="text-primary-gray/30 hover:text-red-500"
-                      aria-label="Esborrar nota"
-                    >
-                      <Trash2 size={14} />
-                    </button>
+              {globalNotes.length === 0 ? (
+                <p className="text-sm text-primary-gray/40">
+                  Cap instrucció global. Marca «Global / RAG» en desar.
+                </p>
+              ) : (
+                globalNotes.map((n) => (
+                  <div key={n.id} className="rounded-2xl border border-[var(--primary-blue)]/20 bg-[var(--primary-blue)]/5 p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteNote(n)}
+                        className="text-primary-gray/30 hover:text-red-500"
+                        aria-label="Esborrar nota global"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-primary-gray/70">{n.content}</p>
                   </div>
-                  <p className="mt-1 whitespace-pre-wrap text-xs text-primary-gray/70">{n.content}</p>
-                </div>
-              ))
-            )}
+                ))
+              )}
+            </div>
+
+            <div className="space-y-2 border-t border-gray-100 pt-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+                Notes d’aquest fil
+              </p>
+              {!activeId ? (
+                <p className="text-sm text-primary-gray/40">
+                  Obre una conversa per veure notes del fil.
+                </p>
+              ) : notes.length === 0 ? (
+                <p className="text-sm text-primary-gray/40">Cap nota encara. Desa un missatge o n’afegeix una.</p>
+              ) : (
+                notes.map((n) => (
+                  <div key={n.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-3">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteNote(n)}
+                        className="text-primary-gray/30 hover:text-red-500"
+                        aria-label="Esborrar nota"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-primary-gray/70">{n.content}</p>
+                  </div>
+                ))
+              )}
+            </div>
           </div>
           <div className="border-t border-gray-100 p-3">
             <textarea
@@ -603,16 +691,26 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
               onChange={(e) => setNoteDraft(e.target.value)}
               onKeyDown={handleNoteKeyDown}
               rows={3}
-              placeholder="Afegir nota important… (Enter per desar)"
+              placeholder="Afegir nota o instrucció… (Enter per desar)"
               className="w-full resize-none rounded-xl border border-gray-200 p-2 text-sm outline-none focus:border-[var(--primary-blue)]"
             />
+            <label className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-primary-gray/70">
+              <input
+                type="checkbox"
+                checked={noteGlobal || !activeId}
+                onChange={(e) => setNoteGlobal(e.target.checked)}
+                disabled={!activeId}
+                className="rounded border-gray-300"
+              />
+              Global / RAG (tots els chats)
+            </label>
             <button
               type="button"
               onClick={saveManualNote}
               disabled={!noteDraft.trim()}
               className="mt-2 w-full rounded-xl bg-[var(--primary-blue)] py-2 text-xs font-bold text-white disabled:opacity-40"
             >
-              Desar nota
+              Desar {noteGlobal || !activeId ? 'instrucció global' : 'nota del fil'}
             </button>
           </div>
         </aside>

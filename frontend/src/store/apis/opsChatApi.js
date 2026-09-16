@@ -91,7 +91,14 @@ export const opsChatApi = baseApi.injectEndpoints({
         return qs ? `ops/notes/?${qs}` : 'ops/notes/';
       },
       providesTags: (_r, _e, params) => [
-        { type: 'OpsNotes', id: params?.conversation ? `conv-${params.conversation}` : 'LIST' },
+        {
+          type: 'OpsNotes',
+          id: params?.scope === 'global'
+            ? 'GLOBAL'
+            : params?.conversation
+              ? `conv-${params.conversation}`
+              : 'LIST',
+        },
       ],
     }),
     createOpsNote: builder.mutation({
@@ -101,7 +108,8 @@ export const opsChatApi = baseApi.injectEndpoints({
         body,
       }),
       invalidatesTags: (_r, _e, body) => [
-        { type: 'OpsNotes', id: body?.conversation ? `conv-${body.conversation}` : 'LIST' },
+        { type: 'OpsNotes', id: body?.conversation ? `conv-${body.conversation}` : 'GLOBAL' },
+        { type: 'OpsNotes', id: 'LIST' },
         { type: 'OpsConversations', id: body?.conversation },
       ],
     }),
@@ -119,7 +127,8 @@ export const opsChatApi = baseApi.injectEndpoints({
         method: 'DELETE',
       }),
       invalidatesTags: (_r, _e, { conversation }) => [
-        { type: 'OpsNotes', id: conversation ? `conv-${conversation}` : 'LIST' },
+        { type: 'OpsNotes', id: conversation ? `conv-${conversation}` : 'GLOBAL' },
+        { type: 'OpsNotes', id: 'LIST' },
         { type: 'OpsConversations', id: conversation },
       ],
     }),

@@ -144,6 +144,54 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertEqual(res.data["title"], "Codi iGEO")
         self.assertEqual(AdminMemoryNote.objects.get(pk=res.data["id"]).user_id, self.user.id)
 
+    def test_global_note_indexes_ops_rag(self):
+        from knowledge.models import TechnicalKnowledge
+        from knowledge.ops_notes_rag import admin_note_source_key
+        from unittest.mock import patch
+
+        with patch("knowledge.sync._safe_embedding", return_value=[0.0] * 3072):
+            res = self.client.post(
+                "/api/ops/notes/",
+                {
+                    "conversation": None,
+                    "title": "Delegació pre",
+                    "content": "Sempre usa DEL-PRE-01 per potencials",
+                    "pinned": True,
+                },
+                format="json",
+            )
+        self.assertEqual(res.status_code, 201)
+        key = admin_note_source_key(res.data["id"])
+        self.assertTrue(TechnicalKnowledge.objects.filter(source_key=key, audience="ops").exists())
+        stored = TechnicalKnowledge.objects.get(source_key=key)
+        self.assertIn("DEL-PRE-01", stored.content)
+
+        with patch("knowledge.sync._safe_embedding", return_value=[0.0] * 3072):
+            del_res = self.client.delete(f"/api/ops/notes/{res.data['id']}/")
+        self.assertEqual(del_res.status_code, 204)
+        self.assertFalse(TechnicalKnowledge.objects.filter(source_key=key).exists())
+
+    def test_conversation_note_does_not_index_rag(self):
+        from knowledge.models import TechnicalKnowledge
+        from knowledge.ops_notes_rag import admin_note_source_key
+        from unittest.mock import patch
+
+        conv = AdminConversation.objects.create(user=self.user, title="Fil")
+        with patch("knowledge.sync._safe_embedding", return_value=[0.0] * 3072):
+            res = self.client.post(
+                "/api/ops/notes/",
+                {
+                    "conversation": conv.id,
+                    "title": "Tel temporal",
+                    "content": "612111222 només aquest fil",
+                    "pinned": True,
+                },
+                format="json",
+            )
+        self.assertEqual(res.status_code, 201)
+        key = admin_note_source_key(res.data["id"])
+        self.assertFalse(TechnicalKnowledge.objects.filter(source_key=key).exists())
+
 
 class SearchCrmToolTests(APITestCase):
     def test_search_by_phone(self):
