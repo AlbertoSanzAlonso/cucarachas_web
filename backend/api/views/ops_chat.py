@@ -106,12 +106,26 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             or "usage_limits" in err_low
             or "tool_calls_limit" in err_low
         )
-        if is_usage or "openwa" in err_low or "whatsapp" in err_low:
+        if is_usage:
+            openwa_related = "openwa" in err_low or "whatsapp" in err_low
+            if openwa_related:
+                reply = (
+                    "No s'ha pogut completar l'acció de WhatsApp (límit de passos amb errors OpenWA). "
+                    "Comprova a Coolify que OpenWA està en marxa, sessió ready (QR) i "
+                    f"OPENWA_API_URL al hostname intern. Detall: {exc}"
+                )
+            else:
+                reply = (
+                    "No s'ha pogut acabar l'acció: massa passos en un sol torn. "
+                    "Torna-ho a provar amb una ordre més concreta "
+                    "(ex.: «envia WhatsApp a +34… amb aquest text»). "
+                    f"Detall: {exc}"
+                )
+        elif "openwa" in err_low or "whatsapp" in err_low:
             reply = (
-                "No s'ha pogut completar l'acció de WhatsApp: l'agent ha deixat de reintentar "
-                "per evitar un bucle. Comprova a Coolify que el contenidor OpenWA està en marxa, "
-                "amb sessió ready (QR escanejat) i que OPENWA_API_URL apunta al hostname intern. "
-                f"Detall: {exc}"
+                "No s'ha pogut completar l'acció de WhatsApp. "
+                "Comprova a Coolify que OpenWA està en marxa, amb sessió ready (QR escanejat) "
+                f"i OPENWA_API_URL al hostname intern. Detall: {exc}"
             )
         else:
             reply = (

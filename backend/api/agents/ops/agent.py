@@ -22,7 +22,9 @@ from api.agents import bootstrap  # noqa: F401
 from api.agents.config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
 
 # Límites estrictos: si OpenWA falla, el LLM tiende a reintentar hasta agotar el default (50).
-_OPS_USAGE_LIMITS = UsageLimits(request_limit=12, tool_calls_limit=8)
+# Límite holgado: un torn pot fer CRM + espill + 1–2 cerques WA + send + email.
+# El tall antic (6) feia fallar fluxos normals i semblava un "bucle OpenWA".
+_OPS_USAGE_LIMITS = UsageLimits(request_limit=20, tool_calls_limit=16)
 
 
 @dataclass
@@ -108,8 +110,10 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             "search_whatsapp_contacts. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
             "Acepta móviles ES e internacionales con prefijo de país (+54, +52…) o el id `…@c.us` del contacto. "
-            "Si no encuentras el nombre completo, busca solo el apellido o el nombre; "
+            "Si no encuentras el nombre completo, busca solo el apellido o el nombre (máximo 2 búsquedas WA); "
             "sin resultados NO es fallo técnico: pide el móvil internacional y envía con send_whatsapp. "
+            "Para un saludo/WhatsApp por nombre: NO llames CRM, iGEO ni RAG salvo que el operario lo pida; "
+            "search_whatsapp_contacts → send_whatsapp. No llames whatsapp_status si no hay error. "
             "Si whatsapp_status o send_whatsapp fallan (error técnico), cita el texto TAL CUAL "
             "(incluye url= y el error); no lo resumas como 'fallo de conexión' genérico. "
             "Si send_whatsapp falla UNA vez por error técnico, NO reintentes: informa al operario y para. "
@@ -138,8 +142,10 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         "search_whatsapp_contacts. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
         "Accepta mòbils ES i internacionals amb prefix de país (+54, +52…) o l'id `…@c.us` del contacte. "
-        "Si no trobes el nom complet, cerca només el cognom o el nom; "
+        "Si no trobes el nom complet, cerca només el cognom o el nom (màxim 2 cerques WA); "
         "sense resultats NO és fallada tècnica: demana el mòbil internacional i envia amb send_whatsapp. "
+        "Per un salut/WhatsApp per nom: NO cridis CRM, iGEO ni RAG si l'operari no ho demana; "
+        "search_whatsapp_contacts → send_whatsapp. No cridis whatsapp_status si no hi ha error. "
         "Si whatsapp_status o send_whatsapp fallen (error tècnic), cita el text TAL QUAL "
         "(inclou url= i l'error); no ho resumeixis com a 'fallo de connexió' genèric. "
         "Si send_whatsapp falla UN cop per error tècnic, NO reintentis: informa l'operari i para. "
@@ -457,10 +463,12 @@ def run_ops_agent(
     except UsageLimitExceeded as exc:
         hint = ""
         if deps.openwa_failed:
-            hint = f" OpenWA: {deps.openwa_fail_reason}"
+            hint = f" Últim error OpenWA: {deps.openwa_fail_reason}"
+        elif deps.email_failed:
+            hint = f" Últim error email: {deps.email_fail_reason}"
         raise RuntimeError(
-            "L'agent ha esgotat el límit de passos (probable bucle WhatsApp/OpenWA)."
-            f"{hint} Detall: {exc}"
+            "L'agent ha esgotat el límit de crides d'eines en aquest torn "
+            f"(no és necessàriament un error d'OpenWA).{hint} Detall: {exc}"
         ) from exc
     output = result.output
     if isinstance(output, OpsAgentOutput):
