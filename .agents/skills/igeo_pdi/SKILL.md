@@ -29,9 +29,11 @@ Consolas: pre `https://pdi.pre.igeoapp.com:15671/` · prod `https://pdi.igeoapp.
 | Hook post-cita | `backend/api/agenda/engine.py` → `publish_lead_from_booking` |
 | Tools agentes públicos | `backend/api/agents/public/igeo_tools.py` (scheduler + sintetizador) |
 | Asistente oficina | `backend/api/agents/ops/agent.py` |
+| RAG operativo (ops) | `TechnicalKnowledge` `audience=ops` + `knowledge/ops_corpus/` + `sync_ops_knowledge` |
 | MCP Cursor | `mcp-igeo/server.py` (+ `mcp-igeo/README.md`) |
 | Espejo | `IgeoMirrorEntity` (SQL) + `Cliente.igeo_codigo` + `IgeoSyncLog` |
-| Ingesta | `python manage.py igeo_ingest_exports --demo` (sense cua) o `--from-queue` |
+| Ingesta espejo | `python manage.py igeo_ingest_exports --demo` (sense cua) o `--from-queue` |
+| Ingesta RAG ops | `python manage.py sync_ops_knowledge [--skip-embeddings] [--skip-pdf]` |
 
 ## Env (Coolify)
 
@@ -70,15 +72,22 @@ Veu: `audio` multipart → Whisper intern + resposta TTS. No comparteix sessió 
 
 ## Espejo (fase 1, sense credencials)
 
-Còpia **relacional** a Postgres (`IgeoMirrorEntity`). No és el RAG del Bio-Assistent.
+Còpia **relacional** a Postgres (`IgeoMirrorEntity`). No és el RAG del Bio-Assistent ni el RAG ops.
 
 ```bash
 python manage.py migrate
 python manage.py igeo_ingest_exports --demo
 ```
 
-L’assistent d’oficina busca amb `search_igeo_espejo`. Quan hi hagi PDI: `igeo_ingest_exports --from-queue`.
+L’assistent d’oficina busca dades vives amb `search_igeo_espejo` / CRM. Quan hi hagi PDI: `igeo_ingest_exports --from-queue`.
 
+## RAG operativo (procedimientos, no datos vivos)
+
+- Corpus: `backend/knowledge/ops_corpus/*.md` + skill iGEO + PDF PDI (raíz del repo).
+- Vectores: `TechnicalKnowledge` con `audience=ops` (el chat público **no** los ve).
+- Sync: `python manage.py sync_ops_knowledge --skip-embeddings` (CI/local) o con `GOOGLE_API_KEY` para embeddings reales.
+- El agente ops inyecta top-k automáticamente y tiene la tool `search_ops_knowledge`.
+- **No** vectorizar el espejo: clientes/OT = SQL; cómo proceder = RAG.
 ## Flujo v1
 
 1. Usuario confirma cita en chat.

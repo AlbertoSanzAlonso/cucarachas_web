@@ -12,6 +12,18 @@ if not settings.configured:
 
 from knowledge.models import TechnicalKnowledge
 
+# Audiencias visibles para el Bio-Assistent público (nunca ops-only).
+_PUBLIC_AUDIENCES = (
+    TechnicalKnowledge.Audience.PUBLIC,
+    TechnicalKnowledge.Audience.BOTH,
+)
+# Audiencias visibles para el asistente de oficina.
+_OPS_AUDIENCES = (
+    TechnicalKnowledge.Audience.OPS,
+    TechnicalKnowledge.Audience.BOTH,
+)
+
+
 def get_embedding(text: str):
     """Genera embedding para la búsqueda."""
     client = genai.Client(api_key=os.environ.get('GOOGLE_API_KEY'))
@@ -37,18 +49,46 @@ def _apply_category_filter(qs, category: str | list[str] | tuple[str, ...] | Non
         return qs
     return qs.filter(category=category)
 
+
+def _apply_audience_filter(qs, audience: str | list[str] | tuple[str, ...] | None):
+    """Filtra por audience. Por defecto: solo público (+ both)."""
+    if audience is None:
+        return qs.filter(audience__in=_PUBLIC_AUDIENCES)
+    if isinstance(audience, (list, tuple, set)):
+        auds = [a for a in audience if a]
+        if auds:
+            return qs.filter(audience__in=auds)
+        return qs.filter(audience__in=_PUBLIC_AUDIENCES)
+    aud = (audience or "").strip().lower()
+    if aud == "ops":
+        return qs.filter(audience__in=_OPS_AUDIENCES)
+    if aud == "public":
+        return qs.filter(audience__in=_PUBLIC_AUDIENCES)
+    if aud == "both":
+        return qs.filter(audience=TechnicalKnowledge.Audience.BOTH)
+    if aud in (
+        TechnicalKnowledge.Audience.PUBLIC,
+        TechnicalKnowledge.Audience.OPS,
+        TechnicalKnowledge.Audience.BOTH,
+    ):
+        return qs.filter(audience=aud)
+    return qs.filter(audience__in=_PUBLIC_AUDIENCES)
+
 def retrieve_relevant_knowledge(
     query: str,
     limit=3,
     category: str | list[str] | tuple[str, ...] | None = None,
+    audience: str | list[str] | tuple[str, ...] | None = None,
 ):
     """
     Busca los fragmentos más cercanos en la DB usando distancia de coseno.
     Nunca lanza excepción: un fallo en RAG no debe tumbar el chat de diagnóstico.
     Si category está definida (str o lista), filtra. Fallback por texto si no hay embeddings.
+    audience=None → solo público (+ both). Para oficina usar audience="ops".
     """
     try:
         qs = TechnicalKnowledge.objects.all()
+        qs = _apply_audience_filter(qs, audience)
         qs = _apply_category_filter(qs, category)
 
         if os.environ.get('GOOGLE_API_KEY'):
@@ -65,7 +105,11 @@ def retrieve_relevant_knowledge(
                 print(f"WARNING: embedding search failed, text fallback: {emb_err}")
 
         # Fallback textual (sin API o embedding fallido)
-        tokens = [t for t in (query or "").lower().split() if len(t) > 3][:8]
+        tokens = [
+            t.strip(".,;:!?¿¡()[]\"'")
+            for t in (query or "").lower().split()
+            if len(t.strip(".,;:!?¿¡()[]\"'")) > 3
+        ][:8]
         text_qs = qs
         if tokens:
             q_filter = Q()
@@ -82,7 +126,6 @@ def retrieve_relevant_knowledge(
             def _score(row) -> int:
                 title = (row.title or "").lower()
                 content = (row.content or "").lower()
-                blob = f"{title}\n{content}"
                 score = 0
                 for tok in tokens:
                     if tok in title:
@@ -111,3 +154,27 @@ def retrieve_relevant_knowledge(
     except Exception as e:
         print(f"WARNING: retrieve_relevant_knowledge failed: {e}")
         return "No s'ha pogut consultar la base de coneixement tècnic en aquest moment."
+
+
+def retrieve_ops_knowledge(
+    query: str,
+    limit: int = 5,
+    category: str | list[str] | tuple[str, ...] | None = None,
+) -> str:
+    """RAG del asistente de oficina (iGEO / SOPs). Nunca expone solo audience=public."""
+    empty_ops = "No s'ha trobat procediment intern per a aquesta consulta."
+    try:
+        result = retrieve_relevant_knowledge(
+            query,
+            limit=limit,
+            category=category,
+            audience="ops",
+        )
+        if not (result or "").strip():
+            return empty_ops
+        if "No s'han trobat" in result or "No s'ha pogut" in result:
+            return empty_ops
+        return result
+    except Exception as e:
+        print(f"WARNING: retrieve_ops_knowledge failed: {e}")
+        return "No s'ha pogut consultar el coneixement operatiu en aquest moment."

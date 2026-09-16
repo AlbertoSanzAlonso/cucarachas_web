@@ -51,6 +51,23 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
         conv.save(update_fields=["title", "updated_at"])
 
     history = list(conv.messages.exclude(pk=user_msg.pk).values("role", "content"))
+    from django.db.models import Q
+
+    pinned_qs = (
+        AdminMemoryNote.objects.filter(user=user, pinned=True)
+        .filter(Q(conversation=conv) | Q(conversation__isnull=True))
+        .order_by("-pinned", "-updated_at")[:12]
+    )
+    memory_notes: list[str] = []
+    for n in pinned_qs:
+        title = (n.title or "").strip()
+        content = (n.content or "").strip()
+        if title and content:
+            memory_notes.append(content if content.startswith(title) else f"{title}: {content}")
+        elif content:
+            memory_notes.append(content)
+        elif title:
+            memory_notes.append(title)
     notes_created = []
     try:
         from api.agents.ops.agent import run_ops_agent
@@ -62,6 +79,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             conversation_id=conv.pk,
             language=language,
             model=model,
+            memory_notes=memory_notes,
         )
         reply = (output.message or "").strip() or "Sense resposta."
         if output.suggested_title and not conv.title:

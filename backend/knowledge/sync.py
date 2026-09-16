@@ -62,10 +62,18 @@ def upsert_knowledge(
     content: str,
     category: str,
     source: str = "",
+    audience: str = TechnicalKnowledge.Audience.PUBLIC,
 ) -> TechnicalKnowledge:
     """Crea o actualiza un chunk RAG por source_key."""
     content = (content or "").strip()
     title = (title or "").strip()[:255] or source_key
+    aud = (audience or TechnicalKnowledge.Audience.PUBLIC).strip().lower()
+    if aud not in (
+        TechnicalKnowledge.Audience.PUBLIC,
+        TechnicalKnowledge.Audience.OPS,
+        TechnicalKnowledge.Audience.BOTH,
+    ):
+        aud = TechnicalKnowledge.Audience.PUBLIC
     emb = _safe_embedding(f"{title}\n{content}"[:8000])
     obj, _ = TechnicalKnowledge.objects.update_or_create(
         source_key=source_key,
@@ -74,6 +82,7 @@ def upsert_knowledge(
             "content": content,
             "category": category,
             "source": source or source_key,
+            "audience": aud,
             "embedding": emb,
         },
     )
