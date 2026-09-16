@@ -168,15 +168,19 @@ class OpenWaClientTests(SimpleTestCase):
                 "number": "5491123456789",
             },
         ]
-        with patch.object(
-            client,
-            "iter_all_contacts",
-            side_effect=lambda **_kwargs: iter(sample),
+        with (
+            patch.object(
+                client,
+                "iter_all_contacts",
+                side_effect=lambda **_kwargs: iter(sample),
+            ),
+            patch.object(client, "iter_all_chats", return_value=iter([])),
         ):
             by_name = client.search_contacts("maria")
             by_phone = client.search_contacts("612345678")
             by_tokens = client.search_contacts("Mauro Montenegro")
             by_accent = client.search_contacts("maría")
+            by_surname = client.search_contacts("Montenegro")
         self.assertEqual(len(by_name), 1)
         self.assertEqual(by_name[0]["name"], "Maria Lopez")
         self.assertEqual(len(by_phone), 1)
@@ -184,6 +188,27 @@ class OpenWaClientTests(SimpleTestCase):
         self.assertEqual(len(by_tokens), 1)
         self.assertEqual(by_tokens[0]["number"], "5491123456789")
         self.assertEqual(len(by_accent), 1)
+        self.assertEqual(len(by_surname), 1)
+
+    def test_search_contacts_includes_chats_not_in_agenda(self):
+        client = OpenWaClient(_settings())
+        chats = [
+            {
+                "id": "5491199988877@c.us",
+                "name": "Mauro Montenegro",
+                "isGroup": False,
+                "kind": "individual",
+                "timestamp": 1,
+            }
+        ]
+        with (
+            patch.object(client, "iter_all_contacts", return_value=iter([])),
+            patch.object(client, "iter_all_chats", return_value=iter(chats)),
+        ):
+            hits = client.search_contacts("Mauro")
+        self.assertEqual(len(hits), 1)
+        self.assertTrue(hits[0].get("_from_chat"))
+        self.assertEqual(hits[0]["number"], "5491199988877")
 
     def test_format_contacts_empty(self):
         text = format_contacts([])
