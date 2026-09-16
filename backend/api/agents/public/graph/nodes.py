@@ -4,9 +4,9 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from pydantic_ai.messages import ModelMessage
 
-from ..config import AGENT_TIMEOUTS, ENABLE_CLIENT_SCHEDULING, HISTORY_MAX_TURNS
+from api.agents.config import AGENT_TIMEOUTS, ENABLE_CLIENT_SCHEDULING, HISTORY_MAX_TURNS
 from ..chat_intake import get_missing_mandatory_fields, get_intake_question, parse_field_value, build_unified_diagnostic
-from ..models import AgentState, DiagnosisOutput, Intent
+from api.agents.models import AgentState, DiagnosisOutput, Intent
 from ..prompts import ORCHESTRATOR_MESSAGES, client_scheduling_unavailable_reply
 from .routing import PRICING_KEYWORDS
 from ..serialization import dump_message_history, messages_adapter
@@ -14,7 +14,7 @@ from ..receptionist import receptionist_agent
 from ..diagnostician import diagnostician_agent
 from ..pricer import pricer_agent
 from ..scheduler import scheduler_agent
-from ..crm_agent import crm_agent
+from ..case_synthesizer import case_synthesizer_agent
 from ..diagnostic_merge import merge_agent_updates
 from ..text_utils import limit_one_question
 from .routing import mentions_pest
@@ -136,7 +136,7 @@ def _is_home_chat(state: CECSAGraphState) -> bool:
 
 def _resolve_lang(agent: AgentState, state: CECSAGraphState):
     """Idioma efectivo: estado del agente o petición (UI)."""
-    from api.agents.serialization import normalize_language
+    from api.agents.public.serialization import normalize_language
 
     raw = agent.language if agent.language in ("ca", "es") else state.get("language", "ca")
     return normalize_language(raw if isinstance(raw, str) else "ca")
@@ -161,7 +161,7 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
 
         if _is_home_chat(state):
             from .home_flow import home_next_action, home_receptionist_context, home_should_diagnose
-            from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
+            from api.agents.public.chat_intake import has_pricing_case_details, next_pricing_intake_field
             from .routing import wants_pricing_message
 
             message = state.get("message") or ""
@@ -212,13 +212,13 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
                 payload["agent_state"] = agent.model_dump(mode="json")
             return payload
 
-        from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
+        from api.agents.public.chat_intake import has_pricing_case_details, next_pricing_intake_field
         from .routing import wants_pricing_message
 
         message = state.get("message") or ""
         if wants_pricing_message(message):
             agent.intent = Intent.QUOTE
-        from api.agents.case_context import build_shared_case_context
+        from api.agents.public.case_context import build_shared_case_context
 
         context = build_shared_case_context(agent, lang, message, role="receptionist")
         pest_before = agent.pest_type
@@ -341,7 +341,7 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
             return fast
 
     try:
-        from api.agents.case_context import build_shared_case_context
+        from api.agents.public.case_context import build_shared_case_context
 
         context = build_shared_case_context(
             agent, lang, state.get("message") or "", role="scheduler"
@@ -389,7 +389,7 @@ async def intake_node(state: CECSAGraphState) -> dict:
 
     if not missing:
         agent.pending_intake_field = None
-        from api.agents.chat_intake import next_pricing_intake_field
+        from api.agents.public.chat_intake import next_pricing_intake_field
 
         needed = next_pricing_intake_field(agent, diagnostic)
         if needed:
@@ -431,7 +431,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
 
     # Sin detalle de caso: el recepcionista orquesta con criterio (no plantilla)
-    from api.agents.chat_intake import next_pricing_intake_field
+    from api.agents.public.chat_intake import next_pricing_intake_field
 
     missing_field = next_pricing_intake_field(agent, state.get("diagnostic"))
     if missing_field:
@@ -543,7 +543,7 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                 return payload
 
             # Baja confianza: pedir el siguiente dato (m², CP…) vía recepcionista
-            from api.agents.chat_intake import get_missing_mandatory_fields
+            from api.agents.public.chat_intake import get_missing_mandatory_fields
 
             needed = next_pricing_intake_field(agent, state.get("diagnostic"))
             if not needed:
@@ -664,7 +664,7 @@ async def diagnostician_node(state: CECSAGraphState) -> dict:
                 agent, lang, state.get("message") or ""
             )
         else:
-            from api.agents.case_context import build_shared_case_context
+            from api.agents.public.case_context import build_shared_case_context
 
             context = build_shared_case_context(
                 agent, lang, state.get("message") or "", role="diagnostician"
@@ -717,13 +717,13 @@ async def crm_node(state: CECSAGraphState) -> dict:
             if lang == "es"
             else "Escriu el summary en català."
         )
-        from api.agents.case_context import build_shared_case_context
+        from api.agents.public.case_context import build_shared_case_context
 
         crm_ctx = build_shared_case_context(
             agent, lang, state.get("message") or "", role="crm"
         )
         agent, output = await _run_agent(
-            crm_agent,
+            case_synthesizer_agent,
             f"{crm_ctx}\n{lang_rule}",
             state,
             timeout_key="crm",

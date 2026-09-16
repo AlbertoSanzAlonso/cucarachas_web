@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from ..chat_intake import parse_field_value
-from ..models import AgentState, Intent, PestType
+from api.agents.models import AgentState, Intent, PestType
 from ..prompts import BIO_TIPS, ORCHESTRATOR_MESSAGES
 from .routing import (
     is_clear_own_pest_report,
@@ -124,7 +124,7 @@ def _is_vague_problem_opener(msg_lower: str) -> bool:
     if any(text == v or text.startswith(v + " ") or text.startswith(v + ",") for v in vague):
         return True
     # «… plaga …» sin nombrar especie concreta
-    from api.agents.graph.routing import VAGUE_PEST_WORDS
+    from api.agents.public.graph.routing import VAGUE_PEST_WORDS
 
     if any(w in text for w in VAGUE_PEST_WORDS) and not mentions_pest(text):
         return True
@@ -132,8 +132,8 @@ def _is_vague_problem_opener(msg_lower: str) -> bool:
 
 
 def _declares_client_type(msg_lower: str) -> bool:
-    from api.agents.company_knowledge import is_company_info_query
-    from api.agents.diagnostic_merge import _declares_own_business
+    from api.agents.public.company_knowledge import is_company_info_query
+    from api.agents.public.diagnostic_merge import _declares_own_business
 
     if is_company_info_query(msg_lower):
         return False
@@ -180,13 +180,13 @@ def home_case_ready(agent: AgentState) -> bool:
 
 def home_next_action(agent: AgentState, message: str) -> HomeAction:
     """Plantillas solo para hechos claros. Descripción / ambiguo → LLM (conversación natural)."""
-    from api.agents.company_knowledge import (
+    from api.agents.public.company_knowledge import (
         find_outside_place,
         is_company_info_query,
         is_outside_service_area,
         wants_onsite_service,
     )
-    from api.agents.graph.routing import (
+    from api.agents.public.graph.routing import (
         PRICING_KEYWORDS,
         affirms_pest_presence,
         is_location_answer,
@@ -194,7 +194,7 @@ def home_next_action(agent: AgentState, message: str) -> HomeAction:
     )
 
     msg_lower = (message or "").lower()
-    from api.agents.company_knowledge import find_coverage_place
+    from api.agents.public.company_knowledge import find_coverage_place
 
     # Fuera de Catalunya: plantilla (no si el mensaje nombra un sitio cubierto)
     if find_outside_place(msg_lower) and not find_coverage_place(msg_lower):
@@ -223,7 +223,7 @@ def home_next_action(agent: AgentState, message: str) -> HomeAction:
     if is_company_info_query(msg_lower):
         return "company_info"
 
-    from api.agents.graph.routing import is_informational_query
+    from api.agents.public.graph.routing import is_informational_query
 
     # Preguntas de blog/FAQ (identificar, signos, prevención): no embudo de intake
     if is_informational_query(msg_lower):
@@ -428,7 +428,7 @@ def _scripted_message(agent: AgentState, action: str, msgs: dict, lang: str, mes
             return msgs.get("home_ask_location_community") or msgs["home_ask_location"]
         return msgs["home_ask_location"]
     if action == "ask_qty":
-        from api.agents.graph.routing import is_pest_description
+        from api.agents.public.graph.routing import is_pest_description
 
         if is_pest_description((message or "").lower()):
             return msgs.get("home_ask_qty_after_desc") or msgs.get("home_location_ack") or msgs["home_ask_location"]
@@ -443,7 +443,7 @@ def home_scripted_reply(state: CECSAGraphState, agent: AgentState, lang: str) ->
     Solo plantilla de saludo corto («hola», «qué tal») para no lanzar
     al LLM a preguntar la plaga. El resto → LLM + tools.
     """
-    from api.agents.serialization import normalize_language
+    from api.agents.public.serialization import normalize_language
 
     lang = normalize_language(lang)
     msgs = ORCHESTRATOR_MESSAGES.get(lang, ORCHESTRATOR_MESSAGES["ca"])
@@ -457,7 +457,7 @@ def home_scripted_reply(state: CECSAGraphState, agent: AgentState, lang: str) ->
 
 def collect_home_case_facts(agent: AgentState, lang: str, message: str = "") -> dict:
     """Hechos de este chat + ficha. Nada de sesión ajena (calle, comunidad…)."""
-    from api.agents.chat_intake import build_unified_diagnostic
+    from api.agents.public.chat_intake import build_unified_diagnostic
     from api.ficha_engine import CaseContext, evaluate_diagnosis_rules, find_ficha, severity_to_agent
 
     lang = lang if lang in ("ca", "es") else "ca"
@@ -502,7 +502,7 @@ def collect_home_case_facts(agent: AgentState, lang: str, message: str = "") -> 
 
 def build_home_verdict(agent: AgentState, lang: str, message: str = "") -> tuple[AgentState, str]:
     """Plantilla de respaldo si el LLM falla. Solo hechos de este chat."""
-    from api.agents.company_knowledge import is_outside_service_area, out_of_area_message
+    from api.agents.public.company_knowledge import is_outside_service_area, out_of_area_message
 
     outside, place = is_outside_service_area(message=message, city=agent.city)
     if outside:
@@ -546,9 +546,9 @@ def build_home_verdict(agent: AgentState, lang: str, message: str = "") -> tuple
 
 def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str:
     """Contexto recepcionista home: memoria compartida + reglas de cobertura."""
-    from api.agents.case_context import build_shared_case_context
-    from api.agents.company_knowledge import is_outside_service_area
-    from api.agents.graph.routing import (
+    from api.agents.public.case_context import build_shared_case_context
+    from api.agents.public.company_knowledge import is_outside_service_area
+    from api.agents.public.graph.routing import (
         is_client_question_or_objection,
         is_informational_query,
         is_simple_greeting,
@@ -615,8 +615,8 @@ def home_receptionist_context(agent: AgentState, lang: str, message: str) -> str
 
 def home_llm_context(agent: AgentState, lang: str, message: str) -> str:
     """Contexto diagnosticador home: misma memoria compartida + tarea de orientación."""
-    from api.agents.case_context import build_shared_case_context, case_memory
-    from api.agents.company_knowledge import is_outside_service_area
+    from api.agents.public.case_context import build_shared_case_context, case_memory
+    from api.agents.public.company_knowledge import is_outside_service_area
 
     base = build_shared_case_context(agent, lang, message, role="diagnostician")
     mem = case_memory(agent, lang)

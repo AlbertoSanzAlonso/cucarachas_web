@@ -1,4 +1,4 @@
-from api.agents.text_utils import limit_one_question
+from api.agents.public.text_utils import limit_one_question
 
 
 def test_limit_one_question_keeps_single_question():

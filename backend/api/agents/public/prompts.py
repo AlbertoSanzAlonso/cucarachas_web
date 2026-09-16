@@ -397,7 +397,7 @@ def client_scheduling_unavailable_reply(lang: str) -> dict:
 
 def scheduling_disabled_prompt_suffix(lang: str) -> str:
     """Instrucción extra para LLMs mientras la agenda del chat esté apagada."""
-    from .config import ENABLE_CLIENT_SCHEDULING
+    from api.agents.config import ENABLE_CLIENT_SCHEDULING
 
     if ENABLE_CLIENT_SCHEDULING:
         return ""

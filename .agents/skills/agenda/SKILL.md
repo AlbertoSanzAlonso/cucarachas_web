@@ -18,7 +18,7 @@ Motor: `backend/api/agenda/engine.py`.
 
 - Slots: `fetch_available_slots` (mismo shape `{date, time, slot_time}`).
 - Reserva: `create_booking_from_slot` + `upsert_cliente_by_phone`.
-- Usado desde `agents/booking.py`, `scheduler.py`, `graph/nodes.py`.
+- Usado desde `agents/public/booking.py`, `scheduler.py`, `public/graph/nodes.py`.
 
 ## Admin UI
 

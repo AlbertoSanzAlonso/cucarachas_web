@@ -199,3 +199,60 @@ class BookingIgeoHookTests(TestCase):
         self.assertEqual(kwargs["name"], "Test User")
         self.assertEqual(kwargs["booking_uid"], "booking-uid-1")
         self.assertIn("Barcelona", kwargs["address"])
+
+
+class MirrorIngestTests(TestCase):
+    def test_ingest_and_search_without_queue(self):
+        from api.igeo.demo import demo_export_payloads
+        from api.igeo.ingest import ingest_export_batch, search_mirror
+        from api.models import IgeoMirrorEntity
+
+        stats = ingest_export_batch(demo_export_payloads(), source="demo")
+        self.assertEqual(stats["errors"], 0)
+        self.assertGreaterEqual(stats["created"], 4)
+        self.assertEqual(IgeoMirrorEntity.objects.filter(is_deleted=False).count(), 4)
+
+        hits = search_mirror("612345678")
+        self.assertTrue(any("Anna" in (h.display_name or "") for h in hits))
+        ot = search_mirror("OT-DEMO", entity_type="Orden_De_Trabajo")
+        self.assertTrue(ot)
+        self.assertEqual(ot[0].entity_type, "ORDEN_DE_TRABAJO")
+
+    def test_delete_marks_deleted(self):
+        from api.igeo.ingest import ingest_export_payload, search_mirror
+        from api.igeo.payloads import build_cliente
+
+        payload = build_cliente(
+            codigo="CLI-DEL",
+            nombre="Baixa Demo",
+            codigo_delegacion="DN",
+            telefono="600111222",
+        )
+        ingest_export_payload(payload, source="demo")
+        payload["comando"] = "DELETE"
+        entity, created = ingest_export_payload(payload, source="demo")
+        self.assertFalse(created)
+        self.assertTrue(entity.is_deleted)
+        self.assertEqual(search_mirror("CLI-DEL"), [])
+
+    def test_links_existing_crm_cliente(self):
+        from api.igeo.ingest import ingest_export_payload
+        from api.igeo.payloads import build_cliente
+        from api.models import Cliente
+
+        Cliente.objects.create(
+            nombre="Local",
+            documento_fiscal="WEB-933309169",
+            telefono="933309169",
+            telefono_norm="933309169",
+        )
+        payload = build_cliente(
+            codigo="CLI-LINK",
+            nombre="Hostaleria Demo SL",
+            codigo_delegacion="DN",
+            telefono="933309169",
+        )
+        entity, _ = ingest_export_payload(payload, source="demo")
+        self.assertIsNotNone(entity.cliente)
+        entity.cliente.refresh_from_db()
+        self.assertEqual(entity.cliente.igeo_codigo, "CLI-LINK")

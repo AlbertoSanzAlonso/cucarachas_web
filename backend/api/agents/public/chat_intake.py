@@ -213,7 +213,7 @@ def next_pricing_intake_field(agent: AgentState, diagnostic: dict | None = None)
 
 def is_bare_pricing_request(message: str) -> bool:
     """Pide precio/presupuesto sin aportar plaga ni contexto del caso."""
-    from api.agents.graph.routing import mentions_pest, wants_pricing_message
+    from api.agents.public.graph.routing import mentions_pest, wants_pricing_message
 
     low = (message or "").lower()
     if not wants_pricing_message(message):
@@ -276,14 +276,14 @@ def pricing_orchestration_context(
     Bloque de orquestación para el recepcionista: qué sabemos, qué falta,
     y qué no puede inventar. Vacío si el mensaje no pide precio.
     """
-    from api.agents.graph.routing import wants_pricing_message
+    from api.agents.public.graph.routing import wants_pricing_message
     from api.agents.models import Intent
 
     asking = wants_pricing_message(message) or agent.intent == Intent.QUOTE
     if not asking:
         return ""
 
-    from api.agents.graph.routing import asks_price_of_appointment
+    from api.agents.public.graph.routing import asks_price_of_appointment
 
     if asks_price_of_appointment(message):
         if lang == "es":

@@ -3,9 +3,9 @@ from pydantic_ai import Agent, RunContext
 
 from api.models import Tratamiento
 
-from . import bootstrap  # noqa: F401
-from .config import AGENT_MODEL
-from .models import AgentState, PricingOutput
+from api.agents import bootstrap  # noqa: F401
+from api.agents.config import AGENT_MODEL
+from api.agents.models import AgentState, PricingOutput
 from .prompts import SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 pricer_agent = Agent(
@@ -35,7 +35,7 @@ async def get_historical_budget_cases(ctx: RunContext[AgentState]) -> str:
 @pricer_agent.tool
 async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
     """Reglas de negocio de la Ficha Maestra para el caso actual (precio, bloqueos, copy)."""
-    from api.agents.chat_intake import build_unified_diagnostic
+    from api.agents.public.chat_intake import build_unified_diagnostic
     from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
 
     lang = ctx.deps.language if ctx.deps else "ca"
@@ -63,7 +63,7 @@ async def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
 @pricer_agent.tool
 async def search_commercial_policy(ctx: RunContext[AgentState]) -> str:
     """Política comercial + fichas/refs anonimizadas (RAG). Sin costes internos ni PII."""
-    from api.agents.company_knowledge import format_commercial_policy
+    from api.agents.public.company_knowledge import format_commercial_policy
     from knowledge.retriever import retrieve_relevant_knowledge
 
     lang = ctx.deps.language if ctx.deps else "ca"

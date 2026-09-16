@@ -140,7 +140,7 @@ class CompanyProfile(models.Model):
         self.pk = 1
         super().save(*args, **kwargs)
         try:
-            from api.agents.company_knowledge import invalidate_company_profile_cache
+            from api.agents.public.company_knowledge import invalidate_company_profile_cache
 
             invalidate_company_profile_cache()
         except Exception:

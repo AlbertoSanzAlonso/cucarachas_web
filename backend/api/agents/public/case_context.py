@@ -24,7 +24,7 @@ def case_memory(agent: AgentState, lang: str = "ca") -> dict[str, Any]:
     Instantánea estructurada del caso para prompts y routing.
     Fuente única: AgentState (pest, inmueble, chat_diagnostic, notes).
     """
-    from api.agents.chat_intake import pest_label_for_agent
+    from api.agents.public.chat_intake import pest_label_for_agent
 
     chat = _chat(agent)
     pest_confirmed = bool(agent.pest_type)
@@ -162,7 +162,7 @@ def build_shared_case_context(
     # Saludos / info / objeciones: no empujar «siguiente dato» del embudo
     defer_intake = False
     if message:
-        from api.agents.graph.routing import (
+        from api.agents.public.graph.routing import (
             is_client_question_or_objection,
             is_informational_query,
             is_simple_greeting,
@@ -209,8 +209,8 @@ def build_shared_case_context(
 
     # Bloques opcionales según mensaje / rol
     if message:
-        from api.agents.chat_intake import pricing_orchestration_context
-        from api.agents.graph.routing import asks_price_of_appointment
+        from api.agents.public.chat_intake import pricing_orchestration_context
+        from api.agents.public.graph.routing import asks_price_of_appointment
 
         pricing = pricing_orchestration_context(agent, lang, message)
         if pricing:
@@ -223,7 +223,7 @@ def build_shared_case_context(
             )
 
     if role == "receptionist":
-        from api.agents.company_knowledge import format_company_knowledge_for_agent
+        from api.agents.public.company_knowledge import format_company_knowledge_for_agent
 
         lines.append("Datos CECSA (si pregunta por la empresa):")
         lines.append(format_company_knowledge_for_agent(lang))
@@ -243,7 +243,7 @@ def build_shared_case_context(
                      "No empujes cita ni presupuesto en cada turno.")
 
     elif role == "diagnostician":
-        from .config import ENABLE_CLIENT_SCHEDULING
+        from api.agents.config import ENABLE_CLIENT_SCHEDULING
 
         lines.append("TAREA diagnóstico: orienta con hechos de MEMORIA; no recapitules.")
         if mem["case_ready"]:
@@ -270,7 +270,7 @@ def build_shared_case_context(
             )
 
     elif role == "scheduler":
-        from .config import ENABLE_CLIENT_SCHEDULING
+        from api.agents.config import ENABLE_CLIENT_SCHEDULING
 
         if ENABLE_CLIENT_SCHEDULING:
             lines.append(

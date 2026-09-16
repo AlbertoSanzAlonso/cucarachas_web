@@ -2,7 +2,7 @@ from functools import lru_cache
 
 from langgraph.graph import END, START, StateGraph
 
-from .. import bootstrap  # noqa: F401 — inicializa API keys una sola vez
+from api.agents import bootstrap  # noqa: F401 — inicializa API keys una sola vez
 from . import nodes
 from .routing import after_diagnostician, after_receptionist, choose_agent_route
 from .state import CECSAGraphState

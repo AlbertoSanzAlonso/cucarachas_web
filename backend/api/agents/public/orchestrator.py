@@ -1,4 +1,4 @@
-from .models import AgentState
+from api.agents.models import AgentState
 from .graph import get_cecsa_graph
 from .graph.state import CECSAGraphState
 

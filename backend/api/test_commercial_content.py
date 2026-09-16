@@ -204,12 +204,12 @@ def test_pricing_hospitality_severe_1100():
 @pytest.mark.django_db
 def test_host_intake_skips_quantity_and_quotes():
     """Bar + alemanas + otras empresas → HOST; no exige 'cuántas'."""
-    from api.agents.chat_intake import (
+    from api.agents.public.chat_intake import (
         apply_chat_intake_from_message,
         has_pricing_case_details,
         next_pricing_intake_field,
     )
-    from api.agents.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
     from api.ficha_engine import evaluate_ficha_pricing, find_ficha
 
     FichaServicio.objects.update_or_create(

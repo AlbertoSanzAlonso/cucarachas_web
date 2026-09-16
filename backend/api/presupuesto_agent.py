@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from django.db import transaction
 
-from api.agents.chat_intake import build_unified_diagnostic
+from api.agents.public.chat_intake import build_unified_diagnostic
 from api.agents.models import AgentState
 from api.models import Cliente, Presupuesto, PresupuestoDetalle
 from api.phone_utils import normalize_phone, upsert_cliente_by_phone

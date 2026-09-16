@@ -1,4 +1,4 @@
-from api.agents.diagnostic_merge import apply_facts_from_message, merge_agent_updates
+from api.agents.public.diagnostic_merge import apply_facts_from_message, merge_agent_updates
 from api.agents.models import AgentState, Intent, PestType, Severity
 
 

@@ -4,7 +4,7 @@ from typing import Any, List
 from pydantic_ai.messages import ModelMessage
 from pydantic import TypeAdapter
 
-from .models import AgentState, Language
+from api.agents.models import AgentState, Language
 
 messages_adapter = TypeAdapter(List[ModelMessage])
 

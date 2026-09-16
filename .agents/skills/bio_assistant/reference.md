@@ -40,7 +40,7 @@ Campos relevantes: `language`, `intent`, `city`, `pest_type`, `property_type`, `
 
 Intents: `quote`, `urgency`, `appointment`, `doubt`, `follow_up`.
 
-En `graph/nodes.py`, `_run_agent` invoca `agent.run(prompt, deps=agent_state, message_history=history)`.
+En `public/graph/nodes.py`, `_run_agent` invoca `agent.run(prompt, deps=agent_state, message_history=history)`.
 
 ## Variables de entorno (agentes + Cal)
 

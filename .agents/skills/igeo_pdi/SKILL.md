@@ -27,9 +27,11 @@ Consolas: pre `https://pdi.pre.igeoapp.com:15671/` · prod `https://pdi.igeoapp.
 |------|------|
 | Cliente / payloads | `backend/api/igeo/` |
 | Hook post-cita | `backend/api/agenda/engine.py` → `publish_lead_from_booking` |
-| Tools agentes | `backend/api/agents/igeo_tools.py` (scheduler + CRM) |
+| Tools agentes públicos | `backend/api/agents/public/igeo_tools.py` (scheduler + sintetizador) |
+| Asistente oficina | `backend/api/agents/ops/agent.py` |
 | MCP Cursor | `mcp-igeo/server.py` (+ `mcp-igeo/README.md`) |
-| Espejo | `Cliente.igeo_codigo`, `IgeoSyncLog` |
+| Espejo | `IgeoMirrorEntity` (SQL) + `Cliente.igeo_codigo` + `IgeoSyncLog` |
+| Ingesta | `python manage.py igeo_ingest_exports --demo` (sense cua) o `--from-queue` |
 
 ## Env (Coolify)
 
@@ -65,6 +67,17 @@ Pestanya **Assistent** (`ops`): `AdminOpsChat.jsx` + `POST /api/ops/conversation
 Selector de model (`GET /api/ops/models/`, allowlist a `OPS_AGENT_MODELS`). El camp `model` s’envia amb text i veu; si no és de la llista, cau al default.
 WhatsApp: `backend/api/openwa/` parla amb el contenidor (`OPENWA_API_URL`, per defecte `http://openwa:2785/api`). Tools `whatsapp_status` i `send_whatsapp`. Només envia si l’operari ho demana. Sense `OPENWA_ENABLED` o sense sessió → dry-run.
 Veu: `audio` multipart → Whisper intern + resposta TTS. No comparteix sessió ni prompt amb el Bio-Assistent públic.
+
+## Espejo (fase 1, sense credencials)
+
+Còpia **relacional** a Postgres (`IgeoMirrorEntity`). No és el RAG del Bio-Assistent.
+
+```bash
+python manage.py migrate
+python manage.py igeo_ingest_exports --demo
+```
+
+L’assistent d’oficina busca amb `search_igeo_espejo`. Quan hi hagi PDI: `igeo_ingest_exports --from-queue`.
 
 ## Flujo v1
 

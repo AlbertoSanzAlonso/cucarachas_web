@@ -46,7 +46,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
     history = list(conv.messages.exclude(pk=user_msg.pk).values("role", "content"))
     notes_created = []
     try:
-        from api.agents.ops_agent import run_ops_agent
+        from api.agents.ops.agent import run_ops_agent
 
         output = run_ops_agent(
             user_message=text,
@@ -89,7 +89,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
     audio_b64 = None
     if speak:
         try:
-            from api.agents.voice import synthesize_speech
+            from api.agents.ops.voice import synthesize_speech
 
             audio_b64 = synthesize_speech(reply, language=language)
         except Exception:
@@ -178,7 +178,7 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
 
         audio = request.FILES.get("audio")
         if audio:
-            from api.agents.voice import VoiceError, transcribe_audio_upload
+            from api.agents.ops.voice import VoiceError, transcribe_audio_upload
 
             try:
                 text = transcribe_audio_upload(audio, language=language)

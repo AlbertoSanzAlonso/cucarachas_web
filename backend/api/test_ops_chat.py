@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
-from api.agents.ops_agent import OpsAgentOutput
+from api.agents.ops.agent import OpsAgentOutput
 from api.models import AdminConversation, AdminMemoryNote, AdminMessage, Cliente
 
 
@@ -42,7 +42,7 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertIn(conv_id, ids)
         self.assertEqual(len(ids), 1)
 
-    @patch("api.agents.ops_agent.run_ops_agent")
+    @patch("api.agents.ops.agent.run_ops_agent")
     def test_post_message_persists_history_and_notes(self, mock_run):
         mock_run.return_value = OpsAgentOutput(
             message="He trobat el client al CRM.",
@@ -63,9 +63,9 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertIn("CRM", res.data["assistant_message"]["content"])
         mock_run.assert_called_once()
 
-    @patch("api.agents.voice.synthesize_speech", return_value="ZGF0YQ==")
-    @patch("api.agents.voice.transcribe_audio_upload", return_value="Busca el client del 612")
-    @patch("api.agents.ops_agent.run_ops_agent")
+    @patch("api.agents.ops.voice.synthesize_speech", return_value="ZGF0YQ==")
+    @patch("api.agents.ops.voice.transcribe_audio_upload", return_value="Busca el client del 612")
+    @patch("api.agents.ops.agent.run_ops_agent")
     def test_voice_message_transcribes_then_runs_agent(self, mock_run, _tr, _tts):
         from django.core.files.uploadedfile import SimpleUploadedFile
 
@@ -102,7 +102,7 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertNotIn("google-gla:gemini-2.0-flash", ids)
         self.assertIn(res.data["default"], ids)
 
-    @patch("api.agents.ops_agent.run_ops_agent")
+    @patch("api.agents.ops.agent.run_ops_agent")
     def test_post_message_uses_allowlisted_model(self, mock_run):
         mock_run.return_value = OpsAgentOutput(message="Ok", suggested_title=None, important_notes=[])
         conv = AdminConversation.objects.create(user=self.user, title="Model")
@@ -115,7 +115,7 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertEqual(res.data["model"], "openai:gpt-4o")
         self.assertEqual(mock_run.call_args.kwargs["model"], "openai:gpt-4o")
 
-    @patch("api.agents.ops_agent.run_ops_agent")
+    @patch("api.agents.ops.agent.run_ops_agent")
     def test_invalid_model_falls_back(self, mock_run):
         mock_run.return_value = OpsAgentOutput(message="Ok", suggested_title=None, important_notes=[])
         conv = AdminConversation.objects.create(user=self.user, title="Model")
@@ -154,7 +154,7 @@ class SearchCrmToolTests(APITestCase):
             telefono_norm="612345678",
             email="anna@test.local",
         )
-        from api.agents.ops_agent import lookup_crm_clientes
+        from api.agents.ops.agent import lookup_crm_clientes
 
         result = lookup_crm_clientes("612345678")
         self.assertIn("Anna Prova", result)

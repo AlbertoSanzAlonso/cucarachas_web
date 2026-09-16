@@ -14,7 +14,7 @@ from api.agents.models import AgentState
 
 
 def register_igeo_tools(agent) -> None:
-    """Adjunta tools iGEO a un Agent Pydantic-AI (scheduler / CRM)."""
+    """Adjunta tools iGEO a un Agent Pydantic-AI (scheduler / sintetizador)."""
 
     @agent.tool
     def igeo_create_lead(

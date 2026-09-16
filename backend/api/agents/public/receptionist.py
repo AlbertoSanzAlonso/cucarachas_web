@@ -1,9 +1,9 @@
 from pydantic_ai import Agent, RunContext
 
-from . import bootstrap  # noqa: F401
+from api.agents import bootstrap  # noqa: F401
 from .company_knowledge import format_company_knowledge_for_agent
-from .config import AGENT_MODEL
-from .models import AgentState, ReceptionistOutput
+from api.agents.config import AGENT_MODEL
+from api.agents.models import AgentState, ReceptionistOutput
 from .prompts import SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 # Agente 1: Recepcionista
@@ -48,7 +48,7 @@ def search_web_knowledge(ctx: RunContext[AgentState], query: str) -> str:
 @receptionist_agent.tool
 def get_ficha_servicio(ctx: RunContext[AgentState]) -> str:
     """Ficha maestra del caso (hostelería grave, negocio, vivienda…). Incluye servicio especial."""
-    from api.agents.chat_intake import build_unified_diagnostic
+    from api.agents.public.chat_intake import build_unified_diagnostic
     from api.ficha_engine import evaluate_ficha_pricing, find_ficha, format_ficha_context
 
     lang = ctx.deps.language if ctx.deps else "ca"

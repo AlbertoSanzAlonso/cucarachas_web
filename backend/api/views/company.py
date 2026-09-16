@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 
-from api.agents.company_knowledge import get_company_profile
+from api.agents.public.company_knowledge import get_company_profile
 from api.cors_utils import apply_cors_headers
 from api.models import FaqItem
 

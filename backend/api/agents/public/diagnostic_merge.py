@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .models import AgentState, Intent, PestType, Severity
+from api.agents.models import AgentState, Intent, PestType, Severity
 
 _EMPTY = frozenset({"no especificat", "no especificado", "cap", "ninguna", "-", ""})
 _WIZARD_PATHS = frozenset({"particular", "empresa", "admin", "comunidad"})
@@ -294,7 +294,7 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
 
     # «información de la empresa» = pregunta sobre CECSA, no cliente negocio
     try:
-        from api.agents.company_knowledge import is_company_info_query
+        from api.agents.public.company_knowledge import is_company_info_query
         company_q = is_company_info_query(low)
     except Exception:
         company_q = False
@@ -445,7 +445,7 @@ def apply_facts_from_message(state: AgentState, message: str) -> AgentState:
         state.chat_diagnostic = chat
 
     try:
-        from api.agents.company_knowledge import find_coverage_place, find_outside_place
+        from api.agents.public.company_knowledge import find_coverage_place, find_outside_place
 
         covered = find_coverage_place(low)
         outside = find_outside_place(low)
@@ -520,7 +520,7 @@ def _declares_own_business(msg_lower: str) -> bool:
 
 def build_case_context(agent: AgentState, lang: str, message: str = "") -> str:
     """Resum del cas conegut per als prompts (sense repetir preguntes)."""
-    from api.agents.case_context import build_shared_case_context
+    from api.agents.public.case_context import build_shared_case_context
 
     return build_shared_case_context(agent, lang, message, role="general")
 

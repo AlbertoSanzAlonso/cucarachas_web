@@ -3,9 +3,9 @@ from unittest.mock import patch
 
 from django.test import SimpleTestCase
 
-from api.agents.booking import confirm_booking_from_chat
+from api.agents.public.booking import confirm_booking_from_chat
 from api.agents.models import AgentState
-from api.agents.prompts import (
+from api.agents.public.prompts import (
     client_scheduling_unavailable_reply,
     scheduling_disabled_prompt_suffix,
 )
@@ -24,7 +24,7 @@ class ClientSchedulingDisabledTests(SimpleTestCase):
         self.assertIn("933 309 169", result["message"])
         self.assertEqual(result["slots"], [])
 
-    @patch("api.agents.booking.ENABLE_CLIENT_SCHEDULING", False)
+    @patch("api.agents.public.booking.ENABLE_CLIENT_SCHEDULING", False)
     def test_confirm_booking_blocked(self):
         state = AgentState(language="es")
         result = confirm_booking_from_chat(

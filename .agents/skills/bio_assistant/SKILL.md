@@ -26,15 +26,15 @@ Mantener coherencia entre el wizard modal, el chat persistente (FloatingCTA), el
 | Chat home | `frontend/src/components/FloatingCTA.jsx` |
 | i18n agente | `frontend/src/locales/{ca,es,en}/agent.json` |
 | API chat | `backend/api/views/agents.py` → `POST /api/chat/` |
-| Confirmación cita | `backend/api/agents/booking.py` → agenda propia |
+| Confirmación cita | `backend/api/agents/public/booking.py` → agenda propia |
 | Agenda | `backend/api/agenda/` + `/api/agenda/*` |
 | Geo (proxy OSM) | `backend/api/views/geo.py` |
-| Orquestador | `backend/api/agents/orchestrator.py` |
-| Grafo | `backend/api/agents/graph/` |
+| Orquestador | `backend/api/agents/public/orchestrator.py` |
+| Grafo | `backend/api/agents/public/graph/` |
 | Estado / deps | `backend/api/agents/models.py` → `AgentState` (grafo + `ctx.deps`; sin `AgentDeps`) |
-| Merge diagnóstico | `backend/api/agents/diagnostic_merge.py` |
+| Merge diagnóstico | `backend/api/agents/public/diagnostic_merge.py` |
 | **Ficha Maestra** | `backend/api/models.py` → `FichaServicio`; motor `backend/api/ficha_engine.py` |
-| **Intake chat libre** | `backend/api/agents/chat_intake.py`; nodo `intake` en `graph/nodes.py` |
+| **Intake chat libre** | `backend/api/agents/public/chat_intake.py`; nodo `intake` en `public/graph/nodes.py` |
 | **Empresa / FAQ** | `CompanyProfile`, `FaqItem`; `GET /api/company/`, `GET /api/faq/` |
 
 ## Flujo del wizard modal
@@ -107,24 +107,24 @@ Handlers en `useAgentChat.js`: `handleBookingNameNext`, `handleBookingAddressNex
 
 ## Backend: enrutado sin LLM
 
-`graph/routing.py` — `wants_scheduling(msg)`; no enrutar a agenda solo por sesión `APPOINTMENT`.
+`public/graph/routing.py` — `wants_scheduling(msg)`; no enrutar a agenda solo por sesión `APPOINTMENT`.
 
 ## AgentState como deps unificado
 
-Todos los agentes Pydantic-AI usan `deps_type=AgentState`. En tools y system prompts: `RunContext[AgentState]` y `ctx.deps` (p. ej. `ctx.deps.language`). `graph/nodes.py` pasa `agent_state` a `agent.run(deps=agent_state)`. **No reintroducir `AgentDeps`.**
+Todos los agentes Pydantic-AI usan `deps_type=AgentState`. En tools y system prompts: `RunContext[AgentState]` y `ctx.deps` (p. ej. `ctx.deps.language`). `public/graph/nodes.py` pasa `agent_state` a `agent.run(deps=agent_state)`. **No reintroducir `AgentDeps`.**
 
 ### Memoria compartida (obligatorio)
 
 - **Fuente de verdad**: `AgentState` en sesión Django (`pest_type`, `property_type`, `chat_diagnostic`, `technical_notes`).
-- **Contexto único**: `api/agents/case_context.py` → `build_shared_case_context(..., role=...)`.
-- Recepcionista, diagnóstico, pricer, scheduler y CRM deben usar ese bloque (MEMORIA / SIGUIENTE DATO).
+- **Contexto único**: `api/agents/public/case_context.py` → `build_shared_case_context(..., role=...)`.
+- Recepcionista, diagnóstico, pricer, scheduler y sintetizador deben usar ese bloque (MEMORIA / SIGUIENTE DATO).
 - `merge_agent_updates` **no puede borrar** plaga, inmueble, ciudad ni claves de `chat_diagnostic` ya rellenadas.
 - Anti-patrón: prompts distintos por agente que repreguntan plaga/zona ignorando el estado.
 
 ## Checklist al modificar reservas
 
 - [ ] ¿Nuevo paso? → `BookingContactForm`, `useAgentChat`, `FloatingCTA`, `ChatMessage`, claves `agent.booking.*` en ca/es/en
-- [ ] ¿Campo nuevo en booking? → `agents.py`, `booking.py`, `api/agenda/engine.py`
+- [ ] ¿Campo nuevo en booking? → `agents.py`, `public/booking.py`, `api/agenda/engine.py`
 - [ ] ¿Textos? → `ca/agent.json` + `es/agent.json` (+ `en` si aplica)
 
 ## Anti-patterns

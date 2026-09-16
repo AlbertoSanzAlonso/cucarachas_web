@@ -1,8 +1,8 @@
 from pydantic_ai import Agent, RunContext
-from .models import AgentState, DiagnosisOutput
+from api.agents.models import AgentState, DiagnosisOutput
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
-from .config import AGENT_MODEL, setup_ai_keys
+from api.agents.config import AGENT_MODEL, setup_ai_keys
 from .prompts import BIO_TIPS, SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 setup_ai_keys()

@@ -5,8 +5,8 @@ import re
 
 from api.agenda.engine import create_booking_from_slot
 
-from .config import ENABLE_CLIENT_SCHEDULING
-from .models import AgentState
+from api.agents.config import ENABLE_CLIENT_SCHEDULING
+from api.agents.models import AgentState
 from .prompts import ORCHESTRATOR_MESSAGES, client_scheduling_unavailable_reply
 
 _EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")

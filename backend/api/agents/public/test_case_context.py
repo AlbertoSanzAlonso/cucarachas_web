@@ -1,6 +1,6 @@
 """Memoria de caso compartida entre agentes."""
-from api.agents.case_context import build_shared_case_context, case_memory
-from api.agents.diagnostic_merge import merge_agent_updates
+from api.agents.public.case_context import build_shared_case_context, case_memory
+from api.agents.public.diagnostic_merge import merge_agent_updates
 from api.agents.models import AgentState, PestType, Severity
 
 

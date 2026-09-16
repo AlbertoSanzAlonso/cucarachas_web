@@ -472,7 +472,7 @@ def evaluate_ficha_pricing(
     message: str = "",
     lang: str = "ca",
 ) -> FichaPricingResult | None:
-    from api.agents.chat_intake import build_unified_diagnostic
+    from api.agents.public.chat_intake import build_unified_diagnostic
 
     diagnostic = build_unified_diagnostic(agent, diagnostic)
     ficha = find_ficha(agent, diagnostic, message=message)

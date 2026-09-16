@@ -4,18 +4,18 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from asgiref.sync import async_to_sync
-from ..agents.orchestrator import CECSAOrchestrator
+from ..agents.public.orchestrator import CECSAOrchestrator
 from ..agents.models import AgentState, Intent
-from ..agents.booking import confirm_booking_from_chat
-from ..agents.chat_intake import (
+from ..agents.public.booking import confirm_booking_from_chat
+from ..agents.public.chat_intake import (
     apply_chat_intake_from_message,
     ensure_pest_from_message,
     reset_assumed_pest_for_bare_pricing,
 )
-from ..agents.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state, apply_facts_from_message
-from ..agents.graph.routing import wants_scheduling
-from ..agents.graph.home_flow import reset_stale_home_case
-from ..agents.serialization import normalize_language, state_for_session
+from ..agents.public.diagnostic_merge import apply_diagnostic_from_message, merge_diagnostic_into_state, apply_facts_from_message
+from ..agents.public.graph.routing import wants_scheduling
+from ..agents.public.graph.home_flow import reset_stale_home_case
+from ..agents.public.serialization import normalize_language, state_for_session
 from ..cors_utils import apply_cors_headers
 
 
@@ -60,7 +60,7 @@ def chat_with_agents(request):
             orchestrator.state = merge_diagnostic_into_state(orchestrator.state, diagnostic)
         orchestrator.state = apply_diagnostic_from_message(orchestrator.state, message)
 
-        from ..agents.graph.routing import is_informational_query
+        from ..agents.public.graph.routing import is_informational_query
 
         # Preguntas de blog/guía: no capturar plaga/zona como si fuera un caso de servicio
         if is_informational_query(message.lower()):

@@ -6,8 +6,8 @@ from django.core.cache import cache
 
 from api.agenda.config import AGENDA_DAYS_AHEAD
 from api.agenda.engine import create_booking_from_slot, fetch_available_slots
-from .models import AgentState, SchedulerOutput
-from .config import AGENT_MODEL, ENABLE_CLIENT_SCHEDULING
+from api.agents.models import AgentState, SchedulerOutput
+from api.agents.config import AGENT_MODEL, ENABLE_CLIENT_SCHEDULING
 from .prompts import SYSTEM_PROMPTS, client_scheduling_unavailable_reply, scheduling_disabled_prompt_suffix
 from .igeo_tools import register_igeo_tools
 

@@ -18,6 +18,7 @@ from .company import CompanyProfile
 from .content import BlogArticle
 from .crm import Cliente, IgeoSyncLog, Ubicacion
 from .faq import FaqItem
+from .igeo import IgeoMirrorEntity
 from .operacion import Cita, ReporteServicio
 from .ops_chat import AdminConversation, AdminMemoryNote, AdminMessage
 from .presupuesto import Presupuesto, PresupuestoDetalle, PresupuestoReferencia
@@ -32,6 +33,7 @@ __all__ = [
     "FaqItem",
     "Cliente",
     "IgeoSyncLog",
+    "IgeoMirrorEntity",
     "Ubicacion",
     "Presupuesto",
     "PresupuestoDetalle",

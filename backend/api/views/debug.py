@@ -29,7 +29,7 @@ def debug_system(request):
 
     try:
         # Intentar cargar el orquestador (aquí es donde sospecho el 500)
-        from api.agents.orchestrator import CECSAOrchestrator
+        from api.agents.public.orchestrator import CECSAOrchestrator
         info["imports"]["orchestrator"] = "OK"
     except Exception as e:
         info["imports"]["orchestrator_error"] = traceback.format_exc()

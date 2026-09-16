@@ -14,8 +14,8 @@ from api.igeo.sync import publish_entity
 from api.openwa import OpenWaClient, OpenWaError, is_openwa_enabled, status_summary
 from api.phone_utils import normalize_phone
 
-from . import bootstrap  # noqa: F401
-from .config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
+from api.agents import bootstrap  # noqa: F401
+from api.agents.config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
 
 
 @dataclass
@@ -58,7 +58,7 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             f"iGEO PDI está {igeo_on}. Si está desactivado, puedes preparar la acción pero no finjas que iGEO ya se actualizó. "
             f"WhatsApp (OpenWA) está {wa_on}. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
-            "Usa herramientas para buscar en el CRM local (Cliente) antes de crear nada. "
+            "Usa herramientas para buscar en el CRM local (Cliente) y en el espejo iGEO antes de crear nada. "
             "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
             "No inventes códigos de delegación, técnico ni contrato. "
             "Operaciones sensibles (borrar, facturar, cambiar contrato) requiere que el humano confirme; no las ejecutes por tu cuenta. "
@@ -71,7 +71,7 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         f"iGEO PDI està {igeo_on}. Si està desactivat, pots preparar l'acció però no fingis que iGEO ja s'ha actualitzat. "
         f"WhatsApp (OpenWA) està {wa_on}. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
-        "Fes servir eines per buscar al CRM local (Cliente) abans de crear res. "
+        "Fes servir eines per buscar al CRM local (Cliente) i a l'espill iGEO abans de crear res. "
         "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
         "No inventis codis de delegació, tècnic ni contracte. "
         "Operacions sensibles (esborrar, facturar, canviar contracte) cal que l'humà confirmi; no les executis pel teu compte. "
@@ -99,7 +99,7 @@ def lookup_crm_clientes(query: str) -> str:
     for c in rows:
         igeo = getattr(c, "igeo_codigo", "") or "—"
         lines.append(
-            f"id={c.id} | {c.nombre} | tel={c.telefono} | email={c.email or '—'} "
+            f"id={c.pk} | {c.nombre} | tel={c.telefono} | email={c.email or '—'} "
             f"| estat={c.crm_status} | iGEO={igeo}"
         )
     return "\n".join(lines)
@@ -109,6 +109,27 @@ def lookup_crm_clientes(query: str) -> str:
 def search_crm_cliente(ctx: RunContext[OpsAgentDeps], query: str) -> str:
     """Busca clients/leads al CRM CECSA per nom, telèfon o email (no és iGEO en viu)."""
     return lookup_crm_clientes(query)
+
+
+@ops_agent.tool
+def search_igeo_espejo(
+    ctx: RunContext[OpsAgentDeps],
+    query: str,
+    tipo_entidad: str = "",
+) -> str:
+    """Busca al espill local iGEO (clients, seus, OT…). No consulta iGEO en viu."""
+    from api.igeo.ingest import format_mirror_hits, search_mirror
+
+    rows = search_mirror(query, entity_type=tipo_entidad or None)
+    return format_mirror_hits(rows)
+
+
+@ops_agent.tool
+def igeo_espejo_status(ctx: RunContext[OpsAgentDeps]) -> str:
+    """Comptadors de l'espill iGEO (SQL). Sense embeddings."""
+    from api.igeo.ingest import mirror_counts
+
+    return mirror_counts()
 
 
 @ops_agent.tool

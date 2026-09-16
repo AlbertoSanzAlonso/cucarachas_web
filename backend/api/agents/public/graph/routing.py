@@ -1,7 +1,7 @@
 """Enrutado determinista (sin LLM) para ahorrar tokens y latencia."""
 from ..chat_intake import get_missing_mandatory_fields
 from ..diagnostic_merge import has_wizard_diagnostic
-from ..models import AgentState, Intent
+from api.agents.models import AgentState, Intent
 from .state import CECSAGraphState
 
 DIAGNOSTIC_KEYWORDS = (
@@ -746,7 +746,7 @@ def apply_preprocess(state: CECSAGraphState) -> dict:
     agent = AgentState.model_validate(state.get("agent_state") or {})
     msg_lower = message.lower()
 
-    from api.agents.serialization import normalize_language
+    from api.agents.public.serialization import normalize_language
 
     session_lang = state.get("language")
     if session_lang in ("ca", "es"):
@@ -796,7 +796,7 @@ def _wants_pricing(agent: AgentState, diagnostic: dict | None, msg_lower: str) -
     if not wants_pricing_message(msg_lower):
         return False
     # Path/who del wizard no basta: hace falta detalle real del caso
-    from api.agents.chat_intake import has_pricing_case_details
+    from api.agents.public.chat_intake import has_pricing_case_details
 
     return has_pricing_case_details(agent, diagnostic)
 
@@ -808,7 +808,7 @@ def _pricing_flow_route(
     msg_lower: str = "",
 ) -> str | None:
     """Intake → pricer cuando pide precio, o tras completar intake de presupuesto."""
-    from api.agents.chat_intake import has_pricing_case_details, next_pricing_intake_field
+    from api.agents.public.chat_intake import has_pricing_case_details, next_pricing_intake_field
 
     if not agent.pest_type:
         return None
@@ -906,7 +906,7 @@ def after_receptionist(state: CECSAGraphState) -> str:
     if state.get("source") == "home":
         if pending == "diagnostician":
             return "diagnostician"
-        from api.agents.chat_intake import has_pricing_case_details
+        from api.agents.public.chat_intake import has_pricing_case_details
 
         if pending == "pricer" and has_pricing_case_details(agent, diagnostic):
             return "pricer"
@@ -921,7 +921,7 @@ def after_receptionist(state: CECSAGraphState) -> str:
     if pending == "diagnostician" or should_diagnose(agent, msg_lower):
         return "diagnostician"
     # Nunca presupuestar sin plaga + detalle de caso (ubicación/cantidad…)
-    from api.agents.chat_intake import has_pricing_case_details
+    from api.agents.public.chat_intake import has_pricing_case_details
 
     if not has_pricing_case_details(agent, diagnostic):
         if pending == "pricer" and agent.pest_type:
@@ -936,7 +936,7 @@ def after_receptionist(state: CECSAGraphState) -> str:
 
 
 def after_diagnostician(state: CECSAGraphState) -> str:
-    from ..config import ENABLE_CRM_SYNTHESIS
+    from api.agents.config import ENABLE_CRM_SYNTHESIS
 
     if has_wizard_diagnostic(state.get("diagnostic")):
         return "done"

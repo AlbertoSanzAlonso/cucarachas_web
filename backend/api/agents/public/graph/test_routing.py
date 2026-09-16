@@ -1,4 +1,4 @@
-from api.agents.graph.routing import apply_preprocess, choose_agent_route, should_diagnose
+from api.agents.public.graph.routing import apply_preprocess, choose_agent_route, should_diagnose
 from api.agents.models import AgentState, Intent
 
 import pytest
@@ -68,7 +68,7 @@ def test_doubt_with_city_does_not_fallback():
 
 
 def test_should_diagnose_requires_location_or_follow_up():
-    from api.agents.chat_intake import ensure_pest_from_message
+    from api.agents.public.chat_intake import ensure_pest_from_message
 
     agent = AgentState(language="es", city="Barcelona", intent=Intent.DOUBT)
     assert should_diagnose(agent, "de cucarachas") is False
@@ -90,7 +90,7 @@ def test_session_language_wins_over_message_hints():
 
 
 def test_bare_pest_mention_routes_to_receptionist():
-    from api.agents.chat_intake import ensure_pest_from_message
+    from api.agents.public.chat_intake import ensure_pest_from_message
 
     agent = AgentState(language="es", intent=Intent.DOUBT)
     agent = ensure_pest_from_message(agent, "de cucarachas")
@@ -106,7 +106,7 @@ def test_bare_pest_mention_routes_to_receptionist():
 
 def test_stale_session_bare_pest_routes_to_receptionist():
     """Sesión con city+property_type no debe mandar 'cucarachas' al fallback humano."""
-    from api.agents.chat_intake import ensure_pest_from_message
+    from api.agents.public.chat_intake import ensure_pest_from_message
     from api.agents.models import PestType
 
     agent = AgentState(
@@ -133,7 +133,7 @@ def test_scheduling_after_quote_intent_routes_to_scheduler():
 
 def test_price_of_appointment_does_not_route_to_scheduler():
     """«¿Cuánto cuesta la cita?» es precio (gratuita), no horarios."""
-    from api.agents.graph.routing import asks_price_of_appointment, wants_scheduling
+    from api.agents.public.graph.routing import asks_price_of_appointment, wants_scheduling
 
     msg = "cuanto cuesta la primera cita?"
     assert asks_price_of_appointment(msg)
@@ -239,7 +239,7 @@ def test_pricing_with_where_but_no_property_asks_intake():
 
 
 def test_wizard_diagnostic_skips_diagnostician():
-    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.public.diagnostic_merge import merge_diagnostic_into_state
 
     agent = AgentState(language="ca")
     diagnostic = {
@@ -262,7 +262,7 @@ def test_wizard_diagnostic_skips_diagnostician():
 
 
 def test_affirmative_after_wizard_routes_to_scheduler():
-    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.public.diagnostic_merge import merge_diagnostic_into_state
     from api.agents.models import PestType
 
     agent = AgentState(language="es")
@@ -295,7 +295,7 @@ def test_affirmative_without_case_stays_receptionist():
 
 def test_vale_with_pest_only_stays_receptionist():
     """«vale» con plaga pero sin caso listo no salta a agenda (evita brusquedad)."""
-    from api.agents.graph.routing import should_offer_slots
+    from api.agents.public.graph.routing import should_offer_slots
     from api.agents.models import PestType
 
     agent = AgentState(
@@ -332,8 +332,8 @@ def test_vale_after_ready_case_routes_to_scheduler():
 
 def test_si_after_pest_confirm_does_not_offer_slots():
     """Tras ask_pest, «sí» confirma plaga y sigue el guion — no muestra horarios."""
-    from api.agents.chat_intake import ensure_pest_from_message
-    from api.agents.graph.routing import should_offer_slots
+    from api.agents.public.chat_intake import ensure_pest_from_message
+    from api.agents.public.graph.routing import should_offer_slots
     from api.agents.models import PestType
 
     agent = AgentState(language="es", pending_intake_field="pest")
@@ -351,7 +351,7 @@ def test_si_after_pest_confirm_does_not_offer_slots():
 
 
 def test_wizard_diagnostic_routes_pricing_to_pricer():
-    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.public.diagnostic_merge import merge_diagnostic_into_state
 
     agent = AgentState(language="es")
     diagnostic = {
@@ -376,7 +376,7 @@ def test_wizard_diagnostic_routes_pricing_to_pricer():
 
 
 def test_hotel_wizard_pedir_presupuesto_routes_to_pricer_or_intake():
-    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.public.diagnostic_merge import merge_diagnostic_into_state
 
     agent = AgentState(language="es")
     diagnostic = {
@@ -403,7 +403,7 @@ def test_hotel_wizard_pedir_presupuesto_routes_to_pricer_or_intake():
 
 
 def test_intake_answer_routes_to_pricer():
-    from api.agents.diagnostic_merge import merge_diagnostic_into_state
+    from api.agents.public.diagnostic_merge import merge_diagnostic_into_state
 
     agent = AgentState(language="es", intent=Intent.QUOTE)
     diagnostic = {
@@ -429,7 +429,7 @@ def test_intake_answer_routes_to_pricer():
 
 def test_after_receptionist_pricer_without_pest_stays_done():
     """El LLM del recepcionista no debe forzar pricer sin plaga (evita 250€ fantasma)."""
-    from api.agents.graph.routing import after_receptionist
+    from api.agents.public.graph.routing import after_receptionist
 
     agent = AgentState(language="es", intent=Intent.QUOTE)
     state = {
@@ -453,7 +453,7 @@ def test_find_similar_references_requires_pest():
 
 
 def test_bare_presupuesto_resets_assumed_pest():
-    from api.agents.chat_intake import reset_assumed_pest_for_bare_pricing
+    from api.agents.public.chat_intake import reset_assumed_pest_for_bare_pricing
     from api.agents.models import PestType
 
     agent = AgentState(language="es", pest_type=PestType.GERMAN_COCKROACH)
@@ -472,7 +472,7 @@ def test_bare_presupuesto_resets_assumed_pest():
         "presi",
     )
     assert cleared_presi.pest_type is None
-    from api.agents.graph.routing import wants_pricing_message
+    from api.agents.public.graph.routing import wants_pricing_message
 
     assert wants_pricing_message("presi")
     assert not wants_pricing_message("presidente")
@@ -504,7 +504,7 @@ def test_bare_pricing_routes_to_receptionist_not_pricer():
 
 
 def test_diy_product_question_is_listening_turn():
-    from api.agents.graph.routing import is_client_question_or_objection
+    from api.agents.public.graph.routing import is_client_question_or_objection
 
     assert is_client_question_or_objection("pero no me sirve con usar algun producto?")
     assert is_client_question_or_objection(
@@ -538,7 +538,7 @@ def test_ready_case_pricing_routes_to_pricer():
 
 
 def test_pricing_orchestration_context_for_bare_budget():
-    from api.agents.chat_intake import pricing_orchestration_context
+    from api.agents.public.chat_intake import pricing_orchestration_context
 
     block = pricing_orchestration_context(AgentState(language="es"), "es", "presu")
     assert "ORQUESTACIÓN PRESUPUESTO" in block

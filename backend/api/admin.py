@@ -8,6 +8,7 @@ from .models import (
     CompanyProfile,
     FaqItem,
     FichaServicio,
+    IgeoMirrorEntity,
     Presupuesto,
     PresupuestoDetalle,
     PresupuestoReferencia,
@@ -176,3 +177,19 @@ class AdminMemoryNoteAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "user", "pinned", "updated_at")
     list_filter = ("pinned",)
     search_fields = ("title", "content")
+
+
+@admin.register(IgeoMirrorEntity)
+class IgeoMirrorEntityAdmin(admin.ModelAdmin):
+    list_display = (
+        "entity_type",
+        "igeo_codigo",
+        "display_name",
+        "telefono",
+        "is_deleted",
+        "source",
+        "updated_at",
+    )
+    list_filter = ("entity_type", "is_deleted", "source")
+    search_fields = ("display_name", "igeo_codigo", "telefono", "email", "source_key")
+    readonly_fields = ("created_at", "updated_at")

@@ -4,9 +4,9 @@ from typing import List, Optional
 from pydantic import BaseModel
 import os
 import dataclasses
-from . import bootstrap  # noqa: F401
-from .config import AGENT_MODEL
-from .models import AgentState
+from api.agents import bootstrap  # noqa: F401
+from api.agents.config import AGENT_MODEL
+from api.agents.models import AgentState
 from .igeo_tools import register_igeo_tools
 
 # Modelo para la síntesis final del caso
@@ -17,8 +17,8 @@ class CaseSynthesis(BaseModel):
     suggested_treatments: List[str] # Lista de nombres de tratamientos oficiales
     technical_notes: str # Notas para el técnico humano
 
-# Inicializamos el Agente de Síntesis (CRM)
-crm_agent = Agent(
+# Inicializamos el agente de síntesis interna post-diagnóstico (no habla con el cliente).
+case_synthesizer_agent = Agent(
     AGENT_MODEL,
     deps_type=AgentState,
     output_type=CaseSynthesis,
@@ -31,9 +31,9 @@ crm_agent = Agent(
     ),
 )
 
-register_igeo_tools(crm_agent)
+register_igeo_tools(case_synthesizer_agent)
 
-@crm_agent.tool
+@case_synthesizer_agent.tool
 def get_official_treatments(ctx: RunContext[AgentState]) -> str:
     """Consulta el catàleg oficial de tractaments de CECSA."""
     try:
@@ -49,7 +49,7 @@ def get_official_treatments(ctx: RunContext[AgentState]) -> str:
         print(f"WARNING: get_official_treatments failed: {e}")
         return "Catàleg de tractaments no disponible temporalment."
 
-@crm_agent.tool
+@case_synthesizer_agent.tool
 def get_species_info(ctx: RunContext[AgentState], name: str) -> str:
     """Obté detalls tècnics d'una espècie de la base de dades."""
     try:

@@ -1,14 +1,14 @@
 """Tests de recolección de datos por chat libre."""
 from django.test import TestCase
 
-from api.agents.chat_intake import (
+from api.agents.public.chat_intake import (
     apply_chat_intake_from_message,
     build_unified_diagnostic,
     extract_fields_from_message,
     get_missing_mandatory_fields,
     parse_field_value,
 )
-from api.agents.graph.routing import choose_agent_route, should_run_intake
+from api.agents.public.graph.routing import choose_agent_route, should_run_intake
 from api.agents.models import AgentState, Intent, PestType
 from api.models import FichaServicio
 from api.test_ficha_engine import CUC_GER_PISO

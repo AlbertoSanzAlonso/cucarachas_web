@@ -1,10 +1,10 @@
 """Guion del chat home: idioma UI, sin LLM ni datos de otra sesión."""
 import pytest
 
-from api.agents.chat_intake import apply_chat_intake_from_message, ensure_pest_from_message, parse_field_value
-from api.agents.graph.home_flow import home_scripted_reply, reset_stale_home_case
-from api.agents.graph.routing import choose_agent_route, apply_preprocess
-from api.agents.graph.state import CECSAGraphState
+from api.agents.public.chat_intake import apply_chat_intake_from_message, ensure_pest_from_message, parse_field_value
+from api.agents.public.graph.home_flow import home_scripted_reply, reset_stale_home_case
+from api.agents.public.graph.routing import choose_agent_route, apply_preprocess
+from api.agents.public.graph.state import CECSAGraphState
 from api.agents.models import AgentState, Intent, PestType
 
 pytestmark = pytest.mark.django_db
@@ -22,12 +22,12 @@ def _home_state(agent: AgentState, message: str) -> CECSAGraphState:
 
 
 def _turn(agent: AgentState, message: str) -> tuple[AgentState, str]:
-    from api.agents.graph.home_flow import build_home_verdict, home_next_action, home_should_diagnose
+    from api.agents.public.graph.home_flow import build_home_verdict, home_next_action, home_should_diagnose
 
     agent = reset_stale_home_case(agent, message)
     agent.language = "es"
     agent.intent = Intent.DOUBT
-    from api.agents.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
 
     agent = apply_facts_from_message(agent, message)
     agent = ensure_pest_from_message(agent, message)
@@ -113,7 +113,7 @@ def test_home_free_question_routes_to_diagnostician():
 
 def test_vague_plaga_asks_pest_not_kitchen_zones():
     """«ayuda para una plaga» no asume cucarachas; sin plantilla en chat libre."""
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
@@ -140,8 +140,8 @@ def test_cucarachas_asks_property_before_rooms():
 
 
 def test_hola_que_tal_does_not_assume_cockroaches():
-    from api.agents.graph.home_flow import home_next_action
-    from api.agents.graph.routing import is_simple_greeting
+    from api.agents.public.graph.home_flow import home_next_action
+    from api.agents.public.graph.routing import is_simple_greeting
 
     assert is_simple_greeting("hola que tal")
     assert is_simple_greeting("hola, qué tal")
@@ -188,7 +188,7 @@ def test_natural_hola_then_que_tal_then_empresa():
 
     agent, msg = _turn(agent, "tengo una empresa")
     assert agent.property_type == "negoci"
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "tengo una empresa") == "ask_pest"
     assert home_scripted_reply(_home_state(agent, "tengo una empresa"), agent, "es") is None
@@ -204,14 +204,14 @@ def test_plaga_then_negocio_stays_on_script_not_llm():
     agent, msg = _turn(agent, "es un negocio")
     assert agent.property_type == "negoci"
     assert agent.pest_type is None
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "es un negocio") == "ask_pest"
     assert home_scripted_reply(_home_state(agent, "es un negocio"), agent, "es") is None
 
 
 def test_eres_un_robot_goes_to_agent_not_pest_script():
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, _ = _turn(agent, "hola")
@@ -223,7 +223,7 @@ def test_eres_un_robot_goes_to_agent_not_pest_script():
 
 def test_neighbor_cockroaches_goes_to_receptionist_agent():
     """Caso ambiguo: el agente (LLM) debe juzgar, no la plantilla «en el local»."""
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "hola")
@@ -241,7 +241,7 @@ def test_neighbor_cockroaches_goes_to_receptionist_agent():
 
 
 def test_vague_problem_does_not_inherit_stale_pest():
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply, reset_stale_home_case
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply, reset_stale_home_case
 
     stale = AgentState(
         language="es",
@@ -278,7 +278,7 @@ def test_out_of_area_alicante_scripted():
     agent, msg = _turn(agent, "vivo en Alicante")
     assert agent.city and "alicante" in agent.city.lower()
     assert msg == ""
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "vivo en Alicante") == "out_of_area"
     assert home_scripted_reply(_home_state(agent, "vivo en Alicante"), agent, "es") is None
@@ -286,7 +286,7 @@ def test_out_of_area_alicante_scripted():
 
 def test_out_of_area_visit_with_stored_city():
     agent = AgentState(language="es", city="Alicante")
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     assert home_next_action(agent, "¿podéis venir a mi local?") == "out_of_area"
     agent, msg = _turn(agent, "¿podéis venir a mi local?")
@@ -296,8 +296,8 @@ def test_out_of_area_visit_with_stored_city():
 
 def test_cornella_after_valencia_is_in_coverage():
     """Cornellà es Catalunya: no debe quedar bloqueado por una ciudad fuera previa."""
-    from api.agents.diagnostic_merge import apply_facts_from_message
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.graph.home_flow import home_next_action
 
     agent = AgentState(language="es", city="Valencia")
     agent = apply_facts_from_message(agent, "estoy en Cornella")
@@ -307,8 +307,8 @@ def test_cornella_after_valencia_is_in_coverage():
 
 
 def test_company_info_not_marked_as_business():
-    from api.agents.diagnostic_merge import apply_facts_from_message
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply
 
     agent = AgentState(language="es")
     agent = apply_facts_from_message(agent, "quiero informacion de la empresa")
@@ -328,7 +328,7 @@ def test_cucurachas_typo_asks_where():
 
 
 def test_presupuesto_without_case_asks_pest():
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply
 
     agent = AgentState(language="es")
     assert home_next_action(agent, "para el presupuesto?") == "ask_pest"
@@ -344,8 +344,8 @@ def test_presupuesto_without_case_asks_pest():
 
 def test_si_quiero_presupuesto_advances_to_where():
     """Con keyword presupuesto el LLM orquesta; sin plantilla ni precio inventado."""
-    from api.agents.graph.home_flow import home_next_action
-    from api.agents.graph.routing import wants_pricing_message
+    from api.agents.public.graph.home_flow import home_next_action
+    from api.agents.public.graph.routing import wants_pricing_message
 
     agent = AgentState(language="es")
     agent, msg1 = _turn(agent, "para un presupuesto?")
@@ -364,7 +364,7 @@ def test_si_quiero_presupuesto_advances_to_where():
 
 def test_description_without_where_goes_to_llm_not_fake_location():
     """Sin zona aún, hechos en estado; sin plantilla de vivienda."""
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, msg = _turn(agent, "tengo cucarachas pequeñas")
@@ -382,7 +382,7 @@ def test_description_without_where_goes_to_llm_not_fake_location():
 
 def test_description_after_where_asks_quantity_not_verdict():
     """Con cocina ya dicha, «son marrones» → ask_qty en lógica; sin plantilla."""
-    from api.agents.graph.home_flow import home_next_action
+    from api.agents.public.graph.home_flow import home_next_action
 
     agent = AgentState(language="es")
     agent, _ = _turn(agent, "cucarachas")
@@ -397,7 +397,7 @@ def test_description_after_where_asks_quantity_not_verdict():
 
 
 def test_facts_capture_size_and_white_color():
-    from api.agents.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
 
     agent = AgentState(language="es")
     agent = apply_facts_from_message(agent, "cucarachas grandes")
@@ -408,9 +408,9 @@ def test_facts_capture_size_and_white_color():
 
 def test_building_pest_goes_to_agent_not_kitchen_template():
     """«cucarachas en mi edificio» → agente (comunidad), no plantilla cocina/baño."""
-    from api.agents.diagnostic_merge import apply_facts_from_message
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
-    from api.agents.graph.routing import is_building_community_context, is_clear_own_pest_report
+    from api.agents.public.diagnostic_merge import apply_facts_from_message
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.public.graph.routing import is_building_community_context, is_clear_own_pest_report
 
     msg = "tengo cucarachas en mi edificio"
     assert is_building_community_context(msg)
@@ -427,8 +427,8 @@ def test_building_pest_goes_to_agent_not_kitchen_template():
 
 def test_entrada_sets_where_and_context_keeps_pest_memory():
     """«en la entrada» se guarda; el contexto no pide otra vez la plaga."""
-    from api.agents.chat_intake import apply_chat_intake_from_message, parse_field_value
-    from api.agents.graph.home_flow import home_receptionist_context
+    from api.agents.public.chat_intake import apply_chat_intake_from_message, parse_field_value
+    from api.agents.public.graph.home_flow import home_receptionist_context
 
     assert parse_field_value("where", "en la entrada") == "entrada"
 
@@ -495,7 +495,7 @@ def test_street_after_cucarachas_keeps_pest_and_asks_qty():
 
 
 def test_company_knowledge_mentions_catalunya():
-    from api.agents.company_knowledge import (
+    from api.agents.public.company_knowledge import (
         find_outside_place,
         format_company_knowledge_for_agent,
         is_outside_service_area,
@@ -513,8 +513,8 @@ def test_company_knowledge_mentions_catalunya():
 
 def test_informational_identify_does_not_ask_property():
     """«cómo identifico…» / blog: sin plantilla; el LLM + RAG responden."""
-    from api.agents.graph.home_flow import home_next_action, home_scripted_reply
-    from api.agents.graph.routing import is_informational_query
+    from api.agents.public.graph.home_flow import home_next_action, home_scripted_reply
+    from api.agents.public.graph.routing import is_informational_query
 
     msg = "como identifico cucarachas en la cocina?"
     assert is_informational_query(msg)

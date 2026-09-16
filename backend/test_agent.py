@@ -6,11 +6,11 @@ import asyncio
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 django.setup()
 
-from api.agents.crm_agent import crm_agent
+from api.agents.public.case_synthesizer import case_synthesizer_agent
 
 async def test_agent():
     print("--- Test 1: Consulta sobre cucarachas en la cocina ---")
-    result = await crm_agent.run("Tinc unes paneroles petites a la cuina, dalt dels motors de la nevera. Què em recomanes?")
+    result = await case_synthesizer_agent.run("Tinc unes paneroles petites a la cuina, dalt dels motors de la nevera. Què em recomanes?")
     
     print(f"\nExplicació: {result.output.explanation}")
     print("\nTractaments Recomanats:")
