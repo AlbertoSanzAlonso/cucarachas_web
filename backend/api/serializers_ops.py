@@ -6,7 +6,7 @@ from .models import AdminConversation, AdminMemoryNote, AdminMessage
 class AdminMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdminMessage
-        fields = ("id", "role", "content", "created_at")
+        fields = ("id", "role", "content", "source", "created_at")
         read_only_fields = fields
 
 

@@ -6,6 +6,7 @@ from django.db.models import Count, Prefetch
 from django.utils import timezone
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
@@ -25,8 +26,82 @@ def _title_from_message(text: str) -> str:
     return cleaned[:72]
 
 
+def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text") -> dict:
+    user_msg = AdminMessage.objects.create(
+        conversation=conv,
+        role=AdminMessage.Role.USER,
+        content=text,
+        source=source,
+    )
+    if not conv.title:
+        conv.title = _title_from_message(text)
+        conv.save(update_fields=["title", "updated_at"])
+
+    history = list(conv.messages.exclude(pk=user_msg.pk).values("role", "content"))
+    notes_created = []
+    try:
+        from api.agents.ops_agent import run_ops_agent
+
+        output = run_ops_agent(
+            user_message=text,
+            history=history,
+            user_id=user.pk,
+            conversation_id=conv.pk,
+            language=language,
+        )
+        reply = (output.message or "").strip() or "Sense resposta."
+        if output.suggested_title and not conv.title:
+            conv.title = output.suggested_title.strip()[:200]
+        for note_text in output.important_notes or []:
+            body = (note_text or "").strip()
+            if not body:
+                continue
+            note = AdminMemoryNote.objects.create(
+                user=user,
+                conversation=conv,
+                title=body[:80],
+                content=body,
+                pinned=True,
+            )
+            notes_created.append(note)
+    except Exception as exc:
+        reply = (
+            f"No s'ha pogut completar la petició ({exc}). "
+            "Revisa la clau d'OpenAI o torna-ho a provar."
+        )
+
+    assistant_msg = AdminMessage.objects.create(
+        conversation=conv,
+        role=AdminMessage.Role.ASSISTANT,
+        content=reply,
+        source=source,
+    )
+    conv.updated_at = timezone.now()
+    conv.save(update_fields=["title", "updated_at"])
+
+    audio_b64 = None
+    if source == "voice":
+        try:
+            from api.agents.voice import synthesize_speech
+
+            audio_b64 = synthesize_speech(reply, language=language)
+        except Exception:
+            audio_b64 = None
+
+    return {
+        "conversation_id": conv.id,
+        "title": conv.title,
+        "user_message": AdminMessageSerializer(user_msg).data,
+        "assistant_message": AdminMessageSerializer(assistant_msg).data,
+        "notes": AdminMemoryNoteSerializer(notes_created, many=True).data,
+        "via_voice": source == "voice",
+        "assistant_audio_base64": audio_b64,
+    }
+
+
 class AdminConversationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
 
     def get_queryset(self):
@@ -86,76 +161,44 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["post"], url_path="messages")
     def post_message(self, request, pk=None):
         conv = self.get_object()
-        text = (request.data.get("content") or request.data.get("message") or "").strip()
-        if not text:
-            return Response({"detail": "El missatge és buit."}, status=status.HTTP_400_BAD_REQUEST)
         language = (request.data.get("language") or "ca").strip().lower()
         if language not in ("ca", "es"):
             language = "ca"
 
-        user_msg = AdminMessage.objects.create(
-            conversation=conv,
-            role=AdminMessage.Role.USER,
-            content=text,
-        )
-        if not conv.title:
-            conv.title = _title_from_message(text)
-            conv.save(update_fields=["title", "updated_at"])
+        audio = request.FILES.get("audio")
+        if audio:
+            from api.agents.voice import VoiceError, transcribe_audio_upload
 
-        history = list(
-            conv.messages.exclude(pk=user_msg.pk).values("role", "content")
-        )
-        try:
-            from api.agents.ops_agent import run_ops_agent
-
-            output = run_ops_agent(
-                user_message=text,
-                history=history,
-                user_id=request.user.pk,
-                conversation_id=conv.pk,
-                language=language,
-            )
-            reply = (output.message or "").strip() or "Sense resposta."
-            if output.suggested_title and not conv.title:
-                conv.title = output.suggested_title.strip()[:200]
-            notes_created = []
-            for note_text in output.important_notes or []:
-                body = (note_text or "").strip()
-                if not body:
-                    continue
-                note = AdminMemoryNote.objects.create(
-                    user=request.user,
-                    conversation=conv,
-                    title=body[:80],
-                    content=body,
-                    pinned=True,
+            try:
+                text = transcribe_audio_upload(audio, language=language)
+            except VoiceError as exc:
+                return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+            except Exception as exc:
+                return Response(
+                    {"detail": f"No s'ha pogut processar la veu ({exc})."},
+                    status=status.HTTP_502_BAD_GATEWAY,
                 )
-                notes_created.append(note)
-        except Exception as exc:
-            reply = (
-                f"No s'ha pogut completar la petició ({exc}). "
-                "Revisa la clau d'OpenAI o torna-ho a provar."
+            payload = _run_ops_turn(
+                conv=conv,
+                user=request.user,
+                text=text,
+                language=language,
+                source="voice",
             )
-            notes_created = []
+            return Response(payload, status=status.HTTP_201_CREATED)
 
-        assistant_msg = AdminMessage.objects.create(
-            conversation=conv,
-            role=AdminMessage.Role.ASSISTANT,
-            content=reply,
-        )
-        conv.updated_at = timezone.now()
-        conv.save(update_fields=["title", "updated_at"])
+        text = (request.data.get("content") or request.data.get("message") or "").strip()
+        if not text:
+            return Response({"detail": "El missatge és buit."}, status=status.HTTP_400_BAD_REQUEST)
 
-        return Response(
-            {
-                "conversation_id": conv.id,
-                "title": conv.title,
-                "user_message": AdminMessageSerializer(user_msg).data,
-                "assistant_message": AdminMessageSerializer(assistant_msg).data,
-                "notes": AdminMemoryNoteSerializer(notes_created, many=True).data,
-            },
-            status=status.HTTP_201_CREATED,
+        payload = _run_ops_turn(
+            conv=conv,
+            user=request.user,
+            text=text,
+            language=language,
+            source="text",
         )
+        return Response(payload, status=status.HTTP_201_CREATED)
 
 
 class AdminMemoryNoteViewSet(viewsets.ModelViewSet):

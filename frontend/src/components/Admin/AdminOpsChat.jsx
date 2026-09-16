@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   Bookmark,
   BookmarkPlus,
   LayoutDashboard,
   Loader2,
   Mic,
-  MicOff,
   PanelRight,
   Plus,
   Search,
@@ -22,8 +21,10 @@ import {
   useGetOpsConversationQuery,
   useGetOpsConversationsQuery,
   useSendOpsMessageMutation,
+  useSendOpsVoiceMutation,
 } from '@/store/apis/opsChatApi';
-import useSpeechToText from '@/hooks/useSpeechToText';
+import useVoiceRecorder from '@/hooks/useVoiceRecorder';
+import VoiceWaveform from '@/components/Admin/VoiceWaveform';
 
 const SUGGESTIONS = [
   'Busca aquest client al CRM pel telèfon',
@@ -63,20 +64,29 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   });
   const [createConv, { isLoading: creating }] = useCreateOpsConversationMutation();
   const [sendMessage, { isLoading: sending }] = useSendOpsMessageMutation();
+  const [sendVoice, { isLoading: sendingVoice }] = useSendOpsVoiceMutation();
   const [deleteConv] = useDeleteOpsConversationMutation();
   const [createNote] = useCreateOpsNoteMutation();
   const [deleteNote] = useDeleteOpsNoteMutation();
 
   const messages = thread?.messages || [];
   const notes = thread?.notes || [];
-  const busy = sending || creating;
+  const busy = sending || sendingVoice || creating;
+  const voice = useVoiceRecorder();
 
-  const onSpeech = useCallback((text) => {
-    setDraft((prev) => (prev ? `${prev} ${text}` : text));
-    inputRef.current?.focus();
-  }, []);
+  const ensureConversation = async () => {
+    if (activeId) return activeId;
+    const created = await createConv({}).unwrap();
+    setActiveId(created.id);
+    return created.id;
+  };
 
-  const speech = useSpeechToText({ lang: 'ca-ES', onResult: onSpeech });
+  const playAssistantAudio = (b64) => {
+    if (!b64) return;
+    const src = `data:audio/mpeg;base64,${b64}`;
+    const audio = new Audio(src);
+    audio.play().catch(() => {});
+  };
 
   useEffect(() => {
     if (!listRef.current) return;
@@ -87,15 +97,30 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     const text = (raw ?? draft).trim();
     if (!text || busy) return;
     setDraft('');
-    speech.stop();
-
-    let convId = activeId;
-    if (!convId) {
-      const created = await createConv({}).unwrap();
-      convId = created.id;
-      setActiveId(convId);
-    }
+    const convId = await ensureConversation();
     await sendMessage({ id: convId, content: text, language: 'ca' }).unwrap();
+  };
+
+  const toggleVoice = async () => {
+    if (busy) return;
+    if (voice.recording) {
+      const blob = await voice.stop();
+      if (!blob || blob.size < 800) return;
+      const convId = await ensureConversation();
+      const file = new File([blob], 'nota.webm', { type: blob.type || 'audio/webm' });
+      const result = await sendVoice({ id: convId, audio: file, language: 'ca' }).unwrap();
+      playAssistantAudio(result?.assistant_audio_base64);
+      return;
+    }
+    if (!voice.supported) {
+      window.alert('El navegador no permet gravar àudio. Prova Chrome o Edge amb HTTPS.');
+      return;
+    }
+    try {
+      await voice.start();
+    } catch {
+      window.alert('Cal permís de micròfon per parlar amb l’assistent.');
+    }
   };
 
   const handleNewChat = () => {
@@ -136,53 +161,49 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
 
   const composer = (
     <div className="mx-auto w-full max-w-3xl px-3 pb-4 md:px-6">
-      {speech.listening && speech.interim ? (
-        <p className="mb-2 text-center text-sm text-primary-blue/70">{speech.interim}</p>
-      ) : null}
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          submit();
+          if (!voice.recording) submit();
         }}
         className="flex items-end gap-2 rounded-3xl border border-gray-200 bg-white p-2 shadow-lg shadow-primary-blue/5"
       >
-        <textarea
-          ref={inputRef}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              submit();
-            }
-          }}
-          rows={1}
-          placeholder="Missatge a l’assistent d’oficina… (no és el xat de clients)"
-          className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-primary-gray outline-none"
-          data-lenis-prevent
-        />
+        {voice.recording ? (
+          <VoiceWaveform levels={voice.levels} active />
+        ) : (
+          <textarea
+            ref={inputRef}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                submit();
+              }
+            }}
+            rows={1}
+            placeholder="Escriu, o prem el micròfon i parla — s’envia sol"
+            className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-primary-gray outline-none"
+            data-lenis-prevent
+          />
+        )}
         <button
           type="button"
-          onClick={() => {
-            if (!speech.supported) {
-              window.alert('El micròfon de veu requereix Chrome o Edge.');
-              return;
-            }
-            speech.toggle();
-          }}
+          onClick={toggleVoice}
+          disabled={busy}
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-colors ${
-            speech.listening
-              ? 'bg-red-500 text-white'
+            voice.recording
+              ? 'bg-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.25)]'
               : 'bg-gray-100 text-primary-gray hover:bg-primary-blue/10 hover:text-primary-blue'
           }`}
-          title={speech.supported ? 'Parlar' : 'Veu no disponible'}
-          aria-label="Micròfon"
+          title={voice.recording ? 'Atura i envia' : 'Parlar amb l’assistent'}
+          aria-label={voice.recording ? 'Atura i envia' : 'Micròfon'}
         >
-          {speech.listening ? <MicOff size={18} /> : <Mic size={18} />}
+          <Mic size={18} />
         </button>
         <button
           type="submit"
-          disabled={busy || !draft.trim()}
+          disabled={busy || voice.recording || !draft.trim()}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-green)] text-white disabled:opacity-40"
           aria-label="Enviar"
         >
@@ -190,7 +211,9 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
         </button>
       </form>
       <p className="mt-2 text-center text-[11px] text-primary-gray/40">
-        Assistent intern · historial desat al teu usuari · iGEO via funcions controlades
+        {voice.recording
+          ? 'Gravant… torna a prémer el micròfon per enviar-ho a l’assistent'
+          : 'Assistent intern · la veu s’envia directament, sense passar pel recuadre'}
       </p>
     </div>
   );
@@ -359,6 +382,11 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                     }`}
                   >
                     {m.content}
+                    {m.source === 'voice' ? (
+                      <span className="mt-2 flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wide opacity-70">
+                        <Mic size={12} /> Veu
+                      </span>
+                    ) : null}
                     {m.role === 'assistant' ? (
                       <button
                         type="button"
@@ -374,7 +402,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
               {busy ? (
                 <div className="flex justify-start">
                   <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 text-sm text-primary-gray/50">
-                    Pensant…
+                    {sendingVoice ? 'Processant la veu…' : 'Pensant…'}
                   </div>
                 </div>
               ) : null}

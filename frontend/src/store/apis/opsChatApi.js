@@ -60,6 +60,23 @@ export const opsChatApi = baseApi.injectEndpoints({
         { type: 'OpsNotes', id: `conv-${id}` },
       ],
     }),
+    sendOpsVoice: builder.mutation({
+      query: ({ id, audio, language }) => {
+        const body = new FormData();
+        body.append('audio', audio, audio.name || 'nota.webm');
+        body.append('language', language || 'ca');
+        return {
+          url: `ops/conversations/${id}/messages/`,
+          method: 'POST',
+          body,
+        };
+      },
+      invalidatesTags: (_r, _e, { id }) => [
+        { type: 'OpsConversations', id },
+        { type: 'OpsConversations', id: 'LIST' },
+        { type: 'OpsNotes', id: `conv-${id}` },
+      ],
+    }),
     getOpsNotes: builder.query({
       query: (params) => {
         const sp = new URLSearchParams();
@@ -111,6 +128,7 @@ export const {
   useUpdateOpsConversationMutation,
   useDeleteOpsConversationMutation,
   useSendOpsMessageMutation,
+  useSendOpsVoiceMutation,
   useGetOpsNotesQuery,
   useCreateOpsNoteMutation,
   useUpdateOpsNoteMutation,

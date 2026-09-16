@@ -37,6 +37,11 @@ class AdminMessage(models.Model):
     )
     role = models.CharField(max_length=16, choices=Role.choices)
     content = models.TextField()
+    source = models.CharField(
+        max_length=16,
+        default="text",
+        help_text="text | voice — origen de l'entrada de l'operari",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

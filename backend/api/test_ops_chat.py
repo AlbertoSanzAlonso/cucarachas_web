@@ -61,6 +61,32 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertIn("CRM", res.data["assistant_message"]["content"])
         mock_run.assert_called_once()
 
+    @patch("api.agents.voice.synthesize_speech", return_value="ZGF0YQ==")
+    @patch("api.agents.voice.transcribe_audio_upload", return_value="Busca el client del 612")
+    @patch("api.agents.ops_agent.run_ops_agent")
+    def test_voice_message_transcribes_then_runs_agent(self, mock_run, _tr, _tts):
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        mock_run.return_value = OpsAgentOutput(
+            message="Client localitzat.",
+            suggested_title=None,
+            important_notes=[],
+        )
+        conv = AdminConversation.objects.create(user=self.user, title="Veu")
+        audio = SimpleUploadedFile("nota.webm", b"\x00\x01fake-audio", content_type="audio/webm")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"language": "ca", "audio": audio},
+            format="multipart",
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertTrue(res.data["via_voice"])
+        self.assertEqual(res.data["user_message"]["source"], "voice")
+        self.assertEqual(res.data["user_message"]["content"], "Busca el client del 612")
+        self.assertEqual(res.data["assistant_message"]["content"], "Client localitzat.")
+        mock_run.assert_called_once()
+        self.assertEqual(mock_run.call_args.kwargs["user_message"], "Busca el client del 612")
+
     def test_cannot_read_other_user_thread(self):
         conv = AdminConversation.objects.create(user=self.other, title="Aliè")
         res = self.client.get(f"/api/ops/conversations/{conv.id}/")
