@@ -49,6 +49,34 @@ class ChatIdTests(SimpleTestCase):
             to_whatsapp_chat_id("5491123456789@s.whatsapp.net"),
             "5491123456789@c.us",
         )
+        self.assertEqual(to_whatsapp_chat_id("123456789012345@lid"), "123456789012345@lid")
+
+    def test_search_contacts_prioritizes_recent_chats(self):
+        client = OpenWaClient(_settings())
+        chats = [
+            {
+                "id": "111@c.us",
+                "name": "Altre",
+                "isGroup": False,
+                "kind": "individual",
+                "timestamp": 10,
+            },
+            {
+                "id": "5491199988877@c.us",
+                "name": "Mauro Montenegro",
+                "isGroup": False,
+                "kind": "individual",
+                "timestamp": 99,
+            },
+        ]
+        with (
+            patch.object(client, "iter_all_contacts", return_value=iter([])),
+            patch.object(client, "iter_all_chats", return_value=iter(chats)),
+        ):
+            hits = client.search_contacts("Mauro Montenegro")
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]["id"], "5491199988877@c.us")
+        self.assertTrue(hits[0].get("_from_chat"))
 
     def test_rejects_landline(self):
         with self.assertRaises(OpenWaError):

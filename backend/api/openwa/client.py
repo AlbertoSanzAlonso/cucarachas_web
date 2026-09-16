@@ -105,9 +105,15 @@ def _chat_as_contact(chat: dict[str, Any]) -> dict[str, Any] | None:
     ):
         return None
     cid = str(chat.get("id") or "").strip()
-    if not cid or "@g.us" in cid or "@newsletter" in cid:
+    if not cid or "@g.us" in cid.casefold() or "@newsletter" in cid.casefold():
         return None
-    number = re.sub(r"\D", "", cid.split("@", 1)[0])
+    local, _, host = cid.partition("@")
+    host_l = host.lower()
+    # Preferim el número E.164 quan el xat és @c.us; els @lid es envien amb l'id sencer.
+    if host_l in ("c.us", "s.whatsapp.net"):
+        number = re.sub(r"\D", "", local)
+    else:
+        number = ""
     name = str(chat.get("name") or "").strip()
     return {
         "id": cid,
@@ -115,8 +121,9 @@ def _chat_as_contact(chat: dict[str, Any]) -> dict[str, Any] | None:
         "pushName": name,
         "number": number,
         "isMyContact": False,
-        "isBlocked": False,
+        "isBlocked": bool(chat.get("archived")),
         "_from_chat": True,
+        "_chat_timestamp": chat.get("timestamp") or 0,
     }
 
 
@@ -126,18 +133,22 @@ def to_whatsapp_chat_id(phone: str) -> str:
     Accepta:
     - Mòbil ES (9 dígits 6/7, amb o sense +34 / 0034)
     - Número internacional amb prefix de país (10–15 dígits, o amb + / 00)
-    - chatId ja formatat (`…@c.us`)
+    - chatId ja formatat (`…@c.us`, `…@lid`)
     """
     raw = (phone or "").strip()
     if not raw:
         raise OpenWaError("Cal un telèfon (mòbil ES o internacional amb prefix de país).")
 
-    # Ja és un chatId OpenWA / WhatsApp.
+    # Ja és un chatId OpenWA / WhatsApp (inclou @lid de xats migrats).
     if "@" in raw:
         local, _, host = raw.partition("@")
-        digits = re.sub(r"\D", "", local)
-        if host.lower() in ("c.us", "s.whatsapp.net") and 8 <= len(digits) <= 15:
-            return f"{digits}@c.us"
+        host_l = host.lower().split("/", 1)[0]
+        if host_l in ("c.us", "s.whatsapp.net"):
+            digits = re.sub(r"\D", "", local)
+            if 8 <= len(digits) <= 15:
+                return f"{digits}@c.us"
+        if host_l == "lid" and local.strip():
+            return f"{local.strip()}@lid"
         raise OpenWaError(f"chatId WhatsApp no vàlid: {raw}")
 
     digits = re.sub(r"\D", "", raw)
@@ -169,7 +180,7 @@ def to_whatsapp_chat_id(phone: str) -> str:
 
     raise OpenWaError(
         "Telèfon no vàlid per a WhatsApp. Usa mòbil ES (9 dígits 6/7) "
-        "o internacional amb prefix de país (+… / 00…)."
+        "o internacional amb prefix de país (+… / 00…), o l'id del xat (`…@c.us` / `…@lid`)."
     )
 
 
@@ -326,7 +337,12 @@ class OpenWaClient:
             offset += len(batch)
 
     def search_contacts(self, query: str, *, limit: int = _CONTACTS_MAX) -> list[dict[str, Any]]:
-        """Cerca a l'agenda WhatsApp + xats recents (nom, pushName o número)."""
+        """Cerca primer als xats recents i després a l'agenda WhatsApp.
+
+        Important: un contacte pot ser el 2n xat de WhatsApp i NO estar a l'agenda del mòbil.
+        Abans només es mirava l'agenda (i els xats anaven al final, després de milers de
+        contactes) → timeouts i falsos «no trobat».
+        """
         q = (query or "").strip()
         if len(q) < 2:
             raise OpenWaError("Cal un text de cerca d'almenys 2 caràcters.")
@@ -335,12 +351,7 @@ class OpenWaClient:
         digits = re.sub(r"\D", "", q)
         scored: list[tuple[int, dict[str, Any]]] = []
 
-        for row in self.iter_all_contacts(max_total=max(1, min(int(limit), _CONTACTS_MAX))):
-            score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
-            if score:
-                scored.append((score, row))
-
-        # Gent amb qui s'ha xatejat però no està a l'agenda del mòbil.
+        # 1) Xats recents PRIMER (ordenats per activitat a OpenWA).
         try:
             for chat in self.iter_all_chats():
                 row = _chat_as_contact(chat)
@@ -348,11 +359,27 @@ class OpenWaClient:
                     continue
                 score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
                 if score:
+                    # +20: preferim el xat obert (el que veu l'operari a WhatsApp).
+                    scored.append((score + 20, row))
+        except Exception as exc:
+            logger.warning("OpenWA chats search failed: %s", exc)
+
+        # 2) Agenda del mòbil enllaçat.
+        try:
+            for row in self.iter_all_contacts(max_total=max(1, min(int(limit), _CONTACTS_MAX))):
+                score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
+                if score:
                     scored.append((score, row))
         except Exception as exc:
-            logger.warning("OpenWA chats search skipped: %s", exc)
+            logger.warning("OpenWA contacts search failed: %s", exc)
 
-        scored.sort(key=lambda item: (-item[0], str(item[1].get("name") or "")))
+        scored.sort(
+            key=lambda item: (
+                -item[0],
+                -int(item[1].get("_chat_timestamp") or 0),
+                str(item[1].get("name") or ""),
+            )
+        )
         return _dedupe_contacts([row for _, row in scored])
 
     def send_text(self, phone: str, text: str) -> OpenWaSendResult:
@@ -414,14 +441,19 @@ def format_contacts(contacts: list[dict[str, Any]], *, max_rows: int = 20) -> st
         number = (row.get("number") or "").strip() or "—"
         cid = (row.get("id") or "").strip() or "—"
         if row.get("_from_chat"):
-            origen = "xat"
+            origen = "xat-recent"
         else:
             origen = "agenda" if row.get("isMyContact") else "wa"
         blocked = "bloquejat" if row.get("isBlocked") else "ok"
+        # Per enviar: preferir id= (funciona amb @c.us i @lid).
         lines.append(f"{name} | tel={number} | id={cid} | origen={origen} | {blocked}")
     extra = len(contacts) - max_rows
     if extra > 0:
         lines.append(f"… i {extra} més (refina la cerca).")
+    if any(r.get("_from_chat") for r in contacts[:max_rows]):
+        lines.append(
+            "Per enviar, usa el camp id=… (@c.us o @lid) a pending_action.telefono."
+        )
     return "\n".join(lines)
 
 
