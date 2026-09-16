@@ -149,8 +149,8 @@ ORCHESTRATOR_MESSAGES = {
             "📋 **Desglossament**: {breakdown}\n"
             "🛡️ **Garantia**: {months} mesos de cobertura total.\n\n"
             "{commercial_copy}\n\n"
-            "Vols agendar la inspecció gratuïta? Si vols cita, digue'm el teu **telèfon** "
-            "i et mostro els horaris."
+            "Si vols concertar la visita, truca al **933 309 169** "
+            "o deixa'ns el teu telèfon i et truquem nosaltres."
         ),
         "pricing_closed_template": (
             "Basant-nos en el diagnòstic tècnic, aquí tens el pressupost:\n\n"
@@ -159,14 +159,15 @@ ORCHESTRATOR_MESSAGES = {
             "📋 **Desglossament**: {breakdown}\n"
             "🛡️ **Garantia**: {months} mesos de cobertura total.\n\n"
             "{commercial_copy}\n\n"
-            "Pots contractar o agendar la primera visita. Si vols cita, digue'm el teu **telèfon**."
+            "Per contractar o concertar la primera visita, truca al **933 309 169** "
+            "o deixa'ns el teu telèfon."
         ),
         "pricing_inspection_only": (
             "Per garantir la màxima precisió, en aquest cas **no donem un preu automàtic**.\n\n"
             "{confidence_badge}\n"
             "{commercial_copy}\n\n"
             "Recomanem una **inspecció gratuïta** per valorar el cas amb precisió. "
-            "Si vols agendar, digue'm el teu **telèfon** i et mostro els horaris."
+            "Truca al **933 309 169** o deixa'ns el teu telèfon i et truquem."
         ),
         "confidence_green": "Amb les dades que m'has donat, el pressupost queda **tancat** amb força seguretat.",
         "confidence_yellow": "És una estimació **sòlida**; després de la visita tècnica pot haver-hi algun ajust menor.",
@@ -179,10 +180,19 @@ ORCHESTRATOR_MESSAGES = {
             "Perfecte, horari seleccionat. Indica primer el teu **nom** "
             "i després el **telèfon** al formulari per confirmar la cita."
         ),
+        "scheduler_unavailable": (
+            "De moment no podem confirmar cites pel xat. "
+            "Truca al **933 309 169** i et concertem la visita, "
+            "o deixa'ns el teu telèfon i et truquem nosaltres."
+        ),
         "error_scheduler": "Ho sento, tinc problemes amb l'agenda.",
         "error_diagnosis": "Ho sento, necessito que un tècnic humà revisi això.",
         "fallback": "Gràcies. Un agent humà es posarà en contacte amb tu.",
-        "intake_complete": "Perfecte, ja tinc la informació necessària. Vols que et prepari el pressupost o prefereixes agendar una inspecció gratuïta?",
+        "intake_complete": (
+            "Perfecte, ja tinc la informació necessària. "
+            "Vols que et prepari el pressupost, o prefereixes que et truquem "
+            "al **933 309 169** per concertar la visita?"
+        ),
         "intake_retry": "No he pogut interpretar la resposta. Si us plau, respon de forma breu.",
         "intake_fallback": (
             "Entenc que tens un problema. Quin tipus de plaga has vist?"
@@ -211,8 +221,8 @@ ORCHESTRATOR_MESSAGES = {
             "sobre com reconèixer paneroles i què observar a la cuina."
         ),
         "home_knowledge_cta": (
-            "Si vols, després et puc ajudar amb un pressupost o una inspecció gratuïta "
-            "quan m'expliquis el teu cas."
+            "Si vols, després et puc ajudar amb un pressupost "
+            "o et poso amb el **933 309 169** per concertar la visita."
         ),
         "home_ask_location": (
             "Entesos, paneroles a l'habitatge. On les has vist — cuina, bany o una altra zona?"
@@ -241,12 +251,12 @@ ORCHESTRATOR_MESSAGES = {
         ),
         "home_qty_ack": (
             "D'acord. Amb aquests avistaments convé actuar aviat, abans que es reprodueixin. "
-            "Et puc agendar una inspecció gratuïta o preparar un pressupost orientatiu. "
-            "Si vols cita, digue'm el teu telèfon."
+            "Et puc preparar un pressupost orientatiu, o pots trucar al **933 309 169** "
+            "per concertar la visita."
         ),
         "home_cta_offer": (
-            "Si ho prefereixes, pots **agendar una inspecció gratuïta**, demanar **pressupost** o trucar al **933 309 169**. "
-            "Per agendar, digue'm el teu **telèfon**."
+            "Si ho prefereixes, pots demanar **pressupost** o trucar al **933 309 169** "
+            "per concertar la visita."
         ),
         "timeout_error": "S'ha esgotat el temps d'espera. Si us plau, torna-ho a intentar.",
         "general_error": "CECSA Assistant Error: {error}"
@@ -259,8 +269,8 @@ ORCHESTRATOR_MESSAGES = {
             "📋 **Desglose**: {breakdown}\n"
             "🛡️ **Garantía**: {months} meses de cobertura total.\n\n"
             "{commercial_copy}\n\n"
-            "¿Quieres agendar la inspección gratuita? Si quieres cita, dime tu **teléfono** "
-            "y te muestro los horarios."
+            "¿Quieres concertar la visita? Llama al **933 309 169** "
+            "o déjanos tu teléfono y te llamamos nosotros."
         ),
         "pricing_closed_template": (
             "Basándonos en el diagnóstico técnico, aquí tienes el presupuesto:\n\n"
@@ -269,14 +279,15 @@ ORCHESTRATOR_MESSAGES = {
             "📋 **Desglose**: {breakdown}\n"
             "🛡️ **Garantía**: {months} meses de cobertura total.\n\n"
             "{commercial_copy}\n\n"
-            "Puedes contratar o agendar la primera visita. Si quieres cita, dime tu **teléfono**."
+            "Para contratar o concertar la primera visita, llama al **933 309 169** "
+            "o déjanos tu teléfono."
         ),
         "pricing_inspection_only": (
             "Para garantizar la máxima precisión, en este caso **no damos un precio automático**.\n\n"
             "{confidence_badge}\n"
             "{commercial_copy}\n\n"
             "Recomendamos una **inspección gratuita** para valorar el caso con precisión. "
-            "Si quieres agendar, dime tu **teléfono** y te muestro los horarios."
+            "Llama al **933 309 169** o déjanos tu teléfono y te llamamos."
         ),
         "confidence_green": "Con los datos que me has dado, el presupuesto queda **cerrado** con bastante seguridad.",
         "confidence_yellow": "Es una estimación **sólida**; tras la visita técnica puede haber algún ajuste menor.",
@@ -289,10 +300,19 @@ ORCHESTRATOR_MESSAGES = {
             "Perfecto, horario seleccionado. Indica primero tu **nombre** "
             "y después tu **teléfono** en el formulario para confirmar la cita."
         ),
+        "scheduler_unavailable": (
+            "De momento no podemos confirmar citas por el chat. "
+            "Llama al **933 309 169** y te concertamos la visita, "
+            "o déjanos tu teléfono y te llamamos nosotros."
+        ),
         "error_scheduler": "Lo siento, tengo problemas con la agenda.",
         "error_diagnosis": "Lo siento, necesito que un técnico humano revise esto.",
         "fallback": "Gracias. Un agente humano se pondrá en contacto contigo.",
-        "intake_complete": "Perfecto, ya tengo la información necesaria. ¿Quieres que te prepare el presupuesto o prefieres agendar una inspección gratuita?",
+        "intake_complete": (
+            "Perfecto, ya tengo la información necesaria. "
+            "¿Quieres que te prepare el presupuesto, o prefieres que te llamemos "
+            "al **933 309 169** para concertar la visita?"
+        ),
         "intake_retry": "No he podido interpretar la respuesta. Por favor, responde de forma breve.",
         "intake_fallback": (
             "Entiendo que tienes un problema. ¿Qué tipo de plaga has visto?"
@@ -321,8 +341,8 @@ ORCHESTRATOR_MESSAGES = {
             "sobre cómo reconocer cucarachas y qué observar en la cocina."
         ),
         "home_knowledge_cta": (
-            "Si quieres, después te ayudo con un presupuesto o una inspección gratuita "
-            "cuando me cuentes tu caso."
+            "Si quieres, después te ayudo con un presupuesto "
+            "o te pongo con el **933 309 169** para concertar la visita."
         ),
         "home_ask_location": (
             "Entendido, cucarachas en la vivienda. ¿Dónde las has visto — cocina, baño u otra zona?"
@@ -351,14 +371,44 @@ ORCHESTRATOR_MESSAGES = {
         ),
         "home_qty_ack": (
             "De acuerdo. Con esos avistamientos conviene actuar pronto, antes de que se reproduzcan. "
-            "Puedo agendarte una inspección gratuita o preparar un presupuesto orientativo. "
-            "Si quieres cita, dime tu teléfono."
+            "Puedo prepararte un presupuesto orientativo, o puedes llamar al **933 309 169** "
+            "para concertar la visita."
         ),
         "home_cta_offer": (
-            "Si lo prefieres, puedes **agendar una inspección gratuita**, pedir **presupuesto** o llamar al **933 309 169**. "
-            "Para agendar, dime tu **teléfono**."
+            "Si lo prefieres, puedes pedir **presupuesto** o llamar al **933 309 169** "
+            "para concertar la visita."
         ),
         "timeout_error": "Se ha agotado el tiempo de espera. Por favor, inténtalo de nuevo.",
         "general_error": "CECSA Assistant Error: {error}"
     }
 }
+
+
+def client_scheduling_unavailable_reply(lang: str) -> dict:
+    """Respuesta de cita cuando la agendación del chat está desactivada."""
+    key = lang if lang in ORCHESTRATOR_MESSAGES else "ca"
+    return {
+        "message": ORCHESTRATOR_MESSAGES[key]["scheduler_unavailable"],
+        "slots": [],
+        "booking_confirmed": False,
+        "booking_uid": None,
+    }
+
+
+def scheduling_disabled_prompt_suffix(lang: str) -> str:
+    """Instrucción extra para LLMs mientras la agenda del chat esté apagada."""
+    from .config import ENABLE_CLIENT_SCHEDULING
+
+    if ENABLE_CLIENT_SCHEDULING:
+        return ""
+    if lang == "es":
+        return (
+            "\nCITAS POR CHAT: DESACTIVADAS. NO ofrezcas horarios ni confirmes visitas por el chat. "
+            "Si piden cita/visita/inspección, indica que llamen al 933 309 169 "
+            "o que dejen el teléfono para que les llamemos. NO pongas next_agent='scheduler'."
+        )
+    return (
+        "\nCITES PEL XAT: DESACTIVADES. NO ofereixis horaris ni confirmis visites pel xat. "
+        "Si demanen cita/visita/inspecció, indica que truquin al 933 309 169 "
+        "o que deixin el telèfon per a que els truquem. NO posis next_agent='scheduler'."
+    )

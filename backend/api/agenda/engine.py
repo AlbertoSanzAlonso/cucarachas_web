@@ -617,4 +617,20 @@ def create_booking_from_slot(
             f"a {addr}.{email_note_ca} "
             f"Et trucarem al {attendee_phone.strip()} si cal algun detall."
         )
+
+    try:
+        from api.igeo.sync import publish_lead_from_booking
+
+        publish_lead_from_booking(
+            name=attendee_name.strip(),
+            phone=attendee_phone.strip(),
+            email=(attendee_email or "").strip(),
+            address=addr,
+            notes=combined_notes,
+            booking_uid=str(apt.id),
+        )
+    except Exception as exc:
+        # La cita local ya está confirmada; iGEO no debe romper el flujo
+        print(f"WARNING: iGEO PDI sync after booking failed: {exc}")
+
     return True, msg, apt.id

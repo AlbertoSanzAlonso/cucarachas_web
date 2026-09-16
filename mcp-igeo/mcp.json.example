@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "igeo-pdi": {
+      "command": "python",
+      "args": ["mcp-igeo/server.py"],
+      "env": {
+        "IGEO_PDI_DRY_RUN": "true",
+        "IGEO_DEFAULT_DELEGACION": "",
+        "IGEO_DEFAULT_GESTOR": ""
+      }
+    }
+  }
+}

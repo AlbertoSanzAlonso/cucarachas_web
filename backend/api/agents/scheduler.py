@@ -7,8 +7,9 @@ from django.core.cache import cache
 from api.agenda.config import AGENDA_DAYS_AHEAD
 from api.agenda.engine import create_booking_from_slot, fetch_available_slots
 from .models import AgentState, SchedulerOutput
-from .config import AGENT_MODEL
-from .prompts import SYSTEM_PROMPTS
+from .config import AGENT_MODEL, ENABLE_CLIENT_SCHEDULING
+from .prompts import SYSTEM_PROMPTS, client_scheduling_unavailable_reply
+from .igeo_tools import register_igeo_tools
 
 # Agente 4: Agendador
 scheduler_agent = Agent(
@@ -17,6 +18,8 @@ scheduler_agent = Agent(
     output_type=SchedulerOutput,
     retries=3,
 )
+
+register_igeo_tools(scheduler_agent)
 
 
 @scheduler_agent.system_prompt
@@ -28,6 +31,9 @@ def get_scheduler_prompt(ctx: RunContext[AgentState]) -> str:
 @scheduler_agent.tool
 def get_available_slots(ctx: RunContext[AgentState], days_ahead: int = AGENDA_DAYS_AHEAD) -> str | list:
     """Consulta els horaris lliures de l'agenda pròpia pels propers dies."""
+    if not ENABLE_CLIENT_SCHEDULING:
+        lang = ctx.deps.language if ctx.deps else "ca"
+        return client_scheduling_unavailable_reply(lang)["message"]
     cache_key = f"agenda_slots_{days_ahead}"
     cached_slots = cache.get(cache_key)
     if cached_slots:
@@ -90,6 +96,8 @@ def create_booking(
 ) -> str:
     """Crea una reserva a l'agenda pròpia per a l'horari seleccionat."""
     lang = ctx.deps.language if ctx.deps else "ca"
+    if not ENABLE_CLIENT_SCHEDULING:
+        return client_scheduling_unavailable_reply(lang)["message"]
     ok, msg, _uid = create_booking_from_slot(
         slot_time=slot_time,
         attendee_name=attendee_name,

@@ -524,8 +524,8 @@ def build_home_verdict(agent: AgentState, lang: str, message: str = "") -> tuple
         if facts["copy"]:
             parts.append(facts["copy"])
         parts.append(
-            "Puedo agendarte una **inspección gratuita** o preparar un **presupuesto** orientativo. "
-            "Si quieres cita, dime tu **teléfono**."
+            "Puedo prepararte un **presupuesto** orientativo, o puedes llamar al **933 309 169** "
+            "para concertar la visita."
         )
     else:
         parts = [
@@ -538,8 +538,8 @@ def build_home_verdict(agent: AgentState, lang: str, message: str = "") -> tuple
         if facts["copy"]:
             parts.append(facts["copy"])
         parts.append(
-            "Et puc agendar una **inspecció gratuïta** o preparar un **pressupost** orientatiu. "
-            "Si vols cita, digue'm el teu **telèfon**."
+            "Et puc preparar un **pressupost** orientatiu, o pots trucar al **933 309 169** "
+            "per concertar la visita."
         )
     return agent, " ".join(parts)
 
@@ -636,7 +636,7 @@ def home_llm_context(agent: AgentState, lang: str, message: str) -> str:
     if mem["case_ready"] and notes_txt:
         extra.append(
             "Hay descriptores en notas: intégralos en una orientación breve; "
-            "cierra con inspección gratuita o presupuesto."
+            "cierra con presupuesto o llamar al 933 309 169; no ofrezcas agendar por chat."
         )
     if extra:
         return base + "\n" + "\n".join(extra)

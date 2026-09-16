@@ -7,6 +7,7 @@ import dataclasses
 from . import bootstrap  # noqa: F401
 from .config import AGENT_MODEL
 from .models import AgentState
+from .igeo_tools import register_igeo_tools
 
 # Modelo para la síntesis final del caso
 class CaseSynthesis(BaseModel):
@@ -29,6 +30,8 @@ crm_agent = Agent(
         "Sempre respon en l'idioma que et demani el client (Català per defecte)."
     ),
 )
+
+register_igeo_tools(crm_agent)
 
 @crm_agent.tool
 def get_official_treatments(ctx: RunContext[AgentState]) -> str:

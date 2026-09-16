@@ -246,7 +246,8 @@ def build_shared_case_context(
         lines.append("TAREA diagnóstico: orienta con hechos de MEMORIA; no recapitules.")
         if mem["case_ready"]:
             lines.append(
-                "Caso listo (plaga+zona+cantidad): da orientación breve y ofrece inspección gratuita o presupuesto."
+                "Caso listo (plaga+zona+cantidad): da orientación breve y ofrece presupuesto "
+                "o llamar al 933 309 169. NO ofrezcas horarios ni confirmar cita por chat."
             )
         else:
             lines.append("Caso incompleto: pide SOLO el siguiente dato de la lista; sin veredicto largo.")
@@ -263,7 +264,8 @@ def build_shared_case_context(
 
     elif role == "scheduler":
         lines.append(
-            "TAREA agenda: inspección gratuita. No repreguntes el diagnóstico; usa MEMORIA en el mensaje de confirmación."
+            "TAREA agenda DESACTIVADA: no confirmes citas ni listes horarios. "
+            "Indica que llamen al 933 309 169 o dejen teléfono para que les llamemos."
         )
 
     elif role == "crm":

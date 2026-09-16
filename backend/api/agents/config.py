@@ -10,6 +10,14 @@ HISTORY_MAX_TURNS = int(os.getenv('AGENT_HISTORY_MAX_TURNS', '6'))
 # Síntesis CRM post-diagnóstico (LLM extra); desactivar con AGENT_ENABLE_CRM=false
 ENABLE_CRM_SYNTHESIS = os.getenv('AGENT_ENABLE_CRM', 'true').lower() in ('1', 'true', 'yes')
 
+# Reserva de citas en el chat cliente. Off por defecto: no hay agenda iGEO.
+# Reactivar: AGENT_ENABLE_CLIENT_SCHEDULING=true (+ VITE_ENABLE_CLIENT_SCHEDULING=true)
+ENABLE_CLIENT_SCHEDULING = os.getenv('AGENT_ENABLE_CLIENT_SCHEDULING', 'false').lower() in (
+    '1',
+    'true',
+    'yes',
+)
+
 # Timeouts por nodo (segundos)
 AGENT_TIMEOUTS = {
     'receptionist': float(os.getenv('AGENT_TIMEOUT_RECEPTIONIST', '20')),

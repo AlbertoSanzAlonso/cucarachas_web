@@ -12,7 +12,8 @@ import {
   Users,
   Wrench,
   ContactRound,
-  Newspaper
+  Newspaper,
+  Bot
 } from 'lucide-react';
 
 const Sidebar = ({ 
@@ -23,6 +24,7 @@ const Sidebar = ({
   handleLogout 
 }) => {
   const menuItems = [
+    { id: 'ops', icon: <Bot size={20} />, label: 'Assistent' },
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
     { id: 'calendar', icon: <Calendar size={20} />, label: 'Agenda' },
     { id: 'clients', icon: <ContactRound size={20} />, label: 'Clients' },

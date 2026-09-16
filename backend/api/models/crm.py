@@ -32,6 +32,13 @@ class Cliente(models.Model):
         default=False,
         help_text="Si True, el estado automático no sobrescribe crm_status",
     )
+    igeo_codigo = models.CharField(
+        max_length=64,
+        blank=True,
+        default="",
+        db_index=True,
+        help_text="Código entidad iGEO (espejo PDI) cuando esté sincronizado",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:
@@ -49,3 +56,30 @@ class Ubicacion(models.Model):
 
     def __str__(self):
         return f"{self.direccion} ({self.cliente.nombre})"
+
+
+class IgeoSyncLog(models.Model):
+    """Auditoría de publicaciones / resultados PDI iGEO."""
+
+    entity_type = models.CharField(max_length=64, db_index=True)
+    comando = models.CharField(max_length=16, blank=True, default="")
+    remote_operation_id = models.CharField(max_length=128, blank=True, default="", db_index=True)
+    ok = models.BooleanField(default=False)
+    dry_run = models.BooleanField(default=True)
+    message = models.CharField(max_length=2000, blank=True, default="")
+    payload = models.JSONField(default=dict, blank=True)
+    telefono_norm = models.CharField(max_length=15, blank=True, default="")
+    cliente = models.ForeignKey(
+        Cliente,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="igeo_sync_logs",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"{self.entity_type} {self.comando} ok={self.ok}"

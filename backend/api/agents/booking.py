@@ -5,8 +5,9 @@ import re
 
 from api.agenda.engine import create_booking_from_slot
 
+from .config import ENABLE_CLIENT_SCHEDULING
 from .models import AgentState
-from .prompts import ORCHESTRATOR_MESSAGES
+from .prompts import ORCHESTRATOR_MESSAGES, client_scheduling_unavailable_reply
 
 _EMAIL_RE = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
 
@@ -30,6 +31,9 @@ def confirm_booking_from_chat(
     attendee_email = (email or "").strip()
     addr = (address or "").strip() or (state.city or "").strip() or "Barcelona"
     lang = language if language in ("ca", "es") else "ca"
+
+    if not ENABLE_CLIENT_SCHEDULING:
+        return client_scheduling_unavailable_reply(lang)
 
     if not name or not phone or not _is_valid_email(attendee_email):
         return {
@@ -72,6 +76,12 @@ def confirm_booking_from_chat(
         language=language,
         origin="chat",
     )
+
+    if ok and uid:
+        state.chat_diagnostic = {
+            **(state.chat_diagnostic or {}),
+            "igeo_booking_uid": str(uid),
+        }
 
     return {
         "message": msg,

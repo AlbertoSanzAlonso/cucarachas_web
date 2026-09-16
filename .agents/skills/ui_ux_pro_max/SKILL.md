@@ -61,6 +61,12 @@ Flujo **3 pasos** en `BookingContactForm.jsx`:
 - Enlace externo `app.cal.eu/bookings/{uid}`
 - Estado vacío vs error de API distinguibles
 
+### Assistent oficina (`AdminOpsChat.jsx`)
+
+- **No** reutilizar `useAgentChat` ni `POST /api/chat/` (eso es el cliente).
+- Historial persistente por usuario admin; notas importantes en panel lateral.
+- Micrófono: `useSpeechToText` (Chrome/Edge).
+
 ## FloatingCTA vs Modal
 
 | | Modal | Home |

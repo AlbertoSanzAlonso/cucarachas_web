@@ -5,6 +5,7 @@ from .views import (
     TecnicoViewSet, UbicacionViewSet, PresupuestoViewSet,
     CitaViewSet, ReporteServicioViewSet, BlogArticleViewSet,
     chat_with_agents,
+    AdminConversationViewSet, AdminMemoryNoteViewSet,
     auth_login, auth_logout, auth_me,
     debug_system, geo_search, geo_reverse, ficha_wizard_questions,
     company_public, faq_list,
@@ -38,6 +39,8 @@ router.register(r'citas', CitaViewSet)
 router.register(r'reportes', ReporteServicioViewSet)
 router.register(r'knowledge', TechnicalKnowledgeViewSet)
 router.register(r'blog', BlogArticleViewSet, basename='blog')
+router.register(r'ops/conversations', AdminConversationViewSet, basename='ops-conversations')
+router.register(r'ops/notes', AdminMemoryNoteViewSet, basename='ops-notes')
 
 urlpatterns = [
     path('presupuestos/list/', list_presupuestos, name='presupuestos-list'),

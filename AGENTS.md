@@ -48,6 +48,10 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `DJANGO_SECRET_KEY` = clave secreta Django
 - `OPENAI_API_KEY` = clave de OpenAI (principal para los agentes)
 - `GOOGLE_API_KEY` = clave de Google (usada para Geocoding y fallback de agentes)
+- `IGEO_PDI_ENABLED` = `true` para sync leads → iGEO tras reserva (opcional)
+- `IGEO_PDI_HOST` / `IGEO_PDI_PORT` / `IGEO_PDI_SSL` / `IGEO_PDI_USER` / `IGEO_PDI_PASSWORD` / `IGEO_PDI_VHOST` = credenciales RabbitMQ PDI
+- `IGEO_PDI_DRY_RUN` = `true` en pre (valida sin publicar)
+- `IGEO_DEFAULT_DELEGACION` / `IGEO_DEFAULT_GESTOR` = códigos maestros CECSA en iGEO (*! para leads)
 
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:
@@ -76,7 +80,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Enrutado sin LLM**: `graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
 - **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
 - **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
-- **Reserva directa**: `booking.py` + `cal_booking.py` — sin LLM cuando el frontend envía `booking` en el body.
+- **Reserva directa**: `booking.py` + agenda propia — sin LLM cuando el frontend envía `booking` en el body. Tras éxito, sync opcional `CLIENTE_POTENCIAL` → iGEO PDI (`api/igeo/`).
 - **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots agenda propia sin LLM) si el mensaje pide cita explícitamente.
 - **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_TIMEOUT_*`.
 - Retorna **siempre** un dict con `message`, `slots`, `booking_confirmed`, `booking_uid`.
@@ -140,7 +144,8 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
-- **Orquestador**: `AdminDashboard.jsx` — pestanyes `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
+- **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth ` /api/ops/conversations/` i `/api/ops/notes/`. Micròfon (Web Speech API).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.
@@ -157,7 +162,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 - **Logout**: `POST /api/auth/logout/` amb `Authorization: Token <key>`.
 - **Me**: `GET /api/auth/me/` amb `Authorization: Token <key>`.
 - El frontend guarda el token a `localStorage` amb la clau `cecsa_token`.
-- **Endpoints protegits (admin)**: `/api/clientes/`, `/api/agenda/*` (excepto slots públicos), `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
+- **Endpoints protegits (admin)**: `/api/clientes/`, `/api/agenda/*` (excepto slots públicos), `/api/ops/*`, `/api/auth/logout/`, `/api/auth/me/`. Sense token → `401`.
 - **Endpoints públics**: `/api/chat/`, `/api/agenda/slots/`, `/api/auth/login/`, `/api/species/`.
 - **InsForge NO intervé en cap pas del flux d'autenticació.**
 - **Formulari de contacte**: `ContactForm.jsx` envia `{ nombre, telefono, email }` a `POST /api/clientes/` (dedup per `telefono_norm`) — **pendent** endpoint públic dedicat sense auth admin (`/api/contact/`).
@@ -178,6 +183,7 @@ En **`.agents/skills/<carpeta>/SKILL.md`** (versionadas en git). Leer la skill a
 | **Copywriter Local** | `copywriter_local/` |
 | **UI/UX Pro Max** | `ui_ux_pro_max/` |
 | **Tailwind Design System** | `tailwind_design_system/` |
+| **iGEO PDI** | `igeo_pdi/` |
 
 ## 🚀 SEO & Optimización Permanente (MANDATORIO)
 

@@ -16,9 +16,10 @@ from .agenda import (
 from .catalog import FichaServicio, Species, Tecnico, Tratamiento
 from .company import CompanyProfile
 from .content import BlogArticle
-from .crm import Cliente, Ubicacion
+from .crm import Cliente, IgeoSyncLog, Ubicacion
 from .faq import FaqItem
 from .operacion import Cita, ReporteServicio
+from .ops_chat import AdminConversation, AdminMemoryNote, AdminMessage
 from .presupuesto import Presupuesto, PresupuestoDetalle, PresupuestoReferencia
 
 __all__ = [
@@ -30,6 +31,7 @@ __all__ = [
     "BlogArticle",
     "FaqItem",
     "Cliente",
+    "IgeoSyncLog",
     "Ubicacion",
     "Presupuesto",
     "PresupuestoDetalle",
@@ -42,4 +44,7 @@ __all__ = [
     "AgendaStaffAvailability",
     "AgendaTimeBlock",
     "AgendaAppointment",
+    "AdminConversation",
+    "AdminMessage",
+    "AdminMemoryNote",
 ]

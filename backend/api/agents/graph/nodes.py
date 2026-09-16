@@ -4,10 +4,10 @@ from typing import Any
 from asgiref.sync import sync_to_async
 from pydantic_ai.messages import ModelMessage
 
-from ..config import AGENT_TIMEOUTS, HISTORY_MAX_TURNS
+from ..config import AGENT_TIMEOUTS, ENABLE_CLIENT_SCHEDULING, HISTORY_MAX_TURNS
 from ..chat_intake import get_missing_mandatory_fields, get_intake_question, parse_field_value, build_unified_diagnostic
 from ..models import AgentState, DiagnosisOutput, Intent
-from ..prompts import ORCHESTRATOR_MESSAGES
+from ..prompts import ORCHESTRATOR_MESSAGES, client_scheduling_unavailable_reply
 from .routing import PRICING_KEYWORDS
 from ..serialization import dump_message_history, messages_adapter
 from ..receptionist import receptionist_agent
@@ -314,6 +314,12 @@ async def scheduler_node(state: CECSAGraphState) -> dict:
     if lang not in ("ca", "es"):
         lang = "ca"
     agent.language = lang
+
+    if not ENABLE_CLIENT_SCHEDULING:
+        return {
+            "agent_state": agent.model_dump(mode="json"),
+            "result": client_scheduling_unavailable_reply(lang),
+        }
 
     if _is_slot_booking_step(state["message"]):
         return {

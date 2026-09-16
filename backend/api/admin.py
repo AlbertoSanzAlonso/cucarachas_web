@@ -1,6 +1,9 @@
 from django.contrib import admin
 
 from .models import (
+    AdminConversation,
+    AdminMemoryNote,
+    AdminMessage,
     BlogArticle,
     CompanyProfile,
     FaqItem,
@@ -153,3 +156,23 @@ class FaqItemAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("question_ca",)}
     readonly_fields = ("created_at", "updated_at")
     ordering = ("sort_order", "id")
+
+
+@admin.register(AdminConversation)
+class AdminConversationAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "user", "archived", "updated_at")
+    list_filter = ("archived",)
+    search_fields = ("title", "user__email")
+
+
+@admin.register(AdminMessage)
+class AdminMessageAdmin(admin.ModelAdmin):
+    list_display = ("id", "conversation", "role", "created_at")
+    list_filter = ("role",)
+
+
+@admin.register(AdminMemoryNote)
+class AdminMemoryNoteAdmin(admin.ModelAdmin):
+    list_display = ("id", "title", "user", "pinned", "updated_at")
+    list_filter = ("pinned",)
+    search_fields = ("title", "content")

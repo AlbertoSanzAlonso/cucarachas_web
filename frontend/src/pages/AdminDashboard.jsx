@@ -18,6 +18,7 @@ import ServicesManager from '@/components/Admin/ServicesManager';
 import BlogManager from '@/components/Admin/BlogManager';
 import LeadsManager from '@/components/Admin/LeadsManager';
 import PresupuestosManager from '@/components/Admin/PresupuestosManager';
+import AdminOpsChat from '@/components/Admin/AdminOpsChat';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -75,7 +76,7 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
+    <div className="flex h-screen min-h-0 bg-[#f8fafc] overflow-hidden relative">
       <Helmet>
         <title>Admin Dashboard | CECSA</title>
         <meta name="author" content="Alberto Sanz (albertosanz.dev)" />
@@ -91,7 +92,15 @@ const AdminDashboard = () => {
       />
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 lg:p-12 pb-24" data-lenis-prevent>
+      <main
+        className={
+          activeTab === 'ops'
+            ? 'flex min-h-0 flex-1 flex-col overflow-hidden'
+            : 'flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-8 lg:p-12 pb-24'
+        }
+        data-lenis-prevent
+      >
+        {activeTab !== 'ops' ? (
         <TopBar 
           user={user}
           leads={leads}
@@ -104,8 +113,11 @@ const AdminDashboard = () => {
           onViewAllLeads={handleViewAllLeads}
           handleLogout={handleLogout}
         />
+        ) : null}
 
-        {activeTab === 'overview' ? (
+        {activeTab === 'ops' ? (
+          <AdminOpsChat user={user} onOpenSidebar={() => setSidebarOpen(true)} />
+        ) : activeTab === 'overview' ? (
           <DashboardOverview
             leads={leads}
             isLoading={isLoading}
