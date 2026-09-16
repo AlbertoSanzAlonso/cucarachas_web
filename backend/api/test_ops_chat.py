@@ -160,6 +160,19 @@ class SearchCrmToolTests(APITestCase):
         self.assertIn("Anna Prova", result)
 
 
+class OpenWaCircuitBreakerTests(APITestCase):
+    def test_blocks_after_first_failure(self):
+        from api.agents.ops.agent import OpsAgentDeps, _mark_openwa_failed, _openwa_guard
+
+        deps = OpsAgentDeps(user_id=1, conversation_id=1)
+        self.assertIsNone(_openwa_guard(deps))
+        _mark_openwa_failed(deps, "No es pot connectar a OpenWA")
+        blocked = _openwa_guard(deps)
+        self.assertIsNotNone(blocked)
+        self.assertIn("NO reintentis", blocked)
+        self.assertIn("No es pot connectar", blocked)
+
+
 class ResolveOpsModelTests(APITestCase):
     def test_allowlist_and_fallback(self):
         from api.agents.config import resolve_ops_model

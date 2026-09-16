@@ -30,19 +30,56 @@ class OpenWaError(ValueError):
 
 
 def to_whatsapp_chat_id(phone: str) -> str:
-    """Móvil ES → chatId OpenWA (`34600…@c.us`)."""
-    digits = re.sub(r"\D", "", phone or "")
+    """Telèfon ES o internacional (E.164) → chatId OpenWA (`34600…@c.us`).
+
+    Accepta:
+    - Mòbil ES (9 dígits 6/7, amb o sense +34 / 0034)
+    - Número internacional amb prefix de país (10–15 dígits, o amb + / 00)
+    - chatId ja formatat (`…@c.us`)
+    """
+    raw = (phone or "").strip()
+    if not raw:
+        raise OpenWaError("Cal un telèfon (mòbil ES o internacional amb prefix de país).")
+
+    # Ja és un chatId OpenWA / WhatsApp.
+    if "@" in raw:
+        local, _, host = raw.partition("@")
+        digits = re.sub(r"\D", "", local)
+        if host.lower() in ("c.us", "s.whatsapp.net") and 8 <= len(digits) <= 15:
+            return f"{digits}@c.us"
+        raise OpenWaError(f"chatId WhatsApp no vàlid: {raw}")
+
+    digits = re.sub(r"\D", "", raw)
     if digits.startswith("00"):
         digits = digits[2:]
-    if digits.startswith("34") and len(digits) >= 11:
-        national = digits[2:11]
-        rest = digits[:11]
-    else:
-        national = digits[-9:] if len(digits) >= 9 else digits
-        rest = f"34{national}" if national else ""
-    if len(national) != 9 or national[0] not in "67":
-        raise OpenWaError("Cal un mòbil espanyol (9 dígits, comença per 6 o 7).")
-    return f"{rest}@c.us"
+    if not digits:
+        raise OpenWaError("Cal un telèfon (mòbil ES o internacional amb prefix de país).")
+
+    # Mòbil espanyol nacional (9 dígits).
+    if len(digits) == 9:
+        if digits[0] in "67":
+            return f"34{digits}@c.us"
+        raise OpenWaError(
+            "Aquest número de 9 dígits no és un mòbil ES (ha de començar per 6 o 7). "
+            "Si és internacional, indica el prefix de país (ex. +54…, +52…)."
+        )
+
+    # Mòbil espanyol amb prefix 34.
+    if digits.startswith("34") and len(digits) == 11 and digits[2] in "67":
+        return f"{digits}@c.us"
+
+    # Internacional E.164 (amb prefix de país). No afegim 34 automàticament.
+    if 10 <= len(digits) <= 15:
+        if digits.startswith("34") and len(digits) == 11 and digits[2] not in "67":
+            raise OpenWaError(
+                "El número +34 no sembla un mòbil (ha de començar per 6 o 7 després del 34)."
+            )
+        return f"{digits}@c.us"
+
+    raise OpenWaError(
+        "Telèfon no vàlid per a WhatsApp. Usa mòbil ES (9 dígits 6/7) "
+        "o internacional amb prefix de país (+… / 00…)."
+    )
 
 
 class OpenWaClient:

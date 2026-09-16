@@ -58,6 +58,10 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `OPENWA_API_URL` = `http://openwa:2785/api` (hostname interno Coolify del contenedor)
 - `OPENWA_API_KEY` / `OPENWA_SESSION_ID` = clave y sesión conectada (QR escaneado)
 - `OPENWA_DRY_RUN` = `true` valida el envío sin llamar al contenedor
+- Email SMTP (citas + presupuestos + asistente oficina `send_email`): `EMAIL_HOST` / `EMAIL_PORT` / `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` / `EMAIL_USE_TLS` / `DEFAULT_FROM_EMAIL`
+- `OPS_EMAIL_DRY_RUN` = `true` valida el correo del asistente sin llamar a SMTP
+- `CORS_EXTRA_ORIGINS` = orígenes extra (coma-separados) si el front no es Vercel/`cucarachasbarcelona.cat`
+- `DJANGO_ALLOWED_HOSTS` = hosts extra del API (coma-separados); `.sslip.io` de Coolify se acepta por defecto
 
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:
@@ -79,7 +83,7 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 | **Presupuestador** | `public/pricer.py` | Calcula preu basant-se en catàleg oficial, zona i complexitat | `PricingOutput` |
 | **Agendador** | `public/scheduler.py` | Consulta slots reals de l'agenda pròpia i crea reserves confirmades | `SchedulerOutput` |
 | **Sintetizador** | `public/case_synthesizer.py` | Resumen interno post-diagnóstico (no habla con el cliente) | `CaseSynthesis` |
-| **Oficina** | `ops/agent.py` | Chat interno del dashboard (iGEO, CRM, WhatsApp) | `OpsAgentOutput` |
+| **Oficina** | `ops/agent.py` | Chat interno del dashboard (iGEO, CRM, WhatsApp, email) | `OpsAgentOutput` |
 
 ### Orquestador (LangGraph + Pydantic-AI)
 
@@ -153,7 +157,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
-- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Backend: `api/agents/ops/`. Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`search_whatsapp_contacts`, `send_whatsapp`, env `OPENWA_*`).
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Backend: `api/agents/ops/`. Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`search_whatsapp_contacts`, `send_whatsapp`, env `OPENWA_*`). Email via SMTP Django (`email_status`, `send_email`, env `EMAIL_*` / `OPS_EMAIL_DRY_RUN`).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.

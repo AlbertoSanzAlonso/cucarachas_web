@@ -35,6 +35,7 @@ const SUGGESTIONS = [
   'Busca al mirall iGEO el 612345678',
   'Crea un potencial a iGEO amb les dades que et passo',
   'Envia un WhatsApp a aquest mòbil amb el text que et passo',
+  'Envia un email a aquest correu amb l’assumpte i el text que et passo',
   'Quines renovacions tenim a l’octubre?',
   'Prepara una ordre per demà a les 7:30',
 ];

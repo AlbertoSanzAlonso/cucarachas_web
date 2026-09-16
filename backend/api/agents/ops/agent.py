@@ -6,17 +6,22 @@ from dataclasses import dataclass
 from typing import List, Optional
 
 from pydantic import BaseModel, Field
-from pydantic_ai import Agent, RunContext
+from pydantic_ai import Agent, AgentRetries, RunContext
+from pydantic_ai.exceptions import UsageLimitExceeded
 from pydantic_ai.usage import UsageLimits
 
 from api.igeo.config import get_igeo_settings, is_igeo_enabled
 from api.igeo.payloads import build_cliente_potencial
 from api.igeo.sync import publish_entity
 from api.openwa import OpenWaClient, OpenWaError, format_contacts, is_openwa_enabled, status_summary
+from api.ops_email import email_status_summary, is_smtp_ready, send_ops_email
 from api.phone_utils import normalize_phone
 
 from api.agents import bootstrap  # noqa: F401
 from api.agents.config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
+
+# Límites estrictos: si OpenWA falla, el LLM tiende a reintentar hasta agotar el default (50).
+_OPS_USAGE_LIMITS = UsageLimits(request_limit=12, tool_calls_limit=6)
 
 
 @dataclass
@@ -24,6 +29,11 @@ class OpsAgentDeps:
     user_id: int
     conversation_id: int
     language: str = "ca"
+    # Cortocircuito por turno: un fallo OpenWA bloquea más llamadas en la misma petición.
+    openwa_failed: bool = False
+    openwa_fail_reason: str = ""
+    email_failed: bool = False
+    email_fail_reason: str = ""
 
 
 class OpsAgentOutput(BaseModel):
@@ -42,8 +52,43 @@ ops_agent = Agent(
     AGENT_MODEL,
     deps_type=OpsAgentDeps,
     output_type=OpsAgentOutput,
-    retries=2,
+    # Sin reintentos automáticos de tools: devolvemos el error al operario en una sola pasada.
+    retries=AgentRetries(tools=0, output=1),
 )
+
+
+def _mark_openwa_failed(deps: OpsAgentDeps | None, reason: str) -> str:
+    msg = (reason or "").strip() or "Error OpenWA desconegut."
+    if deps is not None:
+        deps.openwa_failed = True
+        deps.openwa_fail_reason = msg
+    return msg
+
+
+def _openwa_guard(deps: OpsAgentDeps | None) -> str | None:
+    if deps is not None and deps.openwa_failed:
+        return (
+            "OpenWA ja ha fallat EN AQUEST TORN — NO reintentis send_whatsapp / "
+            f"search_whatsapp_contacts / whatsapp_status. Motiu: {deps.openwa_fail_reason}"
+        )
+    return None
+
+
+def _mark_email_failed(deps: OpsAgentDeps | None, reason: str) -> str:
+    msg = (reason or "").strip() or "Error email desconegut."
+    if deps is not None:
+        deps.email_failed = True
+        deps.email_fail_reason = msg
+    return msg
+
+
+def _email_guard(deps: OpsAgentDeps | None) -> str | None:
+    if deps is not None and deps.email_failed:
+        return (
+            "Email ja ha fallat EN AQUEST TORN — NO reintentis send_email / email_status. "
+            f"Motiu: {deps.email_fail_reason}"
+        )
+    return None
 
 
 @ops_agent.system_prompt
@@ -51,6 +96,7 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
     lang = (ctx.deps.language if ctx.deps else "ca") or "ca"
     igeo_on = "actiu" if is_igeo_enabled() else "desactivat (IGEO_PDI_ENABLED=false)"
     wa_on = "actiu" if is_openwa_enabled() else "desactivat (OPENWA_ENABLED=false)"
+    mail_on = "actiu" if is_smtp_ready() else "desactivat (falta EMAIL_HOST / SMTP)"
     if lang.startswith("es"):
         return (
             "Eres el asistente administrativo interno de CECSA Control de Plagas. "
@@ -60,9 +106,14 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             f"WhatsApp (OpenWA) está {wa_on}. Puedes buscar contactos de la agenda WhatsApp con "
             "search_whatsapp_contacts. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
+            "Acepta móviles ES e internacionales con prefijo de país (+54, +52…) o el id `…@c.us` del contacto. "
             "Si whatsapp_status o send_whatsapp fallan, cita el texto de la herramienta TAL CUAL "
             "(incluye url= y el error); no lo resumas como 'fallo de conexión' genérico. "
             "Si send_whatsapp o search_whatsapp_contacts fallan UNA vez, NO reintentes: informa al operario y para. "
+            f"Email SMTP está {mail_on}. Solo envía un correo si el operario lo pide de forma explícita; "
+            "nunca por iniciativa propia. Confirma destinatario, asunto y cuerpo antes de send_email. "
+            "Si email_status o send_email fallan, cita el texto de la herramienta TAL CUAL; "
+            "si fallan UNA vez, NO reintentes: informa al operario y para. "
             "Usa herramientas para buscar en el CRM local (Cliente) y en el espejo iGEO antes de crear nada. "
             "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
             "No inventes códigos de delegación, técnico ni contrato. "
@@ -77,9 +128,14 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         f"WhatsApp (OpenWA) està {wa_on}. Pots cercar contactes de l'agenda WhatsApp amb "
         "search_whatsapp_contacts. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
+        "Accepta mòbils ES i internacionals amb prefix de país (+54, +52…) o l'id `…@c.us` del contacte. "
         "Si whatsapp_status o send_whatsapp fallen, cita el text de l'eina TAL QUAL "
         "(inclou url= i l'error); no ho resumeixis com a 'fallo de connexió' genèric. "
         "Si send_whatsapp o search_whatsapp_contacts fallen UN cop, NO reintentis: informa l'operari i para. "
+        f"Email SMTP està {mail_on}. Només envia un correu si l'operari ho demana de forma explícita; "
+        "mai per iniciativa pròpia. Confirma destinataris, assumpte i cos abans de send_email. "
+        "Si email_status o send_email fallen, cita el text de l'eina TAL QUAL; "
+        "si fallen UN cop, NO reintentis: informa l'operari i para. "
         "Fes servir eines per buscar al CRM local (Cliente) i a l'espill iGEO abans de crear res. "
         "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
         "No inventis codis de delegació, tècnic ni contracte. "
@@ -191,35 +247,84 @@ def igeo_create_lead(
 @ops_agent.tool
 def whatsapp_status(ctx: RunContext[OpsAgentDeps]) -> str:
     """Estat del contenidor OpenWA (sense API key ni session id)."""
-    return status_summary()
+    blocked = _openwa_guard(ctx.deps)
+    if blocked:
+        return blocked
+    summary = status_summary()
+    low = summary.lower()
+    if "error de connexió" in low or "desactivat" in low or "falten openwa" in low:
+        return _mark_openwa_failed(ctx.deps, summary)
+    status_token = ""
+    for part in summary.split():
+        if part.startswith("status="):
+            status_token = part.split("=", 1)[1].strip().lower()
+            break
+    if status_token and status_token not in ("ready", "—"):
+        return _mark_openwa_failed(ctx.deps, summary)
+    return summary
 
 
 @ops_agent.tool
 def search_whatsapp_contacts(ctx: RunContext[OpsAgentDeps], query: str) -> str:
     """Cerca contactes a l'agenda WhatsApp vinculada (OpenWA). Només lectura; no envia missatges."""
+    blocked = _openwa_guard(ctx.deps)
+    if blocked:
+        return blocked
     try:
         hits = OpenWaClient().search_contacts(query)
     except OpenWaError as exc:
-        return str(exc)
+        return _mark_openwa_failed(ctx.deps, str(exc))
     except Exception as exc:
-        return f"Error OpenWA: {exc}"
+        return _mark_openwa_failed(ctx.deps, f"Error OpenWA: {exc}")
     return format_contacts(hits)
 
 
 @ops_agent.tool
 def send_whatsapp(ctx: RunContext[OpsAgentDeps], telefono: str, mensaje: str) -> str:
-    """Envia un WhatsApp de text via OpenWA. Només si l'operari ho ha demanat explícitament."""
+    """Envia un WhatsApp via OpenWA. `telefono`: mòbil ES, internacional (+prefix) o chatId (`…@c.us`)."""
+    blocked = _openwa_guard(ctx.deps)
+    if blocked:
+        return blocked
     try:
         result = OpenWaClient().send_text(telefono, mensaje)
     except OpenWaError as exc:
-        return f"No enviat: {exc}"
+        return _mark_openwa_failed(ctx.deps, f"No enviat: {exc}")
     except Exception as exc:
-        return f"Error OpenWA: {exc}"
+        return _mark_openwa_failed(ctx.deps, f"Error OpenWA: {exc}")
     if not result.ok:
-        return f"No enviat: {result.message}"
+        return _mark_openwa_failed(ctx.deps, f"No enviat: {result.message}")
     if result.dry_run:
         return f"DRY-RUN (no enviat de veritat): {result.message}"
     return f"ok={result.ok} dry_run={result.dry_run} chat={result.chat_id} — {result.message}"
+
+
+@ops_agent.tool
+def email_status(ctx: RunContext[OpsAgentDeps]) -> str:
+    """Estat del correu SMTP (backend, host, from). Sense passwords."""
+    blocked = _email_guard(ctx.deps)
+    if blocked:
+        return blocked
+    return email_status_summary()
+
+
+@ops_agent.tool
+def send_email(
+    ctx: RunContext[OpsAgentDeps],
+    to_email: str,
+    subject: str,
+    body: str,
+    cc: str = "",
+) -> str:
+    """Envia un correu de text pla via SMTP Django. Només si l'operari ho ha demanat explícitament."""
+    blocked = _email_guard(ctx.deps)
+    if blocked:
+        return blocked
+    result = send_ops_email(to_email=to_email, subject=subject, body=body, cc=cc)
+    if not result.ok:
+        return _mark_email_failed(ctx.deps, f"No enviat: {result.message}")
+    if result.dry_run:
+        return f"DRY-RUN (no enviat de veritat): {result.message}"
+    return f"ok={result.ok} dry_run={result.dry_run} — {result.message}"
 
 
 def _history_block(messages: list[dict], *, max_turns: int = 16) -> str:
@@ -259,13 +364,22 @@ def run_ops_agent(
     )
     model_id = resolve_ops_model(model)
     setup_ai_keys(model_id)
-    # Evita bucles de reintents amb OpenWA (request_limit per defecte=50 esgota la conversa).
-    result = ops_agent.run_sync(
-        prompt,
-        deps=deps,
-        model=model_id,
-        usage_limits=UsageLimits(request_limit=24, tool_calls_limit=10),
-    )
+    try:
+        result = ops_agent.run_sync(
+            prompt,
+            deps=deps,
+            model=model_id,
+            usage_limits=_OPS_USAGE_LIMITS,
+            retries=AgentRetries(tools=0, output=1),
+        )
+    except UsageLimitExceeded as exc:
+        hint = ""
+        if deps.openwa_failed:
+            hint = f" OpenWA: {deps.openwa_fail_reason}"
+        raise RuntimeError(
+            "L'agent ha esgotat el límit de passos (probable bucle WhatsApp/OpenWA)."
+            f"{hint} Detall: {exc}"
+        ) from exc
     output = result.output
     if isinstance(output, OpsAgentOutput):
         return output

@@ -19,6 +19,13 @@ from api.serializers_ops import (
     AdminMessageSerializer,
 )
 
+try:
+    from pydantic_ai.exceptions import UsageLimitExceeded
+except ImportError:  # pragma: no cover
+
+    class UsageLimitExceeded(Exception):  # type: ignore[no-redef]
+        pass
+
 
 def _title_from_message(text: str) -> str:
     cleaned = " ".join((text or "").strip().split())
@@ -73,11 +80,20 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             notes_created.append(note)
     except Exception as exc:
         err = str(exc)
-        if "request_limit" in err or "usage" in err.lower():
+        err_low = err.lower()
+        is_usage = (
+            isinstance(exc, UsageLimitExceeded)
+            or "request_limit" in err_low
+            or "usage limit" in err_low
+            or "usage_limits" in err_low
+            or "tool_calls_limit" in err_low
+        )
+        if is_usage or "openwa" in err_low or "whatsapp" in err_low:
             reply = (
-                "La petició s'ha aturat per massa passos de l'agent (límit d'ús). "
-                "Normalment passa si OpenWA falla i es reintenta en bucle. "
-                "Comprova estat WhatsApp / xarxa Coolify i torna-ho a provar amb un missatge nou."
+                "No s'ha pogut completar l'acció de WhatsApp: l'agent ha deixat de reintentar "
+                "per evitar un bucle. Comprova a Coolify que el contenidor OpenWA està en marxa, "
+                "amb sessió ready (QR escanejat) i que OPENWA_API_URL apunta al hostname intern. "
+                f"Detall: {exc}"
             )
         else:
             reply = (

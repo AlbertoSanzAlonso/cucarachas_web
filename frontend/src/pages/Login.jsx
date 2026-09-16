@@ -40,7 +40,15 @@ const Login = () => {
         navigate('/admin');
       }
     } catch (err) {
-      setError('Error inesperat. Torna a intentar-ho.');
+      const msg = String(err?.message || err || '');
+      if (/failed to fetch|networkerror|cors/i.test(msg)) {
+        setError(
+          'No s\'ha pogut connectar amb l\'API. Usa https://cucarachasbarcelona.cat/login ' +
+            '(no la URL temporal Coolify/sslip.io) o revisa CORS_EXTRA_ORIGINS.'
+        );
+      } else {
+        setError('Error inesperat. Torna a intentar-ho.');
+      }
       console.error(err);
     } finally {
       setIsLoading(false);

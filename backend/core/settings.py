@@ -26,7 +26,19 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-default-key-fo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '178.104.249.230', 'api.cucarachasbarcelona.cat', 'cucarachasbarcelona.cat']
+_DEFAULT_ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '178.104.249.230',
+    'api.cucarachasbarcelona.cat',
+    'cucarachasbarcelona.cat',
+]
+ALLOWED_HOSTS = _DEFAULT_ALLOWED_HOSTS + [
+    h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()
+]
+# Coolify FQDN temporal: {id}.{ip}.sslip.io (HTTP preview)
+if os.environ.get('DJANGO_ALLOW_SSLIP', 'true').lower() in ('1', 'true', 'yes', 'on'):
+    ALLOWED_HOSTS.append('.sslip.io')
 APPEND_SLASH = False # Evita redirecciones que rompen CORS
 
 # Application definition
@@ -200,6 +212,8 @@ CORS_ALLOWED_ORIGINS = [
 ] + [o.strip() for o in os.environ.get('CORS_EXTRA_ORIGINS', '').split(',') if o.strip()]
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r'^https://([a-z0-9-]+\.)*vercel\.app$',
+    # Coolify preview FQDN: http(s)://{id}.{a}.{b}.{c}.{d}.sslip.io
+    r'^https?://[a-z0-9]+\.(?:\d+\.){3}\d+\.sslip\.io$',
 ]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = [

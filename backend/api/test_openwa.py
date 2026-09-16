@@ -35,10 +35,30 @@ class ChatIdTests(SimpleTestCase):
         self.assertEqual(to_whatsapp_chat_id("612345678"), "34612345678@c.us")
         self.assertEqual(to_whatsapp_chat_id("+34 612 345 678"), "34612345678@c.us")
         self.assertEqual(to_whatsapp_chat_id("34612345678"), "34612345678@c.us")
+        self.assertEqual(to_whatsapp_chat_id("0034612345678"), "34612345678@c.us")
+
+    def test_international_e164(self):
+        self.assertEqual(to_whatsapp_chat_id("+54 9 11 2345 6789"), "5491123456789@c.us")
+        self.assertEqual(to_whatsapp_chat_id("005491123456789"), "5491123456789@c.us")
+        self.assertEqual(to_whatsapp_chat_id("+52 55 1234 5678"), "525512345678@c.us")
+        self.assertEqual(to_whatsapp_chat_id("+1 415 555 2671"), "14155552671@c.us")
+
+    def test_existing_chat_id(self):
+        self.assertEqual(to_whatsapp_chat_id("5491123456789@c.us"), "5491123456789@c.us")
+        self.assertEqual(
+            to_whatsapp_chat_id("5491123456789@s.whatsapp.net"),
+            "5491123456789@c.us",
+        )
 
     def test_rejects_landline(self):
         with self.assertRaises(OpenWaError):
             to_whatsapp_chat_id("933309169")
+        with self.assertRaises(OpenWaError):
+            to_whatsapp_chat_id("+34 933 309 169")
+
+    def test_rejects_ambiguous_short(self):
+        with self.assertRaises(OpenWaError):
+            to_whatsapp_chat_id("12345")
 
 
 class OpenWaClientTests(SimpleTestCase):
