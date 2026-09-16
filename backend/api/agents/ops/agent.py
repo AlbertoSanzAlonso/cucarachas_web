@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from typing import List, Optional
 
@@ -21,7 +22,7 @@ from api.agents import bootstrap  # noqa: F401
 from api.agents.config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
 
 # Límites estrictos: si OpenWA falla, el LLM tiende a reintentar hasta agotar el default (50).
-_OPS_USAGE_LIMITS = UsageLimits(request_limit=12, tool_calls_limit=6)
+_OPS_USAGE_LIMITS = UsageLimits(request_limit=12, tool_calls_limit=8)
 
 
 @dataclass
@@ -107,9 +108,11 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             "search_whatsapp_contacts. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
             "Acepta móviles ES e internacionales con prefijo de país (+54, +52…) o el id `…@c.us` del contacto. "
-            "Si whatsapp_status o send_whatsapp fallan, cita el texto de la herramienta TAL CUAL "
+            "Si no encuentras el nombre completo, busca solo el apellido o el nombre; "
+            "sin resultados NO es fallo técnico: pide el móvil internacional y envía con send_whatsapp. "
+            "Si whatsapp_status o send_whatsapp fallan (error técnico), cita el texto TAL CUAL "
             "(incluye url= y el error); no lo resumas como 'fallo de conexión' genérico. "
-            "Si send_whatsapp o search_whatsapp_contacts fallan UNA vez, NO reintentes: informa al operario y para. "
+            "Si send_whatsapp falla UNA vez por error técnico, NO reintentes: informa al operario y para. "
             f"Email SMTP está {mail_on}. Solo envía un correo si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Si pide un correo de prueba y da el destinatario, "
             "usa un asunto/cuerpo breves y llama send_email (no digas solo 'no puedo'). "
@@ -118,6 +121,9 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             "Confirma destinatario, asunto y cuerpo antes de send_email solo si faltan datos. "
             "Si email_status o send_email fallan UNA vez, NO reintentes: informa al operario y para. "
             "Usa herramientas para buscar en el CRM local (Cliente) y en el espejo iGEO antes de crear nada. "
+            "Datos vivos de clientes/OT/contratos → CRM o espejo SQL, NUNCA el RAG. "
+            "Procedimientos iGEO/PDI/campos obligatorios → usa el bloque RAG del prompt o search_ops_knowledge; "
+            "no inventes campos ni códigos maestros. "
             "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
             "No inventes códigos de delegación, técnico ni contrato. "
             "Operaciones sensibles (borrar, facturar, cambiar contrato) requiere que el humano confirme; no las ejecutes por tu cuenta. "
@@ -132,9 +138,11 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         "search_whatsapp_contacts. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
         "Accepta mòbils ES i internacionals amb prefix de país (+54, +52…) o l'id `…@c.us` del contacte. "
-        "Si whatsapp_status o send_whatsapp fallen, cita el text de l'eina TAL QUAL "
+        "Si no trobes el nom complet, cerca només el cognom o el nom; "
+        "sense resultats NO és fallada tècnica: demana el mòbil internacional i envia amb send_whatsapp. "
+        "Si whatsapp_status o send_whatsapp fallen (error tècnic), cita el text TAL QUAL "
         "(inclou url= i l'error); no ho resumeixis com a 'fallo de connexió' genèric. "
-        "Si send_whatsapp o search_whatsapp_contacts fallen UN cop, NO reintentis: informa l'operari i para. "
+        "Si send_whatsapp falla UN cop per error tècnic, NO reintentis: informa l'operari i para. "
         f"Email SMTP està {mail_on}. Només envia un correu si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Si demana un correu de prova i dóna el destinatari, "
         "fes servir un assumpte/cos breus i crida send_email (no diguis només 'no puc'). "
@@ -143,11 +151,26 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         "Confirma destinataris, assumpte i cos abans de send_email només si falten dades. "
         "Si email_status o send_email fallen UN cop, NO reintentis: informa l'operari i para. "
         "Fes servir eines per buscar al CRM local (Cliente) i a l'espill iGEO abans de crear res. "
+        "Dades vives de clients/OT/contractes → CRM o espill SQL, MAI el RAG. "
+        "Procediments iGEO/PDI/camps obligatoris → fes servir el bloc RAG del prompt o search_ops_knowledge; "
+        "no inventis camps ni codis mestres. "
         "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
         "No inventis codis de delegació, tècnic ni contracte. "
         "Operacions sensibles (esborrar, facturar, canviar contracte) cal que l'humà confirmi; no les executis pel teu compte. "
         "Si detectes una dada a recordar (telèfon, codi iGEO, excepció de garantia), posa-la a important_notes."
     )
+
+
+@ops_agent.tool
+def search_ops_knowledge(ctx: RunContext[OpsAgentDeps], query: str, category: str = "") -> str:
+    """Cerca procediments interns (PDI, SOPs, camps iGEO). No substitueix la cerca de clients."""
+    from knowledge.retriever import retrieve_ops_knowledge
+
+    q = (query or "").strip()
+    if len(q) < 3:
+        return "Cal una consulta d'almenys 3 caràcters."
+    cat = (category or "").strip() or None
+    return retrieve_ops_knowledge(q, limit=5, category=cat)
 
 
 def lookup_crm_clientes(query: str) -> str:
@@ -160,12 +183,23 @@ def lookup_crm_clientes(query: str) -> str:
     from api.models import Cliente
 
     digits = normalize_phone(q)
+    tokens = [t for t in re.split(r"\s+", q) if len(t) >= 2]
     filt = Q(nombre__icontains=q) | Q(email__icontains=q) | Q(telefono__icontains=q)
+    if len(tokens) >= 2:
+        token_filt = Q()
+        for tok in tokens:
+            token_filt &= Q(nombre__icontains=tok)
+        filt = filt | token_filt
+    elif tokens:
+        filt = filt | Q(nombre__icontains=tokens[0])
     if digits:
         filt = filt | Q(telefono_norm=digits)
     rows = list(Cliente.objects.filter(filt).order_by("-created_at")[:8])
     if not rows:
-        return "Cap coincidència al CRM local."
+        return (
+            "Cap coincidència al CRM local. "
+            "Si el tens al mòbil WhatsApp, cerca-l'hi o passa el telèfon internacional."
+        )
     lines = []
     for c in rows:
         igeo = getattr(c, "igeo_codigo", "") or "—"
@@ -345,6 +379,33 @@ def _history_block(messages: list[dict], *, max_turns: int = 16) -> str:
     return "\n".join(lines)
 
 
+def _memory_notes_block(notes: list[str] | None, *, max_notes: int = 12) -> str:
+    lines = []
+    for raw in (notes or [])[:max_notes]:
+        text = (raw or "").strip()
+        if text:
+            lines.append(f"- {text}")
+    return "\n".join(lines)
+
+
+def _ops_rag_block(user_message: str, *, limit: int = 5) -> str:
+    q = (user_message or "").strip()
+    if len(q) < 3:
+        return ""
+    try:
+        from knowledge.retriever import retrieve_ops_knowledge
+
+        rag = retrieve_ops_knowledge(q, limit=limit)
+    except Exception as exc:
+        print(f"WARNING: ops RAG inject failed: {exc}")
+        return ""
+    if not (rag or "").strip():
+        return ""
+    if "No s'ha trobat" in rag or "No s'ha pogut" in rag:
+        return ""
+    return rag.strip()
+
+
 def run_ops_agent(
     *,
     user_message: str,
@@ -353,16 +414,31 @@ def run_ops_agent(
     conversation_id: int,
     language: str = "ca",
     model: str | None = None,
+    memory_notes: list[str] | None = None,
 ) -> OpsAgentOutput:
     """Invoca l'LLM intern. L'historial es passa com a context (no és el xat públic)."""
     prior = _history_block(history)
+    notes = _memory_notes_block(memory_notes)
+    rag = _ops_rag_block(user_message)
     prompt = user_message.strip()
-    if prior:
-        prompt = (
-            "Historial d'aquesta conversa interna (no el xat de clients):\n"
-            f"{prior}\n\n"
-            f"Missatge nou de l'operari:\n{prompt}"
+    parts: list[str] = []
+    if rag:
+        parts.append(
+            "Coneixement intern (RAG — procediments iGEO/PDI; no són dades de clients):\n"
+            f"{rag}"
         )
+    if notes:
+        parts.append(
+            "Notes pinnejades d'aquesta conversa / usuari (recordatoris):\n"
+            f"{notes}"
+        )
+    if prior:
+        parts.append(
+            "Historial d'aquesta conversa interna (no el xat de clients):\n"
+            f"{prior}"
+        )
+    parts.append(f"Missatge nou de l'operari:\n{prompt}")
+    prompt = "\n\n".join(parts)
     deps = OpsAgentDeps(
         user_id=user_id,
         conversation_id=conversation_id,

@@ -161,17 +161,34 @@ class OpenWaClientTests(SimpleTestCase):
             {"id": "34611111111@c.us", "name": "Maria Lopez", "number": "34611111111", "isMyContact": True},
             {"id": "34622222222@c.us", "name": "Joan", "pushName": "Joanet", "number": "34622222222"},
             {"id": "34612345678@c.us", "name": "Altres", "number": "34612345678"},
+            {
+                "id": "5491123456789@c.us",
+                "name": "Montenegro Mauro",
+                "pushName": "Mauro",
+                "number": "5491123456789",
+            },
         ]
-        with patch.object(client, "list_contacts", return_value=sample):
+        with patch.object(
+            client,
+            "iter_all_contacts",
+            side_effect=lambda **_kwargs: iter(sample),
+        ):
             by_name = client.search_contacts("maria")
             by_phone = client.search_contacts("612345678")
+            by_tokens = client.search_contacts("Mauro Montenegro")
+            by_accent = client.search_contacts("maría")
         self.assertEqual(len(by_name), 1)
         self.assertEqual(by_name[0]["name"], "Maria Lopez")
         self.assertEqual(len(by_phone), 1)
         self.assertEqual(by_phone[0]["number"], "34612345678")
+        self.assertEqual(len(by_tokens), 1)
+        self.assertEqual(by_tokens[0]["number"], "5491123456789")
+        self.assertEqual(len(by_accent), 1)
 
     def test_format_contacts_empty(self):
-        self.assertIn("Cap contacte", format_contacts([]))
+        text = format_contacts([])
+        self.assertIn("Cap contacte", text)
+        self.assertIn("internacional", text)
 
     def test_list_contacts_disabled(self):
         client = OpenWaClient(_settings(enabled=False))

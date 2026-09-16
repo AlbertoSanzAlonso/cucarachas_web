@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import unicodedata
 from dataclasses import dataclass
 from typing import Any
 
@@ -14,6 +15,8 @@ from .config import OpenWaSettings, get_openwa_settings
 logger = logging.getLogger(__name__)
 
 MAX_WHATSAPP_CHARS = 3500
+_CONTACTS_PAGE = 500
+_CONTACTS_MAX = 5000
 
 
 @dataclass(frozen=True)
@@ -27,6 +30,17 @@ class OpenWaSendResult:
 
 class OpenWaError(ValueError):
     """Teléfono o mensaje no válidos antes de llamar al contenedor."""
+
+
+def _fold_text(value: str) -> str:
+    """Normalitza accents i majúscules per a cerques robustes."""
+    raw = unicodedata.normalize("NFKD", value or "")
+    stripped = "".join(ch for ch in raw if not unicodedata.combining(ch))
+    return stripped.casefold().strip()
+
+
+def _query_tokens(query: str) -> list[str]:
+    return [tok for tok in re.split(r"\s+", _fold_text(query)) if len(tok) >= 2]
 
 
 def to_whatsapp_chat_id(phone: str) -> str:
@@ -186,24 +200,48 @@ class OpenWaClient:
             return []
         return [row for row in data if isinstance(row, dict)]
 
-    def search_contacts(self, query: str, *, limit: int = 500) -> list[dict[str, Any]]:
-        """Filtra contactos por nombre, pushName o número."""
+    def iter_all_contacts(self, *, page_size: int = _CONTACTS_PAGE, max_total: int = _CONTACTS_MAX):
+        """Recorre contactes amb paginació (OpenWA pot retornar-ne milers)."""
+        offset = 0
+        seen = 0
+        while seen < max_total:
+            batch = self.list_contacts(limit=min(page_size, max_total - seen), offset=offset)
+            if not batch:
+                break
+            for row in batch:
+                yield row
+                seen += 1
+                if seen >= max_total:
+                    return
+            if len(batch) < page_size:
+                break
+            offset += len(batch)
+
+    def search_contacts(self, query: str, *, limit: int = _CONTACTS_MAX) -> list[dict[str, Any]]:
+        """Filtra contactos por nombre, pushName o número (tokens + paginación)."""
         q = (query or "").strip()
         if len(q) < 2:
             raise OpenWaError("Cal un text de cerca d'almenys 2 caràcters.")
-        rows = self.list_contacts(limit=limit, offset=0)
-        q_lower = q.casefold()
+        q_fold = _fold_text(q)
+        tokens = _query_tokens(q)
         digits = re.sub(r"\D", "", q)
         hits: list[dict[str, Any]] = []
-        for row in rows:
+        for row in self.iter_all_contacts(max_total=max(1, min(int(limit), _CONTACTS_MAX))):
             name = str(row.get("name") or "")
             push = str(row.get("pushName") or "")
             number = str(row.get("number") or "")
             cid = str(row.get("id") or "")
-            if q_lower in name.casefold() or q_lower in push.casefold():
-                hits.append(row)
-                continue
-            if digits and (digits in re.sub(r"\D", "", number) or digits in re.sub(r"\D", "", cid)):
+            hay = f"{_fold_text(name)} {_fold_text(push)}"
+            matched = False
+            if q_fold and q_fold in hay:
+                matched = True
+            elif tokens and all(tok in hay for tok in tokens):
+                matched = True
+            elif digits and (
+                digits in re.sub(r"\D", "", number) or digits in re.sub(r"\D", "", cid)
+            ):
+                matched = True
+            if matched:
                 hits.append(row)
         return hits
 
@@ -255,7 +293,10 @@ class OpenWaClient:
 
 def format_contacts(contacts: list[dict[str, Any]], *, max_rows: int = 20) -> str:
     if not contacts:
-        return "Cap contacte trobat a WhatsApp."
+        return (
+            "Cap contacte trobat a WhatsApp. "
+            "Prova només el cognom/nom, o passa el mòbil internacional (+…) per enviar."
+        )
     lines: list[str] = []
     for row in contacts[:max_rows]:
         name = (row.get("name") or row.get("pushName") or "—").strip() or "—"

@@ -183,6 +183,7 @@ def search_mirror(query: str, *, entity_type: str | None = None, include_deleted
     if tipo:
         qs = qs.filter(entity_type=tipo)
     digits = normalize_phone(q)
+    tokens = [t for t in q.split() if len(t) >= 2]
     filt = (
         Q(display_name__icontains=q)
         | Q(email__icontains=q)
@@ -192,6 +193,11 @@ def search_mirror(query: str, *, entity_type: str | None = None, include_deleted
         | Q(igeo_codigo__icontains=q)
         | Q(source_key__icontains=q)
     )
+    if len(tokens) >= 2:
+        token_filt = Q()
+        for tok in tokens:
+            token_filt &= Q(display_name__icontains=tok)
+        filt = filt | token_filt
     if digits:
         filt = filt | Q(telefono_norm=digits)
     return list(qs.filter(filt).order_by("-updated_at")[: max(1, min(limit, 20))])
