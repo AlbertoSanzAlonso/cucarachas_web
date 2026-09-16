@@ -59,9 +59,63 @@ class AdminOpsChatApiTests(APITestCase):
         conv.refresh_from_db()
         self.assertTrue(conv.title)
         self.assertEqual(AdminMessage.objects.filter(conversation=conv).count(), 2)
-        self.assertEqual(AdminMemoryNote.objects.filter(conversation=conv).count(), 1)
+        # Notes només si l'operari ho demana explícitament.
+        self.assertEqual(AdminMemoryNote.objects.filter(conversation=conv).count(), 0)
         self.assertIn("CRM", res.data["assistant_message"]["content"])
+        self.assertIsNone(res.data.get("pending_action"))
         mock_run.assert_called_once()
+
+    @patch("api.agents.ops.agent.run_ops_agent")
+    def test_post_message_returns_pending_action(self, mock_run):
+        from api.agents.ops.agent import OpsPendingAction
+
+        mock_run.return_value = OpsAgentOutput(
+            message="Confirma l'enviament del WhatsApp.",
+            pending_action=OpsPendingAction(
+                kind="whatsapp",
+                summary="Enviar «Hola» a +34612345678",
+                telefono="+34612345678",
+                mensaje="Hola",
+            ),
+        )
+        conv = AdminConversation.objects.create(user=self.user, title="WA")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "Envia un WhatsApp a en Joan", "language": "ca"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        pending = res.data.get("pending_action")
+        self.assertIsNotNone(pending)
+        self.assertEqual(pending["kind"], "whatsapp")
+        self.assertEqual(pending["telefono"], "+34612345678")
+
+    @patch("api.ops_actions.OpenWaClient")
+    def test_confirm_action_sends_whatsapp_without_llm(self, mock_client_cls):
+        client = mock_client_cls.return_value
+        client.send_text.return_value = type(
+            "R",
+            (),
+            {"ok": True, "dry_run": False, "chat_id": "34612345678@c.us", "message": "Enviat"},
+        )()
+        conv = AdminConversation.objects.create(user=self.user, title="Confirm")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {
+                "language": "ca",
+                "confirm_action": {
+                    "kind": "whatsapp",
+                    "summary": "Salut a Joan",
+                    "telefono": "612345678",
+                    "mensaje": "Hola Joan",
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertIn("enviat", res.data["assistant_message"]["content"].lower())
+        client.send_text.assert_called_once()
+        self.assertEqual(AdminMessage.objects.filter(conversation=conv).count(), 2)
 
     @patch("api.agents.ops.voice.synthesize_speech", return_value="ZGF0YQ==")
     @patch("api.agents.ops.voice.transcribe_audio_upload", return_value="Busca el client del 612")

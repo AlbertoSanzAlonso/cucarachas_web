@@ -88,6 +88,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   /** Mensaje del usuario mostrado al instante mientras el API responde. */
   const [pendingUser, setPendingUser] = useState(null);
   const [pendingAction, setPendingAction] = useState(null);
+  const [pendingActionConvId, setPendingActionConvId] = useState(null);
   const [isConfirmingAction, setIsConfirmingAction] = useState(false);
   const [confirmActionError, setConfirmActionError] = useState(null);
   const listRef = useRef(null);
@@ -196,6 +197,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
       if (result?.pending_action) {
         setConfirmActionError(null);
         setPendingAction(result.pending_action);
+        setPendingActionConvId(result.conversation_id || convId);
       }
     } catch {
       setDraft(text);
@@ -206,21 +208,24 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const handleCloseActionConfirm = () => {
     if (isConfirmingAction) return;
     setPendingAction(null);
+    setPendingActionConvId(null);
     setConfirmActionError(null);
   };
 
   const handleConfirmPendingAction = async () => {
-    if (!pendingAction || !activeId) return;
+    const convId = pendingActionConvId || activeId;
+    if (!pendingAction || !convId) return;
     setIsConfirmingAction(true);
     setConfirmActionError(null);
     try {
       await sendMessage({
-        id: activeId,
+        id: convId,
         language: 'ca',
         model: selectedModel,
         confirm_action: pendingAction,
       }).unwrap();
       setPendingAction(null);
+      setPendingActionConvId(null);
     } catch (err) {
       setConfirmActionError(
         err?.data?.detail || "No s'ha pogut executar l'acció. Torna-ho a provar.",
@@ -267,6 +272,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
         if (result?.pending_action) {
           setConfirmActionError(null);
           setPendingAction(result.pending_action);
+          setPendingActionConvId(result.conversation_id || convId);
         }
         if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
       } catch {
