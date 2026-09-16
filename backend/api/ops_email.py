@@ -39,6 +39,20 @@ def _is_valid_email(value: str) -> bool:
     return bool(local) and "." in domain
 
 
+def _missing_smtp_hints() -> list[str]:
+    missing: list[str] = []
+    backend = (getattr(settings, "EMAIL_BACKEND", "") or "").lower()
+    if "console" in backend or "locmem" in backend or "dummy" in backend:
+        return missing
+    if not (getattr(settings, "EMAIL_HOST", "") or "").strip():
+        missing.append("EMAIL_HOST")
+    if not (getattr(settings, "EMAIL_HOST_USER", "") or "").strip():
+        missing.append("EMAIL_HOST_USER")
+    if not (getattr(settings, "EMAIL_HOST_PASSWORD", "") or "").strip():
+        missing.append("EMAIL_HOST_PASSWORD")
+    return missing
+
+
 def is_smtp_ready() -> bool:
     """True si el backend es consola/locmem o hay host SMTP configurado."""
     backend = (getattr(settings, "EMAIL_BACKEND", "") or "").lower()
@@ -54,10 +68,25 @@ def email_status_summary() -> str:
     use_tls = getattr(settings, "EMAIL_USE_TLS", False)
     dry = _env_bool("OPS_EMAIL_DRY_RUN", default=False)
     ready = is_smtp_ready()
-    return (
+    missing = _missing_smtp_hints()
+    base = (
         f"ready={ready} dry_run={dry} backend={backend} "
         f"host={host} port={port} tls={use_tls} from={_from_email()}"
     )
+    if not ready:
+        return (
+            f"{base} — Email NO configurat. A Coolify cal definir almenys "
+            "EMAIL_HOST (i normalment EMAIL_HOST_USER / EMAIL_HOST_PASSWORD / "
+            "DEFAULT_FROM_EMAIL). Sense això el asistente no pot enviar correus."
+        )
+    if missing:
+        return (
+            f"{base} — Avís: falten {', '.join(missing)}. "
+            "L'enviament pot fallar a SMTP si el servidor exigeix autenticació."
+        )
+    if dry:
+        return f"{base} — OPS_EMAIL_DRY_RUN=true (valida però no envia de veritat)."
+    return base
 
 
 def send_ops_email(
@@ -99,10 +128,16 @@ def send_ops_email(
             cc_list.append(addr)
 
     if not is_smtp_ready():
+        missing = _missing_smtp_hints() or ["EMAIL_HOST"]
         return OpsEmailResult(
             ok=False,
             dry_run=False,
-            message="Email no configurat: falta EMAIL_HOST (o backend consola en local).",
+            message=(
+                "Email no configurat a Coolify: falten "
+                + ", ".join(missing)
+                + ". Defineix EMAIL_HOST / EMAIL_HOST_USER / EMAIL_HOST_PASSWORD "
+                "(i DEFAULT_FROM_EMAIL) i torna a desplegar el backend."
+            ),
             to_email=to_email,
         )
 
@@ -129,7 +164,10 @@ def send_ops_email(
         return OpsEmailResult(
             ok=False,
             dry_run=False,
-            message=f"Error SMTP: {exc}",
+            message=(
+                f"Error SMTP: {exc}. "
+                "Revisa EMAIL_HOST / USER / PASSWORD i que el from estigui autoritzat."
+            ),
             to_email=to_email,
         )
 

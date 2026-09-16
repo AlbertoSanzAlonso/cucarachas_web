@@ -67,3 +67,22 @@ class OpsEmailTests(SimpleTestCase):
         summary = email_status_summary()
         self.assertIn("ready=", summary)
         self.assertIn("from=info@cecsaddd.com", summary)
+
+    @override_settings(
+        EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
+        EMAIL_HOST="",
+        EMAIL_HOST_USER="",
+        EMAIL_HOST_PASSWORD="",
+    )
+    def test_not_ready_explains_coolify_vars(self):
+        summary = email_status_summary()
+        self.assertIn("ready=False", summary)
+        self.assertIn("EMAIL_HOST", summary)
+        result = send_ops_email(
+            to_email="anna@test.cat",
+            subject="Prova",
+            body="Hola",
+        )
+        self.assertFalse(result.ok)
+        self.assertIn("EMAIL_HOST", result.message)
+        self.assertIn("Coolify", result.message)
