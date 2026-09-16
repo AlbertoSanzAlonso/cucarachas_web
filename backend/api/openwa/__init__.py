@@ -1,6 +1,13 @@
 """Cliente OpenWA (WhatsApp) per al backoffice CECSA."""
 
-from .client import OpenWaClient, OpenWaError, OpenWaSendResult, status_summary, to_whatsapp_chat_id
+from .client import (
+    OpenWaClient,
+    OpenWaError,
+    OpenWaSendResult,
+    format_contacts,
+    status_summary,
+    to_whatsapp_chat_id,
+)
 from .config import OpenWaSettings, get_openwa_settings, is_openwa_enabled
 
 __all__ = [
@@ -8,6 +15,7 @@ __all__ = [
     "OpenWaError",
     "OpenWaSendResult",
     "OpenWaSettings",
+    "format_contacts",
     "get_openwa_settings",
     "is_openwa_enabled",
     "status_summary",

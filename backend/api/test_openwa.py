@@ -6,7 +6,13 @@ from unittest.mock import MagicMock, patch
 
 from django.test import SimpleTestCase
 
-from api.openwa.client import OpenWaClient, OpenWaError, status_summary, to_whatsapp_chat_id
+from api.openwa.client import (
+    OpenWaClient,
+    OpenWaError,
+    format_contacts,
+    status_summary,
+    to_whatsapp_chat_id,
+)
 from api.openwa.config import OpenWaSettings
 
 
@@ -80,3 +86,50 @@ class OpenWaClientTests(SimpleTestCase):
         text = status_summary(client)
         self.assertIn("enabled=False", text)
         self.assertIn("desactivat", text)
+
+    def test_list_contacts_gets_session_path(self):
+        response = MagicMock()
+        response.ok = True
+        response.json.return_value = [
+            {
+                "id": "34612345678@c.us",
+                "name": "Anna",
+                "pushName": "Anna",
+                "number": "34612345678",
+                "isMyContact": True,
+                "isBlocked": False,
+            }
+        ]
+        client = OpenWaClient(_settings())
+        with patch("api.openwa.client.requests.request", return_value=response) as mock_req:
+            rows = client.list_contacts(limit=100)
+        mock_req.assert_called_once()
+        args, kwargs = mock_req.call_args
+        self.assertEqual(args[0], "GET")
+        self.assertIn("/sessions/sess-cecsa/contacts", args[1])
+        self.assertEqual(kwargs["params"]["limit"], 100)
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["name"], "Anna")
+
+    def test_search_contacts_filters_by_name_and_phone(self):
+        client = OpenWaClient(_settings())
+        sample = [
+            {"id": "34611111111@c.us", "name": "Maria Lopez", "number": "34611111111", "isMyContact": True},
+            {"id": "34622222222@c.us", "name": "Joan", "pushName": "Joanet", "number": "34622222222"},
+            {"id": "34612345678@c.us", "name": "Altres", "number": "34612345678"},
+        ]
+        with patch.object(client, "list_contacts", return_value=sample):
+            by_name = client.search_contacts("maria")
+            by_phone = client.search_contacts("612345678")
+        self.assertEqual(len(by_name), 1)
+        self.assertEqual(by_name[0]["name"], "Maria Lopez")
+        self.assertEqual(len(by_phone), 1)
+        self.assertEqual(by_phone[0]["number"], "34612345678")
+
+    def test_format_contacts_empty(self):
+        self.assertIn("Cap contacte", format_contacts([]))
+
+    def test_list_contacts_disabled(self):
+        client = OpenWaClient(_settings(enabled=False))
+        with self.assertRaises(OpenWaError):
+            client.list_contacts()

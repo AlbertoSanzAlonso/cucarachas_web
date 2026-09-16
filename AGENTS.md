@@ -52,6 +52,7 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `IGEO_PDI_HOST` / `IGEO_PDI_PORT` / `IGEO_PDI_SSL` / `IGEO_PDI_USER` / `IGEO_PDI_PASSWORD` / `IGEO_PDI_VHOST` = credenciales RabbitMQ PDI
 - `IGEO_PDI_DRY_RUN` = `true` en pre (valida sin publicar)
 - `IGEO_DEFAULT_DELEGACION` / `IGEO_DEFAULT_GESTOR` = códigos maestros CECSA en iGEO (*! para leads)
+- Espejo iGEO: `python manage.py igeo_ingest_exports --demo` (local, sin cola)
 - `AGENT_ENABLE_CLIENT_SCHEDULING` = `true` para reactivar citas por el chat (off por defecto: sin agenda iGEO)
 - `OPENWA_ENABLED` = `true` para que el asistente de oficina envíe WhatsApp vía el contenedor OpenWA
 - `OPENWA_API_URL` = `http://openwa:2785/api` (hostname interno Coolify del contenedor)
@@ -73,19 +74,21 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 
 | Agente | Archivo | Rol | Output |
 |--------|---------|-----|--------|
-| **Recepcionista** | `receptionist.py` | Primer contacto, detecta intención y capta ciudad/tipo cliente | `ReceptionistOutput` |
-| **Diagnosticador** | `diagnostician.py` | Identifica espècie, severitat, dona Bio-Tips de prevenció | `DiagnosisOutput` |
-| **Presupuestador** | `pricer.py` | Calcula preu basant-se en catàleg oficial, zona i complexitat | `PricingOutput` |
-| **Agendador** | `scheduler.py` | Consulta slots reals de l'agenda pròpia i crea reserves confirmades | `SchedulerOutput` |
+| **Recepcionista** | `public/receptionist.py` | Primer contacto, detecta intención y capta ciudad/tipo cliente | `ReceptionistOutput` |
+| **Diagnosticador** | `public/diagnostician.py` | Identifica espècie, severitat, dona Bio-Tips de prevenció | `DiagnosisOutput` |
+| **Presupuestador** | `public/pricer.py` | Calcula preu basant-se en catàleg oficial, zona i complexitat | `PricingOutput` |
+| **Agendador** | `public/scheduler.py` | Consulta slots reals de l'agenda pròpia i crea reserves confirmades | `SchedulerOutput` |
+| **Sintetizador** | `public/case_synthesizer.py` | Resumen interno post-diagnóstico (no habla con el cliente) | `CaseSynthesis` |
+| **Oficina** | `ops/agent.py` | Chat interno del dashboard (iGEO, CRM, WhatsApp) | `OpsAgentOutput` |
 
 ### Orquestador (LangGraph + Pydantic-AI)
 
-- **Grafo**: `backend/api/agents/graph/` — compilado en `builder.py` (`get_cecsa_graph`).
-- **Fachada API**: `orchestrator.py` (`CECSAOrchestrator`) invoca el grafo y persiste `AgentState` en sesión Django.
-- **Enrutado sin LLM**: `graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
-- **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
-- **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
-- **Reserva directa**: `booking.py` + agenda propia — sin LLM cuando el frontend envía `booking` en el body. Tras éxito, sync opcional `CLIENTE_POTENCIAL` → iGEO PDI (`api/igeo/`). **Temporalmente desactivada** (`ENABLE_CLIENT_SCHEDULING=false`): el chat no muestra horarios ni confirma citas; deriva a **933 309 169**. Reactivar con `AGENT_ENABLE_CLIENT_SCHEDULING=true` y `VITE_ENABLE_CLIENT_SCHEDULING=true`.
+- **Grafo**: `backend/api/agents/public/graph/` — compilado en `builder.py` (`get_cecsa_graph`).
+- **Fachada API**: `public/orchestrator.py` (`CECSAOrchestrator`) invoca el grafo y persiste `AgentState` en sesión Django.
+- **Enrutado sin LLM**: `public/graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
+- **Fusión diagnóstico**: `public/diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
+- **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `public/graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
+- **Reserva directa**: `public/booking.py` + agenda propia — sin LLM cuando el frontend envía `booking` en el body. Tras éxito, sync opcional `CLIENTE_POTENCIAL` → iGEO PDI (`api/igeo/`). **Temporalmente desactivada** (`ENABLE_CLIENT_SCHEDULING=false`): el chat no muestra horarios ni confirma citas; deriva a **933 309 169**. Reactivar con `AGENT_ENABLE_CLIENT_SCHEDULING=true` y `VITE_ENABLE_CLIENT_SCHEDULING=true`.
 - **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots agenda propia sin LLM) si el mensaje pide cita explícitamente.
 - **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_ENABLE_CLIENT_SCHEDULING`, `AGENT_TIMEOUT_*`.
 - Retorna **siempre** un dict con `message`, `slots`, `booking_confirmed`, `booking_uid`.
@@ -150,7 +153,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
-- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`send_whatsapp`, env `OPENWA_*`).
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Backend: `api/agents/ops/`. Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`search_whatsapp_contacts`, `send_whatsapp`, env `OPENWA_*`).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.
