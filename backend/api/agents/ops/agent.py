@@ -164,6 +164,8 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             f"{_CONFIRM_RULES_ES}"
             f"iGEO PDI está {igeo_on}. Si está desactivado, puedes preparar la acción pero no finjas que iGEO ya se actualizó. "
             f"WhatsApp (OpenWA) está {wa_on}. Puedes buscar contactos con search_whatsapp_contacts. "
+            "Cerca RÀPIDA por defecto (xats recents + 1a lletra/prefix). "
+            "Si no sale: prueba solo la letra (M) o deep=true. "
             "La búsqueda mira agenda del móvil enlazado + chats recientes; si no sale, pide el +teléfono. "
             "Acepta móviles ES e internacionales (+54, +52…) o id `…@c.us` en pending_action.telefono. "
             "Si no encuentras el nombre (máx. 2 búsquedas WA), pide el móvil internacional. "
@@ -183,6 +185,8 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         f"{_CONFIRM_RULES_CA}"
         f"iGEO PDI està {igeo_on}. Si està desactivat, pots preparar l'acció però no fingis que iGEO ja s'ha actualitzat. "
         f"WhatsApp (OpenWA) està {wa_on}. Pots cercar contactes amb search_whatsapp_contacts. "
+        "Cerca RÀPIDA per defecte (xats recents + 1a lletra/prefix). "
+        "Si no surt: prova només la lletra (M) o deep=true. "
         "La cerca mira agenda del mòbil enllaçat + xats recents; si no surt, demana el +telèfon. "
         "Accepta mòbils ES i internacionals (+54, +52…) o id `…@c.us` a pending_action.telefono. "
         "Si no trobes el nom (màx. 2 cerques WA), demana el mòbil internacional. "
@@ -344,13 +348,13 @@ def whatsapp_status(ctx: RunContext[OpsAgentDeps]) -> str:
 
 
 @ops_agent.tool
-def search_whatsapp_contacts(ctx: RunContext[OpsAgentDeps], query: str) -> str:
-    """Cerca contactes a l'agenda WhatsApp vinculada (OpenWA). Només lectura; no envia missatges."""
+def search_whatsapp_contacts(ctx: RunContext[OpsAgentDeps], query: str, deep: bool = False) -> str:
+    """Cerca ràpida a WhatsApp (xats recents + prefix/lletra). `deep=true` només si cal agenda completa."""
     blocked = _openwa_guard(ctx.deps)
     if blocked:
         return blocked
     try:
-        hits = OpenWaClient().search_contacts(query)
+        hits = OpenWaClient().search_contacts(query, deep=bool(deep))
     except OpenWaError as exc:
         return _mark_openwa_failed(ctx.deps, str(exc))
     except Exception as exc:

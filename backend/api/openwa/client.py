@@ -19,6 +19,10 @@ _CONTACTS_PAGE = 500
 _CONTACTS_MAX = 5000
 _CHATS_PAGE = 500
 _CHATS_MAX = 2000
+# Cerca ràpida (1–2 crides HTTP): cobreix el 2n xat i un prefix d'agenda.
+_FAST_CHATS = 100
+_FAST_CONTACTS = 400
+_FAST_MAX_HITS = 15
 
 
 @dataclass(frozen=True)
@@ -43,6 +47,26 @@ def _fold_text(value: str) -> str:
 
 def _query_tokens(query: str) -> list[str]:
     return [tok for tok in re.split(r"\s+", _fold_text(query)) if len(tok) >= 2]
+
+
+def _name_prefix(query: str) -> str:
+    """Prefix curt per filtrar agenda (1a lletra o 2–3 caràcters del primer token)."""
+    tokens = _query_tokens(query)
+    if not tokens:
+        folded = _fold_text(query)
+        return folded[:1] if folded else ""
+    first = tokens[0]
+    if len(first) == 1:
+        return first
+    return first[:3] if len(first) >= 3 else first
+
+
+def _prefix_in_hay(hay: str, prefix: str) -> bool:
+    if not prefix or not hay:
+        return False
+    if hay.startswith(prefix):
+        return True
+    return any(part.startswith(prefix) for part in hay.split())
 
 
 def _contact_haystack(row: dict[str, Any]) -> str:
@@ -336,42 +360,92 @@ class OpenWaClient:
                 break
             offset += len(batch)
 
-    def search_contacts(self, query: str, *, limit: int = _CONTACTS_MAX) -> list[dict[str, Any]]:
-        """Cerca primer als xats recents i després a l'agenda WhatsApp.
+    def search_contacts(
+        self,
+        query: str,
+        *,
+        deep: bool = False,
+        limit: int = _CONTACTS_MAX,
+    ) -> list[dict[str, Any]]:
+        """Cerca ràpida per defecte: xats recents + agenda filtrada per prefix/lletra.
 
-        Important: un contacte pot ser el 2n xat de WhatsApp i NO estar a l'agenda del mòbil.
-        Abans només es mirava l'agenda (i els xats anaven al final, després de milers de
-        contactes) → timeouts i falsos «no trobat».
+        - deep=False: 1 crida de xats (~100) + opcional 1 crida d'agenda amb filtre de prefix.
+          Si ja hi ha match fort als xats (ex. 2n xat), no toca l'agenda.
+        - deep=True: escanerat ampli (més lent).
         """
         q = (query or "").strip()
-        if len(q) < 2:
-            raise OpenWaError("Cal un text de cerca d'almenys 2 caràcters.")
+        if len(q) < 1:
+            raise OpenWaError("Cal un text de cerca (nom, lletra o telèfon).")
         q_fold = _fold_text(q)
         tokens = _query_tokens(q)
         digits = re.sub(r"\D", "", q)
+        is_phone = len(digits) >= 6 and (not tokens or digits == re.sub(r"\D", "", q))
+        prefix = "" if is_phone else _name_prefix(q)
+        letter_mode = len(q_fold) <= 2 and not is_phone
         scored: list[tuple[int, dict[str, Any]]] = []
 
-        # 1) Xats recents PRIMER (ordenats per activitat a OpenWA).
+        chat_cap = _CHATS_MAX if deep else _FAST_CHATS
+        contact_cap = min(int(limit), _CONTACTS_MAX if deep else _FAST_CONTACTS)
+
+        # 1) Xats recents — una sola crida en mode ràpid.
         try:
-            for chat in self.iter_all_chats():
+            for chat in self.list_chats(limit=chat_cap, offset=0):
                 row = _chat_as_contact(chat)
                 if not row:
                     continue
+                hay = _contact_haystack(row)
+                if prefix and letter_mode and not _prefix_in_hay(hay, prefix):
+                    continue
                 score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
+                if not score and prefix and _prefix_in_hay(hay, prefix):
+                    score = 15
                 if score:
-                    # +20: preferim el xat obert (el que veu l'operari a WhatsApp).
                     scored.append((score + 20, row))
         except Exception as exc:
             logger.warning("OpenWA chats search failed: %s", exc)
 
-        # 2) Agenda del mòbil enllaçat.
+        strong = [s for s, _ in scored if s >= 50]
+        if strong and not deep and not is_phone and not letter_mode:
+            scored.sort(
+                key=lambda item: (
+                    -item[0],
+                    -int(item[1].get("_chat_timestamp") or 0),
+                    str(item[1].get("name") or ""),
+                )
+            )
+            return _dedupe_contacts([row for _, row in scored])[:_FAST_MAX_HITS]
+
+        # 2) Agenda — una pàgina, filtrada per prefix (M / Mau…).
         try:
-            for row in self.iter_all_contacts(max_total=max(1, min(int(limit), _CONTACTS_MAX))):
+            for row in self.list_contacts(limit=contact_cap, offset=0):
+                hay = _contact_haystack(row)
+                if prefix and not is_phone and not _prefix_in_hay(hay, prefix):
+                    continue
                 score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
+                if not score and prefix and _prefix_in_hay(hay, prefix):
+                    score = 10
                 if score:
                     scored.append((score, row))
         except Exception as exc:
             logger.warning("OpenWA contacts search failed: %s", exc)
+
+        if deep and not scored:
+            try:
+                for chat in self.iter_all_chats(max_total=_CHATS_MAX):
+                    row = _chat_as_contact(chat)
+                    if not row:
+                        continue
+                    score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
+                    if score:
+                        scored.append((score + 20, row))
+                for row in self.iter_all_contacts(max_total=_CONTACTS_MAX):
+                    if prefix and not is_phone and not _prefix_in_hay(_contact_haystack(row), prefix):
+                        continue
+                    score = _score_contact(row, q_fold=q_fold, tokens=tokens, digits=digits)
+                    if score:
+                        scored.append((score, row))
+            except Exception as exc:
+                logger.warning("OpenWA deep search failed: %s", exc)
 
         scored.sort(
             key=lambda item: (
@@ -380,7 +454,8 @@ class OpenWaClient:
                 str(item[1].get("name") or ""),
             )
         )
-        return _dedupe_contacts([row for _, row in scored])
+        max_hits = 40 if deep else _FAST_MAX_HITS
+        return _dedupe_contacts([row for _, row in scored])[:max_hits]
 
     def send_text(self, phone: str, text: str) -> OpenWaSendResult:
         chat_id = to_whatsapp_chat_id(phone)
@@ -431,9 +506,9 @@ class OpenWaClient:
 def format_contacts(contacts: list[dict[str, Any]], *, max_rows: int = 20) -> str:
     if not contacts:
         return (
-            "Cap contacte trobat a l'agenda WhatsApp ni als xats recents de la sessió. "
-            "OpenWA només veu el que té el mòbil enllaçat (QR): si el contacte no està "
-            "desat o no hi ha xat obert, no surt. Passa el mòbil internacional (+…) per enviar."
+            "Cap contacte als xats recents / prefix d'agenda. "
+            "Prova la 1a lletra (ex. «M»), el cognom, el +telèfon, "
+            "o cerca profunda (deep=true) si cal escanejar tota l'agenda."
         )
     lines: list[str] = []
     for row in contacts[:max_rows]:

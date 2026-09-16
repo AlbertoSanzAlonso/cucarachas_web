@@ -69,14 +69,34 @@ class ChatIdTests(SimpleTestCase):
                 "timestamp": 99,
             },
         ]
-        with (
-            patch.object(client, "iter_all_contacts", return_value=iter([])),
-            patch.object(client, "iter_all_chats", return_value=iter(chats)),
-        ):
+        with patch.object(client, "list_chats", return_value=chats):
             hits = client.search_contacts("Mauro Montenegro")
         self.assertEqual(len(hits), 1)
         self.assertEqual(hits[0]["id"], "5491199988877@c.us")
         self.assertTrue(hits[0].get("_from_chat"))
+
+    def test_search_contacts_letter_prefix(self):
+        client = OpenWaClient(_settings())
+        chats = [
+            {
+                "id": "1@c.us",
+                "name": "Mauro",
+                "isGroup": False,
+                "kind": "individual",
+                "timestamp": 2,
+            },
+            {
+                "id": "2@c.us",
+                "name": "Anna",
+                "isGroup": False,
+                "kind": "individual",
+                "timestamp": 1,
+            },
+        ]
+        with patch.object(client, "list_chats", return_value=chats):
+            hits = client.search_contacts("M")
+        self.assertEqual(len(hits), 1)
+        self.assertEqual(hits[0]["name"], "Mauro")
 
     def test_rejects_landline(self):
         with self.assertRaises(OpenWaError):
@@ -197,12 +217,8 @@ class OpenWaClientTests(SimpleTestCase):
             },
         ]
         with (
-            patch.object(
-                client,
-                "iter_all_contacts",
-                side_effect=lambda **_kwargs: iter(sample),
-            ),
-            patch.object(client, "iter_all_chats", return_value=iter([])),
+            patch.object(client, "list_chats", return_value=[]),
+            patch.object(client, "list_contacts", return_value=sample),
         ):
             by_name = client.search_contacts("maria")
             by_phone = client.search_contacts("612345678")
@@ -229,10 +245,7 @@ class OpenWaClientTests(SimpleTestCase):
                 "timestamp": 1,
             }
         ]
-        with (
-            patch.object(client, "iter_all_contacts", return_value=iter([])),
-            patch.object(client, "iter_all_chats", return_value=iter(chats)),
-        ):
+        with patch.object(client, "list_chats", return_value=chats):
             hits = client.search_contacts("Mauro")
         self.assertEqual(len(hits), 1)
         self.assertTrue(hits[0].get("_from_chat"))
@@ -241,7 +254,7 @@ class OpenWaClientTests(SimpleTestCase):
     def test_format_contacts_empty(self):
         text = format_contacts([])
         self.assertIn("Cap contacte", text)
-        self.assertIn("internacional", text)
+        self.assertIn("lletra", text)
 
     def test_list_contacts_disabled(self):
         client = OpenWaClient(_settings(enabled=False))
