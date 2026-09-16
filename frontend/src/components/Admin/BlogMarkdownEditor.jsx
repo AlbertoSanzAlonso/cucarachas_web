@@ -28,7 +28,7 @@ const ToolbarBtn = ({ active, disabled, onClick, title, children }) => (
     className={`inline-flex items-center justify-center min-w-8 h-8 px-1.5 rounded-lg text-[11px] font-black transition-colors ${
       active
         ? 'bg-primary-blue text-white'
-        : 'text-primary-gray/70 hover:bg-primary-blue/10 hover:text-primary-blue'
+        : 'text-admin-text-muted hover:bg-primary-blue/10 hover:text-primary-blue'
     } disabled:opacity-30`}
   >
     {children}
@@ -96,7 +96,7 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
 
   if (!editor) {
     return (
-      <div className="h-[420px] rounded-2xl border border-gray-100 bg-bg-light animate-pulse" />
+      <div className="h-[420px] rounded-2xl border border-admin-border bg-bg-light animate-pulse" />
     );
   }
 
@@ -122,10 +122,10 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
 
   return (
     <div
-      className="blog-wysiwyg rounded-2xl overflow-hidden border border-gray-100 bg-white"
+      className="blog-wysiwyg rounded-2xl overflow-hidden border border-admin-border bg-admin-card"
       style={{ minHeight: height }}
     >
-      <div className="flex flex-wrap items-center gap-1 px-3 py-2 border-b border-gray-100 bg-bg-light/80">
+      <div className="flex flex-wrap items-center gap-1 px-3 py-2 border-b border-admin-border bg-bg-light/80">
         <ToolbarBtn
           title="Negreta"
           active={editor.isActive('bold')}
@@ -148,7 +148,7 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
           <Strikethrough size={15} />
         </ToolbarBtn>
 
-        <span className="w-px h-5 bg-gray-200 mx-1" />
+        <span className="w-px h-5 bg-admin-border mx-1" />
 
         {[1, 2, 3, 4, 5, 6].map((level) => (
           <ToolbarBtn
@@ -161,7 +161,7 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
           </ToolbarBtn>
         ))}
 
-        <span className="w-px h-5 bg-gray-200 mx-1" />
+        <span className="w-px h-5 bg-admin-border mx-1" />
 
         <ToolbarBtn
           title="Llista"
@@ -194,14 +194,14 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
           <LinkIcon size={15} />
         </ToolbarBtn>
 
-        <span className="w-px h-5 bg-gray-200 mx-1" />
+        <span className="w-px h-5 bg-admin-border mx-1" />
 
         <div className="relative" ref={emojiRef}>
           <ToolbarBtn title="Emojis" active={emojiOpen} onClick={() => setEmojiOpen((o) => !o)}>
             <span className="text-base leading-none">😊</span>
           </ToolbarBtn>
           {emojiOpen && (
-            <div className="absolute left-0 top-full mt-2 z-30 w-[17rem] rounded-2xl border border-gray-100 bg-white shadow-xl p-2 grid grid-cols-6 gap-1">
+            <div className="absolute left-0 top-full mt-2 z-30 w-[17rem] rounded-2xl border border-admin-border bg-admin-card shadow-xl p-2 grid grid-cols-6 gap-1">
               {BLOG_EMOJIS.map(({ name, emoji }) => (
                 <button
                   key={name}
@@ -217,7 +217,7 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
           )}
         </div>
 
-        <span className="w-px h-5 bg-gray-200 mx-1" />
+        <span className="w-px h-5 bg-admin-border mx-1" />
 
         <ToolbarBtn
           title="Desfer"
@@ -235,7 +235,7 @@ const BlogMarkdownEditor = ({ value = '', onChange, height = 420, contentKey = '
         </ToolbarBtn>
       </div>
 
-      <div className="overflow-y-auto bg-white" style={{ minHeight: Math.max(280, height - 56) }}>
+      <div className="overflow-y-auto bg-admin-card" style={{ minHeight: Math.max(280, height - 56) }}>
         <EditorContent editor={editor} />
       </div>
     </div>

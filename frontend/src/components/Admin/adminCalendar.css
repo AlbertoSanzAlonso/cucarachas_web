@@ -22,14 +22,14 @@
 .admin-calendar-wrapper .rbc-toolbar-label {
   font-weight: 900;
   font-size: 1.125rem;
-  color: var(--color-primary-gray);
+  color: var(--admin-text);
   text-transform: capitalize;
 }
 
 .admin-calendar-wrapper .rbc-btn-group button {
-  border: 1px solid #e5e7eb;
-  background: #fff;
-  color: var(--color-primary-gray);
+  border: 1px solid var(--admin-border);
+  background: var(--admin-card-bg);
+  color: var(--admin-text);
   font-weight: 700;
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -39,7 +39,7 @@
 }
 
 .admin-calendar-wrapper .rbc-btn-group button:hover {
-  background: #f8fafc;
+  background: var(--admin-page-bg);
   color: var(--color-primary-blue);
 }
 
@@ -56,10 +56,10 @@
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary-gray);
+  color: var(--admin-text);
   opacity: 0.55;
-  border-bottom: 1px solid #eef2f7;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid var(--admin-border);
+  background: linear-gradient(180deg, var(--admin-page-bg) 0%, var(--admin-muted-bg) 100%);
   transition: all 0.2s ease;
 }
 
@@ -81,9 +81,9 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  border: 1px solid #e8eef4;
+  border: 1px solid var(--admin-border);
   border-radius: 1.5rem;
-  background: linear-gradient(180deg, #fafcff 0%, #ffffff 100%);
+  background: linear-gradient(180deg, var(--admin-muted-bg) 0%, var(--admin-card-bg) 100%);
   overflow: hidden;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
@@ -91,16 +91,16 @@
 .admin-calendar-wrapper .rbc-month-view {
   flex: 1 1 auto;
   min-height: 0;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--admin-border);
   border-radius: 1.5rem;
   overflow: auto;
-  background: #fff;
+  background: var(--admin-card-bg);
   overscroll-behavior: contain;
 }
 
 .admin-calendar-wrapper .rbc-time-header-content,
 .admin-calendar-wrapper .rbc-time-content {
-  border-color: #f1f5f9;
+  border-color: var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-time-content {
@@ -113,23 +113,23 @@
 }
 
 .admin-calendar-wrapper .rbc-time-slot {
-  border-top-color: #f8fafc;
+  border-top-color: var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-timeslot-group {
   min-height: 52px;
-  border-bottom-color: #f1f5f9;
+  border-bottom-color: var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-time-gutter .rbc-timeslot-group {
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--color-primary-gray);
+  color: var(--admin-text);
   opacity: 0.4;
 }
 
 .admin-calendar-wrapper .rbc-day-slot .rbc-time-slot {
-  border-top: 1px solid #f8fafc;
+  border-top: 1px solid var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-today {
@@ -150,14 +150,14 @@
 }
 
 .admin-calendar-wrapper .rbc-off-range-bg {
-  background: #fafbfc;
+  background: var(--admin-muted-bg);
 }
 
 .admin-calendar-wrapper .rbc-date-cell {
   padding: 0.5rem;
   font-weight: 700;
   font-size: 0.8rem;
-  color: var(--color-primary-gray);
+  color: var(--admin-text);
 }
 
 .admin-calendar-wrapper .rbc-date-cell.rbc-now {
@@ -279,7 +279,7 @@
 }
 
 .admin-calendar-wrapper .rbc-time-view .rbc-time-gutter {
-  background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+  background: linear-gradient(90deg, var(--admin-page-bg) 0%, var(--admin-card-bg) 100%);
 }
 
 .admin-calendar-wrapper .rbc-time-view .rbc-day-slot .rbc-events-container {
@@ -293,11 +293,11 @@
 }
 
 .admin-calendar-wrapper .rbc-month-row + .rbc-month-row {
-  border-top-color: #f1f5f9;
+  border-top-color: var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-day-bg + .rbc-day-bg {
-  border-left-color: #f1f5f9;
+  border-left-color: var(--admin-border);
 }
 
 .admin-calendar-wrapper .rbc-month-view .rbc-day-bg {
@@ -319,7 +319,7 @@
 .admin-calendar-wrapper .rbc-button-link {
   cursor: pointer;
   font-weight: 800;
-  color: var(--color-primary-gray);
+  color: var(--admin-text);
   text-decoration: none;
 }
 

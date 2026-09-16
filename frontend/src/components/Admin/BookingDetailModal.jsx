@@ -36,7 +36,7 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 40, scale: 0.95 }}
           onClick={(e) => e.stopPropagation()}
-          className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+          className="relative w-full max-w-md bg-admin-card rounded-[2.5rem] shadow-2xl overflow-hidden"
         >
           <div className="p-6 md:p-8">
             <div className="flex justify-between items-start mb-6">
@@ -57,7 +57,7 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
                 </span>
                 <button
                   onClick={onClose}
-                  className="p-2 bg-gray-50 rounded-xl text-primary-gray/30 hover:text-red-500 transition-colors"
+                  className="p-2 bg-admin-muted rounded-xl text-admin-text-muted hover:text-red-500 transition-colors"
                   aria-label="Tancar"
                 >
                   <X size={20} />
@@ -65,12 +65,12 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
               </div>
             </div>
 
-            <h3 className="font-black text-xl text-primary-gray mb-5 leading-tight">
+            <h3 className="font-black text-xl text-admin-text mb-5 leading-tight">
               {getBookingDisplayTitle(booking)}
             </h3>
 
             <div className="space-y-3 mb-8">
-              <div className="flex items-center text-sm text-primary-gray/60 font-medium">
+              <div className="flex items-center text-sm text-admin-text-muted font-medium">
                 <Clock size={16} className="mr-3 text-primary-blue shrink-0" />
                 {booking.startTime
                   ? new Date(booking.startTime).toLocaleString('ca-ES', {
@@ -82,18 +82,18 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
                     })
                   : '—'}
               </div>
-              <div className="flex items-center text-sm text-primary-gray/60 font-medium">
+              <div className="flex items-center text-sm text-admin-text-muted font-medium">
                 <User size={16} className="mr-3 text-primary-blue shrink-0" />
                 {booking.attendees?.[0]?.name || booking.customerName || 'Client'}
               </div>
               {location && (
-                <div className="text-xs text-primary-gray/50 font-medium pl-7 leading-relaxed">
+                <div className="text-xs text-admin-text-muted font-medium pl-7 leading-relaxed">
                   {location}
                 </div>
               )}
             </div>
 
-            <div className="flex gap-2 pt-4 border-t border-gray-50">
+            <div className="flex gap-2 pt-4 border-t border-admin-border">
               <button
                 type="button"
                 onClick={onRequestEdit}
@@ -114,7 +114,7 @@ const BookingDetailModal = ({ booking, onClose, onRequestCancel, onRequestEdit }
               </button>
               <a
                 href="#agenda"
-                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-gray-50 text-primary-gray/60 font-bold text-sm px-4 pointer-events-none opacity-40"
+                className="flex items-center justify-center gap-2 p-3 rounded-xl bg-admin-muted text-admin-text-muted font-bold text-sm px-4 pointer-events-none opacity-40"
                 title="Gestionar a l'agenda admin"
               >
                 <ExternalLink size={18} />

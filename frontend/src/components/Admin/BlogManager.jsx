@@ -134,10 +134,10 @@ const BlogManager = () => {
     <div className="space-y-6">
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight">
             Blog
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary-gray/40 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-admin-text-muted mt-1">
             Articles públics · CRUD
           </p>
         </div>
@@ -145,7 +145,7 @@ const BlogManager = () => {
           <button
             type="button"
             onClick={() => refetch()}
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-primary-gray hover:bg-primary-gray/10"
+            className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-admin-text hover:bg-primary-gray/10"
           >
             <RefreshCcw size={14} /> Actualitzar
           </button>
@@ -175,42 +175,42 @@ const BlogManager = () => {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit}
-          className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 md:p-8 space-y-4"
+          className="bg-admin-card rounded-[2rem] border border-admin-border shadow-sm p-6 md:p-8 space-y-4"
         >
           <div className="flex items-center justify-between">
             <h3 className="text-sm font-black uppercase tracking-widest text-primary-blue">
               {editingSlug ? 'Editar article' : 'Nou article'}
             </h3>
-            <button type="button" onClick={resetForm} className="p-2 text-primary-gray/40 hover:text-primary-gray">
+            <button type="button" onClick={resetForm} className="p-2 text-admin-text-muted hover:text-admin-text">
               <X size={18} />
             </button>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             <label className="space-y-1 md:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Títol</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Títol</span>
               <input
                 value={form.title}
                 onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
                 required
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Slug (opcional)</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Slug (opcional)</span>
               <input
                 value={form.slug}
                 onChange={(e) => setForm((f) => ({ ...f, slug: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
                 placeholder="auto des del títol"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Categoria</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Categoria</span>
               <select
                 value={form.category}
                 onChange={(e) => setForm((f) => ({ ...f, category: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               >
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>
@@ -220,38 +220,38 @@ const BlogManager = () => {
               </select>
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Autor</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Autor</span>
               <input
                 value={form.author}
                 onChange={(e) => setForm((f) => ({ ...f, author: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Imatge (/assets/…)</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Imatge (/assets/…)</span>
               <input
                 value={form.image}
                 onChange={(e) => setForm((f) => ({ ...f, image: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Minuts lectura</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Minuts lectura</span>
               <input
                 type="number"
                 min={1}
                 value={form.read_time_minutes}
                 onChange={(e) => setForm((f) => ({ ...f, read_time_minutes: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               />
             </label>
             <label className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Data publicació</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Data publicació</span>
               <input
                 type="date"
                 value={form.published_at || ''}
                 onChange={(e) => setForm((f) => ({ ...f, published_at: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               />
             </label>
             <label className="flex items-center gap-3 pt-6">
@@ -261,20 +261,20 @@ const BlogManager = () => {
                 onChange={(e) => setForm((f) => ({ ...f, is_published: e.target.checked }))}
                 className="size-4 accent-[var(--primary-blue)]"
               />
-              <span className="text-xs font-black uppercase tracking-widest text-primary-gray/60">Publicat</span>
+              <span className="text-xs font-black uppercase tracking-widest text-admin-text-muted">Publicat</span>
             </label>
             <label className="space-y-1 md:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Extracte</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Extracte</span>
               <textarea
                 value={form.excerpt}
                 onChange={(e) => setForm((f) => ({ ...f, excerpt: e.target.value }))}
                 rows={2}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
                 required
               />
             </label>
             <label className="space-y-2 md:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Cos (editor visual · es guarda en Markdown)
               </span>
               <BlogMarkdownEditor
@@ -284,11 +284,11 @@ const BlogManager = () => {
               />
             </label>
             <label className="space-y-1 md:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">Meta description (SEO)</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">Meta description (SEO)</span>
               <input
                 value={form.meta_description}
                 onChange={(e) => setForm((f) => ({ ...f, meta_description: e.target.value }))}
-                className="w-full rounded-xl border border-gray-100 bg-bg-light px-4 py-3 text-sm font-semibold"
+                className="w-full rounded-xl border border-admin-border bg-bg-light px-4 py-3 text-sm font-semibold"
               />
             </label>
           </div>
@@ -312,13 +312,13 @@ const BlogManager = () => {
         </motion.form>
       )}
 
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
+      <div className="bg-admin-card rounded-[2rem] border border-admin-border shadow-sm overflow-hidden">
         {isLoading ? (
-          <div className="p-10 text-center text-primary-gray/40 font-bold">Carregant…</div>
+          <div className="p-10 text-center text-admin-text-muted font-bold">Carregant…</div>
         ) : isError ? (
           <div className="p-10 text-center text-red-500 font-bold">Error carregant articles</div>
         ) : articles.length === 0 ? (
-          <div className="p-10 text-center text-primary-gray/40 font-bold flex flex-col items-center gap-3">
+          <div className="p-10 text-center text-admin-text-muted font-bold flex flex-col items-center gap-3">
             <Newspaper size={40} className="opacity-30" />
             Cap article encara
           </div>
@@ -338,14 +338,14 @@ const BlogManager = () => {
                       className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
                         article.is_published
                           ? 'bg-accent-green/20 text-primary-blue'
-                          : 'bg-primary-gray/10 text-primary-gray/50'
+                          : 'bg-primary-gray/10 text-admin-text-muted'
                       }`}
                     >
                       {article.is_published ? 'Publicat' : 'Esborrany'}
                     </span>
                   </div>
-                  <p className="text-xs text-primary-gray/50 line-clamp-1">{article.excerpt}</p>
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-primary-gray/30">
+                  <p className="text-xs text-admin-text-muted line-clamp-1">{article.excerpt}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-admin-text-muted">
                     {article.category} · {article.published_at || '—'} · /blog/{article.slug}
                   </p>
                 </div>
@@ -353,7 +353,7 @@ const BlogManager = () => {
                   <Link
                     to={`/blog/${article.slug}`}
                     target="_blank"
-                    className="p-2 rounded-xl bg-primary-gray/5 text-primary-gray hover:bg-primary-gray/10"
+                    className="p-2 rounded-xl bg-primary-gray/5 text-admin-text hover:bg-primary-gray/10"
                     title="Obrir"
                   >
                     <ExternalLink size={16} />

@@ -72,7 +72,7 @@ const LeadEditModal = ({ isOpen, onClose, leadRaw }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 40, scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-lg bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-lg bg-admin-card rounded-[2.5rem] shadow-2xl overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-labelledby="lead-edit-title"
@@ -82,11 +82,11 @@ const LeadEditModal = ({ isOpen, onClose, leadRaw }) => {
                 <div>
                   <h2
                     id="lead-edit-title"
-                    className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight"
+                    className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight"
                   >
                     Editar lead
                   </h2>
-                  <p className="text-sm text-primary-gray/40 font-medium mt-1">
+                  <p className="text-sm text-admin-text-muted font-medium mt-1">
                     Actualitza les dades del contacte
                   </p>
                 </div>
@@ -94,7 +94,7 @@ const LeadEditModal = ({ isOpen, onClose, leadRaw }) => {
                   type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="p-2 bg-gray-50 rounded-xl text-primary-gray/30 hover:text-red-500 transition-colors disabled:opacity-40"
+                  className="p-2 bg-admin-muted rounded-xl text-admin-text-muted hover:text-red-500 transition-colors disabled:opacity-40"
                   aria-label="Tancar"
                 >
                   <X size={20} />
@@ -153,7 +153,7 @@ const LeadEditModal = ({ isOpen, onClose, leadRaw }) => {
                   type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="flex-1 p-3 rounded-xl bg-gray-50 text-primary-gray font-bold text-sm hover:bg-gray-100 transition-colors disabled:opacity-40"
+                  className="flex-1 p-3 rounded-xl bg-admin-muted text-admin-text font-bold text-sm hover:bg-admin-muted transition-colors disabled:opacity-40"
                 >
                   Cancel·lar
                 </button>
@@ -184,12 +184,12 @@ const Field = ({ icon: Icon, label, name, type = 'text', value, onChange, requir
   <div className="space-y-1.5">
     <label
       htmlFor={`lead-${name}`}
-      className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40 ml-1"
+      className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted ml-1"
     >
       {label}
     </label>
     <div className="relative">
-      <Icon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-gray/25" />
+      <Icon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-admin-text-muted" />
       <input
         id={`lead-${name}`}
         name={name}
@@ -198,7 +198,7 @@ const Field = ({ icon: Icon, label, name, type = 'text', value, onChange, requir
         onChange={onChange}
         required={required}
         disabled={disabled}
-        className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-medium text-primary-gray text-sm transition-all disabled:opacity-50"
+        className="w-full pl-11 pr-4 py-3.5 bg-admin-muted border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-medium text-admin-text text-sm transition-all disabled:opacity-50"
       />
     </div>
   </div>

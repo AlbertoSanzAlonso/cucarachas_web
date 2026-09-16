@@ -352,10 +352,10 @@ const PresupuestosManager = () => {
     <div className="animate-fade-in space-y-8">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-2xl md:text-3xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-black text-admin-text uppercase tracking-tight">
             Pressupostos
           </h2>
-          <p className="text-primary-gray/40 font-medium text-sm">
+          <p className="text-admin-text-muted font-medium text-sm">
             Pressupostos del Bio-Assistent i creació manual — edita, envia o elimina
           </p>
         </div>
@@ -367,18 +367,18 @@ const PresupuestosManager = () => {
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-8">
         <form
           onSubmit={handleSubmit}
-          className="xl:col-span-3 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 p-6 md:p-10 flex flex-col gap-6 overflow-visible"
+          className="xl:col-span-3 bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border p-6 md:p-10 flex flex-col gap-6 overflow-visible"
         >
           <div className="space-y-6">
           <div className="flex items-center justify-between gap-4">
-            <h3 className="text-sm font-black uppercase tracking-widest text-primary-gray/50">
+            <h3 className="text-sm font-black uppercase tracking-widest text-admin-text-muted">
               {editingId ? `Editar #${String(editingId).padStart(4, '0')}` : 'Nou pressupost'}
             </h3>
             {editingId && (
               <button
                 type="button"
                 onClick={resetForm}
-                className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-primary-gray/50 hover:text-primary-gray"
+                className="inline-flex items-center gap-1 text-xs font-black uppercase tracking-widest text-admin-text-muted hover:text-admin-text"
               >
                 <X size={14} />
                 Cancel·lar
@@ -387,18 +387,18 @@ const PresupuestosManager = () => {
           </div>
 
           {editingId && loadingEdit && (
-            <p className="text-sm text-primary-gray/40 animate-pulse">Carregant dades...</p>
+            <p className="text-sm text-admin-text-muted animate-pulse">Carregant dades...</p>
           )}
 
           {!editingId && (
             <label className="block space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Plantilla (model CECSA)
               </span>
               <select
                 value={templateId}
                 onChange={(e) => applyTemplate(e.target.value)}
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
               >
                 <option value="">Sense plantilla — línes en blanc</option>
                 {PRESUPUESTO_TEMPLATES.map((tpl) => (
@@ -413,13 +413,13 @@ const PresupuestosManager = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {!editingId && (
               <label className="block space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+                <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                   Client *
                 </span>
                 <select
                   value={clienteId}
                   onChange={(e) => setClienteId(e.target.value)}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                  className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
                   disabled={leadsLoading}
                 >
                   <option value="">Selecciona un lead...</option>
@@ -435,13 +435,13 @@ const PresupuestosManager = () => {
 
             {editingId && (
               <label className="block space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+                <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                   Estat
                 </span>
                 <select
                   value={estado}
                   onChange={(e) => setEstado(e.target.value)}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                  className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
                 >
                   {Object.entries(ESTADO_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>
@@ -454,20 +454,20 @@ const PresupuestosManager = () => {
 
             {!editingId && (
               <label className="block space-y-2">
-                <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+                <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                   Data
                 </span>
                 <input
                   type="date"
                   value={fecha}
                   onChange={(e) => setFecha(e.target.value)}
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                  className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
                 />
               </label>
             )}
 
             <label className="block space-y-2 md:col-span-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Adreça (opcional)
               </span>
               <input
@@ -475,24 +475,24 @@ const PresupuestosManager = () => {
                 value={direccion}
                 onChange={(e) => setDireccion(e.target.value)}
                 placeholder="Carrer Example 12, 3r 1a"
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Ciutat
               </span>
               <input
                 type="text"
                 value={ciudad}
                 onChange={(e) => setCiudad(e.target.value)}
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Validesa (dies)
               </span>
               <input
@@ -501,12 +501,12 @@ const PresupuestosManager = () => {
                 max={365}
                 value={validezDias}
                 onChange={(e) => setValidezDias(e.target.value)}
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
               />
             </label>
 
             <label className="block space-y-2">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Garantia (mesos)
               </span>
               <input
@@ -515,14 +515,14 @@ const PresupuestosManager = () => {
                 max={120}
                 value={garantiaMeses}
                 onChange={(e) => setGarantiaMeses(e.target.value)}
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue"
               />
             </label>
           </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Conceptes i preus *
               </span>
               <button
@@ -540,7 +540,7 @@ const PresupuestosManager = () => {
                 key={index}
                 initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="space-y-2 p-4 rounded-2xl border border-gray-100 bg-gray-50/50"
+                className="space-y-2 p-4 rounded-2xl border border-admin-border bg-admin-muted"
               >
                 <div className="grid grid-cols-12 gap-2 items-end">
                   <div className="col-span-12 md:col-span-6">
@@ -549,7 +549,7 @@ const PresupuestosManager = () => {
                       value={line.concepto}
                       onChange={(e) => updateLine(index, 'concepto', e.target.value)}
                       placeholder="Concepte (ex: Desinsectació paneroles)"
-                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                      className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue bg-admin-card"
                     />
                   </div>
                   <div className="col-span-5 md:col-span-2">
@@ -560,7 +560,7 @@ const PresupuestosManager = () => {
                       value={line.precio}
                       onChange={(e) => updateLine(index, 'precio', e.target.value)}
                       placeholder="Preu € (sense IVA)"
-                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                      className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue bg-admin-card"
                     />
                   </div>
                   <div className="col-span-5 md:col-span-2">
@@ -570,7 +570,7 @@ const PresupuestosManager = () => {
                       value={line.cantidad}
                       onChange={(e) => updateLine(index, 'cantidad', e.target.value)}
                       placeholder="Qt."
-                      className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue bg-white"
+                      className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue bg-admin-card"
                     />
                   </div>
                   <div className="col-span-2 md:col-span-2 flex justify-end">
@@ -589,14 +589,14 @@ const PresupuestosManager = () => {
                   onChange={(e) => updateLine(index, 'descripcion', e.target.value)}
                   rows={2}
                   placeholder="Descripció detallada del servei (opcional, surt al PDF)"
-                  className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-xs font-medium text-primary-gray/70 focus:outline-none focus:border-primary-blue bg-white resize-none"
+                  className="w-full rounded-2xl border border-admin-border px-4 py-3 text-xs font-medium text-admin-text-muted focus:outline-none focus:border-primary-blue bg-admin-card resize-none"
                 />
               </motion.div>
             ))}
           </div>
 
           <label className="block space-y-2">
-            <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Notes (opcional)
             </span>
             <textarea
@@ -604,13 +604,13 @@ const PresupuestosManager = () => {
               onChange={(e) => setNotas(e.target.value)}
               rows={3}
               placeholder="Condicions especials, observacions..."
-              className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm font-medium text-primary-gray focus:outline-none focus:border-primary-blue resize-none"
+              className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm font-medium text-admin-text focus:outline-none focus:border-primary-blue resize-none"
             />
           </label>
           </div>
 
-          <div className="rounded-2xl bg-[#f8fafc] border-2 border-gray-100 p-5 md:p-6 space-y-4 shrink-0">
-            <div className="text-sm font-bold text-primary-gray space-y-1">
+          <div className="rounded-2xl bg-admin-page border-2 border-admin-border p-5 md:p-6 space-y-4 shrink-0">
+            <div className="text-sm font-bold text-admin-text space-y-1">
               <p>
                 Base imposable:{' '}
                 <span className="text-primary-blue">{formatMoney(totalPreview)}</span>
@@ -674,19 +674,19 @@ const PresupuestosManager = () => {
           )}
         </form>
 
-        <section className="xl:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-          <div className="px-6 py-5 border-b border-gray-50">
-            <h3 className="text-sm font-black uppercase tracking-widest text-primary-gray/50">
+        <section className="xl:col-span-2 bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border overflow-hidden flex flex-col">
+          <div className="px-6 py-5 border-b border-admin-border">
+            <h3 className="text-sm font-black uppercase tracking-widest text-admin-text-muted">
               Tots els pressupostos
             </h3>
           </div>
           <div className="divide-y divide-gray-50 flex-1 overflow-y-auto max-h-[900px]">
             {listLoading ? (
-              <p className="p-8 text-center text-primary-gray/40 text-sm font-bold animate-pulse">
+              <p className="p-8 text-center text-admin-text-muted text-sm font-bold animate-pulse">
                 Carregant...
               </p>
             ) : !presupuestos?.length ? (
-              <p className="p-8 text-center text-primary-gray/40 text-sm">
+              <p className="p-8 text-center text-admin-text-muted text-sm">
                 Encara no hi ha pressupostos. Els del Bio-Assistent apareixeran aquí automàticament.
               </p>
             ) : (
@@ -694,18 +694,18 @@ const PresupuestosManager = () => {
                 <div key={item.id} className="px-6 py-4 space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="font-bold text-sm text-primary-gray truncate flex items-center gap-2">
+                      <p className="font-bold text-sm text-admin-text truncate flex items-center gap-2">
                         #{String(item.id).padStart(4, '0')} — {item.cliente_nombre}
                         {item.origen === 'agent' ? (
                           <Bot size={14} className="text-primary-blue shrink-0" title="Bio-Assistent" />
                         ) : (
-                          <User size={14} className="text-primary-gray/30 shrink-0" title="Admin" />
+                          <User size={14} className="text-admin-text-muted shrink-0" title="Admin" />
                         )}
                       </p>
-                      <p className="text-xs text-primary-gray/40 mt-1">
+                      <p className="text-xs text-admin-text-muted mt-1">
                         {formatMoney(item.total_monto)} · {formatDate(item.created_at)}
                       </p>
-                      <span className="inline-block mt-1 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-gray-100 text-primary-gray/60">
+                      <span className="inline-block mt-1 text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full bg-admin-muted text-admin-text-muted">
                         {ESTADO_LABELS[item.estado] || item.estado}
                       </span>
                     </div>
@@ -714,7 +714,7 @@ const PresupuestosManager = () => {
                     <button
                       type="button"
                       onClick={() => loadForEdit(item)}
-                      className="p-2 rounded-xl text-primary-gray/60 hover:bg-gray-50 hover:text-primary-blue"
+                      className="p-2 rounded-xl text-admin-text-muted hover:bg-admin-muted hover:text-primary-blue"
                       title="Editar"
                     >
                       <Pencil size={16} />
@@ -722,7 +722,7 @@ const PresupuestosManager = () => {
                     <button
                       type="button"
                       onClick={() => openSendModal(item)}
-                      className="p-2 rounded-xl text-primary-gray/60 hover:bg-gray-50 hover:text-accent-green"
+                      className="p-2 rounded-xl text-admin-text-muted hover:bg-admin-muted hover:text-accent-green"
                       title="Enviar per correu"
                     >
                       <Mail size={16} />
@@ -760,18 +760,18 @@ const PresupuestosManager = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40">
           <form
             onSubmit={handleSendEmail}
-            className="bg-white rounded-3xl shadow-xl border border-gray-100 w-full max-w-md p-6 space-y-4"
+            className="bg-admin-card rounded-3xl shadow-xl border border-admin-border w-full max-w-md p-6 space-y-4"
           >
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-black uppercase tracking-widest text-primary-gray">
+              <h3 className="text-sm font-black uppercase tracking-widest text-admin-text">
                 Enviar pressupost #{String(sendTarget.id).padStart(4, '0')}
               </h3>
-              <button type="button" onClick={() => setSendTarget(null)} className="text-primary-gray/40">
+              <button type="button" onClick={() => setSendTarget(null)} className="text-admin-text-muted">
                 <X size={20} />
               </button>
             </div>
             <label className="block space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Correu del client *
               </span>
               <input
@@ -780,22 +780,22 @@ const PresupuestosManager = () => {
                 value={sendEmailValue}
                 onChange={(e) => setSendEmailValue(e.target.value)}
                 placeholder="client@exemple.cat"
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm"
               />
             </label>
             <label className="block space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Assumpte
               </span>
               <input
                 type="text"
                 value={sendSubject}
                 onChange={(e) => setSendSubject(e.target.value)}
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm"
               />
             </label>
             <label className="block space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <span className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Missatge (opcional)
               </span>
               <textarea
@@ -803,7 +803,7 @@ const PresupuestosManager = () => {
                 value={sendBody}
                 onChange={(e) => setSendBody(e.target.value)}
                 placeholder="Text personalitzat (si es deixa buit, s'usa la plantilla per defecte)"
-                className="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm resize-none"
+                className="w-full rounded-2xl border border-admin-border px-4 py-3 text-sm resize-none"
               />
             </label>
             <button

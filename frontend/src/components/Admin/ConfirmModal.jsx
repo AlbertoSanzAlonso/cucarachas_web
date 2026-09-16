@@ -33,7 +33,7 @@ const ConfirmModal = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 32, scale: 0.95 }}
             onClick={(e) => e.stopPropagation()}
-            className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-md bg-admin-card rounded-[2.5rem] shadow-2xl overflow-hidden"
             role="dialog"
             aria-modal="true"
             aria-labelledby="confirm-modal-title"
@@ -51,7 +51,7 @@ const ConfirmModal = ({
                   type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="p-2 bg-gray-50 rounded-xl text-primary-gray/30 hover:text-red-500 transition-colors disabled:opacity-40"
+                  className="p-2 bg-admin-muted rounded-xl text-admin-text-muted hover:text-red-500 transition-colors disabled:opacity-40"
                   aria-label="Tancar"
                 >
                   <X size={20} />
@@ -60,12 +60,12 @@ const ConfirmModal = ({
 
               <h3
                 id="confirm-modal-title"
-                className="font-black text-xl text-primary-gray mb-3 leading-tight"
+                className="font-black text-xl text-admin-text mb-3 leading-tight"
               >
                 {title}
               </h3>
               {message && (
-                <p className="text-sm text-primary-gray/60 font-medium leading-relaxed mb-6">
+                <p className="text-sm text-admin-text-muted font-medium leading-relaxed mb-6">
                   {message}
                 </p>
               )}
@@ -81,7 +81,7 @@ const ConfirmModal = ({
                   type="button"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="flex-1 p-3 rounded-xl bg-gray-50 text-primary-gray font-bold text-sm hover:bg-gray-100 transition-colors disabled:opacity-40"
+                  className="flex-1 p-3 rounded-xl bg-admin-muted text-admin-text font-bold text-sm hover:bg-admin-muted transition-colors disabled:opacity-40"
                 >
                   {cancelLabel}
                 </button>

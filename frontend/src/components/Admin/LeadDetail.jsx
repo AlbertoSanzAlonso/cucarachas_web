@@ -91,7 +91,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
 
   if (!lead) {
     return (
-      <div className="text-center py-20 text-primary-gray/40">
+      <div className="text-center py-20 text-admin-text-muted">
         Client no trobat.
         <button onClick={onBack} className="block mx-auto mt-4 text-primary-blue font-bold">
           Tornar
@@ -116,8 +116,8 @@ const LeadDetail = ({ leadRaw, onBack }) => {
       </button>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-        <section className="lg:col-span-1 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
-          <div className="p-6 md:p-8 border-b border-gray-50">
+        <section className="lg:col-span-1 bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border">
+          <div className="p-6 md:p-8 border-b border-admin-border">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div className="p-3 bg-primary-blue/5 rounded-2xl text-primary-blue">
                 <User size={24} />
@@ -149,24 +149,24 @@ const LeadDetail = ({ leadRaw, onBack }) => {
                 </div>
               </div>
             </div>
-            <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight leading-tight">
+            <h2 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight leading-tight">
               {lead.name}
             </h2>
-            <p className="text-sm text-primary-gray/40 font-medium mt-1">
+            <p className="text-sm text-admin-text-muted font-medium mt-1">
               Registrat el {formatLeadDate(lead.createdAt) || '—'}
             </p>
           </div>
 
           <div className="p-6 md:p-8 space-y-5">
             <div>
-              <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-2">
+              <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-2">
                 Estat CRM
               </p>
               <select
                 value={lead.crmStatus}
                 onChange={(e) => handleStatusChange(e.target.value)}
                 disabled={statusBusy}
-                className="w-full px-4 py-3 rounded-xl border border-gray-100 bg-gray-50 text-sm font-bold text-primary-gray cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-4 py-3 rounded-xl border border-admin-border bg-admin-muted text-sm font-bold text-admin-text cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary-blue/20 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {CRM_OPTIONS.map((opt) => (
                   <option key={opt.value} value={opt.value}>
@@ -175,7 +175,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
                 ))}
               </select>
               <div className="mt-2 flex items-center justify-between gap-2">
-                <p className="text-[10px] font-bold uppercase tracking-widest text-primary-gray/30">
+                <p className="text-[10px] font-bold uppercase tracking-widest text-admin-text-muted">
                   {lead.crmStatusLocked ? 'Manual' : 'Automàtic'}
                 </p>
                 {lead.crmStatusLocked && (
@@ -199,8 +199,8 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               <div className="flex items-start gap-3">
                 <Mail size={18} className="text-primary-blue mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Email</p>
-                  <p className="text-sm font-medium text-primary-gray break-all">{lead.email}</p>
+                  <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-1">Email</p>
+                  <p className="text-sm font-medium text-admin-text break-all">{lead.email}</p>
                 </div>
               </div>
             )}
@@ -208,8 +208,8 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               <div className="flex items-start gap-3">
                 <Phone size={18} className="text-primary-blue mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Telèfon</p>
-                  <p className="text-sm font-medium text-primary-gray">{lead.phone}</p>
+                  <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-1">Telèfon</p>
+                  <p className="text-sm font-medium text-admin-text">{lead.phone}</p>
                 </div>
               </div>
             )}
@@ -217,35 +217,35 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               <div className="flex items-start gap-3">
                 <FileText size={18} className="text-primary-blue mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Document</p>
-                  <p className="text-sm font-medium text-primary-gray">{lead.documentoFiscal}</p>
+                  <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-1">Document</p>
+                  <p className="text-sm font-medium text-admin-text">{lead.documentoFiscal}</p>
                 </div>
               </div>
             )}
             <div className="flex items-start gap-3">
               <Calendar size={18} className="text-primary-blue mt-0.5 shrink-0" />
               <div>
-                <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Plaga</p>
-                <p className="text-sm font-medium text-primary-gray">{lead.pest}</p>
+                <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-1">Plaga</p>
+                <p className="text-sm font-medium text-admin-text">{lead.pest}</p>
               </div>
             </div>
             <div className="flex items-start gap-3">
               <Calendar size={18} className="text-primary-blue mt-0.5 shrink-0" />
               <div>
-                <p className="text-[10px] font-black uppercase text-primary-gray/30 tracking-widest mb-1">Cites agenda</p>
-                <p className="text-sm font-medium text-primary-gray">{lead.appointmentsCount}</p>
+                <p className="text-[10px] font-black uppercase text-admin-text-muted tracking-widest mb-1">Cites agenda</p>
+                <p className="text-sm font-medium text-admin-text">{lead.appointmentsCount}</p>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
-          <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
+        <section className="lg:col-span-2 bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border">
+          <div className="p-6 md:p-8 border-b border-admin-border flex justify-between items-center">
             <div>
-              <h3 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">
+              <h3 className="text-lg md:text-xl font-black text-admin-text uppercase tracking-tight">
                 Historial de Cites
               </h3>
-              <p className="text-sm text-primary-gray/40 font-medium mt-1">
+              <p className="text-sm text-admin-text-muted font-medium mt-1">
                 {isLoading ? 'Sincronitzant...' : `${leadBookings.length} cita${leadBookings.length === 1 ? '' : 's'} trobada${leadBookings.length === 1 ? '' : 's'}`}
               </p>
             </div>
@@ -260,7 +260,7 @@ const LeadDetail = ({ leadRaw, onBack }) => {
 
           <div className="p-6 md:p-8">
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center py-16 text-primary-gray/40">
+              <div className="flex flex-col items-center justify-center py-16 text-admin-text-muted">
                 <div className="w-10 h-10 border-4 border-primary-blue/20 border-t-primary-blue rounded-full animate-spin mb-4" />
                 <p className="text-xs font-black uppercase tracking-widest">Carregant cites...</p>
               </div>
@@ -271,11 +271,11 @@ const LeadDetail = ({ leadRaw, onBack }) => {
               </div>
             ) : leadBookings.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-16 text-center opacity-50">
-                <Calendar size={40} className="text-gray-300 mb-4" />
-                <p className="text-sm font-bold text-primary-gray/60 uppercase tracking-widest">
+                <Calendar size={40} className="text-admin-text-muted mb-4" />
+                <p className="text-sm font-bold text-admin-text-muted uppercase tracking-widest">
                   Sense cites registrades
                 </p>
-                <p className="text-xs text-primary-gray/40 mt-2 max-w-xs">
+                <p className="text-xs text-admin-text-muted mt-2 max-w-xs">
                   Aquest contacte encara no té reserves vinculades per email o telèfon.
                 </p>
               </div>

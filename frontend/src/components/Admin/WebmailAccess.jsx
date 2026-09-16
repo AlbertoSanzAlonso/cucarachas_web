@@ -9,34 +9,34 @@ const WebmailAccess = () => {
       animate={{ opacity: 1, scale: 1 }}
       className="h-[calc(100vh-200px)] flex flex-col"
     >
-      <div className="bg-white rounded-[3rem] shadow-2xl border border-gray-100 overflow-hidden flex flex-col flex-1 items-center justify-center text-center p-12">
+      <div className="bg-admin-card rounded-[3rem] shadow-2xl border border-admin-border overflow-hidden flex flex-col flex-1 items-center justify-center text-center p-12">
          <div className="w-24 h-24 bg-primary-blue/5 rounded-full flex items-center justify-center mb-8">
             <Mail size={48} className="text-primary-blue" />
          </div>
          
-         <h2 className="text-3xl font-black text-primary-gray mb-4 uppercase tracking-tighter">Accés Segur al Webmail</h2>
+         <h2 className="text-3xl font-black text-admin-text mb-4 uppercase tracking-tighter">Accés Segur al Webmail</h2>
          
-         <p className="text-primary-gray/50 max-w-md mx-auto mb-10 leading-relaxed font-medium">
+         <p className="text-admin-text-muted max-w-md mx-auto mb-10 leading-relaxed font-medium">
            Per protocols de seguretat del servidor de correu de **DonDominio**, l'accés s'ha de realitzar en una finestra independent protegida.
          </p>
 
          <div className="grid md:grid-cols-2 gap-6 w-full max-w-2xl mb-12">
-            <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100 flex items-start space-x-4">
-               <div className="p-3 bg-white rounded-xl text-accent-green shadow-sm">
+            <div className="bg-admin-muted p-6 rounded-[2rem] border border-admin-border flex items-start space-x-4">
+               <div className="p-3 bg-admin-card rounded-xl text-accent-green shadow-sm">
                   <Shield size={20} />
                </div>
                <div className="text-left">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/30 mb-1">Seguretat</p>
-                  <p className="text-xs font-bold text-primary-gray">Sessió encriptada SSL/TLS amb el domini cecsa.cat</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted mb-1">Seguretat</p>
+                  <p className="text-xs font-bold text-admin-text">Sessió encriptada SSL/TLS amb el domini cecsa.cat</p>
                </div>
             </div>
-            <div className="bg-gray-50 p-6 rounded-[2rem] border border-gray-100 flex items-start space-x-4">
-               <div className="p-3 bg-white rounded-xl text-primary-blue shadow-sm">
+            <div className="bg-admin-muted p-6 rounded-[2rem] border border-admin-border flex items-start space-x-4">
+               <div className="p-3 bg-admin-card rounded-xl text-primary-blue shadow-sm">
                   <Activity size={20} />
                </div>
                <div className="text-left">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/30 mb-1">Estat</p>
-                  <p className="text-xs font-bold text-primary-gray">Servidor actiu i optimitzat per a gestió massiva</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted mb-1">Estat</p>
+                  <p className="text-xs font-bold text-admin-text">Servidor actiu i optimitzat per a gestió massiva</p>
                </div>
             </div>
          </div>

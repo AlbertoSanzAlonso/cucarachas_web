@@ -14,6 +14,8 @@ import {
   X,
   Volume2,
   VolumeX,
+  Sun,
+  Moon,
 } from 'lucide-react';
 import {
   useCreateOpsConversationMutation,
@@ -58,7 +60,7 @@ function formatTime(iso) {
   }
 }
 
-const AdminOpsChat = ({ user, onOpenSidebar }) => {
+const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
   const [activeId, setActiveId] = useState(null);
   const [draft, setDraft] = useState('');
   const [search, setSearch] = useState('');
@@ -395,7 +397,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           e.preventDefault();
           if (!voice.recording) submit();
         }}
-        className="flex items-end gap-2 rounded-3xl border border-gray-200 bg-white p-2 shadow-lg shadow-primary-blue/5"
+        className="flex items-end gap-2 rounded-3xl border border-admin-border bg-admin-card p-2 shadow-lg shadow-primary-blue/5"
       >
         {voice.recording ? (
           <VoiceWaveform levels={voice.levels} active />
@@ -412,7 +414,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
             }}
             rows={1}
             placeholder="Escriu, o prem el micròfon i parla — s’envia sol"
-            className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-primary-gray outline-none"
+            className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-admin-text outline-none"
             data-lenis-prevent
           />
         )}
@@ -423,7 +425,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-colors ${
             voice.recording
               ? 'bg-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.25)]'
-              : 'bg-gray-100 text-primary-gray hover:bg-primary-blue/10 hover:text-primary-blue'
+              : 'bg-admin-muted text-admin-text hover:bg-primary-blue/10 hover:text-primary-blue'
           }`}
           title={voice.recording ? 'Atura i envia' : 'Parlar amb l’assistent'}
           aria-label={voice.recording ? 'Atura i envia' : 'Micròfon'}
@@ -439,7 +441,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           {busy ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
         </button>
       </form>
-      <p className="mt-2 text-center text-[11px] text-primary-gray/40">
+      <p className="mt-2 text-center text-[11px] text-admin-text-muted">
         {voice.recording
           ? 'Gravant… torna a prémer el micròfon per enviar-ho a l’assistent'
           : 'Assistent intern · la veu s’envia directament, sense passar pel recuadre'}
@@ -450,10 +452,10 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const empty = !activeId && !pendingUser;
 
   return (
-    <div className="flex h-full min-h-0 bg-[#f7f8fb]" data-lenis-prevent>
-      <aside className="hidden w-[280px] shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
+    <div className="flex h-full min-h-0 bg-admin-page" data-lenis-prevent>
+      <aside className="hidden w-[280px] shrink-0 flex-col border-r border-admin-border bg-admin-card md:flex">
         <div className="flex items-center justify-between gap-2 p-4">
-          <span className="text-xs font-black uppercase tracking-widest text-primary-gray/50">
+          <span className="text-xs font-black uppercase tracking-widest text-admin-text-muted">
             Oficina
           </span>
           <button
@@ -465,8 +467,8 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           </button>
         </div>
         <div className="px-3 pb-3">
-          <div className="flex items-center gap-2 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2">
-            <Search size={14} className="text-primary-gray/40" />
+          <div className="flex items-center gap-2 rounded-xl border border-admin-border bg-admin-muted px-3 py-2">
+            <Search size={14} className="text-admin-text-muted" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
@@ -477,9 +479,9 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-4">
           {listLoading ? (
-            <p className="px-3 py-6 text-sm text-primary-gray/40">Carregant…</p>
+            <p className="px-3 py-6 text-sm text-admin-text-muted">Carregant…</p>
           ) : conversations.length === 0 ? (
-            <p className="px-3 py-6 text-sm text-primary-gray/40">Encara no hi ha historial.</p>
+            <p className="px-3 py-6 text-sm text-admin-text-muted">Encara no hi ha historial.</p>
           ) : (
             conversations.map((c) => (
               <button
@@ -487,15 +489,15 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                 type="button"
                 onClick={() => setActiveId(c.id)}
                 className={`group mb-1 flex w-full items-start gap-2 rounded-xl px-3 py-2.5 text-left transition-colors ${
-                  activeId === c.id ? 'bg-[var(--primary-blue)]/10' : 'hover:bg-gray-50'
+                  activeId === c.id ? 'bg-[var(--primary-blue)]/10' : 'hover:bg-admin-muted'
                 }`}
               >
-                <SquarePen size={14} className="mt-1 shrink-0 text-primary-gray/35" />
+                <SquarePen size={14} className="mt-1 shrink-0 text-admin-text-muted" />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-sm font-semibold text-primary-gray">
+                  <span className="block truncate text-sm font-semibold text-admin-text">
                     {c.title || 'Nova conversa'}
                   </span>
-                  <span className="block truncate text-[11px] text-primary-gray/40">
+                  <span className="block truncate text-[11px] text-admin-text-muted">
                     {c.preview || formatTime(c.updated_at)}
                   </span>
                 </span>
@@ -504,7 +506,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                   tabIndex={0}
                   onClick={(e) => handleDeleteThread(c.id, e)}
                   onKeyDown={(e) => e.key === 'Enter' && handleDeleteThread(c.id, e)}
-                  className="hidden rounded-lg p-1 text-primary-gray/30 hover:bg-red-50 hover:text-red-500 group-hover:block"
+                  className="hidden rounded-lg p-1 text-admin-text-muted hover:bg-red-50 hover:text-red-500 group-hover:block"
                   aria-label="Eliminar"
                 >
                   <Trash2 size={14} />
@@ -516,32 +518,41 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
       </aside>
 
       <section className="flex min-h-0 min-w-0 flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 bg-white px-3 py-3 md:px-6">
+        <header className="flex items-center justify-between border-b border-admin-border bg-admin-card px-3 py-3 md:px-6">
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={onOpenSidebar}
-              className="rounded-xl border border-gray-100 bg-white p-2 text-primary-blue lg:hidden"
+              className="rounded-xl border border-admin-border bg-admin-card p-2 text-primary-blue lg:hidden"
               aria-label="Menú"
             >
               <LayoutDashboard size={20} />
             </button>
             <div>
-              <h2 className="text-sm font-black uppercase tracking-tight text-primary-gray md:text-base">
+              <h2 className="text-sm font-black uppercase tracking-tight text-admin-text md:text-base">
                 {thread?.title || 'Assistent d’oficina'}
               </h2>
-              <p className="text-[11px] text-primary-gray/45">
+              <p className="text-[11px] text-admin-text-muted">
                 {user?.email || 'Admin'} · independent del xat de la web
               </p>
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className="rounded-xl p-2 text-admin-text-muted hover:bg-admin-muted hover:text-primary-blue"
+              aria-label={isDark ? 'Canviar a mode dia' : 'Canviar a mode nit'}
+              title={isDark ? 'Mode dia' : 'Mode nit'}
+            >
+              {isDark ? <Sun size={18} /> : <Moon size={18} />}
+            </button>
             <label className="min-w-0">
               <span className="sr-only">Model</span>
               <select
                 value={selectedModel}
                 onChange={(e) => chooseModel(e.target.value)}
-                className="max-w-[11rem] rounded-xl border border-gray-200 bg-white px-2 py-2 text-xs font-semibold text-primary-gray outline-none sm:max-w-[16rem]"
+                className="max-w-[11rem] rounded-xl border border-admin-border bg-admin-card px-2 py-2 text-xs font-semibold text-admin-text outline-none sm:max-w-[16rem]"
                 title="Model de l’assistent"
               >
                 {modelOptions.length === 0 ? (
@@ -558,14 +569,14 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
             <button
               type="button"
               onClick={handleNewChat}
-              className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-bold text-primary-gray md:hidden"
+              className="rounded-xl border border-admin-border px-3 py-2 text-xs font-bold text-admin-text md:hidden"
             >
               Nova
             </button>
             <button
               type="button"
               onClick={toggleTts}
-              className={`rounded-xl p-2 ${ttsEnabled ? 'bg-[var(--primary-blue)] text-white' : 'text-primary-gray/50 hover:bg-gray-100'}`}
+              className={`rounded-xl p-2 ${ttsEnabled ? 'bg-[var(--primary-blue)] text-white' : 'text-admin-text-muted hover:bg-admin-muted'}`}
               title={ttsEnabled ? 'Resposta en veu activada' : 'Resposta en veu desactivada'}
               aria-pressed={ttsEnabled}
             >
@@ -574,21 +585,21 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
             <button
               type="button"
               onClick={() => setNotesOpen((v) => !v)}
-              className={`rounded-xl p-2 ${notesOpen ? 'bg-[var(--primary-blue)] text-white' : 'text-primary-gray/50 hover:bg-gray-100'}`}
+              className={`rounded-xl p-2 ${notesOpen ? 'bg-[var(--primary-blue)] text-white' : 'text-admin-text-muted hover:bg-admin-muted'}`}
               title="Notes importants"
             >
               <PanelRight size={18} />
             </button>
           </div>
         </header>
-        <div className="flex gap-2 overflow-x-auto border-b border-gray-100 bg-white px-3 py-2 md:hidden">
+        <div className="flex gap-2 overflow-x-auto border-b border-admin-border bg-admin-card px-3 py-2 md:hidden">
           {conversations.slice(0, 12).map((c) => (
             <button
               key={c.id}
               type="button"
               onClick={() => setActiveId(c.id)}
               className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${
-                activeId === c.id ? 'bg-[var(--primary-blue)] text-white' : 'bg-gray-100 text-primary-gray'
+                activeId === c.id ? 'bg-[var(--primary-blue)] text-white' : 'bg-admin-muted text-admin-text'
               }`}
             >
               {(c.title || 'Nova').slice(0, 22)}
@@ -602,10 +613,10 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
               <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--primary-blue)] text-white">
                 <SquarePen size={22} />
               </div>
-              <h3 className="text-2xl font-black tracking-tight text-primary-gray">
+              <h3 className="text-2xl font-black tracking-tight text-admin-text">
                 En què treballam avui?
               </h3>
-              <p className="mt-2 max-w-md text-sm text-primary-gray/55">
+              <p className="mt-2 max-w-md text-sm text-admin-text-muted">
                 Cerca clients, prepara potencials iGEO, notes de renovació o ordres. Tot queda desat en aquest historial.
               </p>
               <div className="mt-8 grid w-full gap-2 sm:grid-cols-2">
@@ -614,7 +625,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                     key={s}
                     type="button"
                     onClick={() => submit(s)}
-                    className="rounded-2xl border border-gray-200 bg-white px-4 py-3 text-left text-sm text-primary-gray/80 hover:border-[var(--primary-blue)]/40"
+                    className="rounded-2xl border border-admin-border bg-admin-card px-4 py-3 text-left text-sm text-admin-text-muted hover:border-[var(--primary-blue)]/40"
                   >
                     {s}
                   </button>
@@ -624,7 +635,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           ) : (
             <div className="mx-auto max-w-3xl space-y-4 px-3 py-6 md:px-6">
               {threadLoading && messages.length === 0 ? (
-                <p className="text-sm text-primary-gray/40">Carregant fil…</p>
+                <p className="text-sm text-admin-text-muted">Carregant fil…</p>
               ) : null}
               {messages.map((m) => (
                 <div
@@ -635,7 +646,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                     className={`max-w-[85%] rounded-2xl px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap ${
                       m.role === 'user'
                         ? 'bg-[var(--primary-blue)] text-white'
-                        : 'bg-white text-primary-gray shadow-sm border border-gray-100'
+                        : 'bg-admin-card text-admin-text shadow-sm border border-admin-border'
                     }`}
                   >
                     {m.content}
@@ -670,7 +681,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
               ) : null}
               {busy ? (
                 <div className="flex justify-start">
-                  <div className="rounded-2xl border border-gray-100 bg-white px-4 py-3 text-sm text-primary-gray/50">
+                  <div className="rounded-2xl border border-admin-border bg-admin-card px-4 py-3 text-sm text-admin-text-muted">
                     {sendingVoice ? 'Processant la veu…' : 'Pensant…'}
                   </div>
                 </div>
@@ -683,90 +694,90 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
       </section>
 
       {notesOpen ? (
-        <aside className="hidden w-[300px] shrink-0 flex-col border-l border-gray-200 bg-white lg:flex">
-          <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-            <span className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-primary-gray/50">
+        <aside className="hidden w-[300px] shrink-0 flex-col border-l border-admin-border bg-admin-card lg:flex">
+          <div className="flex items-center justify-between border-b border-admin-border px-4 py-3">
+            <span className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-admin-text-muted">
               <Bookmark size={14} /> Notes
             </span>
-            <button type="button" onClick={() => setNotesOpen(false)} className="p-1 text-primary-gray/30">
+            <button type="button" onClick={() => setNotesOpen(false)} className="p-1 text-admin-text-muted">
               <X size={16} />
             </button>
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto p-3 space-y-3">
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+              <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Instruccions globals (RAG)
               </p>
               {globalNotes.length === 0 ? (
-                <p className="text-sm text-primary-gray/40">
+                <p className="text-sm text-admin-text-muted">
                   Cap instrucció global. Marca «Global / RAG» en desar.
                 </p>
               ) : (
                 globalNotes.map((n) => (
                   <div key={n.id} className="rounded-2xl border border-[var(--primary-blue)]/20 bg-[var(--primary-blue)]/5 p-3">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
+                      <p className="text-sm font-semibold text-admin-text">{n.title}</p>
                       <button
                         type="button"
                         onClick={() => handleDeleteNote(n)}
-                        className="text-primary-gray/30 hover:text-red-500"
+                        className="text-admin-text-muted hover:text-red-500"
                         aria-label="Esborrar nota global"
                       >
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <p className="mt-1 whitespace-pre-wrap text-xs text-primary-gray/70">{n.content}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-admin-text-muted">{n.content}</p>
                   </div>
                 ))
               )}
             </div>
 
-            <div className="space-y-2 border-t border-gray-100 pt-3">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <div className="space-y-2 border-t border-admin-border pt-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
                 Notes d’aquest fil
               </p>
               {!activeId ? (
-                <p className="text-sm text-primary-gray/40">
+                <p className="text-sm text-admin-text-muted">
                   Obre una conversa per veure notes del fil.
                 </p>
               ) : notes.length === 0 ? (
-                <p className="text-sm text-primary-gray/40">Cap nota encara. Desa un missatge o n’afegeix una.</p>
+                <p className="text-sm text-admin-text-muted">Cap nota encara. Desa un missatge o n’afegeix una.</p>
               ) : (
                 notes.map((n) => (
-                  <div key={n.id} className="rounded-2xl border border-gray-100 bg-gray-50 p-3">
+                  <div key={n.id} className="rounded-2xl border border-admin-border bg-admin-muted p-3">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
+                      <p className="text-sm font-semibold text-admin-text">{n.title}</p>
                       <button
                         type="button"
                         onClick={() => handleDeleteNote(n)}
-                        className="text-primary-gray/30 hover:text-red-500"
+                        className="text-admin-text-muted hover:text-red-500"
                         aria-label="Esborrar nota"
                       >
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <p className="mt-1 whitespace-pre-wrap text-xs text-primary-gray/70">{n.content}</p>
+                    <p className="mt-1 whitespace-pre-wrap text-xs text-admin-text-muted">{n.content}</p>
                   </div>
                 ))
               )}
             </div>
           </div>
-          <div className="border-t border-gray-100 p-3">
+          <div className="border-t border-admin-border p-3">
             <textarea
               value={noteDraft}
               onChange={(e) => setNoteDraft(e.target.value)}
               onKeyDown={handleNoteKeyDown}
               rows={3}
               placeholder="Afegir nota o instrucció… (Enter per desar)"
-              className="w-full resize-none rounded-xl border border-gray-200 p-2 text-sm outline-none focus:border-[var(--primary-blue)]"
+              className="w-full resize-none rounded-xl border border-admin-border p-2 text-sm outline-none focus:border-[var(--primary-blue)]"
             />
-            <label className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-primary-gray/70">
+            <label className="mt-2 flex cursor-pointer items-center gap-2 text-xs text-admin-text-muted">
               <input
                 type="checkbox"
                 checked={noteGlobal || !activeId}
                 onChange={(e) => setNoteGlobal(e.target.checked)}
                 disabled={!activeId}
-                className="rounded border-gray-300"
+                className="rounded border-admin-border"
               />
               Global / RAG (tots els chats)
             </label>

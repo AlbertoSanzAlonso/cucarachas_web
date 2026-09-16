@@ -31,12 +31,12 @@ function tokenFetch(url, init) {
 
 const modalClassNames = {
   overlay: 'bg-primary-gray/30 backdrop-blur-sm',
-  panel: 'bg-white rounded-[2rem] shadow-2xl border border-gray-100 p-6 md:p-8',
+  panel: 'bg-admin-card rounded-[2rem] shadow-2xl border border-admin-border p-6 md:p-8',
   header: 'mb-4',
   body: 'space-y-3',
   footer: 'mt-6 flex flex-wrap gap-2 justify-end',
-  label: 'text-[10px] font-black uppercase tracking-widest text-primary-gray/40',
-  input: 'w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium text-primary-gray',
+  label: 'text-[10px] font-black uppercase tracking-widest text-admin-text-muted',
+  input: 'w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium text-admin-text',
   button: 'rounded-xl px-4 py-2 text-xs font-black uppercase tracking-widest bg-primary-blue text-white hover:bg-primary-blue/90 disabled:opacity-40',
   error: 'text-red-600 text-sm font-bold',
 };
@@ -202,7 +202,7 @@ function AgendaWorkspaceInner({ token }) {
         <label className="relative flex-1 min-w-[180px] max-w-md">
           <Search
             size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-gray/35 pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-admin-text-muted pointer-events-none"
             aria-hidden
           />
           <input
@@ -210,7 +210,7 @@ function AgendaWorkspaceInner({ token }) {
             value={nameQuery}
             onChange={(e) => setNameQuery(e.target.value)}
             placeholder="Buscar por nombre o teléfono…"
-            className="w-full rounded-xl border border-gray-200 bg-white pl-9 pr-3 py-2.5 text-sm font-medium text-primary-gray placeholder:text-primary-gray/30 focus:outline-none focus:ring-2 focus:ring-primary-blue/25 focus:border-primary-blue/40"
+            className="w-full rounded-xl border border-admin-border bg-admin-card pl-9 pr-3 py-2.5 text-sm font-medium text-admin-text placeholder:text-admin-text-muted focus:outline-none focus:ring-2 focus:ring-primary-blue/25 focus:border-primary-blue/40"
             aria-label="Buscar citas por nombre o teléfono"
           />
         </label>
@@ -218,7 +218,7 @@ function AgendaWorkspaceInner({ token }) {
         <select
           value={serviceFilter}
           onChange={(e) => setServiceFilter(e.target.value)}
-          className="rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-medium text-primary-gray min-w-[200px] focus:outline-none focus:ring-2 focus:ring-primary-blue/25 focus:border-primary-blue/40"
+          className="rounded-xl border border-admin-border bg-admin-card px-3 py-2.5 text-sm font-medium text-admin-text min-w-[200px] focus:outline-none focus:ring-2 focus:ring-primary-blue/25 focus:border-primary-blue/40"
           aria-label="Filtrar por tratamiento"
         >
           <option value="">Todos los tratamientos</option>
@@ -233,7 +233,7 @@ function AgendaWorkspaceInner({ token }) {
           <button
             type="button"
             onClick={clearFilters}
-            className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-[10px] font-black uppercase tracking-widest text-primary-gray/50 hover:text-primary-gray hover:bg-primary-gray/5"
+            className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2.5 text-[10px] font-black uppercase tracking-widest text-admin-text-muted hover:text-admin-text hover:bg-primary-gray/5"
           >
             <X size={14} />
             Limpiar
@@ -241,7 +241,7 @@ function AgendaWorkspaceInner({ token }) {
         )}
 
         {filtersActive && (
-          <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40 sm:ml-auto">
+          <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted sm:ml-auto">
             Hoy: {dayMatchCount}/{dayAppointments.length}
             {rangeLoading ? ' · buscando…' : rangeHits.length > 0 ? ` · ${rangeHits.length} en rango` : ''}
           </p>
@@ -251,14 +251,14 @@ function AgendaWorkspaceInner({ token }) {
       {filtersActive && (rangeHits.length > 0 || rangeLoading) && (
         <div
           data-agenda-search-results=""
-          className="mb-3 rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden"
+          className="mb-3 rounded-2xl border border-admin-border bg-admin-card shadow-sm overflow-hidden"
         >
-          <div className="px-4 py-2.5 border-b border-gray-50 flex items-center justify-between gap-2">
-            <p className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+          <div className="px-4 py-2.5 border-b border-admin-border flex items-center justify-between gap-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Resultados (±30 / +90 días)
             </p>
             {rangeLoading && (
-              <span className="text-[10px] font-bold text-primary-gray/30 uppercase tracking-widest">
+              <span className="text-[10px] font-bold text-admin-text-muted uppercase tracking-widest">
                 Cargando…
               </span>
             )}
@@ -270,15 +270,15 @@ function AgendaWorkspaceInner({ token }) {
                   <button
                     type="button"
                     onClick={() => jumpToHit(apt)}
-                    className="w-full text-left px-4 py-2.5 hover:bg-[#f8fafc] transition-colors flex flex-wrap items-center gap-x-3 gap-y-1"
+                    className="w-full text-left px-4 py-2.5 hover:bg-admin-page transition-colors flex flex-wrap items-center gap-x-3 gap-y-1"
                   >
                     <span className="text-xs font-black text-primary-blue tabular-nums">
                       {apt.date} · {apt.startTime}
                     </span>
-                    <span className="text-sm font-bold text-primary-gray truncate">
+                    <span className="text-sm font-bold text-admin-text truncate">
                       {apt.customerName}
                     </span>
-                    <span className="text-[11px] font-medium text-primary-gray/45 truncate">
+                    <span className="text-[11px] font-medium text-admin-text-muted truncate">
                       {apt.serviceName}
                       {apt.staffName ? ` · ${apt.staffName}` : ''}
                     </span>
@@ -291,7 +291,7 @@ function AgendaWorkspaceInner({ token }) {
       )}
 
       {filtersActive && !rangeLoading && rangeHits.length === 0 && dayMatchCount === 0 && (
-        <p className="mb-3 px-1 text-xs font-bold text-primary-gray/40">
+        <p className="mb-3 px-1 text-xs font-bold text-admin-text-muted">
           No hay citas que coincidan con el filtro.
         </p>
       )}
@@ -301,7 +301,7 @@ function AgendaWorkspaceInner({ token }) {
           data-agenda-selection-actions=""
           className="flex flex-wrap items-center gap-2 mb-3 px-1"
         >
-          <p className="text-xs font-bold text-primary-gray/50 mr-2">
+          <p className="text-xs font-bold text-admin-text-muted mr-2">
             {selectedCount} franja{selectedCount === 1 ? '' : 's'} · {agenda.selection.staffName}
           </p>
           <button
@@ -314,14 +314,14 @@ function AgendaWorkspaceInner({ token }) {
           <button
             type="button"
             onClick={() => agenda.requestBlockSelectedSlots()}
-            className="rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/10 text-primary-gray hover:bg-primary-gray/15"
+            className="rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/10 text-admin-text hover:bg-primary-gray/15"
           >
             Bloquear
           </button>
           <button
             type="button"
             onClick={() => agenda.clearSelection()}
-            className="rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-primary-gray/40 hover:text-primary-gray"
+            className="rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest text-admin-text-muted hover:text-admin-text"
           >
             Cancelar
           </button>
@@ -333,11 +333,11 @@ function AgendaWorkspaceInner({ token }) {
         onDateChange={setDate}
         agenda={agenda}
         classNames={{
-          root: 'cecsa-agenda-root bg-white rounded-3xl md:rounded-[2.5rem] border border-gray-100 shadow-sm overflow-hidden',
-          header: 'cecsa-agenda-header border-b border-gray-50 px-4 md:px-6 py-4',
+          root: 'cecsa-agenda-root bg-admin-card rounded-3xl md:rounded-[2.5rem] border border-admin-border shadow-sm overflow-hidden',
+          header: 'cecsa-agenda-header border-b border-admin-border px-4 md:px-6 py-4',
           main: 'cecsa-agenda-main p-2 md:p-4 min-h-[560px]',
           error: 'text-red-600 text-sm font-bold mt-2',
-          loading: 'text-primary-gray/40 font-bold uppercase tracking-widest text-center py-16',
+          loading: 'text-admin-text-muted font-bold uppercase tracking-widest text-center py-16',
         }}
         slots={{
           controlBarExtra: (
@@ -457,7 +457,7 @@ const CalendarManager = () => {
 
   if (!token) {
     return (
-      <div className="bg-white rounded-[2.5rem] border border-gray-100 p-12 text-center text-primary-gray/40 font-bold">
+      <div className="bg-admin-card rounded-[2.5rem] border border-admin-border p-12 text-center text-admin-text-muted font-bold">
         Cal autenticació per veure l&apos;agenda.
       </div>
     );
@@ -467,10 +467,10 @@ const CalendarManager = () => {
     <div className="space-y-4">
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight">
             Agenda
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary-gray/40 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-admin-text-muted mt-1">
             Busca por nombre · Filtra por tratamiento · Europa/Madrid
           </p>
         </div>

@@ -5,6 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetLeadsQuery } from '@/store/apis/leadsApi';
 import { logout } from '@/store/slices/authSlice';
+import { useAdminTheme } from '@/hooks/useAdminTheme';
 import Sidebar from '@/components/Admin/Sidebar';
 import TopBar from '@/components/Admin/TopBar';
 import LeadBookingCard from '@/components/Admin/LeadBookingCard';
@@ -17,8 +18,10 @@ const LeadBookingsPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { theme, isDark, toggleTheme } = useAdminTheme();
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
 
   const parsedLeadId = Number(leadId);
@@ -45,7 +48,10 @@ const LeadBookingsPage = () => {
   const isLoading = leadsLoading || bookingsLoading;
 
   return (
-    <div className="flex h-screen bg-[#f8fafc] overflow-hidden relative">
+    <div
+      className="flex h-screen bg-admin-page overflow-hidden relative text-admin-text"
+      data-admin-theme={theme}
+    >
       <Helmet>
         <title>
           {lead ? `Cites de ${lead.name} | CECSA` : 'Cites del lead | CECSA'}
@@ -56,6 +62,8 @@ const LeadBookingsPage = () => {
       <Sidebar
         sidebarOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
+        collapsed={sidebarCollapsed}
+        setCollapsed={setSidebarCollapsed}
         activeTab="clients"
         setActiveTab={handleSetActiveTab}
         handleLogout={handleLogout}
@@ -73,6 +81,8 @@ const LeadBookingsPage = () => {
           onSelectLead={(id) => navigate('/admin', { state: { selectedLeadId: id, activeTab: 'clients' } })}
           onViewAllLeads={() => navigate('/admin', { state: { activeTab: 'clients' } })}
           handleLogout={handleLogout}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
         />
 
         <div className="animate-fade-in max-w-4xl">
@@ -85,13 +95,13 @@ const LeadBookingsPage = () => {
             Tornar al lead
           </button>
 
-          <div className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100">
-            <div className="p-6 md:p-8 border-b border-gray-50 flex flex-wrap justify-between items-start gap-4">
+          <div className="bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border">
+            <div className="p-6 md:p-8 border-b border-admin-border flex flex-wrap justify-between items-start gap-4">
               <div>
-                <h1 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+                <h1 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight">
                   {lead ? `Cites de ${lead.name}` : 'Cites del lead'}
                 </h1>
-                <p className="text-sm text-primary-gray/40 font-medium mt-1">
+                <p className="text-sm text-admin-text-muted font-medium mt-1">
                   {isLoading
                     ? 'Sincronitzant...'
                     : `${leadBookings.length} cita${leadBookings.length === 1 ? '' : 's'} trobada${leadBookings.length === 1 ? '' : 's'}`}
@@ -109,7 +119,7 @@ const LeadBookingsPage = () => {
 
             <div className="p-6 md:p-8 pb-10">
               {isLoading ? (
-                <div className="flex flex-col items-center justify-center py-16 text-primary-gray/40">
+                <div className="flex flex-col items-center justify-center py-16 text-admin-text-muted">
                   <div className="w-10 h-10 border-4 border-primary-blue/20 border-t-primary-blue rounded-full animate-spin mb-4" />
                   <p className="text-xs font-black uppercase tracking-widest">Carregant cites...</p>
                 </div>
@@ -125,8 +135,8 @@ const LeadBookingsPage = () => {
                 </div>
               ) : leadBookings.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center opacity-50">
-                  <Calendar size={40} className="text-gray-300 mb-4" />
-                  <p className="text-sm font-bold text-primary-gray/60 uppercase tracking-widest">
+                  <Calendar size={40} className="text-admin-text-muted mb-4" />
+                  <p className="text-sm font-bold text-admin-text-muted uppercase tracking-widest">
                     Sense cites registrades
                   </p>
                 </div>

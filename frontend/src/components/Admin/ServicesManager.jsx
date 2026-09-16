@@ -98,17 +98,17 @@ const ServicesManager = () => {
     <div className="space-y-6">
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight">
             Serveis
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary-gray/40 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-admin-text-muted mt-1">
             Catàleg bookable · durada
           </p>
         </div>
         <button
           type="button"
           onClick={load}
-          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-primary-gray hover:bg-primary-gray/10"
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-admin-text hover:bg-primary-gray/10"
         >
           <RefreshCcw size={14} /> Actualitzar
         </button>
@@ -123,50 +123,50 @@ const ServicesManager = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <form
           onSubmit={handleCreate}
-          className="lg:col-span-1 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 space-y-4"
+          className="lg:col-span-1 bg-admin-card rounded-[2rem] border border-admin-border shadow-sm p-6 space-y-4"
         >
           <div className="flex items-center gap-2 mb-2">
             <Wrench className="text-primary-blue" size={20} />
-            <h3 className="font-black text-primary-gray uppercase tracking-tight text-sm">
+            <h3 className="font-black text-admin-text uppercase tracking-tight text-sm">
               Nou servei
             </h3>
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Nom (CA)
             </label>
             <input
               value={form.nameCa}
               onChange={(e) => setForm((f) => ({ ...f, nameCa: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
               placeholder="Ex: Primera revisió"
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Nom (ES)
             </label>
             <input
               value={form.nameEs}
               onChange={(e) => setForm((f) => ({ ...f, nameEs: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
               placeholder="Ex: Primera revisión"
               required
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Nom (EN)
             </label>
             <input
               value={form.nameEn}
               onChange={(e) => setForm((f) => ({ ...f, nameEn: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
               placeholder="Optional"
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Durada (min)
             </label>
             <input
@@ -178,7 +178,7 @@ const ServicesManager = () => {
               onChange={(e) =>
                 setForm((f) => ({ ...f, durationMinutes: Number(e.target.value) || 60 }))
               }
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
               required
             />
           </div>
@@ -191,18 +191,18 @@ const ServicesManager = () => {
           </button>
         </form>
 
-        <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50">
-            <h3 className="font-black text-primary-gray uppercase tracking-tight text-sm">
+        <div className="lg:col-span-2 bg-admin-card rounded-[2rem] border border-admin-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-admin-border">
+            <h3 className="font-black text-admin-text uppercase tracking-tight text-sm">
               Catàleg
             </h3>
           </div>
           {loading ? (
-            <p className="p-10 text-center text-primary-gray/40 font-bold uppercase tracking-widest text-xs animate-pulse">
+            <p className="p-10 text-center text-admin-text-muted font-bold uppercase tracking-widest text-xs animate-pulse">
               Carregant…
             </p>
           ) : services.length === 0 ? (
-            <p className="p-10 text-center text-primary-gray/40 font-medium">
+            <p className="p-10 text-center text-admin-text-muted font-medium">
               Cap servei encara.
             </p>
           ) : (
@@ -216,10 +216,10 @@ const ServicesManager = () => {
                   className="px-6 py-4 flex flex-wrap items-center justify-between gap-3"
                 >
                   <div>
-                    <p className="font-black text-primary-gray">
+                    <p className="font-black text-admin-text">
                       {item.nameCa || item.nameEs}
                     </p>
-                    <p className="text-xs text-primary-gray/40 font-medium mt-1">
+                    <p className="text-xs text-admin-text-muted font-medium mt-1">
                       {item.durationMinutes} min · {item.id}
                       {item.nameEs && item.nameEs !== item.nameCa
                         ? ` · ES: ${item.nameEs}`
@@ -231,7 +231,7 @@ const ServicesManager = () => {
                       className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
                         item.active
                           ? 'bg-green-100 text-green-600'
-                          : 'bg-gray-100 text-gray-500'
+                          : 'bg-admin-muted text-admin-text-muted'
                       }`}
                     >
                       {item.active ? 'Actiu' : 'Inactiu'}

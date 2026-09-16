@@ -28,17 +28,17 @@ const ProfileModal = ({
             initial={{ opacity: 0, y: 50, scale: 0.9 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
-            className="relative w-full max-w-xl bg-white rounded-[3.5rem] shadow-2xl overflow-hidden"
+            className="relative w-full max-w-xl bg-admin-card rounded-[3.5rem] shadow-2xl overflow-hidden"
           >
              <div className="p-8 md:p-12">
                 <div className="flex justify-between items-center mb-10">
                   <div>
-                    <h2 className="text-3xl font-black text-primary-gray uppercase tracking-tighter leading-none">Editar Perfil</h2>
-                    <p className="text-primary-gray/40 font-bold text-[10px] uppercase tracking-widest mt-2">{user?.role}</p>
+                    <h2 className="text-3xl font-black text-admin-text uppercase tracking-tighter leading-none">Editar Perfil</h2>
+                    <p className="text-admin-text-muted font-bold text-[10px] uppercase tracking-widest mt-2">{user?.role}</p>
                   </div>
                   <button 
                     onClick={onClose}
-                    className="p-3 bg-gray-50 rounded-2xl text-primary-gray/30 hover:text-red-500 transition-colors"
+                    className="p-3 bg-admin-muted rounded-2xl text-admin-text-muted hover:text-red-500 transition-colors"
                   >
                     <X size={24} />
                   </button>
@@ -54,47 +54,47 @@ const ProfileModal = ({
                         </div>
                      </div>
                      <div>
-                        <p className="text-sm font-bold text-primary-gray">Foto de perfil</p>
-                        <p className="text-xs text-primary-gray/40">S'utilitza per identificar-te en el sistema.</p>
+                        <p className="text-sm font-bold text-admin-text">Foto de perfil</p>
+                        <p className="text-xs text-admin-text-muted">S'utilitza per identificar-te en el sistema.</p>
                      </div>
                   </div>
 
                   <div className="grid md:grid-cols-1 gap-6">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40 ml-4">Nom Complet</label>
+                      <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted ml-4">Nom Complet</label>
                       <div className="relative">
-                        <UserIcon size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                        <UserIcon size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-admin-text-muted" />
                         <input 
                           type="text" 
                           value={profileData.name}
                           onChange={(e) => setProfileData({...profileData, name: e.target.value})}
-                          className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray transition-all"
+                          className="w-full pl-14 pr-6 py-4 bg-admin-muted border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-admin-text transition-all"
                         />
                       </div>
                     </div>
                   </div>
 
-                  <div className="space-y-4 pt-4 border-t border-gray-50">
-                    <p className="text-xs font-black uppercase tracking-widest text-primary-gray/20">Canviar Contrasenya</p>
+                  <div className="space-y-4 pt-4 border-t border-admin-border">
+                    <p className="text-xs font-black uppercase tracking-widest text-admin-text-muted">Canviar Contrasenya</p>
                     <div className="grid md:grid-cols-2 gap-4">
                       <div className="relative">
-                        <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                        <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-admin-text-muted" />
                         <input 
                           type="password" 
                           placeholder="Nova contrasenya"
                           value={profileData.password}
                           onChange={(e) => setProfileData({...profileData, password: e.target.value})}
-                          className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray text-sm transition-all"
+                          className="w-full pl-14 pr-6 py-4 bg-admin-muted border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-admin-text text-sm transition-all"
                         />
                       </div>
                       <div className="relative">
-                        <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-primary-gray/20" />
+                        <Key size={18} className="absolute left-6 top-1/2 -translate-y-1/2 text-admin-text-muted" />
                         <input 
                           type="password" 
                           placeholder="Repetir contrasenya"
                           value={profileData.confirmPassword}
                           onChange={(e) => setProfileData({...profileData, confirmPassword: e.target.value})}
-                          className="w-full pl-14 pr-6 py-4 bg-gray-50 border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-primary-gray text-sm transition-all"
+                          className="w-full pl-14 pr-6 py-4 bg-admin-muted border-none rounded-2xl focus:ring-2 focus:ring-primary-blue/20 outline-none font-bold text-admin-text text-sm transition-all"
                         />
                       </div>
                     </div>

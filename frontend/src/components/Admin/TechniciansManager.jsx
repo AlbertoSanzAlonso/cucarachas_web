@@ -30,7 +30,7 @@ function StaffAvatar({ name, photoUrl, size = 44 }) {
         alt={name}
         width={size}
         height={size}
-        className="rounded-full object-cover border border-gray-100 shrink-0"
+        className="rounded-full object-cover border border-admin-border shrink-0"
         style={{ width: size, height: size }}
       />
     );
@@ -226,17 +226,17 @@ const TechniciansManager = () => {
     <div className="space-y-6">
       <div className="flex items-end justify-between gap-4 px-1">
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-xl md:text-2xl font-black text-admin-text uppercase tracking-tight">
             Tècnics
           </h2>
-          <p className="text-xs font-bold uppercase tracking-widest text-primary-gray/40 mt-1">
+          <p className="text-xs font-bold uppercase tracking-widest text-admin-text-muted mt-1">
             Columnes de l&apos;agenda · disponibilitat
           </p>
         </div>
         <button
           type="button"
           onClick={load}
-          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-primary-gray hover:bg-primary-gray/10"
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2 text-[10px] font-black uppercase tracking-widest bg-primary-gray/5 text-admin-text hover:bg-primary-gray/10"
         >
           <RefreshCcw size={14} /> Actualitzar
         </button>
@@ -251,11 +251,11 @@ const TechniciansManager = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <form
           onSubmit={handleCreate}
-          className="lg:col-span-1 bg-white rounded-[2rem] border border-gray-100 shadow-sm p-6 space-y-4"
+          className="lg:col-span-1 bg-admin-card rounded-[2rem] border border-admin-border shadow-sm p-6 space-y-4"
         >
           <div className="flex items-center gap-2 mb-2">
             <UserCog className="text-primary-blue" size={20} />
-            <h3 className="font-black text-primary-gray uppercase tracking-tight text-sm">
+            <h3 className="font-black text-admin-text uppercase tracking-tight text-sm">
               Nou tècnic
             </h3>
           </div>
@@ -298,7 +298,7 @@ const TechniciansManager = () => {
                     setCreatePhoto(null);
                     if (createPhotoRef.current) createPhotoRef.current.value = '';
                   }}
-                  className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-primary-gray/40 hover:text-red-500"
+                  className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-admin-text-muted hover:text-red-500"
                 >
                   <X size={12} /> Treure
                 </button>
@@ -307,36 +307,36 @@ const TechniciansManager = () => {
           </div>
 
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Nom
             </label>
             <input
               value={form.name}
               onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
               placeholder="Ex: Joan Martínez"
               required
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Rol
             </label>
             <input
               value={form.role}
               onChange={(e) => setForm((f) => ({ ...f, role: e.target.value }))}
-              className="mt-1 w-full rounded-xl border border-gray-200 px-3 py-2 text-sm font-medium"
+              className="mt-1 w-full rounded-xl border border-admin-border px-3 py-2 text-sm font-medium"
             />
           </div>
           <div>
-            <label className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40">
+            <label className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted">
               Serveis
             </label>
             <div className="mt-2 space-y-2">
               {services.map((svc) => {
                 const checked = form.serviceIds.includes(svc.id);
                 return (
-                  <label key={svc.id} className="flex items-center gap-2 text-sm font-medium text-primary-gray">
+                  <label key={svc.id} className="flex items-center gap-2 text-sm font-medium text-admin-text">
                     <input
                       type="checkbox"
                       checked={checked}
@@ -364,18 +364,18 @@ const TechniciansManager = () => {
           </button>
         </form>
 
-        <div className="lg:col-span-2 bg-white rounded-[2rem] border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-50">
-            <h3 className="font-black text-primary-gray uppercase tracking-tight text-sm">
+        <div className="lg:col-span-2 bg-admin-card rounded-[2rem] border border-admin-border shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-admin-border">
+            <h3 className="font-black text-admin-text uppercase tracking-tight text-sm">
               Equip actiu
             </h3>
           </div>
           {loading ? (
-            <p className="p-10 text-center text-primary-gray/40 font-bold uppercase tracking-widest text-xs animate-pulse">
+            <p className="p-10 text-center text-admin-text-muted font-bold uppercase tracking-widest text-xs animate-pulse">
               Carregant…
             </p>
           ) : staff.length === 0 ? (
-            <p className="p-10 text-center text-primary-gray/40 font-medium">
+            <p className="p-10 text-center text-admin-text-muted font-medium">
               Cap tècnic encara.
             </p>
           ) : (
@@ -391,8 +391,8 @@ const TechniciansManager = () => {
                   <div className="flex items-center gap-3 min-w-0">
                     <StaffAvatar name={item.name} photoUrl={item.photoUrl} size={48} />
                     <div className="min-w-0">
-                      <p className="font-black text-primary-gray truncate">{item.name}</p>
-                      <p className="text-xs text-primary-gray/40 font-medium mt-1 truncate">
+                      <p className="font-black text-admin-text truncate">{item.name}</p>
+                      <p className="text-xs text-admin-text-muted font-medium mt-1 truncate">
                         {item.role || 'Sense rol'} · {item.id}
                       </p>
                       <div className="flex items-center gap-3 mt-2">
@@ -413,7 +413,7 @@ const TechniciansManager = () => {
                             type="button"
                             disabled={uploadingId === item.id}
                             onClick={() => clearPhoto(item)}
-                            className="text-[10px] font-black uppercase tracking-widest text-primary-gray/40 hover:text-red-500 disabled:opacity-40"
+                            className="text-[10px] font-black uppercase tracking-widest text-admin-text-muted hover:text-red-500 disabled:opacity-40"
                           >
                             Eliminar foto
                           </button>
@@ -439,7 +439,7 @@ const TechniciansManager = () => {
                       className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-full ${
                         item.active
                           ? 'bg-green-100 text-green-600'
-                          : 'bg-gray-100 text-gray-500'
+                          : 'bg-admin-muted text-admin-text-muted'
                       }`}
                     >
                       {item.active ? 'Actiu' : 'Inactiu'}

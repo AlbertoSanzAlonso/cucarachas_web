@@ -39,10 +39,10 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-8">
         <div>
-          <h2 className="text-2xl md:text-3xl font-black text-primary-gray uppercase tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-black text-admin-text uppercase tracking-tight">
             Clients
           </h2>
-          <p className="text-primary-gray/40 font-medium text-sm">
+          <p className="text-admin-text-muted font-medium text-sm">
             {isLoading
               ? 'Carregant...'
               : `${normalizedLeads.length} registres · leads, altes i baixes`}
@@ -64,13 +64,13 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
               className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-colors ${
                 active
                   ? 'bg-primary-blue text-white'
-                  : 'bg-white border border-gray-100 text-primary-gray/50 hover:text-primary-blue hover:border-primary-blue/20'
+                  : 'bg-admin-card border border-admin-border text-admin-text-muted hover:text-primary-blue hover:border-primary-blue/20'
               }`}
             >
               {item.label}
               <span
                 className={`min-w-[1.25rem] px-1.5 py-0.5 rounded-lg text-[10px] ${
-                  active ? 'bg-white/20 text-white' : 'bg-gray-50 text-primary-gray/40'
+                  active ? 'bg-white/20 text-white' : 'bg-admin-muted text-admin-text-muted'
                 }`}
               >
                 {counts[item.id] ?? 0}
@@ -80,24 +80,24 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
         })}
       </div>
 
-      <section className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
+      <section className="bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead>
-              <tr className="bg-gray-50/50">
-                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Client</th>
-                <th className="hidden md:table-cell px-6 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Correu</th>
-                <th className="hidden md:table-cell px-6 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Telèfon</th>
-                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest text-center">Estat</th>
-                <th className="hidden sm:table-cell px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Cites</th>
-                <th className="hidden lg:table-cell px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Alta</th>
-                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest"></th>
+              <tr className="bg-admin-muted">
+                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Client</th>
+                <th className="hidden md:table-cell px-6 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Correu</th>
+                <th className="hidden md:table-cell px-6 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Telèfon</th>
+                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest text-center">Estat</th>
+                <th className="hidden sm:table-cell px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Cites</th>
+                <th className="hidden lg:table-cell px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Alta</th>
+                <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest"></th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
               {isLoading ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-16 text-primary-gray/40 font-bold uppercase tracking-widest animate-pulse">
+                  <td colSpan="7" className="text-center py-16 text-admin-text-muted font-bold uppercase tracking-widest animate-pulse">
                     Carregant dades sanitàries...
                   </td>
                 </tr>
@@ -109,7 +109,7 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
                 </tr>
               ) : filteredLeads.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="text-center py-16 text-primary-gray/40">
+                  <td colSpan="7" className="text-center py-16 text-admin-text-muted">
                     No hi ha registres en aquesta categoria.
                   </td>
                 </tr>
@@ -121,19 +121,19 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.03 }}
                     onClick={() => onSelectLead(lead.id)}
-                    className="hover:bg-gray-50/30 transition-colors cursor-pointer"
+                    className="hover:bg-admin-muted transition-colors cursor-pointer"
                   >
                     <td className="px-4 md:px-8 py-5">
-                      <p className="font-bold text-sm md:text-base text-primary-gray leading-none mb-1">{lead.name}</p>
+                      <p className="font-bold text-sm md:text-base text-admin-text leading-none mb-1">{lead.name}</p>
                       <div className="md:hidden space-y-0.5 mt-1">
                         {lead.email && (
-                          <p className="flex items-center gap-1.5 text-[10px] text-primary-gray/40">
+                          <p className="flex items-center gap-1.5 text-[10px] text-admin-text-muted">
                             <Mail size={12} className="shrink-0" />
                             {lead.email}
                           </p>
                         )}
                         {lead.phone && (
-                          <p className="flex items-center gap-1.5 text-[10px] text-primary-gray/40">
+                          <p className="flex items-center gap-1.5 text-[10px] text-admin-text-muted">
                             <Phone size={12} className="shrink-0" />
                             {lead.phone}
                           </p>
@@ -142,22 +142,22 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
                     </td>
                     <td className="hidden md:table-cell px-6 py-5">
                       {lead.email ? (
-                        <p className="flex items-center gap-2 text-sm text-primary-gray/70 break-all">
+                        <p className="flex items-center gap-2 text-sm text-admin-text-muted break-all">
                           <Mail size={14} className="text-primary-blue shrink-0" />
                           {lead.email}
                         </p>
                       ) : (
-                        <span className="text-sm text-primary-gray/30">—</span>
+                        <span className="text-sm text-admin-text-muted">—</span>
                       )}
                     </td>
                     <td className="hidden md:table-cell px-6 py-5">
                       {lead.phone ? (
-                        <p className="flex items-center gap-2 text-sm text-primary-gray/70">
+                        <p className="flex items-center gap-2 text-sm text-admin-text-muted">
                           <Phone size={14} className="text-primary-blue shrink-0" />
                           {lead.phone}
                         </p>
                       ) : (
-                        <span className="text-sm text-primary-gray/30">—</span>
+                        <span className="text-sm text-admin-text-muted">—</span>
                       )}
                     </td>
                     <td className="px-4 md:px-8 py-5 text-center">
@@ -165,18 +165,18 @@ const LeadsManager = ({ leads, isLoading, isError, selectedLeadId, onSelectLead,
                         {lead.statusLabel}
                       </span>
                       {lead.crmStatusLocked && (
-                        <p className="text-[9px] text-primary-gray/30 font-bold uppercase tracking-widest mt-1">
+                        <p className="text-[9px] text-admin-text-muted font-bold uppercase tracking-widest mt-1">
                           Manual
                         </p>
                       )}
                     </td>
                     <td className="hidden sm:table-cell px-4 md:px-8 py-5">
-                      <p className="flex items-center gap-1.5 text-sm text-primary-gray/60 font-medium">
+                      <p className="flex items-center gap-1.5 text-sm text-admin-text-muted font-medium">
                         <Calendar size={14} className="text-primary-blue shrink-0" />
                         {lead.appointmentsCount}
                       </p>
                     </td>
-                    <td className="hidden lg:table-cell px-4 md:px-8 py-5 text-sm text-primary-gray/50 font-medium">
+                    <td className="hidden lg:table-cell px-4 md:px-8 py-5 text-sm text-admin-text-muted font-medium">
                       {formatLeadDate(lead.createdAt)}
                     </td>
                     <td className="px-4 md:px-8 py-5 text-right">

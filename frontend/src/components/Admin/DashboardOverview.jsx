@@ -30,20 +30,20 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             onClick={() => handleStatClick(item.tab)}
-            className={`bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100 hover:shadow-xl hover:shadow-primary-blue/5 transition-all group ${
+            className={`bg-admin-card p-8 rounded-[2.5rem] shadow-sm border border-admin-border hover:shadow-xl hover:shadow-primary-blue/5 transition-all group ${
               item.tab ? 'cursor-pointer' : 'cursor-default opacity-90'
             }`}
           >
             <div className="flex justify-between items-start mb-4">
-              <div className="p-3 bg-gray-50 rounded-2xl group-hover:bg-primary-blue/5 transition-colors">
+              <div className="p-3 bg-admin-muted rounded-2xl group-hover:bg-primary-blue/5 transition-colors">
                 {item.icon}
               </div>
               <span className={`text-[10px] font-black px-2 py-1 rounded-full ${item.trend.includes('+') ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'}`}>
                 {item.trend}
               </span>
             </div>
-            <p className="text-primary-gray/40 text-[10px] md:text-sm font-bold uppercase tracking-widest mb-1">{item.title}</p>
-            <p className="text-2xl md:text-4xl font-black text-primary-gray tracking-tighter">{item.value}</p>
+            <p className="text-admin-text-muted text-[10px] md:text-sm font-bold uppercase tracking-widest mb-1">{item.title}</p>
+            <p className="text-2xl md:text-4xl font-black text-admin-text tracking-tighter">{item.value}</p>
           </motion.div>
         ))}
       </div>
@@ -51,9 +51,9 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
       {/* Two Column Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Leads */}
-        <section className="lg:col-span-2 bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 overflow-hidden">
-          <div className="p-6 md:p-8 border-b border-gray-50 flex justify-between items-center">
-            <h2 className="text-lg md:text-xl font-black text-primary-gray uppercase tracking-tight">Clients Recents</h2>
+        <section className="lg:col-span-2 bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border overflow-hidden">
+          <div className="p-6 md:p-8 border-b border-admin-border flex justify-between items-center">
+            <h2 className="text-lg md:text-xl font-black text-admin-text uppercase tracking-tight">Clients Recents</h2>
             <button
               onClick={onViewAllLeads}
               className="text-primary-blue font-bold text-xs md:text-sm hover:underline"
@@ -64,32 +64,32 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="bg-gray-50/50">
-                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Client</th>
-                  <th className="hidden md:table-cell px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest">Plaga</th>
-                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest text-center">Estat</th>
-                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-primary-gray/30 tracking-widest"></th>
+                <tr className="bg-admin-muted">
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Client</th>
+                  <th className="hidden md:table-cell px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest">Plaga</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest text-center">Estat</th>
+                  <th className="px-4 md:px-8 py-4 text-[10px] font-black uppercase text-admin-text-muted tracking-widest"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {isLoading ? (
-                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40 font-bold uppercase tracking-widest animate-pulse">Carregant dades sanitàries...</td></tr>
+                  <tr><td colSpan="4" className="text-center py-10 text-admin-text-muted font-bold uppercase tracking-widest animate-pulse">Carregant dades sanitàries...</td></tr>
                 ) : isError ? (
                   <tr><td colSpan="4" className="text-center py-10 text-red-500 font-bold">Error al connectar amb el sistema de control.</td></tr>
                 ) : normalizedLeads.length === 0 ? (
-                  <tr><td colSpan="4" className="text-center py-10 text-primary-gray/40">No hi ha clients registrats.</td></tr>
+                  <tr><td colSpan="4" className="text-center py-10 text-admin-text-muted">No hi ha clients registrats.</td></tr>
                 ) : normalizedLeads.slice(0, 4).map((lead) => (
                   <tr
                     key={lead.id}
                     onClick={() => onSelectLead(lead.id)}
-                    className="hover:bg-gray-50/30 transition-colors cursor-pointer"
+                    className="hover:bg-admin-muted transition-colors cursor-pointer"
                   >
                     <td className="px-4 md:px-8 py-5">
-                      <p className="font-bold text-sm md:text-base text-primary-gray leading-none mb-1">{lead.name}</p>
-                      <p className="text-[10px] text-primary-gray/40">{lead.email || formatLeadDate(lead.createdAt) || 'Recent'}</p>
+                      <p className="font-bold text-sm md:text-base text-admin-text leading-none mb-1">{lead.name}</p>
+                      <p className="text-[10px] text-admin-text-muted">{lead.email || formatLeadDate(lead.createdAt) || 'Recent'}</p>
                     </td>
                     <td className="hidden md:table-cell px-8 py-5">
-                      <span className="text-sm text-primary-gray/70 font-medium">{lead.pest}</span>
+                      <span className="text-sm text-admin-text-muted font-medium">{lead.pest}</span>
                     </td>
                     <td className="px-4 md:px-8 py-5 text-center">
                       <span className={`text-[9px] md:text-[10px] font-black px-2 md:px-3 py-1 rounded-full uppercase tracking-widest ${lead.statusClass}`}>
@@ -116,9 +116,9 @@ const DashboardOverview = ({ leads, isLoading, isError, setActiveTab, onSelectLe
         </section>
 
         {/* Calendar Summary Section */}
-        <section className="bg-white rounded-3xl md:rounded-[3rem] shadow-sm border border-gray-100 flex flex-col">
-          <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-            <h2 className="text-xl font-black text-primary-gray uppercase tracking-tight">Pròximes Cites</h2>
+        <section className="bg-admin-card rounded-3xl md:rounded-[3rem] shadow-sm border border-admin-border flex flex-col">
+          <div className="p-8 border-b border-admin-border flex justify-between items-center">
+            <h2 className="text-xl font-black text-admin-text uppercase tracking-tight">Pròximes Cites</h2>
             <Calendar size={20} className="text-primary-blue" />
           </div>
           <div className="p-8 space-y-4 flex-1">

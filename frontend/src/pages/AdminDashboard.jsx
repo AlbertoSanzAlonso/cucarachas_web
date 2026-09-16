@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { useGetLeadsQuery } from '@/store/apis/leadsApi';
 import { logout } from '@/store/slices/authSlice';
+import { useAdminTheme } from '@/hooks/useAdminTheme';
 
 // Modular Components
 import Sidebar from '@/components/Admin/Sidebar';
@@ -21,6 +22,7 @@ import PresupuestosManager from '@/components/Admin/PresupuestosManager';
 import AdminOpsChat from '@/components/Admin/AdminOpsChat';
 
 const AdminDashboard = () => {
+  const { theme, isDark, toggleTheme } = useAdminTheme();
   const [activeTab, setActiveTab] = useState('overview');
   const [selectedLeadId, setSelectedLeadId] = useState(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -93,7 +95,10 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="flex h-screen min-h-0 bg-[#f8fafc] overflow-hidden relative">
+    <div
+      className="flex h-screen min-h-0 bg-admin-page overflow-hidden relative text-admin-text"
+      data-admin-theme={theme}
+    >
       <Helmet>
         <title>Admin Dashboard | CECSA</title>
         <meta name="author" content="Alberto Sanz (albertosanz.dev)" />
@@ -131,11 +136,18 @@ const AdminDashboard = () => {
           onSelectLead={handleSelectLead}
           onViewAllLeads={handleViewAllLeads}
           handleLogout={handleLogout}
+          isDark={isDark}
+          toggleTheme={toggleTheme}
         />
         ) : null}
 
         {activeTab === 'ops' ? (
-          <AdminOpsChat user={user} onOpenSidebar={() => setSidebarOpen(true)} />
+          <AdminOpsChat
+            user={user}
+            onOpenSidebar={() => setSidebarOpen(true)}
+            isDark={isDark}
+            toggleTheme={toggleTheme}
+          />
         ) : activeTab === 'overview' ? (
           <DashboardOverview
             leads={leads}
@@ -168,11 +180,11 @@ const AdminDashboard = () => {
           <BlogManager />
         ) : (
           <div className="flex flex-col items-center justify-center h-64 text-center">
-            <div className="p-6 bg-gray-100 rounded-full mb-6">
-               <LayoutDashboard size={48} className="text-primary-gray/20" />
+            <div className="p-6 bg-admin-muted rounded-full mb-6">
+               <LayoutDashboard size={48} className="text-admin-text-muted" />
             </div>
-            <h2 className="text-2xl font-black text-primary-gray uppercase tracking-tight">Secció en Desenvolupament</h2>
-            <p className="text-primary-gray/40 font-medium">Estem treballant en el protocol d'aquesta secció.</p>
+            <h2 className="text-2xl font-black text-admin-text uppercase tracking-tight">Secció en Desenvolupament</h2>
+            <p className="text-admin-text-muted font-medium">Estem treballant en el protocol d'aquesta secció.</p>
           </div>
         )}
       </main>

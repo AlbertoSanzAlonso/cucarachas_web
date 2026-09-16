@@ -1,6 +1,14 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LayoutDashboard, Bell, User as UserIcon, LogOut, ContactRound } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Bell,
+  User as UserIcon,
+  LogOut,
+  ContactRound,
+  Sun,
+  Moon,
+} from 'lucide-react';
 import { normalizeLead, formatLeadDate } from '@/utils/leadDisplay';
 import {
   getAdminUserKey,
@@ -19,7 +27,9 @@ const TopBar = ({
   setActiveTab,
   onSelectLead,
   onViewAllLeads,
-  handleLogout 
+  handleLogout,
+  isDark,
+  toggleTheme,
 }) => {
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   const userKey = getAdminUserKey(user);
@@ -61,25 +71,35 @@ const TopBar = ({
       <div className="flex items-center space-x-4">
         <button 
           onClick={() => setSidebarOpen(true)}
-          className="lg:hidden p-2 bg-white rounded-xl shadow-sm border border-gray-100 text-primary-blue"
+          className="lg:hidden p-2 bg-admin-card rounded-xl shadow-sm border border-admin-border text-primary-blue"
         >
           <LayoutDashboard size={24} />
         </button>
         <div className="hidden md:block">
-          <h1 className="text-xl md:text-3xl font-black text-primary-gray tracking-tight uppercase">Hola, {user?.name || user?.email || 'Admin'}</h1>
-          <p className="text-xs md:text-base text-primary-gray/50 font-medium whitespace-nowrap overflow-hidden text-ellipsis">Benvingut al teu panell de control sanitari.</p>
+          <h1 className="text-xl md:text-3xl font-black text-admin-text tracking-tight uppercase">Hola, {user?.name || user?.email || 'Admin'}</h1>
+          <p className="text-xs md:text-base text-admin-text-muted font-medium whitespace-nowrap overflow-hidden text-ellipsis">Benvingut al teu panell de control sanitari.</p>
         </div>
       </div>
-      <div className="flex items-center space-x-6">
+      <div className="flex items-center space-x-4 md:space-x-6">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="p-2 text-admin-text-muted hover:text-primary-blue transition-colors"
+          aria-label={isDark ? 'Canviar a mode dia' : 'Canviar a mode nit'}
+          title={isDark ? 'Mode dia' : 'Mode nit'}
+        >
+          {isDark ? <Sun size={22} /> : <Moon size={22} />}
+        </button>
+
         <div className="relative">
           <button
             onClick={() => setNotificationsOpen(!notificationsOpen)}
-            className="relative p-2 text-primary-gray/40 hover:text-primary-blue transition-colors"
+            className="relative p-2 text-admin-text-muted hover:text-primary-blue transition-colors"
             aria-label="Notificacions"
           >
             <Bell size={24} />
             {pendingCount > 0 && (
-              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-[#f8fafc]" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-admin-page" />
             )}
           </button>
 
@@ -91,10 +111,10 @@ const TopBar = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-4 w-80 bg-white rounded-[2rem] shadow-2xl border border-gray-100 p-4 z-20"
+                  className="absolute right-0 top-full mt-4 w-80 bg-admin-card rounded-[2rem] shadow-2xl border border-admin-border p-4 z-20"
                 >
-                  <div className="p-3 border-b border-gray-50 mb-2 flex justify-between items-center">
-                    <p className="font-black text-primary-gray uppercase tracking-tight text-sm">Notificacions</p>
+                  <div className="p-3 border-b border-admin-border mb-2 flex justify-between items-center">
+                    <p className="font-black text-admin-text uppercase tracking-tight text-sm">Notificacions</p>
                     {pendingCount > 0 && (
                       <span className="text-[10px] font-black px-2 py-1 rounded-full bg-red-100 text-red-600">
                         {pendingCount}
@@ -103,7 +123,7 @@ const TopBar = ({
                   </div>
 
                   {pendingCount === 0 ? (
-                    <p className="text-sm text-primary-gray/40 font-medium px-3 py-6 text-center">
+                    <p className="text-sm text-admin-text-muted font-medium px-3 py-6 text-center">
                       No hi ha notificacions noves.
                     </p>
                   ) : (
@@ -118,9 +138,9 @@ const TopBar = ({
                             <ContactRound size={16} />
                           </div>
                           <div className="min-w-0">
-                            <p className="font-bold text-sm text-primary-gray truncate">{lead.name}</p>
-                            <p className="text-[10px] text-primary-gray/40 truncate">{lead.email}</p>
-                            <p className="text-[10px] text-primary-gray/30 mt-0.5">{formatLeadDate(lead.createdAt)}</p>
+                            <p className="font-bold text-sm text-admin-text truncate">{lead.name}</p>
+                            <p className="text-[10px] text-admin-text-muted truncate">{lead.email}</p>
+                            <p className="text-[10px] text-admin-text-muted mt-0.5">{formatLeadDate(lead.createdAt)}</p>
                           </div>
                         </button>
                       ))}
@@ -141,9 +161,9 @@ const TopBar = ({
           </AnimatePresence>
         </div>
 
-        <div className="relative flex items-center space-x-3 pl-6 border-l border-gray-200">
+        <div className="relative flex items-center space-x-3 pl-4 md:pl-6 border-l border-admin-border">
           <div className="hidden md:block text-right">
-            <p className="text-sm font-bold text-primary-gray">{user?.name || user?.email}</p>
+            <p className="text-sm font-bold text-admin-text">{user?.name || user?.email}</p>
             <p className="text-[10px] text-accent-green font-bold uppercase tracking-widest">{user?.role || 'Administrador'}</p>
           </div>
           
@@ -163,15 +183,15 @@ const TopBar = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-4 w-64 bg-white rounded-[2rem] shadow-2xl border border-gray-100 p-4 z-20"
+                  className="absolute right-0 top-full mt-4 w-64 bg-admin-card rounded-[2rem] shadow-2xl border border-admin-border p-4 z-20"
                 >
-                  <div className="p-4 border-b border-gray-50 mb-2">
-                    <p className="font-black text-primary-gray uppercase tracking-tight">{user?.name || user?.email}</p>
-                    <p className="text-[10px] text-primary-gray/40 font-bold uppercase tracking-widest">{user?.email}</p>
+                  <div className="p-4 border-b border-admin-border mb-2">
+                    <p className="font-black text-admin-text uppercase tracking-tight">{user?.name || user?.email}</p>
+                    <p className="text-[10px] text-admin-text-muted font-bold uppercase tracking-widest">{user?.email}</p>
                   </div>
                   <button 
                     onClick={() => { setIsProfileModalOpen(true); setProfileDropdownOpen(false); }}
-                    className="w-full flex items-center space-x-3 px-4 py-3 text-primary-gray/70 hover:text-primary-blue hover:bg-primary-blue/5 transition-all rounded-xl font-bold text-sm"
+                    className="w-full flex items-center space-x-3 px-4 py-3 text-admin-text-muted hover:text-primary-blue hover:bg-primary-blue/5 transition-all rounded-xl font-bold text-sm"
                   >
                     <UserIcon size={18} />
                     <span>Editar Perfil</span>

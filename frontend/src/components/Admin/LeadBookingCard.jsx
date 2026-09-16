@@ -24,14 +24,14 @@ const LeadBookingCard = ({ booking, index = 0 }) => {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="p-5 md:p-6 rounded-[2rem] border border-gray-100 bg-gray-50/30 hover:bg-gray-50/60 transition-colors"
+      className="p-5 md:p-6 rounded-[2rem] border border-admin-border bg-admin-muted hover:bg-admin-muted transition-colors"
     >
       <div className="flex flex-wrap items-start justify-between gap-3 mb-4">
         <div>
-          <p className="font-black text-primary-gray text-base md:text-lg">
+          <p className="font-black text-admin-text text-base md:text-lg">
             {getBookingDisplayTitle(booking)}
           </p>
-          <p className="flex items-center gap-2 text-sm text-primary-gray/60 font-medium mt-2">
+          <p className="flex items-center gap-2 text-sm text-admin-text-muted font-medium mt-2">
             <Clock size={16} className="text-primary-blue shrink-0" />
             {formatBookingDate(booking.startTime)}
           </p>
@@ -44,14 +44,14 @@ const LeadBookingCard = ({ booking, index = 0 }) => {
       </div>
 
       {address && (
-        <p className="flex items-start gap-2 text-sm text-primary-gray/60 font-medium mb-4">
+        <p className="flex items-start gap-2 text-sm text-admin-text-muted font-medium mb-4">
           <MapPin size={16} className="text-primary-blue shrink-0 mt-0.5" />
           {address}
         </p>
       )}
 
       {booking.uid && (
-        <p className="text-[10px] font-bold uppercase tracking-widest text-primary-gray/30">
+        <p className="text-[10px] font-bold uppercase tracking-widest text-admin-text-muted">
           ID: {booking.uid.slice(0, 8)}…
         </p>
       )}
