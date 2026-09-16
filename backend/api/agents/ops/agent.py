@@ -37,6 +37,25 @@ class OpsAgentDeps:
     openwa_fail_reason: str = ""
     email_failed: bool = False
     email_fail_reason: str = ""
+    # Los envíos reales solo tras confirmación UI (modal); por defecto bloqueados.
+    side_effects_allowed: bool = False
+
+
+class OpsPendingAction(BaseModel):
+    """Acción sensible que el frontend debe confirmar antes de ejecutar."""
+
+    kind: str = Field(description="whatsapp | email | igeo_lead")
+    summary: str = Field(description="Resumen corto para el modal de confirmación.")
+    telefono: str = Field(default="", description="Móvil / chatId para WhatsApp o lead.")
+    mensaje: str = Field(default="", description="Texto WhatsApp.")
+    to_email: str = Field(default="", description="Destinatario email.")
+    subject: str = Field(default="", description="Asunto email.")
+    body: str = Field(default="", description="Cuerpo email.")
+    cc: str = Field(default="", description="CC email, coma-separados.")
+    nombre: str = Field(default="", description="Nombre lead iGEO.")
+    email: str = Field(default="", description="Email lead iGEO.")
+    direccion: str = Field(default="", description="Dirección lead iGEO.")
+    observaciones: str = Field(default="", description="Observaciones lead iGEO.")
 
 
 class OpsAgentOutput(BaseModel):
@@ -47,7 +66,17 @@ class OpsAgentOutput(BaseModel):
     )
     important_notes: List[str] = Field(
         default_factory=list,
-        description="Fets que cal recordar (telèfon, codi iGEO, excepció). Buit si no n'hi ha.",
+        description=(
+            "Només si l'operari demana explícitament recordar/desar una nota. "
+            "Buit en la majoria de torns."
+        ),
+    )
+    pending_action: Optional[OpsPendingAction] = Field(
+        default=None,
+        description=(
+            "Obligatori per enviar WhatsApp/email o crear lead iGEO: omple kind+summary+dades "
+            "i NO cridis send_*/igeo_create_lead. El modal de confirmació executarà l'acció."
+        ),
     )
 
 
@@ -94,6 +123,33 @@ def _email_guard(deps: OpsAgentDeps | None) -> str | None:
     return None
 
 
+def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
+    if deps is None or not deps.side_effects_allowed:
+        return (
+            "BLOQUEJAT: els enviaments / altes iGEO només s'executen després que l'operari "
+            "confirmi al modal. Omple pending_action (kind, summary i dades) al output final, "
+            "explica què faries i NO tornis a cridar aquesta eina."
+        )
+    return None
+
+
+_CONFIRM_RULES_ES = (
+    "FRENO OBLIGATORIO: NUNCA ejecutes send_whatsapp, send_email ni igeo_create_lead en el chat. "
+    "Esas tools están bloqueadas. Para enviar o crear un lead: busca datos si hace falta, "
+    "rellena pending_action (kind=whatsapp|email|igeo_lead, summary, y campos) y en message "
+    "pide confirmación. El operario confirmará en un modal; tú no envías. "
+    "important_notes: vacío salvo que el operario pida explícitamente recordar/guardar una nota. "
+)
+
+_CONFIRM_RULES_CA = (
+    "FRE DE SEGURETAT: MAI executis send_whatsapp, send_email ni igeo_create_lead al xat. "
+    "Aquestes eines estan bloquejades. Per enviar o crear un lead: cerca dades si cal, "
+    "omple pending_action (kind=whatsapp|email|igeo_lead, summary i camps) i al message "
+    "demana confirmació. L'operari confirmarà al modal; tu no envies. "
+    "important_notes: buit tret que l'operari demani explícitament recordar/desar una nota. "
+)
+
+
 @ops_agent.system_prompt
 def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
     lang = (ctx.deps.language if ctx.deps else "ca") or "ca"
@@ -105,65 +161,37 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             "Eres el asistente administrativo interno de CECSA Control de Plagas. "
             "Hablas con personal de oficina, NUNCA con el cliente final. "
             "No uses el tono comercial del Bio-Assistent web. Sé claro, operativo y breve. "
+            f"{_CONFIRM_RULES_ES}"
             f"iGEO PDI está {igeo_on}. Si está desactivado, puedes preparar la acción pero no finjas que iGEO ya se actualizó. "
-            f"WhatsApp (OpenWA) está {wa_on}. Puedes buscar contactos de la agenda WhatsApp con "
-            "search_whatsapp_contacts. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
-            "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
-            "Acepta móviles ES e internacionales con prefijo de país (+54, +52…) o el id `…@c.us` del contacto. "
-            "Si no encuentras el nombre completo, busca solo el apellido o el nombre (máximo 2 búsquedas WA); "
-            "sin resultados NO es fallo técnico: pide el móvil internacional y envía con send_whatsapp. "
-            "Para un saludo/WhatsApp por nombre: NO llames CRM, iGEO ni RAG salvo que el operario lo pida; "
-            "search_whatsapp_contacts → send_whatsapp. No llames whatsapp_status si no hay error. "
-            "Si whatsapp_status o send_whatsapp fallan (error técnico), cita el texto TAL CUAL "
-            "(incluye url= y el error); no lo resumas como 'fallo de conexión' genérico. "
-            "Si send_whatsapp falla UNA vez por error técnico, NO reintentes: informa al operario y para. "
-            f"Email SMTP está {mail_on}. Solo envía un correo si el operario lo pide de forma explícita; "
-            "nunca por iniciativa propia. Si pide un correo de prueba y da el destinatario, "
-            "usa un asunto/cuerpo breves y llama send_email (no digas solo 'no puedo'). "
-            "Si Email está desactivado o falla, llama email_status y cita el texto TAL CUAL "
-            "(incluye ready=, host= y qué variables faltan en Coolify). "
-            "Confirma destinatario, asunto y cuerpo antes de send_email solo si faltan datos. "
-            "Si email_status o send_email fallan UNA vez, NO reintentes: informa al operario y para. "
-            "Usa herramientas para buscar en el CRM local (Cliente) y en el espejo iGEO antes de crear nada. "
-            "Datos vivos de clientes/OT/contratos → CRM o espejo SQL, NUNCA el RAG. "
-            "Procedimientos iGEO/PDI/campos obligatorios → usa el bloque RAG del prompt o search_ops_knowledge; "
-            "no inventes campos ni códigos maestros. "
-            "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
-            "No inventes códigos de delegación, técnico ni contrato. "
-            "Operaciones sensibles (borrar, facturar, cambiar contrato) requiere que el humano confirme; no las ejecutes por tu cuenta. "
-            "Si detectas un dato que hay que recordar (teléfono, código iGEO, excepción de garantía), inclúyelo en important_notes."
+            f"WhatsApp (OpenWA) está {wa_on}. Puedes buscar contactos con search_whatsapp_contacts. "
+            "Acepta móviles ES e internacionales (+54, +52…) o id `…@c.us` en pending_action.telefono. "
+            "Si no encuentras el nombre (máx. 2 búsquedas WA), pide el móvil internacional. "
+            "Para un WhatsApp por nombre: solo search_whatsapp_contacts y luego pending_action; "
+            "no llames CRM/iGEO/RAG ni whatsapp_status salvo error o petición explícita. "
+            f"Email SMTP está {mail_on}. Para un correo: prepara pending_action kind=email "
+            "(to_email, subject, body) y espera el modal. Si falla la config, email_status. "
+            "Usa CRM / espejo iGEO para búsquedas de clientes. "
+            "Datos vivos → CRM o espejo SQL, NUNCA el RAG. "
+            "Procedimientos iGEO/PDI → RAG o search_ops_knowledge; no inventes códigos maestros. "
+            "Operaciones sensibles (borrar, facturar, cambiar contrato) requiere confirmación humana."
         )
     return (
         "Ets l'assistent administratiu intern de CECSA Control de Plagues. "
         "Parles amb personal d'oficina, MAI amb el client final. "
         "No facis servir el to comercial del Bio-Assistent web. Sigues clar, operatiu i breu. "
+        f"{_CONFIRM_RULES_CA}"
         f"iGEO PDI està {igeo_on}. Si està desactivat, pots preparar l'acció però no fingis que iGEO ja s'ha actualitzat. "
-        f"WhatsApp (OpenWA) està {wa_on}. Pots cercar contactes de l'agenda WhatsApp amb "
-        "search_whatsapp_contacts. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
-        "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
-        "Accepta mòbils ES i internacionals amb prefix de país (+54, +52…) o l'id `…@c.us` del contacte. "
-        "Si no trobes el nom complet, cerca només el cognom o el nom (màxim 2 cerques WA); "
-        "sense resultats NO és fallada tècnica: demana el mòbil internacional i envia amb send_whatsapp. "
-        "Per un salut/WhatsApp per nom: NO cridis CRM, iGEO ni RAG si l'operari no ho demana; "
-        "search_whatsapp_contacts → send_whatsapp. No cridis whatsapp_status si no hi ha error. "
-        "Si whatsapp_status o send_whatsapp fallen (error tècnic), cita el text TAL QUAL "
-        "(inclou url= i l'error); no ho resumeixis com a 'fallo de connexió' genèric. "
-        "Si send_whatsapp falla UN cop per error tècnic, NO reintentis: informa l'operari i para. "
-        f"Email SMTP està {mail_on}. Només envia un correu si l'operari ho demana de forma explícita; "
-        "mai per iniciativa pròpia. Si demana un correu de prova i dóna el destinatari, "
-        "fes servir un assumpte/cos breus i crida send_email (no diguis només 'no puc'). "
-        "Si Email està desactivat o falla, crida email_status i cita el text TAL QUAL "
-        "(inclou ready=, host= i quines variables falten a Coolify). "
-        "Confirma destinataris, assumpte i cos abans de send_email només si falten dades. "
-        "Si email_status o send_email fallen UN cop, NO reintentis: informa l'operari i para. "
-        "Fes servir eines per buscar al CRM local (Cliente) i a l'espill iGEO abans de crear res. "
-        "Dades vives de clients/OT/contractes → CRM o espill SQL, MAI el RAG. "
-        "Procediments iGEO/PDI/camps obligatoris → fes servir el bloc RAG del prompt o search_ops_knowledge; "
-        "no inventis camps ni codis mestres. "
-        "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
-        "No inventis codis de delegació, tècnic ni contracte. "
-        "Operacions sensibles (esborrar, facturar, canviar contracte) cal que l'humà confirmi; no les executis pel teu compte. "
-        "Si detectes una dada a recordar (telèfon, codi iGEO, excepció de garantia), posa-la a important_notes."
+        f"WhatsApp (OpenWA) està {wa_on}. Pots cercar contactes amb search_whatsapp_contacts. "
+        "Accepta mòbils ES i internacionals (+54, +52…) o id `…@c.us` a pending_action.telefono. "
+        "Si no trobes el nom (màx. 2 cerques WA), demana el mòbil internacional. "
+        "Per un WhatsApp per nom: només search_whatsapp_contacts i després pending_action; "
+        "no cridis CRM/iGEO/RAG ni whatsapp_status tret d'error o petició explícita. "
+        f"Email SMTP està {mail_on}. Per un correu: prepara pending_action kind=email "
+        "(to_email, subject, body) i espera el modal. Si falla la config, email_status. "
+        "Fes servir CRM / espill iGEO per cerques de clients. "
+        "Dades vives → CRM o espill SQL, MAI el RAG. "
+        "Procediments iGEO/PDI → RAG o search_ops_knowledge; no inventis codis mestres. "
+        "Operacions sensibles (esborrar, facturar, canviar contracte) cal confirmació humana."
     )
 
 
@@ -264,6 +292,9 @@ def igeo_create_lead(
     observaciones: str = "",
 ) -> str:
     """Crea un CLIENTE_POTENCIAL a iGEO via PDI (async). Comprova abans search_crm_cliente."""
+    blocked = _side_effects_guard(ctx.deps)
+    if blocked:
+        return blocked
     if not is_igeo_enabled():
         return "iGEO PDI deshabilitat. El lead NO s'ha enviat a iGEO."
     settings = get_igeo_settings()
@@ -328,6 +359,9 @@ def search_whatsapp_contacts(ctx: RunContext[OpsAgentDeps], query: str) -> str:
 @ops_agent.tool
 def send_whatsapp(ctx: RunContext[OpsAgentDeps], telefono: str, mensaje: str) -> str:
     """Envia un WhatsApp via OpenWA. `telefono`: mòbil ES, internacional (+prefix) o chatId (`…@c.us`)."""
+    blocked = _side_effects_guard(ctx.deps)
+    if blocked:
+        return blocked
     blocked = _openwa_guard(ctx.deps)
     if blocked:
         return blocked
@@ -362,6 +396,9 @@ def send_email(
     cc: str = "",
 ) -> str:
     """Envia un correu de text pla via SMTP Django. Només si l'operari ho ha demanat explícitament."""
+    blocked = _side_effects_guard(ctx.deps)
+    if blocked:
+        return blocked
     blocked = _email_guard(ctx.deps)
     if blocked:
         return blocked

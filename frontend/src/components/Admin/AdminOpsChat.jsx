@@ -87,6 +87,9 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const [deleteNoteError, setDeleteNoteError] = useState(null);
   /** Mensaje del usuario mostrado al instante mientras el API responde. */
   const [pendingUser, setPendingUser] = useState(null);
+  const [pendingAction, setPendingAction] = useState(null);
+  const [isConfirmingAction, setIsConfirmingAction] = useState(false);
+  const [confirmActionError, setConfirmActionError] = useState(null);
   const listRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -112,10 +115,9 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
 
   const showPendingUser =
     Boolean(pendingUser) &&
-    !(
-      pendingUser.source !== 'voice' &&
-      messages.some((m) => m.role === 'user' && m.content === pendingUser.content)
-    );
+    (pendingUser.source === 'voice'
+      ? busy
+      : !messages.some((m) => m.role === 'user' && m.content === pendingUser.content));
 
   const modelOptions = modelCatalog?.models || [];
   const allowedIds = modelOptions.map((m) => m.id);
@@ -166,17 +168,17 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
 
   // Quitar el optimista cuando el fil del servidor ya incluye la pregunta.
   useEffect(() => {
-    if (!pendingUser || !messages.length) return;
-    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
-    if (!lastUser) return;
+    if (!pendingUser) return;
     if (pendingUser.source === 'voice') {
-      setPendingUser(null);
+      if (!busy) setPendingUser(null);
       return;
     }
-    if (lastUser.content === pendingUser.content) {
+    if (!messages.length) return;
+    const lastUser = [...messages].reverse().find((m) => m.role === 'user');
+    if (lastUser?.content === pendingUser.content) {
       setPendingUser(null);
     }
-  }, [messages, pendingUser]);
+  }, [messages, pendingUser, busy]);
 
   const submit = async (raw) => {
     const text = (raw ?? draft).trim();
@@ -185,12 +187,66 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     setPendingUser({ content: text, source: 'text' });
     try {
       const convId = await ensureConversation();
-      await sendMessage({ id: convId, content: text, language: 'ca', model: selectedModel }).unwrap();
+      const result = await sendMessage({
+        id: convId,
+        content: text,
+        language: 'ca',
+        model: selectedModel,
+      }).unwrap();
+      if (result?.pending_action) {
+        setConfirmActionError(null);
+        setPendingAction(result.pending_action);
+      }
     } catch {
       setDraft(text);
       setPendingUser(null);
     }
   };
+
+  const handleCloseActionConfirm = () => {
+    if (isConfirmingAction) return;
+    setPendingAction(null);
+    setConfirmActionError(null);
+  };
+
+  const handleConfirmPendingAction = async () => {
+    if (!pendingAction || !activeId) return;
+    setIsConfirmingAction(true);
+    setConfirmActionError(null);
+    try {
+      await sendMessage({
+        id: activeId,
+        language: 'ca',
+        model: selectedModel,
+        confirm_action: pendingAction,
+      }).unwrap();
+      setPendingAction(null);
+    } catch (err) {
+      setConfirmActionError(
+        err?.data?.detail || "No s'ha pogut executar l'acció. Torna-ho a provar.",
+      );
+    } finally {
+      setIsConfirmingAction(false);
+    }
+  };
+
+  const pendingActionTitle =
+    pendingAction?.kind === 'whatsapp'
+      ? 'Confirmar WhatsApp'
+      : pendingAction?.kind === 'email'
+        ? 'Confirmar correu'
+        : pendingAction?.kind === 'igeo_lead'
+          ? 'Confirmar lead iGEO'
+          : 'Confirmar acció';
+
+  const pendingActionConfirmLabel =
+    pendingAction?.kind === 'whatsapp'
+      ? 'Sí, enviar WhatsApp'
+      : pendingAction?.kind === 'email'
+        ? 'Sí, enviar correu'
+        : pendingAction?.kind === 'igeo_lead'
+          ? 'Sí, crear lead'
+          : 'Sí, confirmar';
 
   const toggleVoice = async () => {
     if (busy) return;
@@ -208,6 +264,10 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           speak: ttsEnabled,
           model: selectedModel,
         }).unwrap();
+        if (result?.pending_action) {
+          setConfirmActionError(null);
+          setPendingAction(result.pending_action);
+        }
         if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
       } catch {
         setPendingUser(null);
@@ -590,7 +650,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                   </div>
                 </div>
               ))}
-              {pendingUser ? (
+              {showPendingUser ? (
                 <div className="flex justify-end">
                   <div className="max-w-[85%] rounded-2xl bg-[var(--primary-blue)] px-4 py-3 text-[15px] leading-relaxed whitespace-pre-wrap text-white opacity-90">
                     {pendingUser.content}
@@ -740,6 +800,19 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
         variant="danger"
         isLoading={isDeletingNote}
         error={deleteNoteError}
+      />
+
+      <ConfirmModal
+        isOpen={Boolean(pendingAction)}
+        onClose={handleCloseActionConfirm}
+        onConfirm={handleConfirmPendingAction}
+        title={pendingActionTitle}
+        message={pendingAction?.summary || 'Confirmes aquesta acció?'}
+        confirmLabel={pendingActionConfirmLabel}
+        cancelLabel="Cancel·lar"
+        variant="primary"
+        isLoading={isConfirmingAction}
+        error={confirmActionError}
       />
     </div>
   );

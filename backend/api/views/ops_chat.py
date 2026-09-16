@@ -39,7 +39,65 @@ def _wants_speech(data) -> bool:
     return raw in ("1", "true", "yes", "on")
 
 
+def _user_asked_to_save_note(text: str) -> bool:
+    low = (text or "").casefold()
+    keys = (
+        "desa nota",
+        "desar nota",
+        "guarda nota",
+        "guardar nota",
+        "recorda",
+        "recordar",
+        "desa com a nota",
+        "guarda como nota",
+        "guardar como nota",
+        "pinnea",
+        "pinna",
+    )
+    return any(k in low for k in keys)
+
+
+def _run_confirm_action(*, conv, user, action: dict, language: str = "ca") -> dict:
+    """Ejecuta una acción ya confirmada en el modal (sin LLM)."""
+    from api.ops_actions import execute_confirmed_action, pending_action_dict
+
+    normalized = pending_action_dict(action)
+    summary = (normalized or {}).get("summary") or "Acció confirmada"
+    user_msg = AdminMessage.objects.create(
+        conversation=conv,
+        role=AdminMessage.Role.USER,
+        content=f"Confirmo: {summary}",
+        source="confirm",
+    )
+    if not conv.title:
+        conv.title = _title_from_message(summary)
+        conv.save(update_fields=["title", "updated_at"])
+
+    reply = execute_confirmed_action(normalized or {}, conversation_id=conv.pk)
+    assistant_msg = AdminMessage.objects.create(
+        conversation=conv,
+        role=AdminMessage.Role.ASSISTANT,
+        content=reply,
+        source="confirm",
+    )
+    conv.updated_at = timezone.now()
+    conv.save(update_fields=["title", "updated_at"])
+    return {
+        "conversation_id": conv.id,
+        "title": conv.title,
+        "user_message": AdminMessageSerializer(user_msg).data,
+        "assistant_message": AdminMessageSerializer(assistant_msg).data,
+        "notes": [],
+        "pending_action": None,
+        "via_voice": False,
+        "assistant_audio_base64": None,
+        "model": None,
+    }
+
+
 def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text", speak: bool = False, model: str | None = None) -> dict:
+    from api.ops_actions import pending_action_dict
+
     user_msg = AdminMessage.objects.create(
         conversation=conv,
         role=AdminMessage.Role.USER,
@@ -69,6 +127,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
         elif title:
             memory_notes.append(title)
     notes_created = []
+    pending = None
     try:
         from api.agents.ops.agent import run_ops_agent
 
@@ -84,18 +143,20 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
         reply = (output.message or "").strip() or "Sense resposta."
         if output.suggested_title and not conv.title:
             conv.title = output.suggested_title.strip()[:200]
-        for note_text in output.important_notes or []:
-            body = (note_text or "").strip()
-            if not body:
-                continue
-            note = AdminMemoryNote.objects.create(
-                user=user,
-                conversation=conv,
-                title=body[:80],
-                content=body,
-                pinned=True,
-            )
-            notes_created.append(note)
+        pending = pending_action_dict(getattr(output, "pending_action", None))
+        if _user_asked_to_save_note(text):
+            for note_text in output.important_notes or []:
+                body = (note_text or "").strip()
+                if not body:
+                    continue
+                note = AdminMemoryNote.objects.create(
+                    user=user,
+                    conversation=conv,
+                    title=body[:80],
+                    content=body,
+                    pinned=True,
+                )
+                notes_created.append(note)
     except Exception as exc:
         err = str(exc)
         err_low = err.lower()
@@ -157,6 +218,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
         "user_message": AdminMessageSerializer(user_msg).data,
         "assistant_message": AdminMessageSerializer(assistant_msg).data,
         "notes": AdminMemoryNoteSerializer(notes_created, many=True).data,
+        "pending_action": pending,
         "via_voice": source == "voice",
         "assistant_audio_base64": audio_b64,
         "model": resolve_ops_model(model),
@@ -231,6 +293,21 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
 
         speak = _wants_speech(request.data)
         model = request.data.get("model")
+
+        confirm_action = request.data.get("confirm_action")
+        if confirm_action is not None:
+            if not isinstance(confirm_action, dict):
+                return Response(
+                    {"detail": "confirm_action ha de ser un objecte."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+            payload = _run_confirm_action(
+                conv=conv,
+                user=request.user,
+                action=confirm_action,
+                language=language,
+            )
+            return Response(payload, status=status.HTTP_201_CREATED)
 
         audio = request.FILES.get("audio")
         if audio:

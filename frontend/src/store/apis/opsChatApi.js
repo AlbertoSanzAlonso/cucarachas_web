@@ -52,10 +52,12 @@ export const opsChatApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: 'OpsConversations', id: 'LIST' }],
     }),
     sendOpsMessage: builder.mutation({
-      query: ({ id, content, language, model }) => ({
+      query: ({ id, content, language, model, confirm_action }) => ({
         url: `ops/conversations/${id}/messages/`,
         method: 'POST',
-        body: { content, language, model },
+        body: confirm_action
+          ? { confirm_action, language, model }
+          : { content, language, model },
       }),
       invalidatesTags: (_r, _e, { id }) => [
         { type: 'OpsConversations', id },
