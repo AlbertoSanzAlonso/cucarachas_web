@@ -67,6 +67,7 @@ Flujo **3 pasos** en `BookingContactForm.jsx`:
 - Historial persistente por usuario admin; notas importantes en panel lateral.
 - Micrófono: graba con onda → Whisper interno; respuesta en texto. TTS opcional (botón volumen, off por defecto).
 - Selector de modelo en la cabecera (allowlist del backend; se guarda en `localStorage`).
+- WhatsApp: el agente puede enviar texto vía OpenWA solo si el operario lo pide.
 
 ## FloatingCTA vs Modal
 

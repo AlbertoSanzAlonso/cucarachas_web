@@ -63,6 +63,7 @@ Principio: la IA no escribe en iGEO; el backend CECSA valida, audita y llama fun
 
 Pestanya **Assistent** (`ops`): `AdminOpsChat.jsx` + `POST /api/ops/conversations/{id}/messages/`.
 Selector de model (`GET /api/ops/models/`, allowlist a `OPS_AGENT_MODELS`). El camp `model` s’envia amb text i veu; si no és de la llista, cau al default.
+WhatsApp: `backend/api/openwa/` parla amb el contenidor (`OPENWA_API_URL`, per defecte `http://openwa:2785/api`). Tools `whatsapp_status` i `send_whatsapp`. Només envia si l’operari ho demana. Sense `OPENWA_ENABLED` o sense sessió → dry-run.
 Veu: `audio` multipart → Whisper intern + resposta TTS. No comparteix sessió ni prompt amb el Bio-Assistent públic.
 
 ## Flujo v1

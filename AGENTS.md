@@ -53,6 +53,10 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `IGEO_PDI_DRY_RUN` = `true` en pre (valida sin publicar)
 - `IGEO_DEFAULT_DELEGACION` / `IGEO_DEFAULT_GESTOR` = códigos maestros CECSA en iGEO (*! para leads)
 - `AGENT_ENABLE_CLIENT_SCHEDULING` = `true` para reactivar citas por el chat (off por defecto: sin agenda iGEO)
+- `OPENWA_ENABLED` = `true` para que el asistente de oficina envíe WhatsApp vía el contenedor OpenWA
+- `OPENWA_API_URL` = `http://openwa:2785/api` (hostname interno Coolify del contenedor)
+- `OPENWA_API_KEY` / `OPENWA_SESSION_ID` = clave y sesión conectada (QR escaneado)
+- `OPENWA_DRY_RUN` = `true` valida el envío sin llamar al contenedor
 
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:
@@ -146,7 +150,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
-- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional).
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`send_whatsapp`, env `OPENWA_*`).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.

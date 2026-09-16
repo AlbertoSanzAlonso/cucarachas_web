@@ -11,6 +11,7 @@ from pydantic_ai import Agent, RunContext
 from api.igeo.config import get_igeo_settings, is_igeo_enabled
 from api.igeo.payloads import build_cliente_potencial
 from api.igeo.sync import publish_entity
+from api.openwa import OpenWaClient, OpenWaError, is_openwa_enabled, status_summary
 from api.phone_utils import normalize_phone
 
 from . import bootstrap  # noqa: F401
@@ -48,12 +49,15 @@ ops_agent = Agent(
 def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
     lang = (ctx.deps.language if ctx.deps else "ca") or "ca"
     igeo_on = "actiu" if is_igeo_enabled() else "desactivat (IGEO_PDI_ENABLED=false)"
+    wa_on = "actiu" if is_openwa_enabled() else "desactivat (OPENWA_ENABLED=false)"
     if lang.startswith("es"):
         return (
             "Eres el asistente administrativo interno de CECSA Control de Plagas. "
             "Hablas con personal de oficina, NUNCA con el cliente final. "
             "No uses el tono comercial del Bio-Assistent web. Sé claro, operativo y breve. "
             f"iGEO PDI está {igeo_on}. Si está desactivado, puedes preparar la acción pero no finjas que iGEO ya se actualizó. "
+            f"WhatsApp (OpenWA) está {wa_on}. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
+            "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
             "Usa herramientas para buscar en el CRM local (Cliente) antes de crear nada. "
             "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
             "No inventes códigos de delegación, técnico ni contrato. "
@@ -65,6 +69,8 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         "Parles amb personal d'oficina, MAI amb el client final. "
         "No facis servir el to comercial del Bio-Assistent web. Sigues clar, operatiu i breu. "
         f"iGEO PDI està {igeo_on}. Si està desactivat, pots preparar l'acció però no fingis que iGEO ja s'ha actualitzat. "
+        f"WhatsApp (OpenWA) està {wa_on}. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
+        "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
         "Fes servir eines per buscar al CRM local (Cliente) abans de crear res. "
         "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
         "No inventis codis de delegació, tècnic ni contracte. "
@@ -150,6 +156,24 @@ def igeo_create_lead(
         return f"Error payload: {exc}"
     result = publish_entity(payload)
     return f"ok={result.ok} dry_run={result.dry_run} — {result.message}"
+
+
+@ops_agent.tool
+def whatsapp_status(ctx: RunContext[OpsAgentDeps]) -> str:
+    """Estat del contenidor OpenWA (sense API key ni session id)."""
+    return status_summary()
+
+
+@ops_agent.tool
+def send_whatsapp(ctx: RunContext[OpsAgentDeps], telefono: str, mensaje: str) -> str:
+    """Envia un WhatsApp de text via OpenWA. Només si l'operari ho ha demanat explícitament."""
+    try:
+        result = OpenWaClient().send_text(telefono, mensaje)
+    except OpenWaError as exc:
+        return f"No enviat: {exc}"
+    except Exception as exc:
+        return f"Error OpenWA: {exc}"
+    return f"ok={result.ok} dry_run={result.dry_run} chat={result.chat_id} — {result.message}"
 
 
 def _history_block(messages: list[dict], *, max_turns: int = 16) -> str:

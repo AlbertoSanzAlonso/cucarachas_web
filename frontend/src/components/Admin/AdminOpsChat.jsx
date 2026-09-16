@@ -32,6 +32,7 @@ import VoiceWaveform from '@/components/Admin/VoiceWaveform';
 const SUGGESTIONS = [
   'Busca aquest client al CRM pel telèfon',
   'Crea un potencial a iGEO amb les dades que et passo',
+  'Envia un WhatsApp a aquest mòbil amb el text que et passo',
   'Quines renovacions tenim a l’octubre?',
   'Prepara una ordre per demà a les 7:30',
 ];
