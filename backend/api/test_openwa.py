@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import requests
 from django.test import SimpleTestCase
 
 from api.openwa.client import (
@@ -65,13 +66,19 @@ class OpenWaClientTests(SimpleTestCase):
             client.send_text("612345678", "  ")
 
     def test_send_text_posts_session_path(self):
+        ready = MagicMock()
+        ready.ok = True
+        ready.json.return_value = {"id": "sess-cecsa", "status": "ready"}
         response = MagicMock()
         response.ok = True
         response.json.return_value = {"success": True, "data": {"messageId": "true_34612345678@c.us_1"}}
         client = OpenWaClient(_settings())
-        with patch("api.openwa.client.requests.request", return_value=response) as mock_req:
+        with patch(
+            "api.openwa.client.requests.request",
+            side_effect=[ready, response],
+        ) as mock_req:
             result = client.send_text("612345678", "Hola")
-        mock_req.assert_called_once()
+        self.assertEqual(mock_req.call_count, 2)
         args, kwargs = mock_req.call_args
         self.assertEqual(args[0], "POST")
         self.assertIn("/sessions/sess-cecsa/messages/send-text", args[1])
@@ -87,10 +94,24 @@ class OpenWaClientTests(SimpleTestCase):
         self.assertIn("enabled=False", text)
         self.assertIn("desactivat", text)
 
+    def test_status_summary_connection_error(self):
+        client = OpenWaClient(_settings(dry_run=False))
+        with patch.object(
+            client,
+            "session_status",
+            side_effect=RuntimeError("No es pot connectar a OpenWA (http://openwa:2785/api/sessions/x)"),
+        ):
+            text = status_summary(client)
+        self.assertIn("ERROR DE CONNEXIÓ", text)
+        self.assertIn("url=http://openwa:2785/api", text)
+
     def test_list_contacts_gets_session_path(self):
-        response = MagicMock()
-        response.ok = True
-        response.json.return_value = [
+        ready = MagicMock()
+        ready.ok = True
+        ready.json.return_value = {"id": "sess-cecsa", "status": "ready"}
+        contacts = MagicMock()
+        contacts.ok = True
+        contacts.json.return_value = [
             {
                 "id": "34612345678@c.us",
                 "name": "Anna",
@@ -101,9 +122,12 @@ class OpenWaClientTests(SimpleTestCase):
             }
         ]
         client = OpenWaClient(_settings())
-        with patch("api.openwa.client.requests.request", return_value=response) as mock_req:
+        with patch(
+            "api.openwa.client.requests.request",
+            side_effect=[ready, contacts],
+        ) as mock_req:
             rows = client.list_contacts(limit=100)
-        mock_req.assert_called_once()
+        self.assertEqual(mock_req.call_count, 2)
         args, kwargs = mock_req.call_args
         self.assertEqual(args[0], "GET")
         self.assertIn("/sessions/sess-cecsa/contacts", args[1])
@@ -133,3 +157,25 @@ class OpenWaClientTests(SimpleTestCase):
         client = OpenWaClient(_settings(enabled=False))
         with self.assertRaises(OpenWaError):
             client.list_contacts()
+
+    def test_send_rejects_when_session_not_ready(self):
+        client = OpenWaClient(_settings())
+        with patch.object(
+            client,
+            "session_status",
+            return_value={"id": "sess-cecsa", "status": "qr_ready"},
+        ):
+            with self.assertRaises(OpenWaError) as ctx:
+                client.send_text("612345678", "Hola")
+        self.assertIn("no ready", str(ctx.exception))
+
+    def test_connection_error_is_explicit(self):
+        client = OpenWaClient(_settings())
+        with patch(
+            "api.openwa.client.requests.request",
+            side_effect=requests.exceptions.ConnectionError("refused"),
+        ):
+            with self.assertRaises(RuntimeError) as ctx:
+                client.list_contacts()
+        self.assertIn("No es pot connectar a OpenWA", str(ctx.exception))
+        self.assertIn("OPENWA_API_URL", str(ctx.exception))

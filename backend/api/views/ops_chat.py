@@ -72,10 +72,18 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             )
             notes_created.append(note)
     except Exception as exc:
-        reply = (
-            f"No s'ha pogut completar la petició ({exc}). "
-            "Revisa la clau d'OpenAI o torna-ho a provar."
-        )
+        err = str(exc)
+        if "request_limit" in err or "usage" in err.lower():
+            reply = (
+                "La petició s'ha aturat per massa passos de l'agent (límit d'ús). "
+                "Normalment passa si OpenWA falla i es reintenta en bucle. "
+                "Comprova estat WhatsApp / xarxa Coolify i torna-ho a provar amb un missatge nou."
+            )
+        else:
+            reply = (
+                f"No s'ha pogut completar la petició ({exc}). "
+                "Revisa la clau d'OpenAI o torna-ho a provar."
+            )
 
     assistant_msg = AdminMessage.objects.create(
         conversation=conv,

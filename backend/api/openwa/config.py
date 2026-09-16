@@ -31,7 +31,7 @@ def get_openwa_settings() -> OpenWaSettings:
     api_url = (os.getenv("OPENWA_API_URL") or "http://openwa:2785/api").strip().rstrip("/")
     api_key = (os.getenv("OPENWA_API_KEY") or "").strip()
     session_id = (os.getenv("OPENWA_SESSION_ID") or "").strip()
-    timeout_seconds = float(os.getenv("OPENWA_TIMEOUT_SECONDS") or "30")
+    timeout_seconds = float(os.getenv("OPENWA_TIMEOUT_SECONDS") or "15")
     credentials_ready = bool(api_url and api_key and session_id)
     enabled = _env_bool("OPENWA_ENABLED", default=False)
     dry_run = _env_bool("OPENWA_DRY_RUN", default=not credentials_ready)

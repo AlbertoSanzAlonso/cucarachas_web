@@ -67,14 +67,26 @@ class OpenWaClient:
         payload: dict[str, Any] | None = None,
         params: dict[str, Any] | None = None,
     ) -> Any:
-        response = requests.request(
-            method,
-            self._url(path),
-            headers=self._headers(),
-            json=payload,
-            params=params,
-            timeout=self.settings.timeout_seconds,
-        )
+        url = self._url(path)
+        try:
+            response = requests.request(
+                method,
+                url,
+                headers=self._headers(),
+                json=payload,
+                params=params,
+                timeout=self.settings.timeout_seconds,
+            )
+        except requests.exceptions.ConnectionError as exc:
+            raise RuntimeError(
+                f"No es pot connectar a OpenWA ({url}): comprova OPENWA_API_URL i la xarxa Docker Coolify."
+            ) from exc
+        except requests.exceptions.Timeout as exc:
+            raise RuntimeError(
+                f"Timeout OpenWA ({url}) després de {self.settings.timeout_seconds}s."
+            ) from exc
+        except requests.exceptions.RequestException as exc:
+            raise RuntimeError(f"Error HTTP OpenWA ({url}): {exc}") from exc
         try:
             body = response.json()
         except ValueError:
@@ -102,12 +114,29 @@ class OpenWaClient:
         data = self._request("GET", f"/sessions/{sid}")
         return data if isinstance(data, dict) else None
 
-    def list_contacts(self, *, limit: int = 500, offset: int = 0) -> list[dict[str, Any]]:
-        """Agenda de contactos WhatsApp de la sesión (solo lectura)."""
+    def require_session_ready(self) -> dict[str, Any]:
+        """Falla ràpid si la sessió no està linked / ready (evita timeouts llargs al enviar)."""
         if not self.settings.enabled:
-            raise OpenWaError("OPENWA_ENABLED=false; no es poden llegir contactes.")
+            raise OpenWaError("OPENWA_ENABLED=false.")
         if not self.settings.credentials_ready:
             raise OpenWaError("Falten OPENWA_API_KEY / OPENWA_SESSION_ID.")
+        session = self.session_status()
+        if not session:
+            raise OpenWaError(
+                f"Sessió no trobada (OPENWA_SESSION_ID={self.settings.session_id}). "
+                "Crea/inicia la sessió a OpenWA i actualitza l'env."
+            )
+        status = str(session.get("status") or "").strip().lower()
+        if status != "ready":
+            raise OpenWaError(
+                f"Sessió WhatsApp no ready (status={status or '—'}). "
+                "Cal start + escanejar QR de nou després d'un redeploy sense volum /app/data."
+            )
+        return session
+
+    def list_contacts(self, *, limit: int = 500, offset: int = 0) -> list[dict[str, Any]]:
+        """Agenda de contactos WhatsApp de la sesión (solo lectura)."""
+        self.require_session_ready()
         sid = self.settings.session_id
         clamped = max(1, min(int(limit), 1000))
         off = max(0, int(offset))
@@ -167,6 +196,7 @@ class OpenWaClient:
                 message="Dry-run: missatge validat, no enviat al contenidor OpenWA.",
             )
 
+        self.require_session_ready()
         sid = self.settings.session_id
         data = self._request(
             "POST",
@@ -209,18 +239,24 @@ def status_summary(client: OpenWaClient | None = None) -> str:
     base = (
         f"enabled={settings.enabled} dry_run={settings.dry_run} "
         f"credentials={ready} url={settings.api_url} "
-        f"session={'sí' if settings.session_id else '—'}"
+        f"session_id={'set' if settings.session_id else 'missing'}"
     )
     if not settings.enabled:
-        return f"{base} — WhatsApp desactivat."
-    if settings.dry_run or not ready:
-        return f"{base} — mode dry-run (no s'envia al contenidor)."
+        return f"{base} — WhatsApp desactivat (OPENWA_ENABLED=false)."
+    if not ready:
+        return f"{base} — falten OPENWA_API_KEY o OPENWA_SESSION_ID."
+    if settings.dry_run:
+        return f"{base} — OPENWA_DRY_RUN=true (no s'envia de veritat)."
     try:
         session = (client or OpenWaClient(settings)).session_status()
     except Exception as exc:
-        return f"{base} — error consultant sessió: {exc}"
+        return (
+            f"{base} — ERROR DE CONNEXIÓ: {exc}. "
+            "El backend CECSA no arriba al contenidor OpenWA: "
+            "revisa OPENWA_API_URL i que ambdós serveis comparteixin xarxa a Coolify."
+        )
     if not session:
-        return f"{base} — sessió no trobada."
+        return f"{base} — sessió no trobada (OPENWA_SESSION_ID incorrecte?)."
     status = session.get("status") or "—"
     phone = session.get("phone") or session.get("phoneNumber") or "—"
     return f"{base} status={status} phone={phone}"

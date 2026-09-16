@@ -28,6 +28,7 @@ import {
 } from '@/store/apis/opsChatApi';
 import useVoiceRecorder from '@/hooks/useVoiceRecorder';
 import VoiceWaveform from '@/components/Admin/VoiceWaveform';
+import ConfirmModal from '@/components/Admin/ConfirmModal';
 
 const SUGGESTIONS = [
   'Busca aquest client al CRM pel telèfon',
@@ -75,6 +76,12 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     }
   });
   const [noteDraft, setNoteDraft] = useState('');
+  const [deleteTargetId, setDeleteTargetId] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState(null);
+  const [deleteNoteTarget, setDeleteNoteTarget] = useState(null);
+  const [isDeletingNote, setIsDeletingNote] = useState(false);
+  const [deleteNoteError, setDeleteNoteError] = useState(null);
   const listRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -186,11 +193,60 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     inputRef.current?.focus();
   };
 
-  const handleDeleteThread = async (id, event) => {
+  const handleDeleteThread = (id, event) => {
     event?.stopPropagation();
-    if (!window.confirm('Eliminar aquesta conversa i les seves notes?')) return;
-    await deleteConv(id);
-    if (activeId === id) setActiveId(null);
+    setDeleteError(null);
+    setDeleteTargetId(id);
+  };
+
+  const handleCloseDeleteConfirm = () => {
+    if (isDeleting) return;
+    setDeleteTargetId(null);
+    setDeleteError(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteTargetId) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+    try {
+      await deleteConv(deleteTargetId).unwrap();
+      if (activeId === deleteTargetId) setActiveId(null);
+      setDeleteTargetId(null);
+    } catch (err) {
+      setDeleteError(
+        err?.data?.detail || "No s'ha pogut eliminar la conversa. Torna-ho a provar.",
+      );
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteNote = (note) => {
+    setDeleteNoteError(null);
+    setDeleteNoteTarget(note);
+  };
+
+  const handleCloseDeleteNoteConfirm = () => {
+    if (isDeletingNote) return;
+    setDeleteNoteTarget(null);
+    setDeleteNoteError(null);
+  };
+
+  const handleConfirmDeleteNote = async () => {
+    if (!deleteNoteTarget?.id) return;
+    setIsDeletingNote(true);
+    setDeleteNoteError(null);
+    try {
+      await deleteNote({ id: deleteNoteTarget.id, conversation: activeId }).unwrap();
+      setDeleteNoteTarget(null);
+    } catch (err) {
+      setDeleteNoteError(
+        err?.data?.detail || "No s'ha pogut eliminar la nota. Torna-ho a provar.",
+      );
+    } finally {
+      setIsDeletingNote(false);
+    }
   };
 
   const saveNoteFromMessage = async (content) => {
@@ -214,6 +270,12 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
       pinned: true,
     });
     setNoteDraft('');
+  };
+
+  const handleNoteKeyDown = (e) => {
+    if (e.key !== 'Enter' || e.shiftKey) return;
+    e.preventDefault();
+    void saveManualNote();
   };
 
   const composer = (
@@ -522,7 +584,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
                     <p className="text-sm font-semibold text-primary-gray">{n.title}</p>
                     <button
                       type="button"
-                      onClick={() => deleteNote({ id: n.id, conversation: activeId })}
+                      onClick={() => handleDeleteNote(n)}
                       className="text-primary-gray/30 hover:text-red-500"
                       aria-label="Esborrar nota"
                     >
@@ -538,8 +600,9 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
             <textarea
               value={noteDraft}
               onChange={(e) => setNoteDraft(e.target.value)}
+              onKeyDown={handleNoteKeyDown}
               rows={3}
-              placeholder="Afegir nota important…"
+              placeholder="Afegir nota important… (Enter per desar)"
               className="w-full resize-none rounded-xl border border-gray-200 p-2 text-sm outline-none focus:border-[var(--primary-blue)]"
             />
             <button
@@ -553,6 +616,32 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
           </div>
         </aside>
       ) : null}
+
+      <ConfirmModal
+        isOpen={Boolean(deleteTargetId)}
+        onClose={handleCloseDeleteConfirm}
+        onConfirm={handleConfirmDelete}
+        title="Eliminar conversa"
+        message="Estàs segur que vols eliminar aquesta conversa i les seves notes? Aquesta acció no es pot desfer."
+        confirmLabel="Sí, eliminar"
+        cancelLabel="No, tornar"
+        variant="danger"
+        isLoading={isDeleting}
+        error={deleteError}
+      />
+
+      <ConfirmModal
+        isOpen={Boolean(deleteNoteTarget)}
+        onClose={handleCloseDeleteNoteConfirm}
+        onConfirm={handleConfirmDeleteNote}
+        title="Eliminar nota"
+        message={`Estàs segur que vols eliminar «${deleteNoteTarget?.title || 'aquesta nota'}»? Aquesta acció no es pot desfer.`}
+        confirmLabel="Sí, eliminar"
+        cancelLabel="No, tornar"
+        variant="danger"
+        isLoading={isDeletingNote}
+        error={deleteNoteError}
+      />
     </div>
   );
 };

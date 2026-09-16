@@ -7,6 +7,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel, Field
 from pydantic_ai import Agent, RunContext
+from pydantic_ai.usage import UsageLimits
 
 from api.igeo.config import get_igeo_settings, is_igeo_enabled
 from api.igeo.payloads import build_cliente_potencial
@@ -59,6 +60,9 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             f"WhatsApp (OpenWA) está {wa_on}. Puedes buscar contactos de la agenda WhatsApp con "
             "search_whatsapp_contacts. Solo envía un WhatsApp si el operario lo pide de forma explícita; "
             "nunca por iniciativa propia. Confirma teléfono y texto antes de send_whatsapp. "
+            "Si whatsapp_status o send_whatsapp fallan, cita el texto de la herramienta TAL CUAL "
+            "(incluye url= y el error); no lo resumas como 'fallo de conexión' genérico. "
+            "Si send_whatsapp o search_whatsapp_contacts fallan UNA vez, NO reintentes: informa al operario y para. "
             "Usa herramientas para buscar en el CRM local (Cliente) y en el espejo iGEO antes de crear nada. "
             "Evita duplicados. Si falta un dato obligatorio, pregúntalo. "
             "No inventes códigos de delegación, técnico ni contrato. "
@@ -73,6 +77,9 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         f"WhatsApp (OpenWA) està {wa_on}. Pots cercar contactes de l'agenda WhatsApp amb "
         "search_whatsapp_contacts. Només envia un WhatsApp si l'operari ho demana de forma explícita; "
         "mai per iniciativa pròpia. Confirma telèfon i text abans de send_whatsapp. "
+        "Si whatsapp_status o send_whatsapp fallen, cita el text de l'eina TAL QUAL "
+        "(inclou url= i l'error); no ho resumeixis com a 'fallo de connexió' genèric. "
+        "Si send_whatsapp o search_whatsapp_contacts fallen UN cop, NO reintentis: informa l'operari i para. "
         "Fes servir eines per buscar al CRM local (Cliente) i a l'espill iGEO abans de crear res. "
         "Evita duplicats. Si falta un dada obligatòria, pregunta-la. "
         "No inventis codis de delegació, tècnic ni contracte. "
@@ -208,6 +215,10 @@ def send_whatsapp(ctx: RunContext[OpsAgentDeps], telefono: str, mensaje: str) ->
         return f"No enviat: {exc}"
     except Exception as exc:
         return f"Error OpenWA: {exc}"
+    if not result.ok:
+        return f"No enviat: {result.message}"
+    if result.dry_run:
+        return f"DRY-RUN (no enviat de veritat): {result.message}"
     return f"ok={result.ok} dry_run={result.dry_run} chat={result.chat_id} — {result.message}"
 
 
@@ -248,7 +259,13 @@ def run_ops_agent(
     )
     model_id = resolve_ops_model(model)
     setup_ai_keys(model_id)
-    result = ops_agent.run_sync(prompt, deps=deps, model=model_id)
+    # Evita bucles de reintents amb OpenWA (request_limit per defecte=50 esgota la conversa).
+    result = ops_agent.run_sync(
+        prompt,
+        deps=deps,
+        model=model_id,
+        usage_limits=UsageLimits(request_limit=24, tool_calls_limit=10),
+    )
     output = result.output
     if isinstance(output, OpsAgentOutput):
         return output
