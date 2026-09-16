@@ -74,8 +74,8 @@ class OpsAgentOutput(BaseModel):
     pending_action: Optional[OpsPendingAction] = Field(
         default=None,
         description=(
-            "Obligatori per enviar WhatsApp/email o crear lead iGEO: omple kind+summary+dades "
-            "i NO cridis send_*/igeo_create_lead. El modal de confirmació executarà l'acció."
+            "Para WhatsApp/email/lead: kind+summary+datos. telefono puede ser id @c.us/@lid. "
+            "NO llames send_*. El operario confirma escribiendo «sí» en el chat."
         ),
     )
 
@@ -126,27 +126,31 @@ def _email_guard(deps: OpsAgentDeps | None) -> str | None:
 def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
     if deps is None or not deps.side_effects_allowed:
         return (
-            "BLOQUEJAT: els enviaments / altes iGEO només s'executen després que l'operari "
-            "confirmi al modal. Omple pending_action (kind, summary i dades) al output final, "
-            "explica què faries i NO tornis a cridar aquesta eina."
+            "BLOQUEJAT: els enviaments només s'executen quan l'operari escriu «sí» al xat. "
+            "Omple pending_action (kind, summary, telefono=id @c.us/@lid, mensaje si el tens) "
+            "i demana confirmació al message. NO tornis a cridar aquesta eina."
         )
     return None
 
 
 _CONFIRM_RULES_ES = (
     "FRENO OBLIGATORIO: NUNCA ejecutes send_whatsapp, send_email ni igeo_create_lead en el chat. "
-    "Esas tools están bloqueadas. Para enviar o crear un lead: busca datos si hace falta, "
-    "rellena pending_action (kind=whatsapp|email|igeo_lead, summary, y campos) y en message "
-    "pide confirmación. El operario confirmará en un modal; tú no envías. "
-    "important_notes: vacío salvo que el operario pida explícitamente recordar/guardar una nota. "
+    "Esas tools están bloqueadas. Para enviar: busca si hace falta, rellena pending_action "
+    "(kind, summary, telefono=id del contacto `@c.us` o `@lid`, mensaje si ya lo tienes) "
+    "y en message pide confirmación EN EL CHAT: el operario escribirá «sí» o «cancel·la». "
+    "NO digas 'Desa com a nota' ni menciones modales. "
+    "El id `@lid` es normal en WhatsApp (privacidad); úsalo como telefono sin alarmar. "
+    "important_notes: vacío salvo petición explícita de recordar/guardar nota. "
 )
 
 _CONFIRM_RULES_CA = (
     "FRE DE SEGURETAT: MAI executis send_whatsapp, send_email ni igeo_create_lead al xat. "
-    "Aquestes eines estan bloquejades. Per enviar o crear un lead: cerca dades si cal, "
-    "omple pending_action (kind=whatsapp|email|igeo_lead, summary i camps) i al message "
-    "demana confirmació. L'operari confirmarà al modal; tu no envies. "
-    "important_notes: buit tret que l'operari demani explícitament recordar/desar una nota. "
+    "Aquestes eines estan bloquejades. Per enviar: cerca si cal, omple pending_action "
+    "(kind, summary, telefono=id del contacte `@c.us` o `@lid`, mensaje si ja el tens) "
+    "i al message demana confirmació AL XAT: l'operari escriurà «sí» o «cancel·la». "
+    "NO diguis 'Desa com a nota' ni parlis de modals. "
+    "L'id `@lid` és normal a WhatsApp (privacitat); fes-lo servir com a telefono sense alarmar. "
+    "important_notes: buit tret de petició explícita de recordar/desar nota. "
 )
 
 

@@ -89,10 +89,6 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
   const [deleteNoteError, setDeleteNoteError] = useState(null);
   /** Mensaje del usuario mostrado al instante mientras el API responde. */
   const [pendingUser, setPendingUser] = useState(null);
-  const [pendingAction, setPendingAction] = useState(null);
-  const [pendingActionConvId, setPendingActionConvId] = useState(null);
-  const [isConfirmingAction, setIsConfirmingAction] = useState(false);
-  const [confirmActionError, setConfirmActionError] = useState(null);
   const listRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -190,70 +186,17 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
     setPendingUser({ content: text, source: 'text' });
     try {
       const convId = await ensureConversation();
-      const result = await sendMessage({
+      await sendMessage({
         id: convId,
         content: text,
         language: 'ca',
         model: selectedModel,
       }).unwrap();
-      if (result?.pending_action) {
-        setConfirmActionError(null);
-        setPendingAction(result.pending_action);
-        setPendingActionConvId(result.conversation_id || convId);
-      }
     } catch {
       setDraft(text);
       setPendingUser(null);
     }
   };
-
-  const handleCloseActionConfirm = () => {
-    if (isConfirmingAction) return;
-    setPendingAction(null);
-    setPendingActionConvId(null);
-    setConfirmActionError(null);
-  };
-
-  const handleConfirmPendingAction = async () => {
-    const convId = pendingActionConvId || activeId;
-    if (!pendingAction || !convId) return;
-    setIsConfirmingAction(true);
-    setConfirmActionError(null);
-    try {
-      await sendMessage({
-        id: convId,
-        language: 'ca',
-        model: selectedModel,
-        confirm_action: pendingAction,
-      }).unwrap();
-      setPendingAction(null);
-      setPendingActionConvId(null);
-    } catch (err) {
-      setConfirmActionError(
-        err?.data?.detail || "No s'ha pogut executar l'acció. Torna-ho a provar.",
-      );
-    } finally {
-      setIsConfirmingAction(false);
-    }
-  };
-
-  const pendingActionTitle =
-    pendingAction?.kind === 'whatsapp'
-      ? 'Confirmar WhatsApp'
-      : pendingAction?.kind === 'email'
-        ? 'Confirmar correu'
-        : pendingAction?.kind === 'igeo_lead'
-          ? 'Confirmar lead iGEO'
-          : 'Confirmar acció';
-
-  const pendingActionConfirmLabel =
-    pendingAction?.kind === 'whatsapp'
-      ? 'Sí, enviar WhatsApp'
-      : pendingAction?.kind === 'email'
-        ? 'Sí, enviar correu'
-        : pendingAction?.kind === 'igeo_lead'
-          ? 'Sí, crear lead'
-          : 'Sí, confirmar';
 
   const toggleVoice = async () => {
     if (busy) return;
@@ -271,11 +214,6 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
           speak: ttsEnabled,
           model: selectedModel,
         }).unwrap();
-        if (result?.pending_action) {
-          setConfirmActionError(null);
-          setPendingAction(result.pending_action);
-          setPendingActionConvId(result.conversation_id || convId);
-        }
         if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
       } catch {
         setPendingUser(null);
@@ -552,7 +490,7 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
               <select
                 value={selectedModel}
                 onChange={(e) => chooseModel(e.target.value)}
-                className="max-w-[11rem] rounded-xl border border-admin-border bg-admin-card px-2 py-2 text-xs font-semibold text-admin-text outline-none sm:max-w-[16rem]"
+                className="max-w-[11rem] cursor-pointer rounded-xl border border-admin-border bg-admin-card px-2 py-2 text-xs font-semibold text-admin-text outline-none transition-colors hover:border-primary-blue hover:bg-admin-muted hover:text-primary-blue focus:border-primary-blue sm:max-w-[16rem]"
                 title="Model de l’assistent"
               >
                 {modelOptions.length === 0 ? (
@@ -817,19 +755,6 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
         variant="danger"
         isLoading={isDeletingNote}
         error={deleteNoteError}
-      />
-
-      <ConfirmModal
-        isOpen={Boolean(pendingAction)}
-        onClose={handleCloseActionConfirm}
-        onConfirm={handleConfirmPendingAction}
-        title={pendingActionTitle}
-        message={pendingAction?.summary || 'Confirmes aquesta acció?'}
-        confirmLabel={pendingActionConfirmLabel}
-        cancelLabel="Cancel·lar"
-        variant="primary"
-        isLoading={isConfirmingAction}
-        error={confirmActionError}
       />
     </div>
   );

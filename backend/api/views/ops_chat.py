@@ -57,42 +57,150 @@ def _user_asked_to_save_note(text: str) -> bool:
     return any(k in low for k in keys)
 
 
-def _run_confirm_action(*, conv, user, action: dict, language: str = "ca") -> dict:
-    """Ejecuta una acción ya confirmada en el modal (sin LLM)."""
-    from api.ops_actions import execute_confirmed_action, pending_action_dict
+def _is_chat_confirmation(text: str) -> bool:
+    low = " ".join((text or "").casefold().strip().split())
+    if not low:
+        return False
+    exact = {
+        "sí",
+        "si",
+        "yes",
+        "ok",
+        "vale",
+        "confirmo",
+        "confirmado",
+        "confirmado.",
+        "envia",
+        "enviar",
+        "d'acord",
+        "de acuerdo",
+        "forward",
+        "ok envia",
+        "ok, envia",
+        "sí envia",
+        "si envia",
+        "sí, envia",
+        "si, envia",
+    }
+    if low in exact:
+        return True
+    return low.startswith("confirmo") or low.startswith("sí,") or low.startswith("si,")
 
-    normalized = pending_action_dict(action)
-    summary = (normalized or {}).get("summary") or "Acció confirmada"
-    user_msg = AdminMessage.objects.create(
-        conversation=conv,
-        role=AdminMessage.Role.USER,
-        content=f"Confirmo: {summary}",
-        source="confirm",
-    )
-    if not conv.title:
-        conv.title = _title_from_message(summary)
-        conv.save(update_fields=["title", "updated_at"])
 
-    reply = execute_confirmed_action(normalized or {}, conversation_id=conv.pk)
+def _is_chat_cancel(text: str) -> bool:
+    low = " ".join((text or "").casefold().strip().split())
+    return low in {
+        "cancel",
+        "cancel·la",
+        "cancela",
+        "cancelar",
+        "no",
+        "discard",
+        "descarta",
+        "mejor no",
+        "millor no",
+    }
+
+
+def _persist_turn(*, conv, user_msg, reply: str, source: str, speak: bool, language: str, model, notes=None, pending=None) -> dict:
     assistant_msg = AdminMessage.objects.create(
         conversation=conv,
         role=AdminMessage.Role.ASSISTANT,
         content=reply,
-        source="confirm",
+        source=source,
     )
     conv.updated_at = timezone.now()
-    conv.save(update_fields=["title", "updated_at"])
+    conv.save(update_fields=["title", "updated_at", "pending_action"])
+    audio_b64 = None
+    if speak:
+        try:
+            from api.agents.ops.voice import synthesize_speech
+
+            audio_b64 = synthesize_speech(reply, language=language)
+        except Exception:
+            audio_b64 = None
     return {
         "conversation_id": conv.id,
         "title": conv.title,
         "user_message": AdminMessageSerializer(user_msg).data,
         "assistant_message": AdminMessageSerializer(assistant_msg).data,
-        "notes": [],
-        "pending_action": None,
-        "via_voice": False,
-        "assistant_audio_base64": None,
-        "model": None,
+        "notes": AdminMemoryNoteSerializer(notes or [], many=True).data,
+        "pending_action": None,  # confirmació només per xat, sense modal
+        "via_voice": source == "voice",
+        "assistant_audio_base64": audio_b64,
+        "model": resolve_ops_model(model) if model is not None else None,
     }
+
+
+def _handle_pending_chat_flow(*, conv, user_msg, text: str, source: str, speak: bool, language: str, model) -> dict | None:
+    """Confirmación / cancelación / captura de texto por chat (sin modal ni LLM)."""
+    from api.ops_actions import execute_confirmed_action, pending_action_dict
+
+    pending = pending_action_dict(getattr(conv, "pending_action", None))
+    if not pending:
+        return None
+
+    if _is_chat_cancel(text):
+        conv.pending_action = None
+        return _persist_turn(
+            conv=conv,
+            user_msg=user_msg,
+            reply="Acció cancel·lada. No s'ha enviat res.",
+            source=source,
+            speak=speak,
+            language=language,
+            model=model,
+        )
+
+    if _is_chat_confirmation(text):
+        if pending.get("kind") == "whatsapp" and not (pending.get("mensaje") or "").strip():
+            return _persist_turn(
+                conv=conv,
+                user_msg=user_msg,
+                reply=(
+                    "Encara falta el text del WhatsApp. "
+                    "Escriu el missatge a enviar (una línia) i després digues «sí»."
+                ),
+                source=source,
+                speak=speak,
+                language=language,
+                model=model,
+            )
+        reply = execute_confirmed_action(pending, conversation_id=conv.pk)
+        conv.pending_action = None
+        return _persist_turn(
+            conv=conv,
+            user_msg=user_msg,
+            reply=reply,
+            source=source,
+            speak=speak,
+            language=language,
+            model=model,
+        )
+
+    # Si falta el cos del WhatsApp, el missatge de l'operari és el text a enviar.
+    if pending.get("kind") == "whatsapp" and not (pending.get("mensaje") or "").strip():
+        body = (text or "").strip()
+        if len(body) >= 2:
+            pending["mensaje"] = body[:3500]
+            dest = pending.get("telefono") or "el contacte"
+            pending["summary"] = f"WhatsApp a {dest}: {body[:80]}"
+            conv.pending_action = pending
+            preview = body if len(body) <= 280 else body[:277] + "…"
+            return _persist_turn(
+                conv=conv,
+                user_msg=user_msg,
+                reply=(
+                    f"Missatge preparat per a WhatsApp:\n«{preview}»\n\n"
+                    "Escriu «sí» per enviar-lo o «cancel·la» per descartar."
+                ),
+                source=source,
+                speak=speak,
+                language=language,
+                model=model,
+            )
+
+    return None
 
 
 def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text", speak: bool = False, model: str | None = None) -> dict:
@@ -107,6 +215,18 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
     if not conv.title:
         conv.title = _title_from_message(text)
         conv.save(update_fields=["title", "updated_at"])
+
+    handled = _handle_pending_chat_flow(
+        conv=conv,
+        user_msg=user_msg,
+        text=text,
+        source=source,
+        speak=speak,
+        language=language,
+        model=model,
+    )
+    if handled is not None:
+        return handled
 
     history = list(conv.messages.exclude(pk=user_msg.pk).values("role", "content"))
     from django.db.models import Q
@@ -144,6 +264,33 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
         if output.suggested_title and not conv.title:
             conv.title = output.suggested_title.strip()[:200]
         pending = pending_action_dict(getattr(output, "pending_action", None))
+        if pending:
+            # Si demanen un salut i no hi ha text, posem un cos per defecte.
+            low = (text or "").casefold()
+            if (
+                pending.get("kind") == "whatsapp"
+                and not (pending.get("mensaje") or "").strip()
+                and any(k in low for k in ("salut", "saludo", "hola", "greeting"))
+            ):
+                pending["mensaje"] = "Hola! Et saluda CECSA Control de Plagues."
+            conv.pending_action = pending
+            # Guia clara al xat (sense modal).
+            if pending.get("kind") == "whatsapp":
+                dest = pending.get("telefono") or "el contacte"
+                msg = (pending.get("mensaje") or "").strip()
+                if msg:
+                    reply = (
+                        f"{reply.rstrip()}\n\n"
+                        f"Pendents d'enviar a WhatsApp ({dest}):\n«{msg[:280]}»\n"
+                        "Escriu «sí» per confirmar o «cancel·la»."
+                    )
+                else:
+                    reply = (
+                        f"{reply.rstrip()}\n\n"
+                        "Escriu ara el text del WhatsApp. Després digues «sí» per enviar."
+                    )
+        else:
+            conv.pending_action = None
         if _user_asked_to_save_note(text):
             for note_text in output.important_notes or []:
                 body = (note_text or "").strip()
@@ -194,35 +341,17 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
                 "Revisa la clau d'OpenAI o torna-ho a provar."
             )
 
-    assistant_msg = AdminMessage.objects.create(
-        conversation=conv,
-        role=AdminMessage.Role.ASSISTANT,
-        content=reply,
+    return _persist_turn(
+        conv=conv,
+        user_msg=user_msg,
+        reply=reply,
         source=source,
+        speak=speak,
+        language=language,
+        model=model,
+        notes=notes_created,
+        pending=pending,
     )
-    conv.updated_at = timezone.now()
-    conv.save(update_fields=["title", "updated_at"])
-
-    audio_b64 = None
-    if speak:
-        try:
-            from api.agents.ops.voice import synthesize_speech
-
-            audio_b64 = synthesize_speech(reply, language=language)
-        except Exception:
-            audio_b64 = None
-
-    return {
-        "conversation_id": conv.id,
-        "title": conv.title,
-        "user_message": AdminMessageSerializer(user_msg).data,
-        "assistant_message": AdminMessageSerializer(assistant_msg).data,
-        "notes": AdminMemoryNoteSerializer(notes_created, many=True).data,
-        "pending_action": pending,
-        "via_voice": source == "voice",
-        "assistant_audio_base64": audio_b64,
-        "model": resolve_ops_model(model),
-    }
 
 
 class AdminConversationViewSet(viewsets.ModelViewSet):
@@ -301,11 +430,27 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
                     {"detail": "confirm_action ha de ser un objecte."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-            payload = _run_confirm_action(
+            # Compat: executa directe (tests / clients antics). El xat UI confirma amb «sí».
+            from api.ops_actions import execute_confirmed_action, pending_action_dict
+
+            normalized = pending_action_dict(confirm_action)
+            summary = (normalized or {}).get("summary") or "Acció confirmada"
+            user_msg = AdminMessage.objects.create(
+                conversation=conv,
+                role=AdminMessage.Role.USER,
+                content=f"Confirmo: {summary}",
+                source="confirm",
+            )
+            reply = execute_confirmed_action(normalized or {}, conversation_id=conv.pk)
+            conv.pending_action = None
+            payload = _persist_turn(
                 conv=conv,
-                user=request.user,
-                action=confirm_action,
+                user_msg=user_msg,
+                reply=reply,
+                source="confirm",
+                speak=False,
                 language=language,
+                model=model,
             )
             return Response(payload, status=status.HTTP_201_CREATED)
 

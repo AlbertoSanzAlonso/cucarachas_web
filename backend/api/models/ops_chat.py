@@ -14,6 +14,8 @@ class AdminConversation(models.Model):
     )
     title = models.CharField(max_length=200, blank=True, default="")
     archived = models.BooleanField(default=False, db_index=True)
+    # Acción sensible pendiente de confirmación por chat («sí» / «cancel·la»).
+    pending_action = models.JSONField(null=True, blank=True, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

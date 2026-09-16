@@ -63,10 +63,18 @@ def execute_confirmed_action(action: dict[str, Any], *, conversation_id: int | N
 
 
 def _exec_whatsapp(action: dict[str, Any]) -> str:
-    telefono = action["telefono"]
-    mensaje = action["mensaje"]
+    telefono = (action.get("telefono") or "").strip()
+    mensaje = (action.get("mensaje") or "").strip()
     if not telefono or not mensaje:
-        return "Falten telèfon o missatge. No s'ha enviat el WhatsApp."
+        missing = []
+        if not telefono:
+            missing.append("destinatari (id/@lid o mòbil)")
+        if not mensaje:
+            missing.append("text del missatge")
+        return (
+            f"Falten {', '.join(missing)}. No s'ha enviat el WhatsApp. "
+            "Escriu el text a enviar i després «sí» per confirmar."
+        )
     try:
         result = OpenWaClient().send_text(telefono, mensaje)
     except OpenWaError as exc:
@@ -77,7 +85,7 @@ def _exec_whatsapp(action: dict[str, Any]) -> str:
         return f"No enviat: {result.message}"
     if result.dry_run:
         return f"DRY-RUN (no enviat de veritat): {result.message}"
-    return f"WhatsApp enviat. chat={result.chat_id} — {result.message}"
+    return f"WhatsApp enviat a {telefono}. {result.message}"
 
 
 def _exec_email(action: dict[str, Any]) -> str:

@@ -66,29 +66,58 @@ class AdminOpsChatApiTests(APITestCase):
         mock_run.assert_called_once()
 
     @patch("api.agents.ops.agent.run_ops_agent")
-    def test_post_message_returns_pending_action(self, mock_run):
+    def test_post_message_stores_pending_for_chat_confirm(self, mock_run):
         from api.agents.ops.agent import OpsPendingAction
 
         mock_run.return_value = OpsAgentOutput(
-            message="Confirma l'enviament del WhatsApp.",
+            message="He trobat en Mauro.",
             pending_action=OpsPendingAction(
                 kind="whatsapp",
-                summary="Enviar «Hola» a +34612345678",
-                telefono="+34612345678",
-                mensaje="Hola",
+                summary="WhatsApp a Mauro",
+                telefono="270144886579415@lid",
+                mensaje="",
             ),
         )
         conv = AdminConversation.objects.create(user=self.user, title="WA")
         res = self.client.post(
             f"/api/ops/conversations/{conv.id}/messages/",
-            {"content": "Envia un WhatsApp a en Joan", "language": "ca"},
+            {"content": "Envia un WhatsApp a Mauro", "language": "ca"},
             format="json",
         )
         self.assertEqual(res.status_code, 201)
-        pending = res.data.get("pending_action")
-        self.assertIsNotNone(pending)
-        self.assertEqual(pending["kind"], "whatsapp")
-        self.assertEqual(pending["telefono"], "+34612345678")
+        self.assertIsNone(res.data.get("pending_action"))
+        conv.refresh_from_db()
+        self.assertEqual(conv.pending_action["telefono"], "270144886579415@lid")
+        self.assertIn("sí", res.data["assistant_message"]["content"].casefold())
+
+    @patch("api.ops_actions.OpenWaClient")
+    def test_chat_si_sends_pending_whatsapp(self, mock_client_cls):
+        client = mock_client_cls.return_value
+        client.send_text.return_value = type(
+            "R",
+            (),
+            {"ok": True, "dry_run": False, "chat_id": "270@lid", "message": "Enviat"},
+        )()
+        conv = AdminConversation.objects.create(
+            user=self.user,
+            title="Confirm",
+            pending_action={
+                "kind": "whatsapp",
+                "summary": "Salut Mauro",
+                "telefono": "270144886579415@lid",
+                "mensaje": "Hola Mauro",
+            },
+        )
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "sí", "language": "ca"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertIn("enviat", res.data["assistant_message"]["content"].casefold())
+        client.send_text.assert_called_once()
+        conv.refresh_from_db()
+        self.assertIsNone(conv.pending_action)
 
     @patch("api.ops_actions.OpenWaClient")
     def test_confirm_action_sends_whatsapp_without_llm(self, mock_client_cls):
