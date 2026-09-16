@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   X,
@@ -18,6 +18,8 @@ import {
   PanelLeftOpen,
 } from 'lucide-react';
 
+const AUTO_COLLAPSE_MS = 30_000;
+
 const Sidebar = ({
   sidebarOpen,
   setSidebarOpen,
@@ -27,6 +29,14 @@ const Sidebar = ({
   setActiveTab,
   handleLogout,
 }) => {
+  const [asideHovered, setAsideHovered] = useState(false);
+
+  useEffect(() => {
+    if (collapsed || asideHovered) return undefined;
+    const timer = window.setTimeout(() => setCollapsed(true), AUTO_COLLAPSE_MS);
+    return () => window.clearTimeout(timer);
+  }, [collapsed, asideHovered, setCollapsed]);
+
   const menuItems = [
     { id: 'ops', icon: <Bot size={20} />, label: 'Assistent' },
     { id: 'overview', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
@@ -79,6 +89,8 @@ const Sidebar = ({
       </AnimatePresence>
 
       <aside
+        onMouseEnter={() => setAsideHovered(true)}
+        onMouseLeave={() => setAsideHovered(false)}
         className={[
           'fixed inset-y-0 left-0 w-72 bg-primary-blue text-white flex flex-col shadow-2xl z-50',
           'transition-[width,transform] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]',
