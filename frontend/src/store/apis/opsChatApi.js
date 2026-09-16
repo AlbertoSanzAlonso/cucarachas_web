@@ -2,6 +2,9 @@ import { baseApi } from './baseApi';
 
 export const opsChatApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
+    getOpsModels: builder.query({
+      query: () => 'ops/models/',
+    }),
     getOpsConversations: builder.query({
       query: (params) => {
         const q = params?.q ? `?q=${encodeURIComponent(params.q)}` : '';
@@ -49,10 +52,10 @@ export const opsChatApi = baseApi.injectEndpoints({
       invalidatesTags: [{ type: 'OpsConversations', id: 'LIST' }],
     }),
     sendOpsMessage: builder.mutation({
-      query: ({ id, content, language }) => ({
+      query: ({ id, content, language, model }) => ({
         url: `ops/conversations/${id}/messages/`,
         method: 'POST',
-        body: { content, language },
+        body: { content, language, model },
       }),
       invalidatesTags: (_r, _e, { id }) => [
         { type: 'OpsConversations', id },
@@ -61,10 +64,12 @@ export const opsChatApi = baseApi.injectEndpoints({
       ],
     }),
     sendOpsVoice: builder.mutation({
-      query: ({ id, audio, language }) => {
+      query: ({ id, audio, language, speak, model }) => {
         const body = new FormData();
         body.append('audio', audio, audio.name || 'nota.webm');
         body.append('language', language || 'ca');
+        if (speak) body.append('speak', 'true');
+        if (model) body.append('model', model);
         return {
           url: `ops/conversations/${id}/messages/`,
           method: 'POST',
@@ -122,6 +127,7 @@ export const opsChatApi = baseApi.injectEndpoints({
 });
 
 export const {
+  useGetOpsModelsQuery,
   useGetOpsConversationsQuery,
   useGetOpsConversationQuery,
   useCreateOpsConversationMutation,

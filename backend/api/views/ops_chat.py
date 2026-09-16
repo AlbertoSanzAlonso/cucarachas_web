@@ -5,11 +5,12 @@ from __future__ import annotations
 from django.db.models import Count, Prefetch
 from django.utils import timezone
 from rest_framework import status, viewsets
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from api.agents.config import OPS_AGENT_MODELS, resolve_ops_model
 from api.models import AdminConversation, AdminMemoryNote, AdminMessage
 from api.serializers_ops import (
     AdminConversationDetailSerializer,
@@ -26,7 +27,12 @@ def _title_from_message(text: str) -> str:
     return cleaned[:72]
 
 
-def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text") -> dict:
+def _wants_speech(data) -> bool:
+    raw = str(data.get("speak") or data.get("tts") or "").strip().lower()
+    return raw in ("1", "true", "yes", "on")
+
+
+def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text", speak: bool = False, model: str | None = None) -> dict:
     user_msg = AdminMessage.objects.create(
         conversation=conv,
         role=AdminMessage.Role.USER,
@@ -48,6 +54,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text")
             user_id=user.pk,
             conversation_id=conv.pk,
             language=language,
+            model=model,
         )
         reply = (output.message or "").strip() or "Sense resposta."
         if output.suggested_title and not conv.title:
@@ -80,7 +87,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text")
     conv.save(update_fields=["title", "updated_at"])
 
     audio_b64 = None
-    if source == "voice":
+    if speak:
         try:
             from api.agents.voice import synthesize_speech
 
@@ -96,6 +103,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text")
         "notes": AdminMemoryNoteSerializer(notes_created, many=True).data,
         "via_voice": source == "voice",
         "assistant_audio_base64": audio_b64,
+        "model": resolve_ops_model(model),
     }
 
 
@@ -165,6 +173,9 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
         if language not in ("ca", "es"):
             language = "ca"
 
+        speak = _wants_speech(request.data)
+        model = request.data.get("model")
+
         audio = request.FILES.get("audio")
         if audio:
             from api.agents.voice import VoiceError, transcribe_audio_upload
@@ -184,6 +195,8 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
                 text=text,
                 language=language,
                 source="voice",
+                speak=speak,
+                model=model,
             )
             return Response(payload, status=status.HTTP_201_CREATED)
 
@@ -197,6 +210,8 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
             text=text,
             language=language,
             source="text",
+            speak=speak,
+            model=model,
         )
         return Response(payload, status=status.HTTP_201_CREATED)
 
@@ -227,3 +242,17 @@ class AdminMemoryNoteViewSet(viewsets.ModelViewSet):
             return super().create(request, *args, **kwargs)
         except PermissionError as exc:
             return Response({"detail": str(exc)}, status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_ops_models(request):
+    """Catàleg de models permesos al selector de l'assistent d'oficina."""
+    from api.agents.config import AGENT_MODEL
+
+    return Response(
+        {
+            "default": resolve_ops_model(AGENT_MODEL),
+            "models": list(OPS_AGENT_MODELS),
+        }
+    )

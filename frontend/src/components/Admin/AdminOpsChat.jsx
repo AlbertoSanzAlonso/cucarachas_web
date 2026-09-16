@@ -12,6 +12,8 @@ import {
   SquarePen,
   Trash2,
   X,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import {
   useCreateOpsConversationMutation,
@@ -20,6 +22,7 @@ import {
   useDeleteOpsNoteMutation,
   useGetOpsConversationQuery,
   useGetOpsConversationsQuery,
+  useGetOpsModelsQuery,
   useSendOpsMessageMutation,
   useSendOpsVoiceMutation,
 } from '@/store/apis/opsChatApi';
@@ -32,6 +35,9 @@ const SUGGESTIONS = [
   'Quines renovacions tenim a l’octubre?',
   'Prepara una ordre per demà a les 7:30',
 ];
+
+const TTS_KEY = 'cecsa_ops_tts';
+const MODEL_KEY = 'cecsa_ops_model';
 
 function formatTime(iso) {
   if (!iso) return '';
@@ -52,10 +58,25 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const [draft, setDraft] = useState('');
   const [search, setSearch] = useState('');
   const [notesOpen, setNotesOpen] = useState(true);
+  const [ttsEnabled, setTtsEnabled] = useState(() => {
+    try {
+      return window.localStorage.getItem(TTS_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [modelId, setModelId] = useState(() => {
+    try {
+      return window.localStorage.getItem(MODEL_KEY) || '';
+    } catch {
+      return '';
+    }
+  });
   const [noteDraft, setNoteDraft] = useState('');
   const listRef = useRef(null);
   const inputRef = useRef(null);
 
+  const { data: modelCatalog } = useGetOpsModelsQuery();
   const { data: conversations = [], isLoading: listLoading } = useGetOpsConversationsQuery(
     search ? { q: search } : undefined,
   );
@@ -74,11 +95,39 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
   const busy = sending || sendingVoice || creating;
   const voice = useVoiceRecorder();
 
+  const modelOptions = modelCatalog?.models || [];
+  const allowedIds = modelOptions.map((m) => m.id);
+  const selectedModel =
+    modelId && (!allowedIds.length || allowedIds.includes(modelId))
+      ? modelId
+      : modelCatalog?.default || 'openai:gpt-4o-mini';
+
+  const chooseModel = (id) => {
+    setModelId(id);
+    try {
+      window.localStorage.setItem(MODEL_KEY, id);
+    } catch {
+      /* ignore */
+    }
+  };
+
   const ensureConversation = async () => {
     if (activeId) return activeId;
     const created = await createConv({}).unwrap();
     setActiveId(created.id);
     return created.id;
+  };
+
+  const toggleTts = () => {
+    setTtsEnabled((prev) => {
+      const next = !prev;
+      try {
+        window.localStorage.setItem(TTS_KEY, next ? 'true' : 'false');
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
   };
 
   const playAssistantAudio = (b64) => {
@@ -98,7 +147,7 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
     if (!text || busy) return;
     setDraft('');
     const convId = await ensureConversation();
-    await sendMessage({ id: convId, content: text, language: 'ca' }).unwrap();
+    await sendMessage({ id: convId, content: text, language: 'ca', model: selectedModel }).unwrap();
   };
 
   const toggleVoice = async () => {
@@ -108,8 +157,14 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
       if (!blob || blob.size < 800) return;
       const convId = await ensureConversation();
       const file = new File([blob], 'nota.webm', { type: blob.type || 'audio/webm' });
-      const result = await sendVoice({ id: convId, audio: file, language: 'ca' }).unwrap();
-      playAssistantAudio(result?.assistant_audio_base64);
+      const result = await sendVoice({
+        id: convId,
+        audio: file,
+        language: 'ca',
+        speak: ttsEnabled,
+        model: selectedModel,
+      }).unwrap();
+      if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
       return;
     }
     if (!voice.supported) {
@@ -307,12 +362,40 @@ const AdminOpsChat = ({ user, onOpenSidebar }) => {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <label className="min-w-0">
+              <span className="sr-only">Model</span>
+              <select
+                value={selectedModel}
+                onChange={(e) => chooseModel(e.target.value)}
+                className="max-w-[11rem] rounded-xl border border-gray-200 bg-white px-2 py-2 text-xs font-semibold text-primary-gray outline-none sm:max-w-[16rem]"
+                title="Model de l’assistent"
+              >
+                {modelOptions.length === 0 ? (
+                  <option value={selectedModel}>{selectedModel}</option>
+                ) : (
+                  modelOptions.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.label}
+                    </option>
+                  ))
+                )}
+              </select>
+            </label>
             <button
               type="button"
               onClick={handleNewChat}
               className="rounded-xl border border-gray-200 px-3 py-2 text-xs font-bold text-primary-gray md:hidden"
             >
               Nova
+            </button>
+            <button
+              type="button"
+              onClick={toggleTts}
+              className={`rounded-xl p-2 ${ttsEnabled ? 'bg-[var(--primary-blue)] text-white' : 'text-primary-gray/50 hover:bg-gray-100'}`}
+              title={ttsEnabled ? 'Resposta en veu activada' : 'Resposta en veu desactivada'}
+              aria-pressed={ttsEnabled}
+            >
+              {ttsEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
             </button>
             <button
               type="button"

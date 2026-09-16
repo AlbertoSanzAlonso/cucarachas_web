@@ -14,7 +14,7 @@ from api.igeo.sync import publish_entity
 from api.phone_utils import normalize_phone
 
 from . import bootstrap  # noqa: F401
-from .config import AGENT_MODEL
+from .config import AGENT_MODEL, resolve_ops_model, setup_ai_keys
 
 
 @dataclass
@@ -171,6 +171,7 @@ def run_ops_agent(
     user_id: int,
     conversation_id: int,
     language: str = "ca",
+    model: str | None = None,
 ) -> OpsAgentOutput:
     """Invoca l'LLM intern. L'historial es passa com a context (no és el xat públic)."""
     prior = _history_block(history)
@@ -186,7 +187,9 @@ def run_ops_agent(
         conversation_id=conversation_id,
         language=language if language in ("ca", "es") else "ca",
     )
-    result = ops_agent.run_sync(prompt, deps=deps)
+    model_id = resolve_ops_model(model)
+    setup_ai_keys(model_id)
+    result = ops_agent.run_sync(prompt, deps=deps, model=model_id)
     output = result.output
     if isinstance(output, OpsAgentOutput):
         return output

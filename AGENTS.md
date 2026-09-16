@@ -146,7 +146,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
-- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth ` /api/ops/conversations/` i `/api/ops/notes/`. Micròfon (Web Speech API).
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.

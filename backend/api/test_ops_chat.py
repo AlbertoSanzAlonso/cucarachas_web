@@ -28,6 +28,8 @@ class AdminOpsChatApiTests(APITestCase):
         self.client.credentials()
         res = self.client.get("/api/ops/conversations/")
         self.assertEqual(res.status_code, 401)
+        models = self.client.get("/api/ops/models/")
+        self.assertEqual(models.status_code, 401)
 
     def test_create_and_list_own_conversations(self):
         res = self.client.post("/api/ops/conversations/", {}, format="json")
@@ -84,8 +86,47 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertEqual(res.data["user_message"]["source"], "voice")
         self.assertEqual(res.data["user_message"]["content"], "Busca el client del 612")
         self.assertEqual(res.data["assistant_message"]["content"], "Client localitzat.")
+        self.assertIsNone(res.data.get("assistant_audio_base64"))
+        _tts.assert_not_called()
         mock_run.assert_called_once()
         self.assertEqual(mock_run.call_args.kwargs["user_message"], "Busca el client del 612")
+
+    def test_list_ops_models_catalog(self):
+        res = self.client.get("/api/ops/models/")
+        self.assertEqual(res.status_code, 200)
+        ids = {item["id"] for item in res.data["models"]}
+        self.assertIn("openai:gpt-6-astra", ids)
+        self.assertIn("openai:gpt-5.6", ids)
+        self.assertIn("openai:gpt-4o-mini", ids)
+        self.assertIn("google:gemini-3.8-flash", ids)
+        self.assertNotIn("google-gla:gemini-2.0-flash", ids)
+        self.assertIn(res.data["default"], ids)
+
+    @patch("api.agents.ops_agent.run_ops_agent")
+    def test_post_message_uses_allowlisted_model(self, mock_run):
+        mock_run.return_value = OpsAgentOutput(message="Ok", suggested_title=None, important_notes=[])
+        conv = AdminConversation.objects.create(user=self.user, title="Model")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "Hola", "language": "ca", "model": "openai:gpt-4o"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.data["model"], "openai:gpt-4o")
+        self.assertEqual(mock_run.call_args.kwargs["model"], "openai:gpt-4o")
+
+    @patch("api.agents.ops_agent.run_ops_agent")
+    def test_invalid_model_falls_back(self, mock_run):
+        mock_run.return_value = OpsAgentOutput(message="Ok", suggested_title=None, important_notes=[])
+        conv = AdminConversation.objects.create(user=self.user, title="Model")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "Hola", "language": "ca", "model": "openai:gpt-evil"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.data["model"], "openai:gpt-4o-mini")
+        self.assertEqual(mock_run.call_args.kwargs["model"], "openai:gpt-evil")
 
     def test_cannot_read_other_user_thread(self):
         conv = AdminConversation.objects.create(user=self.other, title="Aliè")
@@ -117,3 +158,15 @@ class SearchCrmToolTests(APITestCase):
 
         result = lookup_crm_clientes("612345678")
         self.assertIn("Anna Prova", result)
+
+
+class ResolveOpsModelTests(APITestCase):
+    def test_allowlist_and_fallback(self):
+        from api.agents.config import resolve_ops_model
+
+        self.assertEqual(resolve_ops_model("openai:gpt-4o"), "openai:gpt-4o")
+        self.assertEqual(resolve_ops_model("openai:gpt-6-astra"), "openai:gpt-6-astra")
+        self.assertEqual(resolve_ops_model("google-gla:gemini-2.0-flash"), "google:gemini-3.8-flash")
+        self.assertEqual(resolve_ops_model("openai:gpt-evil"), "openai:gpt-4o-mini")
+        self.assertEqual(resolve_ops_model(None), "openai:gpt-4o-mini")
+        self.assertEqual(resolve_ops_model("  "), "openai:gpt-4o-mini")

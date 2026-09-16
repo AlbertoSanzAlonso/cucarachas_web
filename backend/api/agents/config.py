@@ -4,6 +4,42 @@ import os
 # Por defecto usamos OpenAI GPT-4o-mini, pero se puede sobrescribir vía env var
 AGENT_MODEL = os.getenv('AGENT_MODEL', 'openai:gpt-4o-mini')
 
+# Modelos permitidos en el selector del asistente de oficina (allowlist).
+OPS_AGENT_MODELS = (
+    {"id": "openai:gpt-6-astra", "label": "GPT-6 Astra"},
+    {"id": "openai:gpt-5.6", "label": "GPT-5.6"},
+    {"id": "openai:gpt-5.6-terra", "label": "GPT-5.6 Terra"},
+    {"id": "openai:gpt-5.6-luna", "label": "GPT-5.6 Luna"},
+    {"id": "openai:gpt-4.1", "label": "GPT-4.1"},
+    {"id": "openai:gpt-4o", "label": "GPT-4o"},
+    {"id": "openai:gpt-4o-mini", "label": "GPT-4o mini"},
+    {"id": "google:gemini-3.8-flash", "label": "Gemini 3.8 Flash"},
+    {"id": "google:gemini-3.7-flash", "label": "Gemini 3.7 Flash"},
+    {"id": "google:gemini-3.5-flash", "label": "Gemini 3.5 Flash"},
+    {"id": "google:gemini-3.1-pro-preview", "label": "Gemini 3.1 Pro"},
+    {"id": "google:gemini-2.5-pro", "label": "Gemini 2.5 Pro"},
+)
+
+_OPS_MODEL_IDS = {item["id"] for item in OPS_AGENT_MODELS}
+_OPS_MODEL_ALIASES = {
+    "google-gla:gemini-2.0-flash": "google:gemini-3.8-flash",
+    "google-gla:gemini-2.5-flash": "google:gemini-2.5-pro",
+    "google:gemini-2.0-flash": "google:gemini-3.8-flash",
+    "openai:gpt-4.1-mini": "openai:gpt-5.6-luna",
+}
+
+
+def resolve_ops_model(requested: str | None) -> str:
+    """Solo modelos de la allowlist. Si no vale, AGENT_MODEL o gpt-4o-mini."""
+    raw = (requested or "").strip()
+    raw = _OPS_MODEL_ALIASES.get(raw, raw)
+    if raw in _OPS_MODEL_IDS:
+        return raw
+    if AGENT_MODEL in _OPS_MODEL_IDS:
+        return AGENT_MODEL
+    return "openai:gpt-4o-mini"
+
+
 # Límite de turnos de historial enviados al LLM (reduce tokens por petición)
 HISTORY_MAX_TURNS = int(os.getenv('AGENT_HISTORY_MAX_TURNS', '6'))
 

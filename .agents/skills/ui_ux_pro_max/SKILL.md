@@ -65,7 +65,8 @@ Flujo **3 pasos** en `BookingContactForm.jsx`:
 
 - **No** reutilizar `useAgentChat` ni `POST /api/chat/` (eso es el cliente).
 - Historial persistente por usuario admin; notas importantes en panel lateral.
-- Micrófono: graba con onda → el backend transcribe (Whisper) y el agente responde (TTS). No pasar por el recuadro de texto.
+- Micrófono: graba con onda → Whisper interno; respuesta en texto. TTS opcional (botón volumen, off por defecto).
+- Selector de modelo en la cabecera (allowlist del backend; se guarda en `localStorage`).
 
 ## FloatingCTA vs Modal
 
