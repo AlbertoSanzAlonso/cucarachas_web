@@ -10,7 +10,7 @@ from rest_framework.response import Response
 
 NOMINATIM_BASE = "https://nominatim.openstreetmap.org"
 NOMINATIM_HEADERS = {
-    "User-Agent": "CECSA-CucarachasBarcelona/1.0 (info@cecsaddd.com)",
+    "User-Agent": "CECSA-CucarachasBarcelona/1.0 (info@cucarachasbarcelona.cat)",
     "Accept-Language": "ca,es,en",
 }
 

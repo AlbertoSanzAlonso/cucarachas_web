@@ -28,7 +28,7 @@ class OpsEmailResult:
 
 
 def _from_email() -> str:
-    return (getattr(settings, "DEFAULT_FROM_EMAIL", None) or "info@cecsaddd.com").strip()
+    return (getattr(settings, "DEFAULT_FROM_EMAIL", None) or "info@cucarachasbarcelona.cat").strip()
 
 
 def _is_valid_email(value: str) -> bool:

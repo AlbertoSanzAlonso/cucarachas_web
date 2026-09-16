@@ -58,7 +58,13 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `OPENWA_API_URL` = `http://openwa:2785/api` (hostname interno Coolify del contenedor)
 - `OPENWA_API_KEY` / `OPENWA_SESSION_ID` = clave y sesión conectada (QR escaneado)
 - `OPENWA_DRY_RUN` = `true` valida el envío sin llamar al contenedor
-- Email SMTP (citas + presupuestos + asistente oficina `send_email`): `EMAIL_HOST` / `EMAIL_PORT` / `EMAIL_HOST_USER` / `EMAIL_HOST_PASSWORD` / `EMAIL_USE_TLS` / `DEFAULT_FROM_EMAIL`
+- Email SMTP **DonDominio** (citas + presupuestos + asistente oficina `send_email`):
+  - `EMAIL_HOST` = `smtp.dondominio.com`
+  - `EMAIL_PORT` = `587`
+  - `EMAIL_USE_TLS` = `true` (STARTTLS)
+  - `EMAIL_HOST_USER` = `info@cucarachasbarcelona.cat`
+  - `EMAIL_HOST_PASSWORD` = contraseña del buzón en DonDominio
+  - `DEFAULT_FROM_EMAIL` / `BOOKING_NOTIFY_EMAIL` = `info@cucarachasbarcelona.cat`
 - `OPS_EMAIL_DRY_RUN` = `true` valida el correo del asistente sin llamar a SMTP
 - `CORS_EXTRA_ORIGINS` = orígenes extra (coma-separados) si el front no es Vercel/`cucarachasbarcelona.cat`
 - `DJANGO_ALLOWED_HOSTS` = hosts extra del API (coma-separados); `.sslip.io` de Coolify se acepta por defecto

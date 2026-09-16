@@ -15,7 +15,7 @@ COMPANY = {
     "cif": "B64287055",
     "phone": "933 30 9169",
     "whatsapp": "681033305",
-    "email": "info@cecsaddd.com",
+    "email": "info@cucarachasbarcelona.cat",
     "web": "www.cecsaddd.com",
     "roesp": "0246-CAT-SB",
     "mercantil": "Registro Mercantil de Barcelona, hoja BL 4230",

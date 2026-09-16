@@ -27,7 +27,7 @@ def send_presupuesto_email(
         f"Adjuntem el pressupost #{codigo} de CECSA Control de Plagues.\n\n"
         f"Quedem a la vostra disposició per a qualsevol dubte.\n\n"
         f"CECSA Control de Plagues\n"
-        f"info@cecsaddd.com · 933 309 169"
+        f"info@cucarachasbarcelona.cat · 933 309 169"
     )
 
     pdf_bytes = build_presupuesto_pdf(presupuesto)
@@ -36,7 +36,7 @@ def send_presupuesto_email(
     message = EmailMessage(
         subject=subject or default_subject,
         body=body or default_body,
-        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "info@cecsaddd.com"),
+        from_email=getattr(settings, "DEFAULT_FROM_EMAIL", "info@cucarachasbarcelona.cat"),
         to=[to_email],
     )
     message.attach(filename, pdf_bytes, "application/pdf")

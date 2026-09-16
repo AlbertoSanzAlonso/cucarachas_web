@@ -12,7 +12,7 @@ from api.ops_email import email_status_summary, send_ops_email
 
 @override_settings(
     EMAIL_BACKEND="django.core.mail.backends.locmem.EmailBackend",
-    DEFAULT_FROM_EMAIL="info@cecsaddd.com",
+    DEFAULT_FROM_EMAIL="info@cucarachasbarcelona.cat",
     EMAIL_HOST="smtp.test.local",
 )
 class OpsEmailTests(SimpleTestCase):
@@ -40,17 +40,20 @@ class OpsEmailTests(SimpleTestCase):
         self.assertEqual(len(mail.outbox), 1)
         self.assertEqual(mail.outbox[0].to, ["anna@test.cat"])
         self.assertEqual(mail.outbox[0].subject, "Confirmació visita")
-        self.assertEqual(mail.outbox[0].from_email, "info@cecsaddd.com")
+        self.assertEqual(mail.outbox[0].from_email, "info@cucarachasbarcelona.cat")
 
     def test_sends_with_cc(self):
         result = send_ops_email(
             to_email="anna@test.cat",
             subject="Pressupost",
             body="Adjuntem informació.",
-            cc="oficina@cecsaddd.com, info@cecsaddd.com",
+            cc="oficina@cucarachasbarcelona.cat, info@cucarachasbarcelona.cat",
         )
         self.assertTrue(result.ok)
-        self.assertEqual(mail.outbox[0].cc, ["oficina@cecsaddd.com", "info@cecsaddd.com"])
+        self.assertEqual(
+            mail.outbox[0].cc,
+            ["oficina@cucarachasbarcelona.cat", "info@cucarachasbarcelona.cat"],
+        )
 
     def test_dry_run_does_not_send(self):
         os.environ["OPS_EMAIL_DRY_RUN"] = "true"
@@ -66,7 +69,7 @@ class OpsEmailTests(SimpleTestCase):
     def test_status_summary_includes_from(self):
         summary = email_status_summary()
         self.assertIn("ready=", summary)
-        self.assertIn("from=info@cecsaddd.com", summary)
+        self.assertIn("from=info@cucarachasbarcelona.cat", summary)
 
     @override_settings(
         EMAIL_BACKEND="django.core.mail.backends.smtp.EmailBackend",
