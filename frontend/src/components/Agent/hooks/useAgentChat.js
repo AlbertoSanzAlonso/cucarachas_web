@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { buildStaticVerdict, hasExtraInfo } from '@/components/Agent/Diagnostic/buildStaticVerdict';
 import { isBudgetRequest, shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
+import { ENABLE_CLIENT_SCHEDULING } from '@/config/agentFeatures';
 
 export const useAgentChat = (i18n, answers, path) => {
   const { t } = useTranslation();
@@ -278,7 +279,9 @@ export const useAgentChat = (i18n, answers, path) => {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: reply,
-          slots: data.slots?.length ? data.slots.map((s, i) => ({ id: i, ...s })) : null,
+          slots: ENABLE_CLIENT_SCHEDULING && data.slots?.length
+            ? data.slots.map((s, i) => ({ id: i, ...s }))
+            : null,
           showPostBudgetCTAs: shouldShowPostBudgetCTAs(value, reply),
         }]);
       })

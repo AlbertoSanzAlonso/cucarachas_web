@@ -6,7 +6,7 @@ from api.models import Tratamiento
 from . import bootstrap  # noqa: F401
 from .config import AGENT_MODEL
 from .models import AgentState, PricingOutput
-from .prompts import SYSTEM_PROMPTS
+from .prompts import SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 pricer_agent = Agent(
     AGENT_MODEL,
@@ -19,7 +19,8 @@ pricer_agent = Agent(
 @pricer_agent.system_prompt
 def get_pricer_prompt(ctx: RunContext[AgentState]) -> str:
     lang = ctx.deps.language if ctx.deps else "ca"
-    return SYSTEM_PROMPTS["pricer"].get(lang, SYSTEM_PROMPTS["pricer"]["ca"])
+    base = SYSTEM_PROMPTS["pricer"].get(lang, SYSTEM_PROMPTS["pricer"]["ca"])
+    return f"{base}{scheduling_disabled_prompt_suffix(lang)}"
 
 
 @pricer_agent.tool

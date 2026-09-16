@@ -6,6 +6,7 @@ import axios from 'axios';
 import BookingContactForm from '@/components/Agent/Chat/BookingContactForm';
 import SlotPicker from '@/components/Agent/Chat/SlotPicker';
 import { shouldShowPostBudgetCTAs } from '@/components/Agent/utils/chatMessageFlags';
+import { ENABLE_CLIENT_SCHEDULING } from '@/config/agentFeatures';
 import { useGetCompanyQuery } from '@/store/apis/companyApi';
 import {
   getHomeChatMemory,
@@ -264,7 +265,7 @@ const FloatingCTA = () => {
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: response.data.reply,
-        slots: response.data.slots,
+        slots: ENABLE_CLIENT_SCHEDULING && response.data.slots?.length ? response.data.slots : null,
         showPostBudgetCTAs: shouldShowPostBudgetCTAs(userMessage.trim(), response.data.reply),
       }]);
     } catch (error) {
@@ -522,14 +523,16 @@ const FloatingCTA = () => {
                          />
                          {msg.isInitial && (
                            <div className="flex flex-wrap gap-2 mt-4 max-w-[92%]">
-                             <button
-                               type="button"
-                               onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
-                               disabled={isLoading}
-                               className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
-                             >
-                               📅 {t('agent.cta.schedule')}
-                             </button>
+                             {ENABLE_CLIENT_SCHEDULING && (
+                               <button
+                                 type="button"
+                                 onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
+                                 disabled={isLoading}
+                                 className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
+                               >
+                                 📅 {t('agent.cta.schedule')}
+                               </button>
+                             )}
                              <button
                                type="button"
                                onClick={() => handleQuickAction(t('agent.verdict.action_budget'))}
@@ -541,7 +544,7 @@ const FloatingCTA = () => {
                              <button
                                type="button"
                                onClick={() => window.location.href = `tel:${phoneTel.replace('+', '')}`}
-                               className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
+                               className={`${ENABLE_CLIENT_SCHEDULING ? 'bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200' : 'bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none shadow-md'} rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all`}
                              >
                                📞 {t('agent.cta.call')}
                              </button>
@@ -550,18 +553,20 @@ const FloatingCTA = () => {
                          {msg.showPostBudgetCTAs && (
                            <div className="flex flex-col gap-2 mt-4 max-w-[92%]">
                              <div className="flex flex-wrap gap-2">
-                               <button
-                                 type="button"
-                                 onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
-                                 disabled={isLoading}
-                                 className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
-                               >
-                                 📅 {t('agent.cta.schedule')}
-                               </button>
+                               {ENABLE_CLIENT_SCHEDULING && (
+                                 <button
+                                   type="button"
+                                   onClick={() => handleQuickAction(t('agent.verdict.action_schedule'))}
+                                   disabled={isLoading}
+                                   className="bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md disabled:opacity-50"
+                                 >
+                                   📅 {t('agent.cta.schedule')}
+                                 </button>
+                               )}
                                <button
                                  type="button"
                                  onClick={() => window.location.href = `tel:${phoneTel.replace('+', '')}`}
-                                 className="bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all"
+                                 className={`${ENABLE_CLIENT_SCHEDULING ? 'bg-white hover:bg-gray-50 text-secondary-gray/80 border border-gray-200' : 'bg-accent-green hover:bg-accent-green-hv text-primary-gray border-none shadow-md'} rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all`}
                                >
                                  📞 {t('agent.cta.call')}
                                </button>
@@ -571,7 +576,7 @@ const FloatingCTA = () => {
                              </p>
                            </div>
                          )}
-                         {msg.slots && (
+                         {ENABLE_CLIENT_SCHEDULING && msg.slots && (
                            <div className="mt-4 w-full max-w-[320px]" data-chat-interactive>
                              <SlotPicker
                                slots={msg.slots}
@@ -580,7 +585,7 @@ const FloatingCTA = () => {
                              />
                            </div>
                          )}
-                         {msg.showBookingForm && msg.selectedSlot && (
+                         {ENABLE_CLIENT_SCHEDULING && msg.showBookingForm && msg.selectedSlot && (
                            <div data-chat-interactive>
                              <BookingContactForm
                                variant="light"

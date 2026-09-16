@@ -3,7 +3,7 @@ from .models import AgentState, DiagnosisOutput
 from api.models import Species
 from knowledge.retriever import retrieve_relevant_knowledge
 from .config import AGENT_MODEL, setup_ai_keys
-from .prompts import BIO_TIPS, SYSTEM_PROMPTS
+from .prompts import BIO_TIPS, SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 setup_ai_keys()
 
@@ -18,7 +18,8 @@ diagnostician_agent = Agent(
 @diagnostician_agent.system_prompt
 def get_diagnostician_prompt(ctx: RunContext[AgentState]) -> str:
     lang = ctx.deps.language if ctx.deps else "ca"
-    return SYSTEM_PROMPTS["diagnostician"].get(lang, SYSTEM_PROMPTS["diagnostician"]["ca"])
+    base = SYSTEM_PROMPTS["diagnostician"].get(lang, SYSTEM_PROMPTS["diagnostician"]["ca"])
+    return f"{base}{scheduling_disabled_prompt_suffix(lang)}"
 
 @diagnostician_agent.tool
 def search_technical_knowledge(ctx: RunContext[AgentState], query: str) -> str:

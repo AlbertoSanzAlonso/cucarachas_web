@@ -3,16 +3,19 @@ import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import BookingContactForm from './BookingContactForm';
 import SlotPicker from './SlotPicker';
+import { ENABLE_CLIENT_SCHEDULING } from '@/config/agentFeatures';
 
 const VerdictCTAs = ({ handleSendMessage, t }) => (
   <div className="flex flex-wrap gap-2 mt-2">
-    <button
-      type="button"
-      onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
-      className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
-    >
-      📅 {t('agent.cta.schedule')}
-    </button>
+    {ENABLE_CLIENT_SCHEDULING && (
+      <button
+        type="button"
+        onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
+        className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
+      >
+        📅 {t('agent.cta.schedule')}
+      </button>
+    )}
     <button
       type="button"
       onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_budget'))}
@@ -23,7 +26,7 @@ const VerdictCTAs = ({ handleSendMessage, t }) => (
     <button
       type="button"
       onClick={() => window.location.href = 'tel:933309169'}
-      className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
+      className={`${ENABLE_CLIENT_SCHEDULING ? 'bg-white/5 hover:bg-white/10 text-white/60' : 'bg-accent-green hover:bg-accent-green-hv text-black shadow-md'} border ${ENABLE_CLIENT_SCHEDULING ? 'border-white/10' : 'border-none'} rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center`}
     >
       📞 {t('agent.cta.call')}
     </button>
@@ -33,17 +36,19 @@ const VerdictCTAs = ({ handleSendMessage, t }) => (
 const PostBudgetCTAs = ({ handleSendMessage, t }) => (
   <div className="flex flex-col gap-2 mt-2">
     <div className="flex flex-wrap gap-2">
-      <button
-        type="button"
-        onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
-        className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
-      >
-        📅 {t('agent.cta.schedule')}
-      </button>
+      {ENABLE_CLIENT_SCHEDULING && (
+        <button
+          type="button"
+          onClick={() => handleSendMessage({ preventDefault: () => {} }, t('agent.verdict.action_schedule'))}
+          className="bg-accent-green hover:bg-accent-green-hv text-black border-none rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all shadow-md"
+        >
+          📅 {t('agent.cta.schedule')}
+        </button>
+      )}
       <button
         type="button"
         onClick={() => window.location.href = 'tel:933309169'}
-        className="bg-white/5 hover:bg-white/10 text-white/60 border border-white/10 rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center"
+        className={`${ENABLE_CLIENT_SCHEDULING ? 'bg-white/5 hover:bg-white/10 text-white/60 border border-white/10' : 'bg-accent-green hover:bg-accent-green-hv text-black border-none shadow-md'} rounded-xl px-4 py-2 text-xs font-black uppercase tracking-wider transition-all flex items-center`}
       >
         📞 {t('agent.cta.call')}
       </button>
@@ -77,11 +82,11 @@ const ChatMessage = memo(({ msg, handleSendMessage, handleSlotSelect, handleBook
         )}
 
 
-        {msg.slots && (
+        {ENABLE_CLIENT_SCHEDULING && msg.slots && (
           <SlotPicker slots={msg.slots} onSlotSelect={handleSlotSelect} variant="dark" />
         )}
 
-        {msg.showBookingForm && msg.selectedSlot && (
+        {ENABLE_CLIENT_SCHEDULING && msg.showBookingForm && msg.selectedSlot && (
           <BookingContactForm
             slot={msg.selectedSlot}
             step={msg.bookingStep || 'name'}

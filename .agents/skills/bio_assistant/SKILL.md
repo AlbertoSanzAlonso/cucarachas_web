@@ -58,6 +58,10 @@ Plantillas i18n: `agent.verdict.static.{path}.{tier}` en **ca** y **es**.
 
 ## Chat y reservas
 
+> ⚠️ **Agendación cliente temporalmente DESACTIVADA** (sin acceso a la agenda iGEO).
+> No mostrar horarios ni confirmar citas por el chat. CTA principal: llamar al **933 309 169**.
+> Reactivar: `AGENT_ENABLE_CLIENT_SCHEDULING=true` (backend) y `VITE_ENABLE_CLIENT_SCHEDULING=true` (frontend).
+
 ### Payload `POST /api/chat/`
 
 ```json

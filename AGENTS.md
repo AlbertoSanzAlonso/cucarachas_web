@@ -52,6 +52,7 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `IGEO_PDI_HOST` / `IGEO_PDI_PORT` / `IGEO_PDI_SSL` / `IGEO_PDI_USER` / `IGEO_PDI_PASSWORD` / `IGEO_PDI_VHOST` = credenciales RabbitMQ PDI
 - `IGEO_PDI_DRY_RUN` = `true` en pre (valida sin publicar)
 - `IGEO_DEFAULT_DELEGACION` / `IGEO_DEFAULT_GESTOR` = códigos maestros CECSA en iGEO (*! para leads)
+- `AGENT_ENABLE_CLIENT_SCHEDULING` = `true` para reactivar citas por el chat (off por defecto: sin agenda iGEO)
 
 ### Crear usuario administrador en producción
 Desde la **Terminal del contenedor** en Coolify:
@@ -80,9 +81,9 @@ El proyecto dispone de un ecosistema de agentes de IA en el backend (`/backend/a
 - **Enrutado sin LLM**: `graph/routing.py` — función clave `wants_scheduling(msg)`; **no** enrutar a agenda solo por sesión antigua con `APPOINTMENT`.
 - **Fusión diagnóstico**: `diagnostic_merge.py` — datos del wizard → `AgentState` (ciudad, notas, tipo cliente).
 - **Estado unificado**: `AgentState` (`agents/models.py`) es a la vez el estado del grafo LangGraph **y** `deps_type` de todos los agentes Pydantic-AI (`ctx.deps`). No existe clase `AgentDeps` separada; `graph/nodes.py` pasa `agent_state` directamente a `agent.run(deps=agent_state)`.
-- **Reserva directa**: `booking.py` + agenda propia — sin LLM cuando el frontend envía `booking` en el body. Tras éxito, sync opcional `CLIENTE_POTENCIAL` → iGEO PDI (`api/igeo/`).
+- **Reserva directa**: `booking.py` + agenda propia — sin LLM cuando el frontend envía `booking` en el body. Tras éxito, sync opcional `CLIENTE_POTENCIAL` → iGEO PDI (`api/igeo/`). **Temporalmente desactivada** (`ENABLE_CLIENT_SCHEDULING=false`): el chat no muestra horarios ni confirma citas; deriva a **933 309 169**. Reactivar con `AGENT_ENABLE_CLIENT_SCHEDULING=true` y `VITE_ENABLE_CLIENT_SCHEDULING=true`.
 - **Nodos**: cada agente Pydantic-AI en su módulo; `scheduler_node` usa **fast path** (slots agenda propia sin LLM) si el mensaje pide cita explícitamente.
-- **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_TIMEOUT_*`.
+- **Optimización** (`config.py`): `AGENT_HISTORY_MAX_TURNS`, `AGENT_ENABLE_CRM`, `AGENT_ENABLE_CLIENT_SCHEDULING`, `AGENT_TIMEOUT_*`.
 - Retorna **siempre** un dict con `message`, `slots`, `booking_confirmed`, `booking_uid`.
 
 ### API de chat (`POST /api/chat/`)

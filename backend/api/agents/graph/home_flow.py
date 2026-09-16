@@ -634,10 +634,18 @@ def home_llm_context(agent: AgentState, lang: str, message: str) -> str:
             "Color blanco/claro en notas: suele ser muda/ninfa; no inventes otra especie."
         )
     if mem["case_ready"] and notes_txt:
-        extra.append(
-            "Hay descriptores en notas: intégralos en una orientación breve; "
-            "cierra con presupuesto o llamar al 933 309 169; no ofrezcas agendar por chat."
-        )
+        from api.agents.config import ENABLE_CLIENT_SCHEDULING
+
+        if ENABLE_CLIENT_SCHEDULING:
+            extra.append(
+                "Hay descriptores en notas: intégralos en una orientación breve; "
+                "cierra con inspección gratuita o presupuesto."
+            )
+        else:
+            extra.append(
+                "Hay descriptores en notas: intégralos en una orientación breve; "
+                "cierra con presupuesto o llamar al 933 309 169; no ofrezcas agendar por chat."
+            )
     if extra:
         return base + "\n" + "\n".join(extra)
     return base

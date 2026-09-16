@@ -4,7 +4,7 @@ from . import bootstrap  # noqa: F401
 from .company_knowledge import format_company_knowledge_for_agent
 from .config import AGENT_MODEL
 from .models import AgentState, ReceptionistOutput
-from .prompts import SYSTEM_PROMPTS
+from .prompts import SYSTEM_PROMPTS, scheduling_disabled_prompt_suffix
 
 # Agente 1: Recepcionista
 receptionist_agent = Agent(
@@ -20,7 +20,7 @@ def get_receptionist_prompt(ctx: RunContext[AgentState]) -> str:
     base = SYSTEM_PROMPTS["receptionist"].get(lang, SYSTEM_PROMPTS["receptionist"]["ca"])
     facts = format_company_knowledge_for_agent(lang if lang in ("ca", "es") else "ca")
     return (
-        f"{base}\n\n"
+        f"{base}{scheduling_disabled_prompt_suffix(lang)}\n\n"
         "DATOS OFICIALES DE CECSA (fuente de verdad; usa get_company_info si necesitas recordarlos):\n"
         f"{facts}\n"
         "No inventes horarios, cobertura ni teléfono distintos a estos."

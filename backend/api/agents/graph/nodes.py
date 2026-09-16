@@ -244,7 +244,7 @@ async def receptionist_node(state: CECSAGraphState) -> dict:
                 agent.pest_type = None
 
         next_route = None
-        if output.next_agent == "scheduler":
+        if output.next_agent == "scheduler" and ENABLE_CLIENT_SCHEDULING:
             agent.intent = Intent.APPOINTMENT
             next_route = "scheduler"
         elif output.next_agent == "diagnostician":
@@ -534,11 +534,13 @@ async def pricer_node(state: CECSAGraphState) -> dict:
                     confidence_badge=badge,
                     commercial_copy=ficha_result.commercial_copy or "",
                 )
-                return {
+                payload = {
                     "agent_state": agent.model_dump(mode="json"),
                     "result": {"message": msg},
-                    "route": "scheduler",
                 }
+                if ENABLE_CLIENT_SCHEDULING:
+                    payload["route"] = "scheduler"
+                return payload
 
             # Baja confianza: pedir el siguiente dato (m², CP…) vía recepcionista
             from api.agents.chat_intake import get_missing_mandatory_fields
