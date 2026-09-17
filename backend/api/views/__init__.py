@@ -6,7 +6,14 @@ from .crm import (
     CitaViewSet, ReporteServicioViewSet
 )
 from .agents import chat_with_agents
-from .ops_chat import AdminConversationViewSet, AdminMemoryNoteViewSet, list_ops_models
+from .ops_chat import (
+    AdminConversationViewSet,
+    AdminMemoryNoteViewSet,
+    list_ops_models,
+    ops_realtime_session,
+    ops_realtime_tool,
+    ops_realtime_transcript,
+)
 from .debug import debug_system
 from .geo import geo_search, geo_reverse
 from .fichas import ficha_wizard_questions

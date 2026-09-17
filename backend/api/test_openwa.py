@@ -11,6 +11,7 @@ from api.openwa.client import (
     OpenWaClient,
     OpenWaError,
     format_contacts,
+    human_whatsapp_dest,
     status_summary,
     to_whatsapp_chat_id,
 )
@@ -255,6 +256,36 @@ class OpenWaClientTests(SimpleTestCase):
         text = format_contacts([])
         self.assertIn("Cap contacte", text)
         self.assertIn("lletra", text)
+
+    def test_format_contacts_hides_lid_from_human_lines(self):
+        text = format_contacts(
+            [
+                {
+                    "id": "270144886579415@lid",
+                    "name": "Mauro Montenegro",
+                    "number": "",
+                    "_from_chat": True,
+                }
+            ]
+        )
+        self.assertIn("Mauro Montenegro", text)
+        self.assertIn("REF_INTERNA", text)
+        self.assertIn("270144886579415@lid", text)
+        # La línia humana no ha de ser «id=…@lid».
+        human_line = text.splitlines()[0]
+        self.assertIn("Mauro", human_line)
+        self.assertNotIn("@lid", human_line)
+
+    def test_human_whatsapp_dest_never_shows_lid(self):
+        self.assertEqual(
+            human_whatsapp_dest("270144886579415@lid", name="Mauro Montenegro"),
+            "Mauro Montenegro",
+        )
+        self.assertEqual(
+            human_whatsapp_dest("34612345678@c.us", name="Joan"),
+            "Joan (+34612345678)",
+        )
+        self.assertNotIn("@lid", human_whatsapp_dest("999@lid"))
 
     def test_list_contacts_disabled(self):
         client = OpenWaClient(_settings(enabled=False))

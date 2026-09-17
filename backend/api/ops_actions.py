@@ -7,7 +7,7 @@ from typing import Any
 from api.igeo.config import get_igeo_settings, is_igeo_enabled
 from api.igeo.payloads import build_cliente_potencial
 from api.igeo.sync import publish_entity
-from api.openwa import OpenWaClient, OpenWaError
+from api.openwa import OpenWaClient, OpenWaError, human_whatsapp_dest
 from api.ops_email import send_ops_email
 
 
@@ -33,7 +33,8 @@ def pending_action_dict(action: Any) -> dict[str, Any] | None:
     return {
         "kind": kind,
         "summary": summary[:500],
-        "telefono": str(data.get("telefono") or "").strip()[:40],
+        # chatId @lid pot ser llarg; el mantenim intern (no es mostra al xat).
+        "telefono": str(data.get("telefono") or "").strip()[:80],
         "mensaje": str(data.get("mensaje") or "").strip()[:3500],
         "to_email": str(data.get("to_email") or "").strip()[:200],
         "subject": str(data.get("subject") or "").strip()[:200],
@@ -44,6 +45,27 @@ def pending_action_dict(action: Any) -> dict[str, Any] | None:
         "direccion": str(data.get("direccion") or "").strip()[:400],
         "observaciones": str(data.get("observaciones") or "").strip()[:1000],
     }
+
+
+def human_pending_dest(action: dict[str, Any] | None) -> str:
+    """Nom + telèfon per al xat; amaga @lid."""
+    if not action:
+        return "el contacte"
+    name = str(action.get("nombre") or "").strip()
+    if not name:
+        # Fallback: «WhatsApp a Mauro Montenegro: …» / «Salut Mauro».
+        summary = str(action.get("summary") or "").strip()
+        for prefix in ("WhatsApp a ", "WhatsApp a", "Salut a ", "Saludo a ", "Salut ", "a "):
+            if summary.lower().startswith(prefix.lower()):
+                rest = summary[len(prefix) :].strip()
+                name = rest.split(":")[0].strip()
+                break
+        if name and ("@" in name or len(name) > 80):
+            name = ""
+    return human_whatsapp_dest(
+        str(action.get("telefono") or ""),
+        name=name,
+    )
 
 
 def execute_confirmed_action(action: dict[str, Any], *, conversation_id: int | None = None) -> str:
@@ -83,9 +105,10 @@ def _exec_whatsapp(action: dict[str, Any]) -> str:
         return f"Error OpenWA: {exc}"
     if not result.ok:
         return f"No enviat: {result.message}"
+    dest = human_pending_dest(action)
     if result.dry_run:
-        return f"DRY-RUN (no enviat de veritat): {result.message}"
-    return f"WhatsApp enviat a {telefono}. {result.message}"
+        return f"DRY-RUN (no enviat de veritat) a {dest}: {result.message}"
+    return f"WhatsApp enviat a {dest}."
 
 
 def _exec_email(action: dict[str, Any]) -> str:

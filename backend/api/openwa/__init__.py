@@ -5,6 +5,7 @@ from .client import (
     OpenWaError,
     OpenWaSendResult,
     format_contacts,
+    human_whatsapp_dest,
     status_summary,
     to_whatsapp_chat_id,
 )
@@ -17,6 +18,7 @@ __all__ = [
     "OpenWaSettings",
     "format_contacts",
     "get_openwa_settings",
+    "human_whatsapp_dest",
     "is_openwa_enabled",
     "status_summary",
     "to_whatsapp_chat_id",

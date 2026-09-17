@@ -73,8 +73,9 @@ class AdminOpsChatApiTests(APITestCase):
             message="He trobat en Mauro.",
             pending_action=OpsPendingAction(
                 kind="whatsapp",
-                summary="WhatsApp a Mauro",
+                summary="WhatsApp a Mauro Montenegro",
                 telefono="270144886579415@lid",
+                nombre="Mauro Montenegro",
                 mensaje="",
             ),
         )
@@ -88,7 +89,10 @@ class AdminOpsChatApiTests(APITestCase):
         self.assertIsNone(res.data.get("pending_action"))
         conv.refresh_from_db()
         self.assertEqual(conv.pending_action["telefono"], "270144886579415@lid")
-        self.assertIn("sí", res.data["assistant_message"]["content"].casefold())
+        content = res.data["assistant_message"]["content"]
+        self.assertIn("sí", content.casefold())
+        self.assertIn("Mauro", content)
+        self.assertNotIn("@lid", content)
 
     @patch("api.ops_actions.OpenWaClient")
     def test_chat_si_sends_pending_whatsapp(self, mock_client_cls):
@@ -105,6 +109,7 @@ class AdminOpsChatApiTests(APITestCase):
                 "kind": "whatsapp",
                 "summary": "Salut Mauro",
                 "telefono": "270144886579415@lid",
+                "nombre": "Mauro Montenegro",
                 "mensaje": "Hola Mauro",
             },
         )
@@ -114,7 +119,10 @@ class AdminOpsChatApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(res.status_code, 201)
-        self.assertIn("enviat", res.data["assistant_message"]["content"].casefold())
+        content = res.data["assistant_message"]["content"]
+        self.assertIn("enviat", content.casefold())
+        self.assertIn("Mauro", content)
+        self.assertNotIn("@lid", content)
         client.send_text.assert_called_once()
         conv.refresh_from_db()
         self.assertIsNone(conv.pending_action)

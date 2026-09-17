@@ -503,6 +503,41 @@ class OpenWaClient:
         )
 
 
+def format_e164_display(digits: str) -> str:
+    """Mostra un número llegible (+prefix) sense ids tècnics."""
+    d = re.sub(r"\D", "", digits or "")
+    if not d:
+        return ""
+    return f"+{d}"
+
+
+def human_whatsapp_dest(
+    phone_or_id: str,
+    *,
+    name: str = "",
+) -> str:
+    """Etiqueta humana per al xat: nom i/o telèfon. Mai mostra @lid / @c.us."""
+    label = (name or "").strip()
+    raw = (phone_or_id or "").strip()
+    if not raw and not label:
+        return "el contacte"
+    if "@" in raw:
+        local, _, host = raw.partition("@")
+        host_l = host.lower().split("/", 1)[0]
+        if host_l in ("c.us", "s.whatsapp.net"):
+            tel = format_e164_display(local)
+            if label and tel:
+                return f"{label} ({tel})"
+            return label or tel or "el contacte"
+        # @lid u altres: només nom (el LID no és útil per a l'operari).
+        return label or "contacte WhatsApp"
+    digits = re.sub(r"\D", "", raw)
+    tel = format_e164_display(digits) if digits else ""
+    if label and tel:
+        return f"{label} ({tel})"
+    return label or tel or raw
+
+
 def format_contacts(contacts: list[dict[str, Any]], *, max_rows: int = 20) -> str:
     if not contacts:
         return (
@@ -511,23 +546,32 @@ def format_contacts(contacts: list[dict[str, Any]], *, max_rows: int = 20) -> st
             "o cerca profunda (deep=true) si cal escanejar tota l'agenda."
         )
     lines: list[str] = []
-    for row in contacts[:max_rows]:
+    refs: list[str] = []
+    for idx, row in enumerate(contacts[:max_rows], start=1):
         name = (row.get("name") or row.get("pushName") or "—").strip() or "—"
-        number = (row.get("number") or "").strip() or "—"
-        cid = (row.get("id") or "").strip() or "—"
+        number = (row.get("number") or "").strip()
+        cid = (row.get("id") or "").strip()
+        tel_disp = format_e164_display(number) if number else "—"
         if row.get("_from_chat"):
             origen = "xat-recent"
         else:
             origen = "agenda" if row.get("isMyContact") else "wa"
         blocked = "bloquejat" if row.get("isBlocked") else "ok"
-        # Per enviar: preferir id= (funciona amb @c.us i @lid).
-        lines.append(f"{name} | tel={number} | id={cid} | origen={origen} | {blocked}")
+        # Vista humana: nom + telèfon (sense @lid).
+        lines.append(f"{idx}. {name} | tel={tel_disp} | origen={origen} | {blocked}")
+        if cid:
+            refs.append(f"{idx}→{cid}")
     extra = len(contacts) - max_rows
     if extra > 0:
         lines.append(f"… i {extra} més (refina la cerca).")
-    if any(r.get("_from_chat") for r in contacts[:max_rows]):
+    if refs:
         lines.append(
-            "Per enviar, usa el camp id=… (@c.us o @lid) a pending_action.telefono."
+            "REF_INTERNA (només per pending_action.telefono; MAI la posis al message de l'operari): "
+            + "; ".join(refs)
+        )
+        lines.append(
+            "Al message parla només amb nom i telèfon (+…). "
+            "Si tel=—, digues el nom (xat recent) sense inventar número."
         )
     return "\n".join(lines)
 

@@ -12,25 +12,24 @@ import {
   SquarePen,
   Trash2,
   X,
-  Volume2,
-  VolumeX,
   Sun,
   Moon,
 } from 'lucide-react';
 import {
   useCreateOpsConversationMutation,
   useCreateOpsNoteMutation,
+  useCreateOpsRealtimeSessionMutation,
   useDeleteOpsConversationMutation,
   useDeleteOpsNoteMutation,
   useGetOpsConversationQuery,
   useGetOpsConversationsQuery,
   useGetOpsModelsQuery,
   useGetOpsNotesQuery,
+  useRunOpsRealtimeToolMutation,
+  useSaveOpsRealtimeTranscriptMutation,
   useSendOpsMessageMutation,
-  useSendOpsVoiceMutation,
 } from '@/store/apis/opsChatApi';
-import useVoiceRecorder from '@/hooks/useVoiceRecorder';
-import VoiceWaveform from '@/components/Admin/VoiceWaveform';
+import OpsVoiceMode from '@/components/Admin/OpsVoiceMode';
 import ConfirmModal from '@/components/Admin/ConfirmModal';
 
 const SUGGESTIONS = [
@@ -43,7 +42,6 @@ const SUGGESTIONS = [
   'Prepara una ordre per demà a les 7:30',
 ];
 
-const TTS_KEY = 'cecsa_ops_tts';
 const MODEL_KEY = 'cecsa_ops_model';
 
 function formatTime(iso) {
@@ -65,13 +63,7 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
   const [draft, setDraft] = useState('');
   const [search, setSearch] = useState('');
   const [notesOpen, setNotesOpen] = useState(true);
-  const [ttsEnabled, setTtsEnabled] = useState(() => {
-    try {
-      return window.localStorage.getItem(TTS_KEY) === 'true';
-    } catch {
-      return false;
-    }
-  });
+  const [voiceOpen, setVoiceOpen] = useState(false);
   const [modelId, setModelId] = useState(() => {
     try {
       return window.localStorage.getItem(MODEL_KEY) || '';
@@ -96,27 +88,26 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
   const { data: conversations = [], isLoading: listLoading } = useGetOpsConversationsQuery(
     search ? { q: search } : undefined,
   );
-  const { data: thread, isFetching: threadLoading } = useGetOpsConversationQuery(activeId, {
+  const { data: thread, isFetching: threadLoading, refetch: refetchThread } = useGetOpsConversationQuery(activeId, {
     skip: !activeId,
   });
   const { data: globalNotes = [] } = useGetOpsNotesQuery({ scope: 'global' });
   const [createConv, { isLoading: creating }] = useCreateOpsConversationMutation();
   const [sendMessage, { isLoading: sending }] = useSendOpsMessageMutation();
-  const [sendVoice, { isLoading: sendingVoice }] = useSendOpsVoiceMutation();
+  const [createRealtimeSession] = useCreateOpsRealtimeSessionMutation();
+  const [runRealtimeTool] = useRunOpsRealtimeToolMutation();
+  const [saveRealtimeTranscript] = useSaveOpsRealtimeTranscriptMutation();
   const [deleteConv] = useDeleteOpsConversationMutation();
   const [createNote] = useCreateOpsNoteMutation();
   const [deleteNote] = useDeleteOpsNoteMutation();
 
   const messages = thread?.messages || [];
   const notes = thread?.notes || [];
-  const busy = sending || sendingVoice || creating;
-  const voice = useVoiceRecorder();
+  const busy = sending || creating;
 
   const showPendingUser =
     Boolean(pendingUser) &&
-    (pendingUser.source === 'voice'
-      ? busy
-      : !messages.some((m) => m.role === 'user' && m.content === pendingUser.content));
+    !messages.some((m) => m.role === 'user' && m.content === pendingUser.content);
 
   const modelOptions = modelCatalog?.models || [];
   const allowedIds = modelOptions.map((m) => m.id);
@@ -141,25 +132,6 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
     return created.id;
   };
 
-  const toggleTts = () => {
-    setTtsEnabled((prev) => {
-      const next = !prev;
-      try {
-        window.localStorage.setItem(TTS_KEY, next ? 'true' : 'false');
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
-  };
-
-  const playAssistantAudio = (b64) => {
-    if (!b64) return;
-    const src = `data:audio/mpeg;base64,${b64}`;
-    const audio = new Audio(src);
-    audio.play().catch(() => {});
-  };
-
   useEffect(() => {
     if (!listRef.current) return;
     listRef.current.scrollTop = listRef.current.scrollHeight;
@@ -168,16 +140,12 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
   // Quitar el optimista cuando el fil del servidor ya incluye la pregunta.
   useEffect(() => {
     if (!pendingUser) return;
-    if (pendingUser.source === 'voice') {
-      if (!busy) setPendingUser(null);
-      return;
-    }
     if (!messages.length) return;
     const lastUser = [...messages].reverse().find((m) => m.role === 'user');
     if (lastUser?.content === pendingUser.content) {
       setPendingUser(null);
     }
-  }, [messages, pendingUser, busy]);
+  }, [messages, pendingUser]);
 
   const submit = async (raw) => {
     const text = (raw ?? draft).trim();
@@ -198,37 +166,22 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
     }
   };
 
-  const toggleVoice = async () => {
+  const openVoiceMode = () => {
     if (busy) return;
-    if (voice.recording) {
-      const blob = await voice.stop();
-      if (!blob || blob.size < 800) return;
-      setPendingUser({ content: 'Missatge de veu…', source: 'voice' });
-      try {
-        const convId = await ensureConversation();
-        const file = new File([blob], 'nota.webm', { type: blob.type || 'audio/webm' });
-        const result = await sendVoice({
-          id: convId,
-          audio: file,
-          language: 'ca',
-          speak: ttsEnabled,
-          model: selectedModel,
-        }).unwrap();
-        if (ttsEnabled) playAssistantAudio(result?.assistant_audio_base64);
-      } catch {
-        setPendingUser(null);
-      }
+    if (!window.isSecureContext && window.location.hostname !== 'localhost') {
+      window.alert('Cal HTTPS (o localhost) per al mode veu.');
       return;
     }
-    if (!voice.supported) {
-      window.alert('El navegador no permet gravar àudio. Prova Chrome o Edge amb HTTPS.');
+    if (!navigator.mediaDevices?.getUserMedia) {
+      window.alert('El navegador no permet micròfon. Prova Chrome o Edge.');
       return;
     }
-    try {
-      await voice.start();
-    } catch {
-      window.alert('Cal permís de micròfon per parlar amb l’assistent.');
-    }
+    setVoiceOpen(true);
+  };
+
+  const closeVoiceMode = () => {
+    setVoiceOpen(false);
+    if (activeId) refetchThread();
   };
 
   const handleNewChat = () => {
@@ -333,46 +286,38 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (!voice.recording) submit();
+          submit();
         }}
         className="flex items-end gap-2 rounded-3xl border border-admin-border bg-admin-card p-2 shadow-lg shadow-primary-blue/5"
       >
-        {voice.recording ? (
-          <VoiceWaveform levels={voice.levels} active />
-        ) : (
-          <textarea
-            ref={inputRef}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                submit();
-              }
-            }}
-            rows={1}
-            placeholder="Escriu, o prem el micròfon i parla — s’envia sol"
-            className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-admin-text outline-none"
-            data-lenis-prevent
-          />
-        )}
+        <textarea
+          ref={inputRef}
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              submit();
+            }
+          }}
+          rows={1}
+          placeholder="Escriu un missatge, o obre el mode veu"
+          className="max-h-40 min-h-[44px] flex-1 resize-none bg-transparent px-3 py-2.5 text-[15px] text-admin-text outline-none"
+          data-lenis-prevent
+        />
         <button
           type="button"
-          onClick={toggleVoice}
+          onClick={openVoiceMode}
           disabled={busy}
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl transition-colors ${
-            voice.recording
-              ? 'bg-red-500 text-white shadow-[0_0_0_4px_rgba(239,68,68,0.25)]'
-              : 'bg-admin-muted text-admin-text hover:bg-primary-blue/10 hover:text-primary-blue'
-          }`}
-          title={voice.recording ? 'Atura i envia' : 'Parlar amb l’assistent'}
-          aria-label={voice.recording ? 'Atura i envia' : 'Micròfon'}
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--primary-blue)] text-white hover:opacity-90 disabled:opacity-40"
+          title="Mode veu (com ChatGPT)"
+          aria-label="Mode veu"
         >
           <Mic size={18} />
         </button>
         <button
           type="submit"
-          disabled={busy || voice.recording || !draft.trim()}
+          disabled={busy || !draft.trim()}
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent-green)] text-white disabled:opacity-40"
           aria-label="Enviar"
         >
@@ -380,9 +325,7 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
         </button>
       </form>
       <p className="mt-2 text-center text-[11px] text-admin-text-muted">
-        {voice.recording
-          ? 'Gravant… torna a prémer el micròfon per enviar-ho a l’assistent'
-          : 'Assistent intern · la veu s’envia directament, sense passar pel recuadre'}
+        Assistent intern · el micròfon obre conversa de veu contínua (Realtime)
       </p>
     </div>
   );
@@ -513,15 +456,6 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
             </button>
             <button
               type="button"
-              onClick={toggleTts}
-              className={`rounded-xl p-2 ${ttsEnabled ? 'bg-[var(--primary-blue)] text-white' : 'text-admin-text-muted hover:bg-admin-muted'}`}
-              title={ttsEnabled ? 'Resposta en veu activada' : 'Resposta en veu desactivada'}
-              aria-pressed={ttsEnabled}
-            >
-              {ttsEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}
-            </button>
-            <button
-              type="button"
               onClick={() => setNotesOpen((v) => !v)}
               className={`rounded-xl p-2 ${notesOpen ? 'bg-[var(--primary-blue)] text-white' : 'text-admin-text-muted hover:bg-admin-muted'}`}
               title="Notes importants"
@@ -620,7 +554,7 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
               {busy ? (
                 <div className="flex justify-start">
                   <div className="rounded-2xl border border-admin-border bg-admin-card px-4 py-3 text-sm text-admin-text-muted">
-                    {sendingVoice ? 'Processant la veu…' : 'Pensant…'}
+                    Pensant…
                   </div>
                 </div>
               ) : null}
@@ -755,6 +689,19 @@ const AdminOpsChat = ({ user, onOpenSidebar, isDark, toggleTheme }) => {
         variant="danger"
         isLoading={isDeletingNote}
         error={deleteNoteError}
+      />
+
+      <OpsVoiceMode
+        open={voiceOpen}
+        conversationId={activeId}
+        language="ca"
+        createSession={async (body) => createRealtimeSession(body).unwrap()}
+        runTool={async (body) => runRealtimeTool(body).unwrap()}
+        saveTranscript={async (body) => saveRealtimeTranscript(body).unwrap()}
+        onConversationId={(id) => {
+          if (id && id !== activeId) setActiveId(id);
+        }}
+        onClose={closeVoiceMode}
       />
     </div>
   );

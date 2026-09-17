@@ -46,20 +46,31 @@ class OpsPendingAction(BaseModel):
 
     kind: str = Field(description="whatsapp | email | igeo_lead")
     summary: str = Field(description="Resumen corto para el modal de confirmación.")
-    telefono: str = Field(default="", description="Móvil / chatId para WhatsApp o lead.")
+    telefono: str = Field(
+        default="",
+        description="Móvil o chatId interno (@c.us/@lid). Nunca lo pegues en message.",
+    )
     mensaje: str = Field(default="", description="Texto WhatsApp.")
     to_email: str = Field(default="", description="Destinatario email.")
     subject: str = Field(default="", description="Asunto email.")
     body: str = Field(default="", description="Cuerpo email.")
     cc: str = Field(default="", description="CC email, coma-separados.")
-    nombre: str = Field(default="", description="Nombre lead iGEO.")
+    nombre: str = Field(
+        default="",
+        description="Nombre visible del contacto WhatsApp o lead iGEO.",
+    )
     email: str = Field(default="", description="Email lead iGEO.")
     direccion: str = Field(default="", description="Dirección lead iGEO.")
     observaciones: str = Field(default="", description="Observaciones lead iGEO.")
 
 
 class OpsAgentOutput(BaseModel):
-    message: str = Field(description="Resposta per a l'operari, en català o castellà segons el missatge.")
+    message: str = Field(
+        description=(
+            "Resposta per a l'operari. Només nom i telèfon llegible (+…); "
+            "MAI ids tècnics (@lid, @c.us, REF_INTERNA)."
+        ),
+    )
     suggested_title: Optional[str] = Field(
         default=None,
         description="Títol curt de la conversa (màx 60 caràcters) si encara no en té.",
@@ -74,8 +85,8 @@ class OpsAgentOutput(BaseModel):
     pending_action: Optional[OpsPendingAction] = Field(
         default=None,
         description=(
-            "Para WhatsApp/email/lead: kind+summary+datos. telefono puede ser id @c.us/@lid. "
-            "NO llames send_*. El operario confirma escribiendo «sí» en el chat."
+            "WhatsApp/email/lead: kind+summary+datos. telefono=REF_INTERNA (id). "
+            "nombre=nombre humano. NO llames send_*. Confirmación con «sí» en el chat."
         ),
     )
 
@@ -127,8 +138,9 @@ def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
     if deps is None or not deps.side_effects_allowed:
         return (
             "BLOQUEJAT: els enviaments només s'executen quan l'operari escriu «sí» al xat. "
-            "Omple pending_action (kind, summary, telefono=id @c.us/@lid, mensaje si el tens) "
-            "i demana confirmació al message. NO tornis a cridar aquesta eina."
+            "Omple pending_action (kind, summary, telefono=REF_INTERNA, nombre=nom humà, "
+            "mensaje si el tens) i demana confirmació al message sense ids tècnics. "
+            "NO tornis a cridar aquesta eina."
         )
     return None
 
@@ -136,20 +148,20 @@ def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
 _CONFIRM_RULES_ES = (
     "FRENO OBLIGATORIO: NUNCA ejecutes send_whatsapp, send_email ni igeo_create_lead en el chat. "
     "Esas tools están bloqueadas. Para enviar: busca si hace falta, rellena pending_action "
-    "(kind, summary, telefono=id del contacto `@c.us` o `@lid`, mensaje si ya lo tienes) "
+    "(kind, summary, telefono=REF_INTERNA/id, nombre=nombre humano, mensaje si ya lo tienes) "
     "y en message pide confirmación EN EL CHAT: el operario escribirá «sí» o «cancel·la». "
     "NO digas 'Desa com a nota' ni menciones modales. "
-    "El id `@lid` es normal en WhatsApp (privacidad); úsalo como telefono sin alarmar. "
+    "PRIVACIDAD UX: en message NUNCA muestres @lid, @c.us ni REF_INTERNA; solo nombre y teléfono (+…). "
     "important_notes: vacío salvo petición explícita de recordar/guardar nota. "
 )
 
 _CONFIRM_RULES_CA = (
     "FRE DE SEGURETAT: MAI executis send_whatsapp, send_email ni igeo_create_lead al xat. "
     "Aquestes eines estan bloquejades. Per enviar: cerca si cal, omple pending_action "
-    "(kind, summary, telefono=id del contacte `@c.us` o `@lid`, mensaje si ja el tens) "
+    "(kind, summary, telefono=REF_INTERNA/id, nombre=nom humà, mensaje si ja el tens) "
     "i al message demana confirmació AL XAT: l'operari escriurà «sí» o «cancel·la». "
     "NO diguis 'Desa com a nota' ni parlis de modals. "
-    "L'id `@lid` és normal a WhatsApp (privacitat); fes-lo servir com a telefono sense alarmar. "
+    "UX: al message MAI mostris @lid, @c.us ni REF_INTERNA; només nom i telèfon (+…). "
     "important_notes: buit tret de petició explícita de recordar/desar nota. "
 )
 
@@ -468,13 +480,23 @@ def run_ops_agent(
     language: str = "ca",
     model: str | None = None,
     memory_notes: list[str] | None = None,
+    source: str = "text",
 ) -> OpsAgentOutput:
     """Invoca l'LLM intern. L'historial es passa com a context (no és el xat públic)."""
-    prior = _history_block(history)
+    via_voice = (source or "").strip().lower() == "voice"
+    # Veu: menys context = menys tokens = menys latència.
+    hist_slice = history[-6:] if via_voice else history
+    prior = _history_block(hist_slice)
     notes = _memory_notes_block(memory_notes)
-    rag = _ops_rag_block(user_message)
+    # RAG és lent i rarament útil en ordres de veu curtes («envia WhatsApp a…»).
+    rag = "" if via_voice else _ops_rag_block(user_message)
     prompt = user_message.strip()
     parts: list[str] = []
+    if via_voice:
+        parts.append(
+            "ENTRADA PER VEU: respon en 1–3 frases curtes. "
+            "Només nom i telèfon (+…); zero ids tècnics."
+        )
     if rag:
         parts.append(
             "Coneixement intern (RAG — procediments iGEO/PDI; no són dades de clients):\n"

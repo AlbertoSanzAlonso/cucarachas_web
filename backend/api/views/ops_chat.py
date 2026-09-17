@@ -114,9 +114,9 @@ def _persist_turn(*, conv, user_msg, reply: str, source: str, speak: bool, langu
     audio_b64 = None
     if speak:
         try:
-            from api.agents.ops.voice import synthesize_speech
+            from api.agents.ops.voice import synthesize_speech, text_for_tts
 
-            audio_b64 = synthesize_speech(reply, language=language)
+            audio_b64 = synthesize_speech(text_for_tts(reply), language=language)
         except Exception:
             audio_b64 = None
     return {
@@ -134,7 +134,7 @@ def _persist_turn(*, conv, user_msg, reply: str, source: str, speak: bool, langu
 
 def _handle_pending_chat_flow(*, conv, user_msg, text: str, source: str, speak: bool, language: str, model) -> dict | None:
     """Confirmación / cancelación / captura de texto por chat (sin modal ni LLM)."""
-    from api.ops_actions import execute_confirmed_action, pending_action_dict
+    from api.ops_actions import execute_confirmed_action, human_pending_dest, pending_action_dict
 
     pending = pending_action_dict(getattr(conv, "pending_action", None))
     if not pending:
@@ -183,7 +183,7 @@ def _handle_pending_chat_flow(*, conv, user_msg, text: str, source: str, speak: 
         body = (text or "").strip()
         if len(body) >= 2:
             pending["mensaje"] = body[:3500]
-            dest = pending.get("telefono") or "el contacte"
+            dest = human_pending_dest(pending)
             pending["summary"] = f"WhatsApp a {dest}: {body[:80]}"
             conv.pending_action = pending
             preview = body if len(body) <= 280 else body[:277] + "…"
@@ -191,7 +191,7 @@ def _handle_pending_chat_flow(*, conv, user_msg, text: str, source: str, speak: 
                 conv=conv,
                 user_msg=user_msg,
                 reply=(
-                    f"Missatge preparat per a WhatsApp:\n«{preview}»\n\n"
+                    f"Missatge preparat per a {dest}:\n«{preview}»\n\n"
                     "Escriu «sí» per enviar-lo o «cancel·la» per descartar."
                 ),
                 source=source,
@@ -259,6 +259,7 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             language=language,
             model=model,
             memory_notes=memory_notes,
+            source=source,
         )
         reply = (output.message or "").strip() or "Sense resposta."
         if output.suggested_title and not conv.title:
@@ -274,9 +275,11 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
             ):
                 pending["mensaje"] = "Hola! Et saluda CECSA Control de Plagues."
             conv.pending_action = pending
-            # Guia clara al xat (sense modal).
+            # Guia clara al xat (sense modal); destí humà (nom/tel, sense @lid).
+            from api.ops_actions import human_pending_dest
+
             if pending.get("kind") == "whatsapp":
-                dest = pending.get("telefono") or "el contacte"
+                dest = human_pending_dest(pending)
                 msg = (pending.get("mensaje") or "").strip()
                 if msg:
                     reply = (
@@ -287,7 +290,8 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
                 else:
                     reply = (
                         f"{reply.rstrip()}\n\n"
-                        "Escriu ara el text del WhatsApp. Després digues «sí» per enviar."
+                        f"Escriu ara el text del WhatsApp per a {dest}. "
+                        "Després digues «sí» per enviar."
                     )
         else:
             conv.pending_action = None
@@ -354,7 +358,8 @@ def _run_ops_turn(*, conv, user, text: str, language: str, source: str = "text",
     )
 
 
-class AdminConversationViewSet(viewsets.ModelViewSet):
+class AdminConversationViewSet(viewsets.ModelViewSet[AdminConversation]):
+    queryset = AdminConversation.objects.all()
     permission_classes = [IsAuthenticated]
     parser_classes = [JSONParser, MultiPartParser, FormParser]
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
@@ -494,7 +499,8 @@ class AdminConversationViewSet(viewsets.ModelViewSet):
         return Response(payload, status=status.HTTP_201_CREATED)
 
 
-class AdminMemoryNoteViewSet(viewsets.ModelViewSet):
+class AdminMemoryNoteViewSet(viewsets.ModelViewSet[AdminMemoryNote]):
+    queryset = AdminMemoryNote.objects.all()
     permission_classes = [IsAuthenticated]
     serializer_class = AdminMemoryNoteSerializer
     http_method_names = ["get", "post", "patch", "delete", "head", "options"]
@@ -533,4 +539,119 @@ def list_ops_models(request):
             "default": resolve_ops_model(AGENT_MODEL),
             "models": list(OPS_AGENT_MODELS),
         }
+    )
+
+
+def _ops_conv_for_user(user, conversation_id) -> AdminConversation | None:
+    if not conversation_id:
+        return None
+    try:
+        cid = int(conversation_id)
+    except (TypeError, ValueError):
+        return None
+    return AdminConversation.objects.filter(user=user, pk=cid).first()
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def ops_realtime_session(request):
+    """Crea clau efímera OpenAI Realtime + assegura conversa (mai exposa OPENAI_API_KEY)."""
+    from api.agents.ops.realtime_session import RealtimeSessionError, create_ephemeral_client_secret
+    from django.utils import timezone
+
+    language = (request.data.get("language") or "ca").strip().lower()
+    if language not in ("ca", "es"):
+        language = "ca"
+
+    conv = _ops_conv_for_user(request.user, request.data.get("conversation_id"))
+    if conv is None:
+        conv = AdminConversation.objects.create(
+            user=request.user,
+            title=(request.data.get("title") or "").strip()[:200] or "Veu",
+        )
+
+    try:
+        secret = create_ephemeral_client_secret(language=language, user_id=request.user.pk)
+    except RealtimeSessionError as exc:
+        return Response({"detail": str(exc)}, status=status.HTTP_502_BAD_GATEWAY)
+    except Exception as exc:
+        return Response(
+            {"detail": f"Error Realtime: {exc}"},
+            status=status.HTTP_502_BAD_GATEWAY,
+        )
+
+    if not conv.title:
+        conv.title = "Veu"
+        conv.save(update_fields=["title", "updated_at"])
+
+    return Response(
+        {
+            "conversation_id": conv.pk,
+            "client_secret": secret["client_secret"],
+            "expires_at": secret.get("expires_at"),
+            "model": secret.get("model"),
+            "voice": secret.get("voice"),
+            "created_at": timezone.now().isoformat(),
+        }
+    )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def ops_realtime_tool(request):
+    """Executa una tool Realtime al servidor (CRM / WA / pending)."""
+    from api.agents.ops.realtime_session import execute_realtime_tool
+
+    conv = _ops_conv_for_user(request.user, request.data.get("conversation_id"))
+    if conv is None:
+        return Response({"detail": "Conversa no trobada."}, status=status.HTTP_404_NOT_FOUND)
+
+    name = (request.data.get("name") or "").strip()
+    if not name:
+        return Response({"detail": "Falta name de la tool."}, status=status.HTTP_400_BAD_REQUEST)
+
+    arguments = request.data.get("arguments")
+    try:
+        result = execute_realtime_tool(name, arguments, conversation=conv)
+    except Exception as exc:
+        return Response(
+            {"detail": f"Error executant {name}: {exc}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+    return Response({"name": name, "output": result})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def ops_realtime_transcript(request):
+    """Persisteix un torn de veu (user/assistant) al fil de la conversa."""
+    conv = _ops_conv_for_user(request.user, request.data.get("conversation_id"))
+    if conv is None:
+        return Response({"detail": "Conversa no trobada."}, status=status.HTTP_404_NOT_FOUND)
+
+    role = (request.data.get("role") or "").strip().lower()
+    if role not in ("user", "assistant"):
+        return Response(
+            {"detail": "role ha de ser user o assistant."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+    content = (request.data.get("content") or "").strip()
+    if not content:
+        return Response({"detail": "content buit."}, status=status.HTTP_400_BAD_REQUEST)
+
+    msg = AdminMessage.objects.create(
+        conversation=conv,
+        role=role,
+        content=content[:8000],
+        source="voice",
+    )
+    if not conv.title or conv.title in ("Veu", "Nou xat", ""):
+        conv.title = content[:60]
+    conv.save(update_fields=["title", "updated_at"])
+    return Response(
+        {
+            "conversation_id": conv.pk,
+            "message": AdminMessageSerializer(msg).data,
+        },
+        status=status.HTTP_201_CREATED,
     )

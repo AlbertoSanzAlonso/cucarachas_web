@@ -59,6 +59,10 @@ Este proyecto está diseñado para ser mantenido y evolucionado por agentes de I
 - `OPENWA_API_URL` = `http://openwa:2785/api` (hostname interno Coolify del contenedor)
 - `OPENWA_API_KEY` / `OPENWA_SESSION_ID` = clave y sesión conectada (QR escaneado)
 - `OPENWA_DRY_RUN` = `true` valida el envío sin llamar al contenedor
+- Modo voz Realtime (oficina, experiencia tipo ChatGPT; más caro por minuto que Whisper+TTS):
+  - Usa `OPENAI_API_KEY` (claves efímeras vía `POST /api/ops/realtime/session/`)
+  - `OPS_REALTIME_MODEL` = `gpt-realtime` (opcional)
+  - `OPS_REALTIME_VOICE` = `marin` (opcional)
 - Email SMTP **DonDominio** (citas + presupuestos + asistente oficina `send_email`):
   - `EMAIL_HOST` = `smtp.dondominio.com`
   - `EMAIL_PORT` = `587`
@@ -164,7 +168,7 @@ Respuesta JSON: `{ reply, slots, booking_confirmed, booking_uid }`.
 ### Admin Dashboard (`/frontend/src/pages/AdminDashboard.jsx`)
 
 - **Orquestador**: `AdminDashboard.jsx` — pestanyes `ops` | `overview` | `leads` | `calendar` | `mail` via `activeTab` + `Sidebar` / `TopBar`.
-- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Backend: `api/agents/ops/`. Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). Micròfon (onda → Whisper intern; TTS opcional). WhatsApp via OpenWA (`search_whatsapp_contacts`, `send_whatsapp`, env `OPENWA_*`). Email via SMTP Django (`email_status`, `send_email`, env `EMAIL_*` / `OPS_EMAIL_DRY_RUN`). **Confirmació per xat**: WhatsApp/email/lead → `pending_action` guardat a la conversa; l'operari escriu «sí» / «cancel·la» (sense modal). **RAG operatiu** (`audience=ops` a `TechnicalKnowledge`): procediments iGEO/PDI via `sync_ops_knowledge` + tool `search_ops_knowledge`; dades vives segueixen a espill/CRM (no vectors).
+- **Assistent oficina**: pestanya `ops` (`AdminOpsChat.jsx`) — xat intern (no Bio-Assistent web). Backend: `api/agents/ops/`. Historial `AdminConversation` / notes `AdminMemoryNote`. API auth `/api/ops/conversations/` i `/api/ops/notes/`. Selector de model (`GET /api/ops/models/`). **Mode veu Realtime** (overlay tipus ChatGPT): micròfon → WebRTC + clau efímera (`POST /api/ops/realtime/session/`); tools al servidor (`/api/ops/realtime/tool/`); transcript (`/api/ops/realtime/transcript/`). WhatsApp via OpenWA (`search_whatsapp_contacts`, env `OPENWA_*`). Email via SMTP Django (`email_status`, env `EMAIL_*` / `OPS_EMAIL_DRY_RUN`). **Confirmació per veu/xat**: WhatsApp/email/lead → `pending_action`; l'operari diu/escriu «sí» / «cancel·la» (sense modal; tools `prepare_*` + `confirm_pending_action`). **RAG operatiu** (`audience=ops` a `TechnicalKnowledge`): procediments iGEO/PDI via `sync_ops_knowledge` + tool `search_ops_knowledge`; dades vives segueixen a espill/CRM (no vectors).
 - **Leads CRM**: `GET /api/clientes/` via RTK Query (`leadsApi.js` → `baseApi.js`). Requiere **`IsAuthenticated`** + cabecera `Authorization: Token <key>`.
 - **Model API `Cliente`**: PK técnica `id`; **clave de negocio** `telefono_norm` (últimos 9 dígitos, `unique`). Campos: `nombre`, `email` (opcional), `telefono`, `documento_fiscal`, `created_at`. Dedup: `api/phone_utils.py` → `normalize_phone()`, `upsert_cliente_by_phone()`. **No** usar `name` / `pest_type` / `status` en UI sin normalizar (`leadDisplay.js`).
 - **Cites per lead**: `frontend/src/utils/leadBookings.js` — empareja citas de agenda por teléfono (y email); pàgina `LeadBookingsPage.jsx`; hook `useAgendaBookings` → `/api/agenda/appointments`.

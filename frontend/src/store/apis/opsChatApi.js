@@ -84,6 +84,42 @@ export const opsChatApi = baseApi.injectEndpoints({
         { type: 'OpsNotes', id: `conv-${id}` },
       ],
     }),
+    createOpsRealtimeSession: builder.mutation({
+      query: (body) => ({
+        url: 'ops/realtime/session/',
+        method: 'POST',
+        body: body || {},
+      }),
+      invalidatesTags: [{ type: 'OpsConversations', id: 'LIST' }],
+    }),
+    runOpsRealtimeTool: builder.mutation({
+      query: (body) => ({
+        url: 'ops/realtime/tool/',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_r, _e, body) =>
+        body?.conversation_id
+          ? [
+              { type: 'OpsConversations', id: body.conversation_id },
+              { type: 'OpsConversations', id: 'LIST' },
+            ]
+          : [{ type: 'OpsConversations', id: 'LIST' }],
+    }),
+    saveOpsRealtimeTranscript: builder.mutation({
+      query: (body) => ({
+        url: 'ops/realtime/transcript/',
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: (_r, _e, body) =>
+        body?.conversation_id
+          ? [
+              { type: 'OpsConversations', id: body.conversation_id },
+              { type: 'OpsConversations', id: 'LIST' },
+            ]
+          : [{ type: 'OpsConversations', id: 'LIST' }],
+    }),
     getOpsNotes: builder.query({
       query: (params) => {
         const sp = new URLSearchParams();
@@ -146,6 +182,9 @@ export const {
   useDeleteOpsConversationMutation,
   useSendOpsMessageMutation,
   useSendOpsVoiceMutation,
+  useCreateOpsRealtimeSessionMutation,
+  useRunOpsRealtimeToolMutation,
+  useSaveOpsRealtimeTranscriptMutation,
   useGetOpsNotesQuery,
   useCreateOpsNoteMutation,
   useUpdateOpsNoteMutation,
