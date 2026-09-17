@@ -127,6 +127,96 @@ class AdminOpsChatApiTests(APITestCase):
         conv.refresh_from_db()
         self.assertIsNone(conv.pending_action)
 
+    @patch("api.ops_actions.send_ops_email")
+    @patch("api.ops_actions.OpenWaClient")
+    def test_chat_si_sends_batch_whatsapp_and_email(self, mock_client_cls, mock_email):
+        client = mock_client_cls.return_value
+        client.send_text.return_value = type(
+            "R",
+            (),
+            {"ok": True, "dry_run": False, "chat_id": "34600@c.us", "message": "Enviat"},
+        )()
+        mock_email.return_value = type(
+            "E",
+            (),
+            {"ok": True, "dry_run": False, "message": "Enviat a a@test.local", "to_email": "a@test.local"},
+        )()
+        conv = AdminConversation.objects.create(
+            user=self.user,
+            title="Lot",
+            pending_action={
+                "kind": "batch",
+                "summary": "Lot de 2",
+                "items": [
+                    {
+                        "kind": "whatsapp",
+                        "summary": "WA Joan",
+                        "telefono": "34600111222",
+                        "nombre": "Joan",
+                        "mensaje": "Hola Joan",
+                    },
+                    {
+                        "kind": "email",
+                        "summary": "Mail Anna",
+                        "to_email": "a@test.local",
+                        "subject": "Visita",
+                        "body": "Et confirmem la visita.",
+                        "cc": "",
+                    },
+                ],
+            },
+        )
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "sí", "language": "ca"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        content = res.data["assistant_message"]["content"]
+        self.assertIn("2/2", content)
+        self.assertIn("Joan", content)
+        client.send_text.assert_called_once()
+        mock_email.assert_called_once()
+        conv.refresh_from_db()
+        self.assertIsNone(conv.pending_action)
+
+    @patch("api.agents.ops.agent.run_ops_agent")
+    def test_agent_pending_actions_list_stores_batch(self, mock_run):
+        from api.agents.ops.agent import OpsPendingAction
+
+        mock_run.return_value = OpsAgentOutput(
+            message="Preparats els enviaments.",
+            pending_actions=[
+                OpsPendingAction(
+                    kind="email",
+                    summary="Mail 1",
+                    to_email="un@test.local",
+                    subject="A",
+                    body="Cos A",
+                ),
+                OpsPendingAction(
+                    kind="email",
+                    summary="Mail 2",
+                    to_email="dos@test.local",
+                    subject="B",
+                    body="Cos B",
+                ),
+            ],
+        )
+        conv = AdminConversation.objects.create(user=self.user, title="Mails")
+        res = self.client.post(
+            f"/api/ops/conversations/{conv.id}/messages/",
+            {"content": "Envia correu a un@ i dos@", "language": "ca"},
+            format="json",
+        )
+        self.assertEqual(res.status_code, 201)
+        conv.refresh_from_db()
+        self.assertEqual(conv.pending_action["kind"], "batch")
+        self.assertEqual(len(conv.pending_action["items"]), 2)
+        content = res.data["assistant_message"]["content"]
+        self.assertIn("2", content)
+        self.assertIn("sí", content.casefold())
+
     @patch("api.ops_actions.OpenWaClient")
     def test_confirm_action_sends_whatsapp_without_llm(self, mock_client_cls):
         client = mock_client_cls.return_value

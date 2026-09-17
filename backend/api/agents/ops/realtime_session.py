@@ -17,9 +17,12 @@ from api.igeo.config import get_igeo_settings, is_igeo_enabled
 from api.igeo.ingest import format_mirror_hits, mirror_counts, search_mirror
 from api.openwa import OpenWaClient, OpenWaError, format_contacts, is_openwa_enabled, status_summary
 from api.ops_actions import (
+    enqueue_pending_action,
     execute_confirmed_action,
+    first_incomplete_whatsapp,
     human_pending_dest,
     pending_action_dict,
+    pending_items,
 )
 from api.ops_email import email_status_summary, is_smtp_ready
 
@@ -43,7 +46,8 @@ def _instructions(language: str = "ca") -> str:
             "Hablas por voz con personal de oficina, NUNCA con el cliente final. "
             "Sé breve (1–3 frases), operativo y claro. "
             "FRENO: NUNCA envíes WhatsApp, email ni leads sin confirmación. "
-            "Usa prepare_whatsapp / prepare_email / prepare_igeo_lead y pide que digan «sí». "
+            "Usa prepare_whatsapp / prepare_email / prepare_igeo_lead (puedes llamarlas "
+            "varias veces para encolar un lote) y pide que digan «sí» UNA vez para todo. "
             "Cuando digan sí/vale/confirmo → confirm_pending_action. "
             "cancel·la/no → cancel_pending_action. "
             "PRIVACIDAD: habla solo con nombre y teléfono (+…). "
@@ -58,7 +62,8 @@ def _instructions(language: str = "ca") -> str:
         "Parles per veu amb personal d'oficina, MAI amb el client final. "
         "Sigues breu (1–3 frases), operatiu i clar. "
         "FRE: MAI enviïs WhatsApp, email ni leads sense confirmació. "
-        "Fes servir prepare_whatsapp / prepare_email / prepare_igeo_lead i demana «sí». "
+        "Fes servir prepare_whatsapp / prepare_email / prepare_igeo_lead (les pots cridar "
+        "diverses vegades per encuar un lot) i demana «sí» UN cop per a tot. "
         "Quan diguin sí/d'acord/confirmo → confirm_pending_action. "
         "cancel·la/no → cancel_pending_action. "
         "UX: parla només amb nom i telèfon (+…). "
@@ -156,9 +161,9 @@ def realtime_tools_schema() -> list[dict]:
         },
         _tool(
             "prepare_whatsapp",
-            "Prepara un WhatsApp pendent de confirmació verbal («sí»). "
+            "Encuera un WhatsApp pendent (es pot cridar diverses vegades per un lot). "
             "telefono = REF_INTERNA/id o mòbil; nombre = nom humà. "
-            "NO enviïs encara.",
+            "NO enviïs encara; un «sí» confirma tot el lot.",
             {
                 "telefono": {"type": "string"},
                 "nombre": {"type": "string"},
@@ -169,7 +174,8 @@ def realtime_tools_schema() -> list[dict]:
         ),
         _tool(
             "prepare_email",
-            "Prepara un email pendent de confirmació («sí»). NO enviïs encara.",
+            "Encuera un email pendent (es pot cridar diverses vegades per un lot). "
+            "NO enviïs encara; un «sí» confirma tot el lot.",
             {
                 "to_email": {"type": "string"},
                 "subject": {"type": "string"},
@@ -181,7 +187,8 @@ def realtime_tools_schema() -> list[dict]:
         ),
         _tool(
             "prepare_igeo_lead",
-            "Prepara un lead iGEO pendent de confirmació («sí»).",
+            "Encuera un lead iGEO pendent (es pot combinar amb altres prepare_*). "
+            "Un «sí» confirma tot el lot.",
             {
                 "nombre": {"type": "string"},
                 "telefono": {"type": "string"},
@@ -195,13 +202,13 @@ def realtime_tools_schema() -> list[dict]:
         {
             "type": "function",
             "name": "confirm_pending_action",
-            "description": "Executa l'acció pendent quan l'operari confirma («sí»).",
+            "description": "Executa TOTES les accions pendents del lot quan l'operari confirma («sí»).",
             "parameters": empty,
         },
         {
             "type": "function",
             "name": "cancel_pending_action",
-            "description": "Cancel·la l'acció pendent sense enviar res.",
+            "description": "Cancel·la tot el lot pendent sense enviar res.",
             "parameters": empty,
         },
     ]
@@ -363,26 +370,29 @@ def execute_realtime_tool(
         dest_label = human_pending_dest(
             {"telefono": telefono, "nombre": nombre, "summary": summary}
         )
-        pending = pending_action_dict(
+        pending, err = enqueue_pending_action(
+            getattr(conversation, "pending_action", None),
             {
                 "kind": "whatsapp",
                 "summary": summary or f"WhatsApp a {dest_label}",
                 "telefono": telefono,
                 "nombre": nombre,
                 "mensaje": mensaje,
-            }
+            },
         )
-        if not pending:
-            return "No s'ha pogut preparar l'acció WhatsApp."
+        if err or not pending:
+            return err or "No s'ha pogut preparar l'acció WhatsApp."
         conversation.pending_action = pending
         conversation.save(update_fields=["pending_action", "updated_at"])
+        n = len(pending_items(pending))
+        lot = f" ({n} al lot)" if n > 1 else ""
         if mensaje:
             return (
-                f"WhatsApp preparat per a {dest_label}. "
-                f"Text: «{mensaje[:200]}». Digues «sí» per enviar o «cancel·la»."
+                f"WhatsApp preparat per a {dest_label}{lot}. "
+                f"Text: «{mensaje[:200]}». Digues «sí» per enviar tot o «cancel·la»."
             )
         return (
-            f"Destinatari {dest_label} preparat. "
+            f"Destinatari {dest_label} preparat{lot}. "
             "Digues el text del missatge i després «sí», o crida prepare_whatsapp amb mensaje."
         )
 
@@ -394,7 +404,8 @@ def execute_realtime_tool(
         summary = str(args.get("summary") or "").strip()
         if not to_email or not subject or not body:
             return "Cal to_email, subject i body per preparar el correu."
-        pending = pending_action_dict(
+        pending, err = enqueue_pending_action(
+            getattr(conversation, "pending_action", None),
             {
                 "kind": "email",
                 "summary": summary or f"Email a {to_email}: {subject[:60]}",
@@ -402,20 +413,23 @@ def execute_realtime_tool(
                 "subject": subject,
                 "body": body,
                 "cc": cc,
-            }
+            },
         )
-        if not pending:
-            return "No s'ha pogut preparar el correu."
+        if err or not pending:
+            return err or "No s'ha pogut preparar el correu."
         conversation.pending_action = pending
         conversation.save(update_fields=["pending_action", "updated_at"])
-        return f"Correu preparat per a {to_email}. Digues «sí» per enviar o «cancel·la»."
+        n = len(pending_items(pending))
+        lot = f" ({n} al lot)" if n > 1 else ""
+        return f"Correu preparat per a {to_email}{lot}. Digues «sí» per enviar tot o «cancel·la»."
 
     if tool == "prepare_igeo_lead":
         nombre = str(args.get("nombre") or "").strip()
         if len(nombre) < 2:
             return "Cal un nom vàlid per al lead."
         summary = str(args.get("summary") or "").strip()
-        pending = pending_action_dict(
+        pending, err = enqueue_pending_action(
+            getattr(conversation, "pending_action", None),
             {
                 "kind": "igeo_lead",
                 "summary": summary or f"Lead iGEO: {nombre}",
@@ -424,20 +438,24 @@ def execute_realtime_tool(
                 "email": str(args.get("email") or "").strip(),
                 "direccion": str(args.get("direccion") or "").strip(),
                 "observaciones": str(args.get("observaciones") or "").strip(),
-            }
+            },
         )
-        if not pending:
-            return "No s'ha pogut preparar el lead."
+        if err or not pending:
+            return err or "No s'ha pogut preparar el lead."
         conversation.pending_action = pending
         conversation.save(update_fields=["pending_action", "updated_at"])
-        return f"Lead «{nombre}» preparat. Digues «sí» per enviar a iGEO o «cancel·la»."
+        n = len(pending_items(pending))
+        lot = f" ({n} al lot)" if n > 1 else ""
+        return f"Lead «{nombre}» preparat{lot}. Digues «sí» per enviar tot o «cancel·la»."
 
     if tool == "confirm_pending_action":
         pending = pending_action_dict(getattr(conversation, "pending_action", None))
         if not pending:
             return "No hi ha cap acció pendent per confirmar."
-        if pending.get("kind") == "whatsapp" and not (pending.get("mensaje") or "").strip():
-            return "Encara falta el text del WhatsApp. Digues el missatge i torna a confirmar."
+        incomplete = first_incomplete_whatsapp(pending)
+        if incomplete is not None:
+            dest = human_pending_dest(incomplete[1])
+            return f"Encara falta el text del WhatsApp per a {dest}. Digues el missatge i torna a confirmar."
         reply = execute_confirmed_action(pending, conversation_id=conversation.pk)
         conversation.pending_action = None
         conversation.save(update_fields=["pending_action", "updated_at"])

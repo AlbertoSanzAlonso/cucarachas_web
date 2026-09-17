@@ -146,7 +146,14 @@ def handle_pending_chat_flow(
     model,
 ) -> dict[str, Any] | None:
     """Confirmación / cancelación / captura de texto por chat (sin modal ni LLM)."""
-    from api.ops_actions import execute_confirmed_action, human_pending_dest, pending_action_dict
+    from api.ops_actions import (
+        execute_confirmed_action,
+        first_incomplete_whatsapp,
+        format_pending_preview,
+        human_pending_dest,
+        pending_action_dict,
+        set_item_mensaje,
+    )
 
     pending = pending_action_dict(getattr(conv, "pending_action", None))
     if not pending:
@@ -165,12 +172,14 @@ def handle_pending_chat_flow(
         )
 
     if is_chat_confirmation(text):
-        if pending.get("kind") == "whatsapp" and not (pending.get("mensaje") or "").strip():
+        incomplete = first_incomplete_whatsapp(pending)
+        if incomplete is not None:
+            dest = human_pending_dest(incomplete[1])
             return persist_turn(
                 conv=conv,
                 user_msg=user_msg,
                 reply=(
-                    "Encara falta el text del WhatsApp. "
+                    f"Encara falta el text del WhatsApp per a {dest}. "
                     "Escriu el missatge a enviar (una línia) i després digues «sí»."
                 ),
                 source=source,
@@ -190,29 +199,60 @@ def handle_pending_chat_flow(
             model=model,
         )
 
-    # Si falta el cos del WhatsApp, el missatge de l'operari és el text a enviar.
-    if pending.get("kind") == "whatsapp" and not (pending.get("mensaje") or "").strip():
+    # Si falta el cos d'algun WhatsApp, el missatge de l'operari és el text a enviar.
+    incomplete = first_incomplete_whatsapp(pending)
+    if incomplete is not None:
+        idx, item = incomplete
         body = (text or "").strip()
         if len(body) >= 2:
-            pending["mensaje"] = body[:3500]
-            dest = human_pending_dest(pending)
-            pending["summary"] = f"WhatsApp a {dest}: {body[:80]}"
-            conv.pending_action = pending
-            preview = body if len(body) <= 280 else body[:277] + "…"
-            return persist_turn(
-                conv=conv,
-                user_msg=user_msg,
-                reply=(
-                    f"Missatge preparat per a {dest}:\n«{preview}»\n\n"
-                    "Escriu «sí» per enviar-lo o «cancel·la» per descartar."
-                ),
-                source=source,
-                speak=speak,
-                language=language,
-                model=model,
-            )
+            updated = set_item_mensaje(pending, idx, body)
+            if updated:
+                conv.pending_action = updated
+                dest = human_pending_dest(item)
+                preview = body if len(body) <= 280 else body[:277] + "…"
+                still = first_incomplete_whatsapp(updated)
+                if still is not None:
+                    next_dest = human_pending_dest(still[1])
+                    reply = (
+                        f"Missatge preparat per a {dest}:\n«{preview}»\n\n"
+                        f"Ara escriu el text del WhatsApp per a {next_dest}."
+                    )
+                else:
+                    tail = format_pending_preview(updated)
+                    reply = (
+                        f"Missatge preparat per a {dest}:\n«{preview}»\n\n"
+                        + (tail or "Escriu «sí» per enviar o «cancel·la» per descartar.")
+                    )
+                return persist_turn(
+                    conv=conv,
+                    user_msg=user_msg,
+                    reply=reply,
+                    source=source,
+                    speak=speak,
+                    language=language,
+                    model=model,
+                )
 
     return None
+
+
+def _coalesce_agent_pending(output) -> dict[str, Any] | None:
+    """Uneix pending_action + pending_actions de l'output de l'agent."""
+    from api.ops_actions import coalesce_pending_actions, pending_action_dict
+
+    raw_list: list[Any] = []
+    multi = getattr(output, "pending_actions", None) or []
+    if multi:
+        raw_list.extend(list(multi))
+    single = getattr(output, "pending_action", None)
+    if single is not None:
+        raw_list.append(single)
+    if not raw_list:
+        return None
+    # Si només hi ha un pending_action clàssic, manté el dict normalitzat.
+    if len(raw_list) == 1:
+        return pending_action_dict(raw_list[0])
+    return coalesce_pending_actions(raw_list)
 
 
 def run_ops_turn(
@@ -225,8 +265,6 @@ def run_ops_turn(
     speak: bool = False,
     model: str | None = None,
 ) -> dict[str, Any]:
-    from api.ops_actions import pending_action_dict
-
     user_msg = AdminMessage.objects.create(
         conversation=conv,
         role=AdminMessage.Role.USER,
@@ -270,6 +308,7 @@ def run_ops_turn(
     pending = None
     try:
         from api.agents.ops.agent import run_ops_agent
+        from api.ops_actions import first_incomplete_whatsapp, format_pending_preview, pending_items
 
         output = run_ops_agent(
             user_message=text,
@@ -284,35 +323,29 @@ def run_ops_turn(
         reply = (output.message or "").strip() or "Sense resposta."
         if output.suggested_title and not conv.title:
             conv.title = output.suggested_title.strip()[:200]
-        pending = pending_action_dict(getattr(output, "pending_action", None))
+        pending = _coalesce_agent_pending(output)
         if pending:
-            # Si demanen un salut i no hi ha text, posem un cos per defecte.
+            # Si demanen un salut i no hi ha text, posem un cos per defecte (primer WA sense cos).
             low = (text or "").casefold()
-            if (
-                pending.get("kind") == "whatsapp"
-                and not (pending.get("mensaje") or "").strip()
-                and any(k in low for k in ("salut", "saludo", "hola", "greeting"))
-            ):
-                pending["mensaje"] = "Hola! Et saluda CECSA Control de Plagues."
-            conv.pending_action = pending
-            # Guia clara al xat (sense modal); destí humà (nom/tel, sense @lid).
-            from api.ops_actions import human_pending_dest
+            if any(k in low for k in ("salut", "saludo", "hola", "greeting")):
+                incomplete = first_incomplete_whatsapp(pending)
+                if incomplete is not None:
+                    from api.ops_actions import set_item_mensaje
 
-            if pending.get("kind") == "whatsapp":
-                dest = human_pending_dest(pending)
-                msg = (pending.get("mensaje") or "").strip()
-                if msg:
-                    reply = (
-                        f"{reply.rstrip()}\n\n"
-                        f"Pendents d'enviar a WhatsApp ({dest}):\n«{msg[:280]}»\n"
-                        "Escriu «sí» per confirmar o «cancel·la»."
-                    )
-                else:
-                    reply = (
-                        f"{reply.rstrip()}\n\n"
-                        f"Escriu ara el text del WhatsApp per a {dest}. "
-                        "Després digues «sí» per enviar."
-                    )
+                    pending = set_item_mensaje(
+                        pending,
+                        incomplete[0],
+                        "Hola! Et saluda CECSA Control de Plagues.",
+                    ) or pending
+            conv.pending_action = pending
+            preview = format_pending_preview(pending)
+            if preview:
+                reply = f"{reply.rstrip()}\n\n{preview}"
+            elif pending_items(pending):
+                reply = (
+                    f"{reply.rstrip()}\n\n"
+                    "Escriu «sí» per confirmar o «cancel·la»."
+                )
         else:
             conv.pending_action = None
         if user_asked_to_save_note(text):

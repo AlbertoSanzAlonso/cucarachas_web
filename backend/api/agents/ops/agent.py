@@ -85,8 +85,17 @@ class OpsAgentOutput(BaseModel):
     pending_action: Optional[OpsPendingAction] = Field(
         default=None,
         description=(
-            "WhatsApp/email/lead: kind+summary+datos. telefono=REF_INTERNA (id). "
-            "nombre=nombre humano. NO llames send_*. Confirmación con «sí» en el chat."
+            "UN solo envío WhatsApp/email/lead. telefono=REF_INTERNA (id), nombre humano. "
+            "Si hay VARIOS destinatarios, usa pending_actions (lista). "
+            "NO llames send_*. Confirmación con «sí» en el chat."
+        ),
+    )
+    pending_actions: List[OpsPendingAction] = Field(
+        default_factory=list,
+        description=(
+            "Varios envíos a la vez (emails y/o WhatsApp y/o leads), máx. 10. "
+            "Un solo «sí» confirma todo el lote. Preferir esto si hay 2+ destinatarios. "
+            "Cada ítem: kind+summary+datos completos (mensaje/body incluidos)."
         ),
     )
 
@@ -138,8 +147,9 @@ def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
     if deps is None or not deps.side_effects_allowed:
         return (
             "BLOQUEJAT: els enviaments només s'executen quan l'operari escriu «sí» al xat. "
-            "Omple pending_action (kind, summary, telefono=REF_INTERNA, nombre=nom humà, "
-            "mensaje si el tens) i demana confirmació al message sense ids tècnics. "
+            "Omple pending_action (1) o pending_actions (llista 2–10) amb kind, summary, "
+            "telefono=REF_INTERNA, nombre=nom humà, mensaje/body si el tens) i demana "
+            "confirmació al message sense ids tècnics. "
             "NO tornis a cridar aquesta eina."
         )
     return None
@@ -147,9 +157,10 @@ def _side_effects_guard(deps: OpsAgentDeps | None) -> str | None:
 
 _CONFIRM_RULES_ES = (
     "FRENO OBLIGATORIO: NUNCA ejecutes send_whatsapp, send_email ni igeo_create_lead en el chat. "
-    "Esas tools están bloqueadas. Para enviar: busca si hace falta, rellena pending_action "
-    "(kind, summary, telefono=REF_INTERNA/id, nombre=nombre humano, mensaje si ya lo tienes) "
-    "y en message pide confirmación EN EL CHAT: el operario escribirá «sí» o «cancel·la». "
+    "Esas tools están bloqueadas. Para enviar: busca si hace falta y rellena pending_action "
+    "(1 envío) o pending_actions (lista, 2–10 envíos: varios emails y/o WhatsApp). "
+    "Cada ítem: kind, summary, telefono=REF_INTERNA/id, nombre humano, mensaje/body completo. "
+    "Un solo «sí» confirma TODO el lote. Pide confirmación EN EL CHAT («sí» / «cancel·la»). "
     "NO digas 'Desa com a nota' ni menciones modales. "
     "PRIVACIDAD UX: en message NUNCA muestres @lid, @c.us ni REF_INTERNA; solo nombre y teléfono (+…). "
     "important_notes: vacío salvo petición explícita de recordar/guardar nota. "
@@ -157,9 +168,10 @@ _CONFIRM_RULES_ES = (
 
 _CONFIRM_RULES_CA = (
     "FRE DE SEGURETAT: MAI executis send_whatsapp, send_email ni igeo_create_lead al xat. "
-    "Aquestes eines estan bloquejades. Per enviar: cerca si cal, omple pending_action "
-    "(kind, summary, telefono=REF_INTERNA/id, nombre=nom humà, mensaje si ja el tens) "
-    "i al message demana confirmació AL XAT: l'operari escriurà «sí» o «cancel·la». "
+    "Aquestes eines estan bloquejades. Per enviar: cerca si cal i omple pending_action "
+    "(1 enviament) o pending_actions (llista, 2–10: diversos correus i/o WhatsApp). "
+    "Cada ítem: kind, summary, telefono=REF_INTERNA/id, nombre humà, mensaje/body complet. "
+    "Un sol «sí» confirma TOT el lot. Demana confirmació AL XAT («sí» / «cancel·la»). "
     "NO diguis 'Desa com a nota' ni parlis de modals. "
     "UX: al message MAI mostris @lid, @c.us ni REF_INTERNA; només nom i telèfon (+…). "
     "important_notes: buit tret de petició explícita de recordar/desar nota. "
@@ -185,10 +197,12 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
             "La búsqueda mira agenda del móvil enlazado + chats recientes; si no sale, pide el +teléfono. "
             "Acepta móviles ES e internacionales (+54, +52…) o id `…@c.us` en pending_action.telefono. "
             "Si no encuentras el nombre (máx. 2 búsquedas WA), pide el móvil internacional. "
-            "Para un WhatsApp por nombre: solo search_whatsapp_contacts y luego pending_action; "
-            "no llames CRM/iGEO/RAG ni whatsapp_status salvo error o petición explícita. "
-            f"Email SMTP está {mail_on}. Para un correo: prepara pending_action kind=email "
-            "(to_email, subject, body) y espera el modal. Si falla la config, email_status. "
+            "Para WhatsApp por nombre: search_whatsapp_contacts y luego pending_action "
+            "(o pending_actions si son varios); no llames CRM/iGEO/RAG ni whatsapp_status "
+            "salvo error o petición explícita. "
+            f"Email SMTP está {mail_on}. Para correos: pending_action kind=email "
+            "(to_email, subject, body) o pending_actions si hay varios destinatarios. "
+            "Si falla la config, email_status. "
             "Usa CRM / espejo iGEO para búsquedas de clientes. "
             "Datos vivos → CRM o espejo SQL, NUNCA el RAG. "
             "Procedimientos iGEO/PDI → RAG o search_ops_knowledge; no inventes códigos maestros. "
@@ -206,10 +220,12 @@ def _ops_prompt(ctx: RunContext[OpsAgentDeps]) -> str:
         "La cerca mira agenda del mòbil enllaçat + xats recents; si no surt, demana el +telèfon. "
         "Accepta mòbils ES i internacionals (+54, +52…) o id `…@c.us` a pending_action.telefono. "
         "Si no trobes el nom (màx. 2 cerques WA), demana el mòbil internacional. "
-        "Per un WhatsApp per nom: només search_whatsapp_contacts i després pending_action; "
-        "no cridis CRM/iGEO/RAG ni whatsapp_status tret d'error o petició explícita. "
-        f"Email SMTP està {mail_on}. Per un correu: prepara pending_action kind=email "
-        "(to_email, subject, body) i espera el modal. Si falla la config, email_status. "
+        "Per WhatsApp per nom: search_whatsapp_contacts i després pending_action "
+        "(o pending_actions si són diversos); no cridis CRM/iGEO/RAG ni whatsapp_status "
+        "tret d'error o petició explícita. "
+        f"Email SMTP està {mail_on}. Per correus: pending_action kind=email "
+        "(to_email, subject, body) o pending_actions si hi ha diversos destinataris. "
+        "Si falla la config, email_status. "
         "Fes servir CRM / espill iGEO per cerques de clients. "
         "Dades vives → CRM o espill SQL, MAI el RAG. "
         "Procediments iGEO/PDI → RAG o search_ops_knowledge; no inventis codis mestres. "

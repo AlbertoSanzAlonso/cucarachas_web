@@ -113,6 +113,74 @@ class RealtimeApiTests(TestCase):
         conv.refresh_from_db()
         self.assertIsNone(conv.pending_action)
 
+    def test_tool_prepare_queues_batch_email_and_whatsapp(self):
+        conv = AdminConversation.objects.create(user=self.user, title="RT-lot")
+        wa = self.client.post(
+            "/api/ops/realtime/tool/",
+            {
+                "conversation_id": conv.pk,
+                "name": "prepare_whatsapp",
+                "arguments": {
+                    "telefono": "34600111222",
+                    "nombre": "Joan",
+                    "mensaje": "Hola Joan",
+                    "summary": "WA Joan",
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(wa.status_code, 200)
+        mail = self.client.post(
+            "/api/ops/realtime/tool/",
+            {
+                "conversation_id": conv.pk,
+                "name": "prepare_email",
+                "arguments": {
+                    "to_email": "anna@test.local",
+                    "subject": "Visita",
+                    "body": "Et confirmem.",
+                    "cc": "",
+                    "summary": "Mail Anna",
+                },
+            },
+            format="json",
+        )
+        self.assertEqual(mail.status_code, 200)
+        self.assertIn("2", mail.data["output"])
+        conv.refresh_from_db()
+        self.assertEqual(conv.pending_action["kind"], "batch")
+        self.assertEqual(len(conv.pending_action["items"]), 2)
+
+        with patch("api.ops_actions.OpenWaClient") as mock_wa, patch(
+            "api.ops_actions.send_ops_email"
+        ) as mock_mail:
+            mock_wa.return_value.send_text.return_value = type(
+                "R",
+                (),
+                {"ok": True, "dry_run": False, "chat_id": "34600111222@c.us", "message": "ok"},
+            )()
+            mock_mail.return_value = type(
+                "E",
+                (),
+                {
+                    "ok": True,
+                    "dry_run": False,
+                    "message": "Enviat",
+                    "to_email": "anna@test.local",
+                },
+            )()
+            conf = self.client.post(
+                "/api/ops/realtime/tool/",
+                {"conversation_id": conv.pk, "name": "confirm_pending_action", "arguments": {}},
+                format="json",
+            )
+        self.assertEqual(conf.status_code, 200)
+        self.assertIn("2/2", conf.data["output"])
+        mock_wa.return_value.send_text.assert_called_once()
+        mock_mail.assert_called_once()
+        conv.refresh_from_db()
+        self.assertIsNone(conv.pending_action)
+
     def test_transcript_persists_voice_messages(self):
         conv = AdminConversation.objects.create(user=self.user, title="Veu")
         res = self.client.post(
