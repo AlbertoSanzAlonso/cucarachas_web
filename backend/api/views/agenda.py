@@ -272,8 +272,15 @@ def agenda_admin_service_detail(request, service_id: str):
     if "nameCa" in body or "name_ca" in body:
         service.name_ca = (body.get("nameCa") or body.get("name_ca") or "").strip()
     if "durationMinutes" in body or "duration_minutes" in body:
+        raw_duration = (
+            body.get("durationMinutes")
+            if "durationMinutes" in body
+            else body.get("duration_minutes")
+        )
+        if raw_duration is None:
+            return Response({"error": "Duración inválida"}, status=400)
         try:
-            duration = int(body.get("durationMinutes") or body.get("duration_minutes"))
+            duration = int(raw_duration)
         except (TypeError, ValueError):
             return Response({"error": "Duración inválida"}, status=400)
         if duration < 15 or duration > 480:
@@ -390,7 +397,7 @@ def agenda_create_appointment(request):
             (body.get("customerPhone") or "").strip(),
         ]
     )
-    if not required_ok:
+    if not required_ok or not isinstance(service_id, str):
         return Response({"error": "Datos incompletos"}, status=400)
     notes = body.get("notes") or ""
     address = body.get("customerAddress") or body.get("address") or ""

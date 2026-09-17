@@ -21,6 +21,42 @@ def _presupuesto_qs():
     return Presupuesto.objects.select_related("cliente", "ubicacion").prefetch_related("detalles")
 
 
+def _get_presupuesto_or_404(pk: int) -> Presupuesto | Response:
+    try:
+        return _presupuesto_qs().get(pk=pk)
+    except Presupuesto.DoesNotExist:
+        return Response(
+            {"detail": "Pressupost no trobat."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+
+def _create_from_validated(data):
+    return create_presupuesto_from_form(
+        cliente_id=data["cliente_id"],
+        lineas=data["lineas"],
+        direccion=data.get("direccion", ""),
+        ciudad=data.get("ciudad", "Barcelona"),
+        tipo_propiedad=data.get("tipo_propiedad", "Residencial"),
+        fecha=data.get("fecha"),
+        validez_dias=data.get("validez_dias", 30),
+        pest_type=data.get("pest_type", ""),
+        severity=data.get("severity", ""),
+        garantia_meses=data.get("garantia_meses", 12),
+        notas=data.get("notas", ""),
+    )
+
+
+def _pdf_response(pdf_bytes, presupuesto, *, extra_headers=None):
+    filename = f"pressupost-cecsa-{presupuesto.id:04d}.pdf"
+    response = HttpResponse(pdf_bytes, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="{filename}"'
+    if extra_headers:
+        for key, value in extra_headers.items():
+            response[key] = value
+    return response
+
+
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def list_presupuestos(request):
@@ -31,20 +67,18 @@ def list_presupuestos(request):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def get_presupuesto_detail(request, pk: int):
-    try:
-        presupuesto = _presupuesto_qs().get(pk=pk)
-    except Presupuesto.DoesNotExist:
-        return Response({"detail": "Pressupost no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    presupuesto = _get_presupuesto_or_404(pk)
+    if isinstance(presupuesto, Response):
+        return presupuesto
     return Response(PresupuestoDetailSerializer(presupuesto).data)
 
 
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def update_presupuesto(request, pk: int):
-    try:
-        presupuesto = _presupuesto_qs().get(pk=pk)
-    except Presupuesto.DoesNotExist:
-        return Response({"detail": "Pressupost no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    presupuesto = _get_presupuesto_or_404(pk)
+    if isinstance(presupuesto, Response):
+        return presupuesto
 
     serializer = UpdatePresupuestoSerializer(data=request.data, partial=True)
     serializer.is_valid(raise_exception=True)
@@ -74,10 +108,9 @@ def update_presupuesto(request, pk: int):
 @api_view(["DELETE"])
 @permission_classes([IsAuthenticated])
 def delete_presupuesto(request, pk: int):
-    try:
-        presupuesto = Presupuesto.objects.get(pk=pk)
-    except Presupuesto.DoesNotExist:
-        return Response({"detail": "Pressupost no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    presupuesto = _get_presupuesto_or_404(pk)
+    if isinstance(presupuesto, Response):
+        return presupuesto
     presupuesto.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -85,10 +118,9 @@ def delete_presupuesto(request, pk: int):
 @api_view(["POST"])
 @permission_classes([IsAuthenticated])
 def send_presupuesto_email_view(request, pk: int):
-    try:
-        presupuesto = _presupuesto_qs().get(pk=pk)
-    except Presupuesto.DoesNotExist:
-        return Response({"detail": "Pressupost no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    presupuesto = _get_presupuesto_or_404(pk)
+    if isinstance(presupuesto, Response):
+        return presupuesto
 
     serializer = SendPresupuestoEmailSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
@@ -125,19 +157,7 @@ def create_presupuesto(request):
     data = serializer.validated_data
 
     try:
-        presupuesto = create_presupuesto_from_form(
-            cliente_id=data["cliente_id"],
-            lineas=data["lineas"],
-            direccion=data.get("direccion", ""),
-            ciudad=data.get("ciudad", "Barcelona"),
-            tipo_propiedad=data.get("tipo_propiedad", "Residencial"),
-            fecha=data.get("fecha"),
-            validez_dias=data.get("validez_dias", 30),
-            pest_type=data.get("pest_type", ""),
-            severity=data.get("severity", ""),
-            garantia_meses=data.get("garantia_meses", 12),
-            notas=data.get("notas", ""),
-        )
+        presupuesto = _create_from_validated(data)
     except Cliente.DoesNotExist:
         return Response({"detail": "Client no trobat."}, status=status.HTTP_404_NOT_FOUND)
     except ValueError as exc:
@@ -154,42 +174,26 @@ def create_presupuesto_pdf(request):
     data = serializer.validated_data
 
     try:
-        presupuesto = create_presupuesto_from_form(
-            cliente_id=data["cliente_id"],
-            lineas=data["lineas"],
-            direccion=data.get("direccion", ""),
-            ciudad=data.get("ciudad", "Barcelona"),
-            tipo_propiedad=data.get("tipo_propiedad", "Residencial"),
-            fecha=data.get("fecha"),
-            validez_dias=data.get("validez_dias", 30),
-            pest_type=data.get("pest_type", ""),
-            severity=data.get("severity", ""),
-            garantia_meses=data.get("garantia_meses", 12),
-            notas=data.get("notas", ""),
-        )
+        presupuesto = _create_from_validated(data)
     except Cliente.DoesNotExist:
         return Response({"detail": "Client no trobat."}, status=status.HTTP_404_NOT_FOUND)
     except ValueError as exc:
         return Response({"detail": str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     pdf_bytes = build_presupuesto_pdf(presupuesto, issue_date=data.get("fecha"))
-    filename = f"pressupost-cecsa-{presupuesto.id:04d}.pdf"
-    response = HttpResponse(pdf_bytes, content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
-    response["X-Presupuesto-Id"] = str(presupuesto.id)
-    return response
+    return _pdf_response(
+        pdf_bytes,
+        presupuesto,
+        extra_headers={"X-Presupuesto-Id": str(presupuesto.id)},
+    )
 
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def download_presupuesto_pdf(request, pk: int):
-    try:
-        presupuesto = _presupuesto_qs().get(pk=pk)
-    except Presupuesto.DoesNotExist:
-        return Response({"detail": "Pressupost no trobat."}, status=status.HTTP_404_NOT_FOUND)
+    presupuesto = _get_presupuesto_or_404(pk)
+    if isinstance(presupuesto, Response):
+        return presupuesto
 
     pdf_bytes = build_presupuesto_pdf(presupuesto)
-    filename = f"pressupost-cecsa-{presupuesto.id:04d}.pdf"
-    response = HttpResponse(pdf_bytes, content_type="application/pdf")
-    response["Content-Disposition"] = f'attachment; filename="{filename}"'
-    return response
+    return _pdf_response(pdf_bytes, presupuesto)

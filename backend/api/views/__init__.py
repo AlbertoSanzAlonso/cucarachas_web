@@ -10,6 +10,8 @@ from .ops_chat import (
     AdminConversationViewSet,
     AdminMemoryNoteViewSet,
     list_ops_models,
+)
+from .ops_realtime import (
     ops_realtime_session,
     ops_realtime_tool,
     ops_realtime_transcript,
