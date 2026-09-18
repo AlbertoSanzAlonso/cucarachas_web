@@ -111,7 +111,7 @@ const TopBar = ({
                   initial={{ opacity: 0, y: 10, scale: 0.95 }}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
                   exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  className="absolute right-0 top-full mt-4 w-80 bg-admin-card rounded-[2rem] shadow-2xl border border-admin-border p-4 z-20"
+                  className="absolute top-full mt-4 z-20 w-80 max-w-[calc(100vw-2rem)] right-0 max-md:-right-20 bg-admin-card rounded-[2rem] shadow-2xl border border-admin-border p-4"
                 >
                   <div className="p-3 border-b border-admin-border mb-2 flex justify-between items-center">
                     <p className="font-black text-admin-text uppercase tracking-tight text-sm">Notificacions</p>
