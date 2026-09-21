@@ -100,7 +100,8 @@ class AdminConversationViewSet(viewsets.ModelViewSet[AdminConversation]):
                     status=status.HTTP_400_BAD_REQUEST,
                 )
             # Compat: executa directe (tests / clients antics). El xat UI confirma amb «sí».
-            from api.ops_actions import execute_confirmed_action, pending_action_dict
+            from api.ops_actions import pending_action_dict
+            from api.ops_jobs import run_confirmed_queue
 
             normalized = pending_action_dict(confirm_action)
             summary = (normalized or {}).get("summary") or "Acció confirmada"
@@ -110,7 +111,11 @@ class AdminConversationViewSet(viewsets.ModelViewSet[AdminConversation]):
                 content=f"Confirmo: {summary}",
                 source="confirm",
             )
-            reply = execute_confirmed_action(normalized or {}, conversation_id=conv.pk)
+            reply = run_confirmed_queue(
+                conversation=conv,
+                user=request.user,
+                action=normalized or {},
+            )
             conv.pending_action = None
             payload = persist_turn(
                 conv=conv,

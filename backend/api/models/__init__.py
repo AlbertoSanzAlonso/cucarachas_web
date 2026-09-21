@@ -20,7 +20,7 @@ from .crm import Cliente, IgeoSyncLog, Ubicacion
 from .faq import FaqItem
 from .igeo import IgeoMirrorEntity
 from .operacion import Cita, ReporteServicio
-from .ops_chat import AdminConversation, AdminMemoryNote, AdminMessage
+from .ops_chat import AdminConversation, AdminMemoryNote, AdminMessage, OpsJob
 from .presupuesto import Presupuesto, PresupuestoDetalle, PresupuestoReferencia
 
 __all__ = [
@@ -49,4 +49,5 @@ __all__ = [
     "AdminConversation",
     "AdminMessage",
     "AdminMemoryNote",
+    "OpsJob",
 ]

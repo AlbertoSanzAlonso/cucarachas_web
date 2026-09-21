@@ -32,7 +32,10 @@ Consolas: pre `https://pdi.pre.igeoapp.com:15671/` · prod `https://pdi.igeoapp.
 | RAG operativo (ops) | `TechnicalKnowledge` `audience=ops` + `knowledge/ops_corpus/` + `sync_ops_knowledge` |
 | MCP Cursor | `mcp-igeo/server.py` (+ `mcp-igeo/README.md`) |
 | Espejo | `IgeoMirrorEntity` (SQL) + `Cliente.igeo_codigo` + `IgeoSyncLog` |
-| Ingesta espejo | `python manage.py igeo_ingest_exports --demo` (sense cua) o `--from-queue` |
+| Ingesta espejo | `python manage.py igeo_ingest_exports --demo` o `--from-queue` |
+| Worker PDI | `python manage.py igeo_drain_loop --once` |
+| Cola ops | `OpsJob` + `python manage.py process_ops_jobs` |
+| Borradores Gloria / iGEO | `respuesta_gloria.md` (no enviado), `solicitud_igeo_pre.md`, `dia0_checklist.md` |
 | Ingesta RAG ops | `python manage.py sync_ops_knowledge [--skip-embeddings] [--skip-pdf]` |
 
 ## Env (Coolify)

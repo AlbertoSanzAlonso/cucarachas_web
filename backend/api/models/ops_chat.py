@@ -79,3 +79,45 @@ class AdminMemoryNote(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+
+class OpsJob(models.Model):
+    """Cola persistente de acciones ops ya confirmadas (WhatsApp, email, iGEO)."""
+
+    class Status(models.TextChoices):
+        QUEUED = "queued", "En cola"
+        RUNNING = "running", "En curso"
+        DONE = "done", "Hecho"
+        FAILED = "failed", "Fallido"
+
+    conversation = models.ForeignKey(
+        AdminConversation,
+        on_delete=models.CASCADE,
+        related_name="ops_jobs",
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="ops_jobs",
+    )
+    kind = models.CharField(max_length=32)
+    summary = models.CharField(max_length=500, blank=True, default="")
+    payload = models.JSONField(default=dict)
+    position = models.PositiveIntegerField(default=0)
+    status = models.CharField(
+        max_length=16,
+        choices=Status.choices,
+        default=Status.QUEUED,
+        db_index=True,
+    )
+    result = models.TextField(blank=True, default="")
+    idempotency_key = models.CharField(max_length=80, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    started_at = models.DateTimeField(null=True, blank=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["position", "id"]
+
+    def __str__(self) -> str:
+        return f"{self.kind} #{self.pk} ({self.status})"

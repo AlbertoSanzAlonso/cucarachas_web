@@ -4,6 +4,7 @@ from .models import (
     AdminConversation,
     AdminMemoryNote,
     AdminMessage,
+    OpsJob,
     BlogArticle,
     CompanyProfile,
     FaqItem,
@@ -170,6 +171,13 @@ class AdminConversationAdmin(admin.ModelAdmin):
 class AdminMessageAdmin(admin.ModelAdmin):
     list_display = ("id", "conversation", "role", "created_at")
     list_filter = ("role",)
+
+
+@admin.register(OpsJob)
+class OpsJobAdmin(admin.ModelAdmin):
+    list_display = ("id", "kind", "status", "conversation", "position", "created_at")
+    list_filter = ("status", "kind")
+    search_fields = ("summary", "idempotency_key", "result")
 
 
 @admin.register(AdminMemoryNote)
