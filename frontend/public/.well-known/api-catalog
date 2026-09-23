@@ -1,0 +1,101 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://cucarachasbarcelona.cat/.well-known/api-catalog",
+      "item": [
+        {
+          "href": "https://api.cucarachasbarcelona.cat/api/company/",
+          "type": "application/json",
+          "title": "CECSA company profile (public)"
+        },
+        {
+          "href": "https://api.cucarachasbarcelona.cat/api/faq/",
+          "type": "application/json",
+          "title": "CECSA FAQ (public)"
+        },
+        {
+          "href": "https://api.cucarachasbarcelona.cat/api/species/",
+          "type": "application/json",
+          "title": "Cockroach species catalog (public)"
+        },
+        {
+          "href": "https://api.cucarachasbarcelona.cat/api/chat/",
+          "type": "application/json",
+          "title": "Bio-Assistent chat API (public)"
+        },
+        {
+          "href": "https://api.cucarachasbarcelona.cat/api/agenda/slots/",
+          "type": "application/json",
+          "title": "Public agenda slots"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.cucarachasbarcelona.cat/api/company/",
+      "service-desc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/openapi.json",
+          "type": "application/openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/llms-full.txt",
+          "type": "text/plain"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.cucarachasbarcelona.cat/api/faq/",
+      "service-desc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/openapi.json",
+          "type": "application/openapi+json;version=3.1"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/faq",
+          "type": "text/html"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.cucarachasbarcelona.cat/api/species/",
+      "service-desc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/openapi.json",
+          "type": "application/openapi+json;version=3.1"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.cucarachasbarcelona.cat/api/chat/",
+      "service-desc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/openapi.json",
+          "type": "application/openapi+json;version=3.1"
+        },
+        {
+          "href": "https://cucarachasbarcelona.cat/.well-known/agent-card.json",
+          "type": "application/a2a+json"
+        }
+      ],
+      "service-doc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/llms.txt",
+          "type": "text/plain"
+        }
+      ]
+    },
+    {
+      "anchor": "https://api.cucarachasbarcelona.cat/api/agenda/slots/",
+      "service-desc": [
+        {
+          "href": "https://cucarachasbarcelona.cat/openapi.json",
+          "type": "application/openapi+json;version=3.1"
+        }
+      ]
+    }
+  ]
+}

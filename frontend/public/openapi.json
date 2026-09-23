@@ -1,0 +1,217 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CECSA Control de Plagas — API pública",
+    "description": "Endpoints públicos para agentes y clientes: perfil de empresa, FAQ, especies de cucarachas, chat del Bio-Assistent y slots de agenda. No incluye rutas de administración ni CRM autenticado.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "CECSA Control de Plagas",
+      "url": "https://cucarachasbarcelona.cat",
+      "email": "info@cucarachasbarcelona.cat",
+      "phone": "+34933309169"
+    },
+    "license": {
+      "name": "Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.cucarachasbarcelona.cat",
+      "description": "API producción (Coolify)"
+    }
+  ],
+  "tags": [
+    { "name": "company", "description": "Datos públicos de empresa" },
+    { "name": "faq", "description": "Preguntas frecuentes" },
+    { "name": "species", "description": "Especies de cucarachas" },
+    { "name": "chat", "description": "Bio-Assistent conversacional" },
+    { "name": "agenda", "description": "Disponibilidad pública de citas" }
+  ],
+  "paths": {
+    "/api/company/": {
+      "get": {
+        "tags": ["company"],
+        "summary": "Perfil público de CECSA",
+        "operationId": "getCompany",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["ca", "es", "en"], "default": "ca" },
+            "description": "Idioma de textos localizados"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Perfil de empresa",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "brand_name": { "type": "string" },
+                    "legal_name": { "type": "string" },
+                    "phone": { "type": "string" },
+                    "phone_tel": { "type": "string" },
+                    "whatsapp": { "type": "string" },
+                    "whatsapp_url": { "type": "string", "format": "uri" },
+                    "email": { "type": "string", "format": "email" },
+                    "address": { "type": "string" },
+                    "hero_title": { "type": "string" },
+                    "hero_subtitle": { "type": "string" },
+                    "service_area": { "type": "string" },
+                    "business_hours": { "type": "string" },
+                    "policies": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/faq/": {
+      "get": {
+        "tags": ["faq"],
+        "summary": "FAQ publicada",
+        "operationId": "listFaq",
+        "parameters": [
+          {
+            "name": "lang",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["ca", "es", "en"], "default": "ca" }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": { "type": "string" },
+            "description": "Filtro opcional de categoría"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de FAQ",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "items": { "type": "array", "items": { "type": "object" } }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/species/": {
+      "get": {
+        "tags": ["species"],
+        "summary": "Catálogo de especies de cucarachas",
+        "operationId": "listSpecies",
+        "responses": {
+          "200": {
+            "description": "Lista de especies",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "type": "object" }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/chat/": {
+      "post": {
+        "tags": ["chat"],
+        "summary": "Bio-Assistent (diagnóstico, precios orientativos, cita)",
+        "operationId": "chatWithAgents",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "description": "Texto del usuario (puede ir vacío si solo se envía booking)"
+                  },
+                  "language": {
+                    "type": "string",
+                    "enum": ["ca", "es", "en"],
+                    "default": "ca"
+                  },
+                  "source": {
+                    "type": "string",
+                    "description": "Origen UI, p. ej. home",
+                    "example": "home"
+                  },
+                  "diagnostic": {
+                    "type": "object",
+                    "description": "Respuestas del wizard de diagnóstico"
+                  },
+                  "booking": {
+                    "type": "object",
+                    "description": "Confirmación de cita presencial si el agendado client está activo",
+                    "properties": {
+                      "slot_time": { "type": "string" },
+                      "name": { "type": "string" },
+                      "phone": { "type": "string" },
+                      "address": { "type": "string" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Respuesta del orquestador",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "reply": { "type": "string" },
+                    "slots": { "type": "array", "items": { "type": "object" } },
+                    "booking_confirmed": { "type": "boolean" },
+                    "booking_uid": { "type": "string", "nullable": true }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/agenda/slots/": {
+      "get": {
+        "tags": ["agenda"],
+        "summary": "Slots públicos de agenda (si el agendado client está activo)",
+        "operationId": "listPublicAgendaSlots",
+        "responses": {
+          "200": {
+            "description": "Disponibilidad",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "llms.txt — resumen para LLMs",
+    "url": "https://cucarachasbarcelona.cat/llms.txt"
+  }
+}

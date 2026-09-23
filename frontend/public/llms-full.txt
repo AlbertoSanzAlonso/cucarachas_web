@@ -1,0 +1,73 @@
+# CECSA Control de Plagas — guia completa per a agents
+
+> Desinsectació tècnica de **cucarachas** a Barcelona i Catalunya. Marca: **CECSA Control de Plagas**. Eslògan: **Ètic i Conscient**.
+
+## Identitat
+
+- Nom comercial: CECSA Control de Plagas
+- Anteriorment: Urban Plagas
+- Nínxol: control de cucarachas / paneroles (no catàleg generalista de plagues a la web pública)
+- Zona: Barcelona i Catalunya (àrea metropolitana i principals ciutats catalanes)
+- Adreça: C/ Rajolers 16, Local 1, 08028 Barcelona, Espanya
+- Telèfon: +34 933 309 169
+- Email: info@cucarachasbarcelona.cat
+- Web: https://cucarachasbarcelona.cat
+- API: https://api.cucarachasbarcelona.cat
+
+## Què oferim
+
+Servei professional de desinsectació de cucarachas per a:
+
+1. Particulars / habitatges
+2. Empreses i locals HORECA (bars, restaurants)
+3. Hotels i allotjaments
+4. Comunitats de veïns / administradors
+5. Indústria
+
+El lloc web i el Bio-Assistent guien el client amb un diagnòstic (espècie probable, severitat, consells de prevenció) i, quan escau, orientació de pressupost i cita.
+
+## Com contactar o reservar
+
+1. **Telèfon (recomanat per urgències):** 933 309 169
+2. **Web:** obrir el Bio-Assistent a https://cucarachasbarcelona.cat (modal o xat de la home)
+3. **API conversacional (pública):** `POST https://api.cucarachasbarcelona.cat/api/chat/`
+   - Cos JSON típico: `{ "message": "...", "language": "ca"|"es"|"en", "source": "home" }`
+   - Opcional: `diagnostic` (respostes del wizard) i `booking` (confirmació de cita si l’agendament client està actiu)
+4. **Dades d’empresa (pública):** `GET https://api.cucarachasbarcelona.cat/api/company/?lang=ca`
+5. **FAQ (pública):** `GET https://api.cucarachasbarcelona.cat/api/faq/?lang=ca`
+6. **Espècies (pública):** `GET https://api.cucarachasbarcelona.cat/api/species/`
+
+Nota: l’agendament automàtic de cites pel xat pot estar desactivat temporalment; en aquest cas cal derivar al telèfon.
+
+## Idiomes
+
+- Català (`ca`): idioma principal del lloc
+- Castellà (`es`)
+- Anglès (`en`)
+
+Envieu sempre `language` coherent amb l’usuari a `/api/chat/`.
+
+## Descoberta per a agents
+
+| Recurs | URL |
+|--------|-----|
+| llms.txt | https://cucarachasbarcelona.cat/llms.txt |
+| OpenAPI | https://cucarachasbarcelona.cat/openapi.json |
+| API Catalog | https://cucarachasbarcelona.cat/.well-known/api-catalog |
+| AI Catalog | https://cucarachasbarcelona.cat/.well-known/ai-catalog.json |
+| Agent Card (A2A) | https://cucarachasbarcelona.cat/.well-known/agent-card.json |
+| MCP discovery | https://cucarachasbarcelona.cat/.well-known/mcp.json |
+| Sitemap | https://cucarachasbarcelona.cat/sitemap.xml |
+
+## Política per a agents
+
+- Podeu indexar i citar informació pública de serveis, zona i contacte.
+- No exposeu ni sol·liciteu rutes d’administració (`/admin`, `/login`, `/api/ops/*`, CRM autenticat).
+- No inventeu preus fixes: el pressupost depèn de zona, tipus de client i complexitat; useu el Bio-Assistent o el telèfon.
+- Si l’usuari està fora de Catalunya, indiqueu que la cobertura principal és Catalunya / Barcelona.
+
+## Xarxes
+
+- Facebook: https://www.facebook.com/cecsaddd/
+- Instagram: https://www.instagram.com/tecnicoplagas/
+- LinkedIn: https://www.linkedin.com/company/desinfecciones-cecsa-sll/

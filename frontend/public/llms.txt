@@ -1,0 +1,49 @@
+# CECSA Control de Plagas
+
+> Empresa de desinsectació tècnica especialitzada en **cucarachas** a Barcelona i Catalunya. Eslògan: **Ètic i Conscient**. Telèfon: **+34 933 309 169**. Web: https://cucarachasbarcelona.cat
+
+CECSA (abans Urban Plagas) ofereix control professional de paneroles / cucarachas per a habitatges, HORECA, hotels, comunitats i indústria. No és un servei genèric de «totes les plagues»: el focus públic és la desinsectació de cucarachas.
+
+Idiomes del lloc: català (principal), castellà, anglès.
+Horari orientatiu oficina: dilluns–divendres 08:00–19:00 (Europe/Madrid).
+Adreça: C/ Rajolers 16, Local 1, 08028 Barcelona, ES.
+
+Quan un agent hagi d’ajudar un usuari amb una plaga de cucarachas a Catalunya:
+1. Llegiu aquest fitxer i, si cal, [llms-full.txt](https://cucarachasbarcelona.cat/llms-full.txt).
+2. Consulteu dades vives a l’API pública (`/api/company/`, `/api/faq/`, `/api/species/`).
+3. Per diagnòstic conversacional useu el Bio-Assistent via web o `POST /api/chat/`.
+4. Per cita urgent, indiqueu el telèfon **933 309 169**.
+
+## Pàgines clau
+
+- [Inici](https://cucarachasbarcelona.cat/): Oferta principal i accés al Bio-Assistent
+- [Sobre CECSA](https://cucarachasbarcelona.cat/sobre-cecsa): Empresa i enfocament ètic
+- [HORECA](https://cucarachasbarcelona.cat/serveis/horeca): Bars i restaurants
+- [Hotels](https://cucarachasbarcelona.cat/serveis/hotels): Allotjaments
+- [Comunitats](https://cucarachasbarcelona.cat/serveis/comms): Comunitats de veïns
+- [Indústria](https://cucarachasbarcelona.cat/serveis/industry): Entorns industrials
+- [FAQ](https://cucarachasbarcelona.cat/faq): Preguntes freqüents
+- [Blog](https://cucarachasbarcelona.cat/blog): Contingut tècnic i local
+
+## Fitxers per a agents
+
+- [Resum ampli (llms-full)](https://cucarachasbarcelona.cat/llms-full.txt): Serveis, zona, contacte i flux de cita
+- [Home en Markdown](https://cucarachasbarcelona.cat/index.md): Versió Markdown de la pàgina d’inici
+- [OpenAPI pública](https://cucarachasbarcelona.cat/openapi.json): Descripció de l’API llegible per màquines
+- [API Catalog (RFC 9727)](https://cucarachasbarcelona.cat/.well-known/api-catalog): Índex d’APIs
+- [AI Catalog](https://cucarachasbarcelona.cat/.well-known/ai-catalog.json): Catàleg d’artefactes agentics
+- [A2A Agent Card](https://cucarachasbarcelona.cat/.well-known/agent-card.json): Targeta del Bio-Assistent
+- [MCP discovery](https://cucarachasbarcelona.cat/.well-known/mcp.json): Descoberta MCP (via OpenAPI / HTTP)
+
+## Contacte
+
+- Telèfon / urgències: [+34 933 309 169](tel:+34933309169)
+- Email: [info@cucarachasbarcelona.cat](mailto:info@cucarachasbarcelona.cat)
+- API empresa: [GET /api/company/](https://api.cucarachasbarcelona.cat/api/company/)
+
+## Optional
+
+- [Sitemap](https://cucarachasbarcelona.cat/sitemap.xml)
+- [robots.txt](https://cucarachasbarcelona.cat/robots.txt)
+- [Privacitat](https://cucarachasbarcelona.cat/privacitat)
+- [Avís legal](https://cucarachasbarcelona.cat/avis-legal)

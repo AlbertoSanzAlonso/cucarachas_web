@@ -1,0 +1,63 @@
+{
+  "name": "CECSA Bio-Assistent",
+  "description": "Assistent de diagnòstic i orientació per a control de cucarachas a Barcelona i Catalunya (CECSA Control de Plagas). Identifica situació, dona consells de prevenció, orienta pressupost i deriva a cita o telèfon 933 309 169.",
+  "version": "1.0.0",
+  "protocolVersion": "1.0",
+  "provider": {
+    "organization": "CECSA Control de Plagas",
+    "url": "https://cucarachasbarcelona.cat"
+  },
+  "documentationUrl": "https://cucarachasbarcelona.cat/llms-full.txt",
+  "url": "https://api.cucarachasbarcelona.cat/api/chat/",
+  "preferredTransport": "HTTP+JSON",
+  "supportedInterfaces": [
+    {
+      "url": "https://api.cucarachasbarcelona.cat/api/chat/",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    },
+    {
+      "url": "https://api.cucarachasbarcelona.cat/api/company/",
+      "protocolBinding": "HTTP+JSON",
+      "protocolVersion": "1.0"
+    }
+  ],
+  "capabilities": {
+    "streaming": false,
+    "pushNotifications": false,
+    "extendedAgentCard": false
+  },
+  "defaultInputModes": ["text/plain", "application/json"],
+  "defaultOutputModes": ["text/plain", "application/json"],
+  "skills": [
+    {
+      "id": "cockroach-diagnosis",
+      "name": "Diagnòstic de cucarachas",
+      "description": "Recull context (habitatge/empresa, quantitat, zona) i orienta sobre espècie probable i urgència via POST /api/chat/.",
+      "tags": ["pest-control", "cockroaches", "diagnosis", "barcelona", "catalunya"],
+      "examples": [
+        "Tinc cucarachas a la cuina a Barcelona",
+        "Sóc un bar a l'Eixample i veig paneroles de nit"
+      ]
+    },
+    {
+      "id": "company-info",
+      "name": "Informació d'empresa",
+      "description": "Retorna telèfon, adreça, zona de servei i horaris via GET /api/company/?lang=ca|es|en.",
+      "tags": ["company", "contact", "coverage"],
+      "examples": ["Quin és el telèfon de CECSA?", "Cobriu Girona?"]
+    },
+    {
+      "id": "faq",
+      "name": "FAQ",
+      "description": "Preguntes freqüents publicades via GET /api/faq/.",
+      "tags": ["faq", "support"]
+    },
+    {
+      "id": "booking-handoff",
+      "name": "Cita / urgències",
+      "description": "Orienta a reserva (si l'agendat client està actiu) o deriva al telèfon +34 933 309 169.",
+      "tags": ["booking", "phone", "urgent"]
+    }
+  ]
+}

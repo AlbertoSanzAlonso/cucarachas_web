@@ -1,0 +1,72 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-10-17/server.schema.json",
+  "version": "1.0",
+  "name": "cecsa-control-de-plagas",
+  "title": "CECSA Control de Plagas",
+  "description": "Discovery MCP per a CECSA: especialistes en control de cucarachas a Barcelona i Catalunya. No hi ha transport MCP streamable públic; els agents han d'usar l'OpenAPI HTTP documentada i llms.txt. Telèfon: +34 933 309 169.",
+  "websiteUrl": "https://cucarachasbarcelona.cat",
+  "documentationUrl": "https://cucarachasbarcelona.cat/llms-full.txt",
+  "icons": [
+    {
+      "src": "https://cucarachasbarcelona.cat/assets/isotipo.png",
+      "sizes": "any",
+      "type": "image/png"
+    }
+  ],
+  "transport": {
+    "type": "http+json",
+    "endpoint": "https://api.cucarachasbarcelona.cat/api/chat/",
+    "note": "Interface HTTP JSON (Bio-Assistent). No MCP Streamable HTTP remote."
+  },
+  "endpoint": "https://api.cucarachasbarcelona.cat/api/chat/",
+  "serverUrl": "https://api.cucarachasbarcelona.cat/api/chat/",
+  "authentication": {
+    "required": false,
+    "schemes": []
+  },
+  "capabilities": {
+    "tools": {},
+    "resources": {}
+  },
+  "tools": [
+    {
+      "name": "get_company_profile",
+      "description": "GET https://api.cucarachasbarcelona.cat/api/company/?lang=ca|es|en — brand, phone, address, service area, hours."
+    },
+    {
+      "name": "list_faq",
+      "description": "GET https://api.cucarachasbarcelona.cat/api/faq/?lang=ca|es|en — published FAQ items."
+    },
+    {
+      "name": "list_species",
+      "description": "GET https://api.cucarachasbarcelona.cat/api/species/ — cockroach species catalog."
+    },
+    {
+      "name": "chat_bio_assistent",
+      "description": "POST https://api.cucarachasbarcelona.cat/api/chat/ with {message, language, source?, diagnostic?, booking?} — diagnosis and booking handoff."
+    }
+  ],
+  "resources": [
+    {
+      "uri": "https://cucarachasbarcelona.cat/llms.txt",
+      "name": "llms.txt",
+      "description": "Curated LLM overview",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "https://cucarachasbarcelona.cat/openapi.json",
+      "name": "openapi",
+      "description": "OpenAPI 3.1 for public endpoints",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://cucarachasbarcelona.cat/.well-known/api-catalog",
+      "name": "api-catalog",
+      "description": "RFC 9727 API catalog linkset",
+      "mimeType": "application/linkset+json"
+    }
+  ],
+  "category": "local-services",
+  "categories": ["pest-control", "local-business", "barcelona"],
+  "protocolVersion": "2025-11-25"
+}

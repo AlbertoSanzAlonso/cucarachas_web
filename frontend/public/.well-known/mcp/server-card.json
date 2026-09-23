@@ -1,0 +1,24 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json",
+  "name": "cecsa-control-de-plagas",
+  "title": "CECSA Control de Plagas",
+  "description": "Server card de descobriment per a CECSA (control de cucarachas, Barcelona/Catalunya). Integració màquina via OpenAPI HTTP; sense endpoint MCP streamable públic.",
+  "websiteUrl": "https://cucarachasbarcelona.cat",
+  "version": "1.0.0",
+  "icons": [
+    {
+      "src": "https://cucarachasbarcelona.cat/assets/isotipo.png",
+      "mimeType": "image/png"
+    }
+  ],
+  "remotes": [
+    {
+      "type": "http+json",
+      "url": "https://api.cucarachasbarcelona.cat/api/chat/"
+    }
+  ],
+  "transport": {
+    "type": "http+json",
+    "endpoint": "https://api.cucarachasbarcelona.cat/api/chat/"
+  }
+}

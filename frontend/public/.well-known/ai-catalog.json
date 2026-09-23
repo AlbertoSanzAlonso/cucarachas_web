@@ -1,0 +1,62 @@
+{
+  "version": "1.0",
+  "name": "CECSA Control de Plagas",
+  "description": "Catálogo de artefactos agenticos del dominio cucarachasbarcelona.cat: llms.txt, OpenAPI, API Catalog, Agent Card A2A y discovery MCP. Especialistas en control de cucarachas en Barcelona y Catalunya.",
+  "website": "https://cucarachasbarcelona.cat",
+  "provider": {
+    "organization": "CECSA Control de Plagas",
+    "url": "https://cucarachasbarcelona.cat",
+    "email": "info@cucarachasbarcelona.cat",
+    "telephone": "+34933309169"
+  },
+  "artifacts": [
+    {
+      "type": "llms.txt",
+      "url": "https://cucarachasbarcelona.cat/llms.txt",
+      "title": "llms.txt",
+      "description": "Resumen curado para LLMs (llmstxt.org)"
+    },
+    {
+      "type": "llms-full",
+      "url": "https://cucarachasbarcelona.cat/llms-full.txt",
+      "title": "llms-full.txt",
+      "description": "Guía ampliada de servicios, zona y APIs"
+    },
+    {
+      "type": "openapi",
+      "url": "https://cucarachasbarcelona.cat/openapi.json",
+      "title": "OpenAPI 3.1 — API pública",
+      "description": "Company, FAQ, species, chat y slots públicos"
+    },
+    {
+      "type": "api-catalog",
+      "url": "https://cucarachasbarcelona.cat/.well-known/api-catalog",
+      "title": "API Catalog (RFC 9727)",
+      "description": "Linkset de descubrimiento de APIs públicas"
+    },
+    {
+      "type": "a2a-agent-card",
+      "url": "https://cucarachasbarcelona.cat/.well-known/agent-card.json",
+      "title": "Bio-Assistent Agent Card",
+      "description": "Tarjeta A2A del asistente de diagnóstico y cita"
+    },
+    {
+      "type": "mcp-server-card",
+      "url": "https://cucarachasbarcelona.cat/.well-known/mcp.json",
+      "title": "MCP discovery",
+      "description": "Descubrimiento MCP: integración vía OpenAPI HTTP (sin transport streamable remoto)"
+    },
+    {
+      "type": "rest-api",
+      "url": "https://api.cucarachasbarcelona.cat/api/company/",
+      "title": "Company API",
+      "description": "Perfil público de empresa"
+    },
+    {
+      "type": "rest-api",
+      "url": "https://api.cucarachasbarcelona.cat/api/chat/",
+      "title": "Chat API",
+      "description": "Bio-Assistent conversacional"
+    }
+  ]
+}
