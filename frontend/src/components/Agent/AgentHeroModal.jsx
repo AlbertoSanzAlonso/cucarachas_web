@@ -13,7 +13,7 @@ import ChatInput from './Chat/ChatInput';
 import { useAgentChat } from './hooks/useAgentChat';
 import { fetchFichaWizardQuestions, getParticularMaxStep } from '@/utils/fichaWizard';
 
-const AgentHeroModal = ({ isOpen, onClose }) => {
+const AgentHeroModal = ({ isOpen, onClose, useLayoutMorph = false }) => {
   const { t, i18n } = useTranslation();
   const [step, setStep] = useState(1);
   const [path, setPath] = useState(null); 
@@ -159,7 +159,7 @@ const AgentHeroModal = ({ isOpen, onClose }) => {
       style={{ touchAction: 'manipulation' }}
     >
       <motion.div 
-        layoutId={isDesktop ? 'hero-box' : undefined}
+        layoutId={useLayoutMorph && isDesktop ? 'hero-box' : undefined}
         className="relative w-[96%] md:w-[94%] max-w-[1700px] h-[85vh] md:h-[85vh] rounded-[2.5rem] md:rounded-[5rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col items-center overflow-hidden" 
         style={{ 
           background: 'linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-primary-blue-hv) 60%, #004d70 100%)',

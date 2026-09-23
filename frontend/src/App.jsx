@@ -35,12 +35,28 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   const [isAgentOpen, setIsAgentOpen] = React.useState(() => {
-    return !localStorage.getItem('cecsa_agent_dismissed');
+    try {
+      return !localStorage.getItem('cecsa_agent_dismissed');
+    } catch {
+      return true;
+    }
   });
+  // Solo morph Hero↔modal al abrir desde CTA; en auto-open el layoutId deja la UI en blanco.
+  const [agentLayoutMorph, setAgentLayoutMorph] = React.useState(false);
 
   const handleCloseAgent = () => {
     setIsAgentOpen(false);
-    localStorage.setItem('cecsa_agent_dismissed', 'true');
+    setAgentLayoutMorph(false);
+    try {
+      localStorage.setItem('cecsa_agent_dismissed', 'true');
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const handleOpenAgent = () => {
+    setAgentLayoutMorph(true);
+    setIsAgentOpen(true);
   };
 
   React.useEffect(() => {
@@ -62,14 +78,15 @@ function App() {
     <Router>
       <AppContent
         isAgentOpen={isAgentOpen}
+        agentLayoutMorph={agentLayoutMorph}
         handleCloseAgent={handleCloseAgent}
-        handleOpenAgent={() => setIsAgentOpen(true)}
+        handleOpenAgent={handleOpenAgent}
       />
     </Router>
   );
 }
 
-function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
+function AppContent({ isAgentOpen, agentLayoutMorph, handleCloseAgent, handleOpenAgent }) {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin') || location.pathname.startsWith('/login');
   const showAgentModal = isAgentOpen && !isAdminRoute;
@@ -84,7 +101,12 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
     <SmoothScroll>
       <AnimatePresence mode="popLayout">
         {showAgentModal && (
-          <AgentHeroModal key="agent-modal" isOpen={isAgentOpen} onClose={handleCloseAgent} />
+          <AgentHeroModal
+            key="agent-modal"
+            isOpen={isAgentOpen}
+            onClose={handleCloseAgent}
+            useLayoutMorph={agentLayoutMorph}
+          />
         )}
       </AnimatePresence>
 
@@ -224,7 +246,7 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
         </Suspense>
       )}
 
-      {!isAdminRoute && <CookieConsent />}
+      {!isAdminRoute && <CookieConsent defer={showAgentModal} />}
     </SmoothScroll>
   );
 }

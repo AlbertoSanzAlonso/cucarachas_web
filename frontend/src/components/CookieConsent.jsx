@@ -25,8 +25,9 @@ function writeConsent(value) {
 /**
  * Banner RGPD: solo cookies técnicas / preferencia de consentimiento.
  * Estilo Sanitary Premium Clean (tokens CSS + inline como FloatingCTA).
+ * @param {{ defer?: boolean }} props - si true (p. ej. modal agente abierto), no se muestra aún
  */
-const CookieConsent = () => {
+const CookieConsent = ({ defer = false }) => {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(() => !readConsent());
 
@@ -35,9 +36,11 @@ const CookieConsent = () => {
     setVisible(false);
   };
 
+  const show = visible && !defer;
+
   return (
     <AnimatePresence>
-      {visible && (
+      {show && (
         <motion.aside
           role="dialog"
           aria-labelledby="cookie-consent-title"
