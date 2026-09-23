@@ -46,7 +46,7 @@ const CookieConsent = () => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 24, opacity: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="fixed bottom-4 left-4 right-4 md:left-8 md:right-auto md:bottom-8 md:max-w-lg z-[110] pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2"
+          className="fixed bottom-4 left-4 right-4 md:left-8 md:right-auto md:bottom-8 md:max-w-lg z-[250] pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2"
           style={{
             background: 'var(--primary-blue)',
             color: '#fff',
