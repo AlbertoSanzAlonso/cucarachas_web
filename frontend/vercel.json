@@ -5,7 +5,7 @@
       "headers": [
         {
           "key": "Link",
-          "value": "</llms.txt>; rel=\"describedby\"; type=\"text/plain\", </.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\", </.well-known/ai-catalog.json>; rel=\"ai-catalog\"; type=\"application/json\", </.well-known/agent-card.json>; rel=\"agent-card\"; type=\"application/a2a+json\", </.well-known/mcp.json>; rel=\"mcp-server\"; type=\"application/json\", </openapi.json>; rel=\"service-desc\"; type=\"application/openapi+json\""
+          "value": "<https://cucarachasbarcelona.cat/.well-known/ai-catalog.json>; rel=\"ai-catalog\", </.well-known/ai-catalog.json>; rel=ai-catalog, <https://cucarachasbarcelona.cat/.well-known/ard.json>; rel=\"ard\", <https://cucarachasbarcelona.cat/llms.txt>; rel=\"describedby\"; type=\"text/plain\", <https://cucarachasbarcelona.cat/.well-known/api-catalog>; rel=\"api-catalog\"; type=\"application/linkset+json\", <https://cucarachasbarcelona.cat/.well-known/agent-card.json>; rel=\"agent-card\"; type=\"application/a2a+json\", <https://cucarachasbarcelona.cat/.well-known/mcp.json>; rel=\"mcp-server\"; type=\"application/json\", <https://cucarachasbarcelona.cat/openapi.json>; rel=\"service-desc\"; type=\"application/openapi+json\""
         }
       ]
     },
@@ -39,7 +39,24 @@
         },
         {
           "key": "Cache-Control",
-          "value": "public, max-age=3600"
+          "value": "public, max-age=300"
+        }
+      ]
+    },
+    {
+      "source": "/.well-known/ard.json",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/json; charset=utf-8"
+        },
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=300"
         }
       ]
     },

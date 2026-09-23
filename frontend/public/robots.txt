@@ -4,6 +4,9 @@ Allow: /
 Disallow: /admin
 Disallow: /login
 
+# Agentic Resource Discovery (ARD) — pointer to capability catalog
+Agentmap: https://cucarachasbarcelona.cat/.well-known/ai-catalog.json
+
 # Explicit AI crawler policy (same as default: allow public content)
 User-agent: GPTBot
 Allow: /
@@ -37,7 +40,7 @@ Allow: /
 
 # LLM / agent discovery
 # llms.txt: https://cucarachasbarcelona.cat/llms.txt
-# API catalog: https://cucarachasbarcelona.cat/.well-known/api-catalog
 # AI catalog: https://cucarachasbarcelona.cat/.well-known/ai-catalog.json
+# ARD: https://cucarachasbarcelona.cat/.well-known/ard.json
 
 Sitemap: https://cucarachasbarcelona.cat/sitemap.xml
