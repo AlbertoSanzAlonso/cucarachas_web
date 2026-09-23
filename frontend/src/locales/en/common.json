@@ -13,5 +13,12 @@
     "about": "About CECSA",
     "contact": "24h Emergency",
     "home": "Home"
+  },
+  "cookies": {
+    "title": "Cookies & privacy",
+    "description": "We use essential technical cookies for the site to work and to remember your preferences. We do not run third-party advertising.",
+    "privacy_link": "Privacy policy",
+    "accept": "Accept",
+    "reject": "Essential only"
   }
 }

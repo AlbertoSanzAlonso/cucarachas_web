@@ -82,8 +82,13 @@
     </script>
   </head>
   <body>
-    <div id="root">
-      <!-- Contingut estàtic per a crawlers / agents sense JS. React el substitueix en carregar. -->
+    <div id="root"></div>
+    <!--
+      Contingut estàtic només sense JS (crawlers / agents / usuaris amb JS desactivat).
+      Ha d'anar dins <noscript>: si està dins #root a la vista, provoca un flash blanc
+      amb horaris i enllaços abans que React munti l'app.
+    -->
+    <noscript>
       <header>
         <p><strong>CECSA Control de Plagas</strong> — Ètic i Conscient</p>
         <p>Telèfon: <a href="tel:+34933309169">+34 933 309 169</a> · <a href="mailto:info@cucarachasbarcelona.cat">info@cucarachasbarcelona.cat</a></p>
@@ -113,7 +118,7 @@
           </ul>
         </nav>
       </main>
-    </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

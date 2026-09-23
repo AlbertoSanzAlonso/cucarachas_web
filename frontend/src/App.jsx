@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardSkeleton } from '@/components/Skeleton';
 import AgentHeroModal from '@/components/Agent/AgentHeroModal';
+import CookieConsent from '@/components/CookieConsent';
 import SmoothScroll from '@/components/SmoothScroll';
 import { scrollToTop } from '@/utils/scrollToAnchor';
 import './index.css';
@@ -222,6 +223,8 @@ function AppContent({ isAgentOpen, handleCloseAgent, handleOpenAgent }) {
           <FloatingCTA />
         </Suspense>
       )}
+
+      {!isAdminRoute && <CookieConsent />}
     </SmoothScroll>
   );
 }

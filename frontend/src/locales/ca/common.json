@@ -43,5 +43,12 @@
     "services": "Serveis Realitzats",
     "guarantee": "Garantia d'Èxit",
     "response": "Temps de Resposta"
+  },
+  "cookies": {
+    "title": "Galetes i privacitat",
+    "description": "Fem servir galetes tècniques necessàries pel funcionament del lloc i per recordar les teves preferències. No fem publicitat de tercers.",
+    "privacy_link": "Política de privacitat",
+    "accept": "Acceptar",
+    "reject": "Només necessàries"
   }
 }

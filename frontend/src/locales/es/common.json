@@ -43,5 +43,12 @@
     "services": "Servicios Realizados",
     "guarantee": "Garantía de Éxito",
     "response": "Tiempo de Respuesta"
+  },
+  "cookies": {
+    "title": "Cookies y privacidad",
+    "description": "Usamos cookies técnicas necesarias para el funcionamiento del sitio y para recordar tus preferencias. No hacemos publicidad de terceros.",
+    "privacy_link": "Política de privacidad",
+    "accept": "Aceptar",
+    "reject": "Solo necesarias"
   }
 }
