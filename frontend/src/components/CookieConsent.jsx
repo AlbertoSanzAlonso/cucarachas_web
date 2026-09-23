@@ -25,9 +25,9 @@ function writeConsent(value) {
 /**
  * Banner RGPD: solo cookies técnicas / preferencia de consentimiento.
  * Estilo Sanitary Premium Clean (tokens CSS + inline como FloatingCTA).
- * @param {{ defer?: boolean }} props - si true (p. ej. modal agente abierto), no se muestra aún
+ * z-index por encima del AgentHeroModal (z-200) y del FloatingCTA (z-100).
  */
-const CookieConsent = ({ defer = false }) => {
+const CookieConsent = () => {
   const { t } = useTranslation();
   const [visible, setVisible] = useState(() => !readConsent());
 
@@ -36,11 +36,9 @@ const CookieConsent = ({ defer = false }) => {
     setVisible(false);
   };
 
-  const show = visible && !defer;
-
   return (
     <AnimatePresence>
-      {show && (
+      {visible && (
         <motion.aside
           role="dialog"
           aria-labelledby="cookie-consent-title"
@@ -49,7 +47,7 @@ const CookieConsent = ({ defer = false }) => {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 24, opacity: 0 }}
           transition={{ duration: 0.35, ease: 'easeOut' }}
-          className="fixed bottom-4 left-4 right-4 md:left-8 md:right-auto md:bottom-8 md:max-w-lg z-[250] pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2"
+          className="fixed bottom-4 left-4 right-4 md:left-8 md:right-auto md:bottom-8 md:max-w-lg z-[300] pointer-events-auto [@media(max-height:600px)_and_(orientation:landscape)]:bottom-2"
           style={{
             background: 'var(--primary-blue)',
             color: '#fff',

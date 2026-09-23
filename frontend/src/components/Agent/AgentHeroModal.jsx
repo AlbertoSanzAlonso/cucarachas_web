@@ -151,12 +151,12 @@ const AgentHeroModal = ({ isOpen, onClose, useLayoutMorph = false }) => {
 
   return (
     <motion.div 
-      initial={{ opacity: 0 }} 
+      initial={useLayoutMorph ? { opacity: 0 } : false}
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0, transition: { duration: 0.5, ease: "easeInOut" } }} 
       className="fixed inset-0 z-[200] flex items-center justify-center bg-bg-light"
       data-lenis-prevent
-      style={{ touchAction: 'manipulation' }}
+      style={{ touchAction: 'manipulation', opacity: 1 }}
     >
       <motion.div 
         layoutId={useLayoutMorph && isDesktop ? 'hero-box' : undefined}

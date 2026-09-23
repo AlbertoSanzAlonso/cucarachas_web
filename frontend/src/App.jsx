@@ -99,7 +99,7 @@ function AppContent({ isAgentOpen, agentLayoutMorph, handleCloseAgent, handleOpe
 
   return (
     <SmoothScroll>
-      <AnimatePresence mode="popLayout">
+      <AnimatePresence mode="sync">
         {showAgentModal && (
           <AgentHeroModal
             key="agent-modal"
@@ -114,8 +114,11 @@ function AppContent({ isAgentOpen, agentLayoutMorph, handleCloseAgent, handleOpe
         key="main-content"
         initial={false}
         animate={{ opacity: showAgentModal ? 0 : 1 }}
-        transition={{ duration: 0.4, ease: 'easeInOut' }}
-        style={{ pointerEvents: showAgentModal ? 'none' : 'auto' }}
+        transition={{ duration: showAgentModal ? 0 : 0.4, ease: 'easeInOut' }}
+        style={{
+          pointerEvents: showAgentModal ? 'none' : 'auto',
+          visibility: showAgentModal ? 'hidden' : 'visible',
+        }}
       >
         <Routes>
           <Route
@@ -246,7 +249,7 @@ function AppContent({ isAgentOpen, agentLayoutMorph, handleCloseAgent, handleOpe
         </Suspense>
       )}
 
-      {!isAdminRoute && <CookieConsent defer={showAgentModal} />}
+      {!isAdminRoute && <CookieConsent />}
     </SmoothScroll>
   );
 }
