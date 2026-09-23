@@ -2,13 +2,13 @@
   "specVersion": "1.0",
   "host": {
     "displayName": "CECSA Control de Plagas",
-    "identifier": "did:web:cucarachasbarcelona.cat",
+    "identifier": "cucarachasbarcelona.cat",
     "documentationUrl": "https://cucarachasbarcelona.cat/llms-full.txt",
     "logoUrl": "https://cucarachasbarcelona.cat/assets/isotipo.png"
   },
   "entries": [
     {
-      "identifier": "urn:air:cucarachasbarcelona.cat:agent:bio-assistent",
+      "identifier": "urn:ai:cucarachasbarcelona.cat:agent:bio-assistent",
       "displayName": "CECSA Bio-Assistent",
       "type": "application/a2a-agent-card+json",
       "url": "https://cucarachasbarcelona.cat/.well-known/agent-card.json",
@@ -38,7 +38,7 @@
       "updatedAt": "2026-09-23T12:00:00Z"
     },
     {
-      "identifier": "urn:air:cucarachasbarcelona.cat:server:mcp-discovery",
+      "identifier": "urn:ai:cucarachasbarcelona.cat:server:mcp-discovery",
       "displayName": "CECSA MCP discovery",
       "type": "application/mcp-server-card+json",
       "url": "https://cucarachasbarcelona.cat/.well-known/mcp.json",
@@ -59,7 +59,7 @@
       "updatedAt": "2026-09-23T12:00:00Z"
     },
     {
-      "identifier": "urn:air:cucarachasbarcelona.cat:doc:llms-txt",
+      "identifier": "urn:ai:cucarachasbarcelona.cat:doc:llms-txt",
       "displayName": "CECSA llms.txt",
       "type": "text/plain",
       "url": "https://cucarachasbarcelona.cat/llms.txt",
@@ -73,7 +73,7 @@
       "updatedAt": "2026-09-23T12:00:00Z"
     },
     {
-      "identifier": "urn:air:cucarachasbarcelona.cat:api:openapi",
+      "identifier": "urn:ai:cucarachasbarcelona.cat:api:openapi",
       "displayName": "CECSA OpenAPI pública",
       "type": "application/openapi+json",
       "url": "https://cucarachasbarcelona.cat/openapi.json",
@@ -94,7 +94,7 @@
       "updatedAt": "2026-09-23T12:00:00Z"
     },
     {
-      "identifier": "urn:air:cucarachasbarcelona.cat:api:catalog",
+      "identifier": "urn:ai:cucarachasbarcelona.cat:api:catalog",
       "displayName": "CECSA API Catalog (RFC 9727)",
       "type": "application/linkset+json",
       "url": "https://cucarachasbarcelona.cat/.well-known/api-catalog",
